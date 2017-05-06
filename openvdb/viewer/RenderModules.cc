@@ -32,6 +32,9 @@
 
 #include <openvdb/tools/Morphology.h>
 #include <openvdb/tools/Prune.h>
+#include <openvdb/points/PointDataGrid.h>
+#include <openvdb/points/PointCount.h>
+#include <openvdb/points/PointConversion.h>
 #include <openvdb/tree/LeafManager.h>
 #include <openvdb/util/logging.h>
 
@@ -107,6 +110,7 @@ processTypedGrid(GridPtrType grid, OpType& op)
     else if (grid->template isType<Vec3IGrid>())  doProcessTypedGrid<Vec3IGrid>(grid, op);
     else if (grid->template isType<Vec3SGrid>())  doProcessTypedGrid<Vec3SGrid>(grid, op);
     else if (grid->template isType<Vec3DGrid>())  doProcessTypedGrid<Vec3DGrid>(grid, op);
+    else if (grid->template isType<points::PointDataGrid>()) doProcessTypedGrid<points::PointDataGrid>(grid, op);
     else return false;
     return true;
 }
@@ -1552,6 +1556,145 @@ MeshModule::init()
 
 void
 MeshModule::render()
+{
+    if (!mIsVisible) return;
+    if (!mIsInitialized) init();
+
+    mShader.startShading();
+
+    mBufferObject.render();
+
+    mShader.stopShading();
+}
+
+////////////////////////////////////////
+
+class PointDataGridOp
+{
+
+private:
+    struct VectorAttributeWrapper
+    {
+        using ValueType = openvdb::Vec3f;
+        struct Handle
+        {
+            explicit Handle(VectorAttributeWrapper& attribute)
+                : mValues(attribute.mValues)
+                , mIndices(attribute.mIndices) {}
+
+            void set(openvdb::Index offset, openvdb::Index/*unused*/, const ValueType& value) {
+                if (mIndices) (*mIndices)[offset] = static_cast<GLuint>(offset);
+                offset *= 3;
+                for (size_t i = 0; i < 3; ++i, ++offset) {
+                    mValues[offset] = value[i];
+                }
+            }
+        private:
+            std::vector<GLfloat>& mValues;
+            std::vector<GLuint>* mIndices;
+        }; // struct Handle
+
+        VectorAttributeWrapper(std::vector<GLfloat>& values, 
+                               std::vector<GLuint>* indices = nullptr)
+            : mValues(values)
+            , mIndices(indices) {}
+
+        void expand() {}
+        void compact() {}
+    private:
+        std::vector<GLfloat>& mValues;
+        std::vector<GLuint>* mIndices;
+    }; // struct VectorAttributeWrapper
+
+public:
+    PointDataGridOp(BufferObject& buffer) : mBuffer(&buffer) {}
+
+    void operator()(openvdb::points::PointDataGrid::ConstPtr grid)
+    {
+        using namespace openvdb::points;
+
+        const PointDataTree& tree = grid->tree();
+
+        // obtain cumulative point offsets and total points
+        std::vector<openvdb::Index64> pointOffsets;
+        const openvdb::Index64 total = getPointOffsets(pointOffsets, tree);
+
+        // @todo use glDrawArrays with GL_POINTS to avoid generating indices
+        std::vector<GLfloat> values(total * 3);
+        std::vector<GLuint> indices(total);
+
+        VectorAttributeWrapper positionWrapper(values, &indices);
+        convertPointDataGridPosition(positionWrapper, *grid, pointOffsets, 0);
+
+        // gen buffers and upload data to GPU
+        mBuffer->genVertexBuffer(values);
+        mBuffer->genIndexBuffer(indices, GL_POINTS);
+
+        const auto leafIter = tree.cbeginLeaf();
+        if (!leafIter) return;
+
+        const AttributeSet& set = leafIter->attributeSet();
+        const size_t colorIdx = set.find("Cd");
+        if (colorIdx == AttributeSet::INVALID_POS) return;
+
+        const AttributeArray& colorArray = leafIter->constAttributeArray(colorIdx);
+        if (colorArray.template hasValueType<openvdb::Vec3f>()) {
+            VectorAttributeWrapper colorWrapper(values);
+            convertPointDataGridAttribute(colorWrapper, tree, pointOffsets, 0, colorIdx);
+
+            // gen color buffer
+            mBuffer->genColorBuffer(values);
+        }
+    }
+
+private:
+    BufferObject *mBuffer;
+
+}; // PointDataGridOp
+
+
+////////////////////////////////////////
+
+// Point module
+
+PointDataGridModule::PointDataGridModule(const openvdb::GridBase::ConstPtr& grid):
+    mGrid(grid),
+    mIsInitialized(false)
+{
+    mShader.setVertShader(
+        "#version 120\n"
+        "void main() {\n"
+        "gl_FrontColor = gl_Color;\n"
+        "gl_Position =  ftransform();\n"
+        "gl_ClipVertex = gl_ModelViewMatrix * gl_Vertex;\n"
+        "}\n");
+
+    mShader.setFragShader(
+        "#version 120\n"
+         "void main() {\n"
+            "gl_FragColor = gl_Color;}\n");
+
+    mShader.build();
+}
+
+
+void
+PointDataGridModule::init()
+{
+    mIsInitialized = true;
+
+    if (mGrid->template isType<openvdb::points::PointDataGrid>()) {
+        PointDataGridOp drawPoints(mBufferObject);
+        drawPoints(openvdb::gridConstPtrCast<openvdb::points::PointDataGrid>(mGrid));
+    }
+    else {
+        OPENVDB_LOG_INFO("Ignoring non point data grid type during point module initialization.");
+    }
+}
+
+
+void
+PointDataGridModule::render()
 {
     if (!mIsVisible) return;
     if (!mIsInitialized) init();

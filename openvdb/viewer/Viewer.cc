@@ -36,6 +36,8 @@
 #include "RenderModules.h"
 #include <openvdb/util/Formats.h> // for formattedInt()
 #include <openvdb/util/logging.h>
+#include <openvdb/points/PointDataGrid.h>
+#include <openvdb/points/PointCount.h>
 #include <openvdb/version.h> // for OPENVDB_LIBRARY_MAJOR_VERSION, etc.
 #include <tbb/atomic.h>
 #include <tbb/mutex.h>
@@ -1021,6 +1023,7 @@ ViewerImpl::showNthGrid(size_t n)
     mRenderModules.push_back(RenderModulePtr(new TreeTopologyModule(mGrids[n])));
     mRenderModules.push_back(RenderModulePtr(new MeshModule(mGrids[n])));
     mRenderModules.push_back(RenderModulePtr(new ActiveValueModule(mGrids[n])));
+    mRenderModules.push_back(RenderModulePtr(new PointDataGridModule(mGrids[n])));
 
     if (active.empty()) {
         for (size_t i = 1, I = mRenderModules.size(); i < I; ++i) {
@@ -1058,6 +1061,17 @@ ViewerImpl::showNthGrid(size_t n)
             << " active voxel" << (count == 1 ? "" : "s");
         mTreeInfo = ostrm.str();
     }
+    {
+        if (mGrids[n]->template isType<openvdb::points::PointDataGrid>()) {
+            const openvdb::points::PointDataGrid::ConstPtr points = 
+                openvdb::gridConstPtrCast<openvdb::points::PointDataGrid>(mGrids[n]);
+            const openvdb::Index64 count = openvdb::points::pointCount(points->tree());
+            std::ostringstream ostrm;
+            ostrm << " - " << openvdb::util::formattedInt(count)
+                 << " point" << (count == 1 ? "" : "s");
+            mTreeInfo.append(ostrm.str());
+        }
+    }
 
     setWindowTitle();
 }
@@ -1093,6 +1107,9 @@ ViewerImpl::keyCallback(int key, int action)
             break;
         case '3': case GLFW_KEY_KP_3:
             toggleRenderModule(2);
+            break;
+        case '4': case GLFW_KEY_KP_4:
+            toggleRenderModule(3);
             break;
         case 'c': case 'C':
             mClipBox->reset();
