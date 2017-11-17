@@ -102,6 +102,13 @@ getNodeChain(OP_Context& context, NodeType* startNode, bool addInterest = true)
         }
     }; // struct Local
 
+    // disallow the mixing of node chains with SESI vdb nodes and DW
+    // vdb nodes as the parameter sets mismatch. If the node is a sesi
+    // vdb node, prefix stores "vdb". For DW nodes, prefix will store "DW_"
+
+    const std::string prefix =
+        startNode->getOperator()->getName().toStdString().substr(0, 3);
+
     const fpreal now = context.getTime();
 
     std::vector<NodeType*> nodes;
@@ -110,6 +117,10 @@ getNodeChain(OP_Context& context, NodeType* startNode, bool addInterest = true)
         if (!node->needToCook(context, /*query_only=*/true)) break;
 
         if (NodeType* candidate = dynamic_cast<NodeType*>(node)) {
+            // only accept candidates with a matching prefix to avoid
+            // clashes with parameter set mismatches
+            const std::string type(candidate->getOperator()->getName().toStdString());
+            if (prefix != type.substr(0, 3)) break;
             nodes.push_back(candidate);
         } else {
             // Stop if the node is not of the requested type, unless it is a SOP_NULL.
