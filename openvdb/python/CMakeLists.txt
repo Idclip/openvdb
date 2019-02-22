@@ -82,7 +82,7 @@ IF ( OPENVDB_ENABLE_RPATH )
   IF ( OpenVDB_LIBRARY_DIR )
     SET( CMAKE_INSTALL_RPATH ${OpenVDB_LIBRARY_DIR} )
   ELSE ()
-    MESSAGE ( WARNING "Assumes the openvdb shared library is one level up"
+    MESSAGE ( WARNING "Assumes the openvdb shared library is one level up. "
       "If this is wrong set OpenVDB_LIBRARY_DIR to correct path")
     SET(CMAKE_INSTALL_RPATH "$ORIGIN/..")
   ENDIF ()

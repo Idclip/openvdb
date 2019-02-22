@@ -52,84 +52,14 @@ stages:
 
 # Build and install all library dependencies for OpenVDB
 # (build will error if this stage does not succeed)
-install: bash travis/travis.run install $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
+install: bash travis/travis.setup $BLOSC $HOUDINI_MAJOR $COMPILER
 
 jobs:
   include:
     # build core OpenVDB library
     - stage: build_core
-      script: bash travis/travis.run extras $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run extras $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=gcc
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=header HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=4 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=3 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=yes MODE=release HOUDINI_MAJOR=17.0 COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=4 BLOSC=yes MODE=release HOUDINI_MAJOR=16.5 COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=3 BLOSC=yes MODE=release HOUDINI_MAJOR=16.0 COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=no MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=no MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=debug HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=yes MODE=debug HOUDINI_MAJOR=none COMPILER=clang
-    # build OpenVDB unit tests
-    - stage: build_unittests_and_houdini
-      script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=gcc
-    - script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=4 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=3 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run houdini $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=yes MODE=release HOUDINI_MAJOR=17.0 COMPILER=clang
-    - script: bash travis/travis.run houdini $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=4 BLOSC=yes MODE=release HOUDINI_MAJOR=16.5 COMPILER=clang
-    - script: bash travis/travis.run houdini $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=3 BLOSC=yes MODE=release HOUDINI_MAJOR=16.0 COMPILER=clang
-    - script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=no MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=no MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=debug HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run test $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=yes MODE=debug HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run houdini $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=yes MODE=header HOUDINI_MAJOR=17.0 COMPILER=clang
-    - script: bash travis/travis.run core $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=header HOUDINI_MAJOR=none COMPILER=clang
-    # run OpenVDB unit tests
-    - stage: run_unittests
-      script: bash travis/travis.run run $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run run $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=gcc
-    - script: bash travis/travis.run run $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run run $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=4 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run run $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=3 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run run $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=6 BLOSC=no MODE=release HOUDINI_MAJOR=none COMPILER=clang
-    - script: bash travis/travis.run run $ABI $BLOSC $MODE $HOUDINI_MAJOR $COMPILER
-      env: ABI=5 BLOSC=no MODE=release HOUDINI_MAJOR=none COMPILER=clang
+      script: bash travis/travis_cmake $ABI $COMPILER
+      env: ABI=6 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=g++
 
 after_failure:
     # cleanup

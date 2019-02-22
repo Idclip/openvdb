@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+#
+# Copyright (c) 2012-2019 DreamWorks Animation LLC
+#
+# All rights reserved. This software is distributed under the
+# Mozilla Public License 2.0 ( http://www.mozilla.org/MPL/2.0/ )
+#
+# Redistributions of source code must retain the above copyright
+# and license notice and the following restrictions and disclaimer.
+#
+# *     Neither the name of DreamWorks Animation nor the names of
+# its contributors may be used to endorse or promote products derived
+# from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDERS' AND CONTRIBUTORS' AGGREGATE
+# LIABILITY FOR ALL CLAIMS REGARDLESS OF THEIR BASIS EXCEED US$250.00.
+#
+#
+# Travis build script
+
+set -ex
+
+ABI="$1"
+COMPILER="$2"
+
+echo "CMake Version Details"
+cmake --version
+echo ""
+
+#### Export some manual library locations
+#### @note These locations will be empty if they're disabled (see travis.setup)
+
+ldconfig -p | grep libtbb
+ldconfig -p | grep libglfw3
+ldconfig -p | grep libglfw
+
+export CPPUNIT_ROOT=$HOME/cppunit
+export BLOSC_ROOT=$HOME/blosc
+
+#### All other library locations, handled by USE_SYSTEM_LIBRARY_PATHS
+
+# BOOST_LIB_DIR=/usr/lib/x86_64-linux-gnu
+# EXR_INCL_DIR=/usr/include/OpenEXR
+# EXR_LIB_DIR=/usr/local/lib
+# TBB_LIB_DIR=/usr/lib
+# LOG4CPLUS_INCL_DIR=/usr/include
+# LOG4CPLUS_LIB_DIR=/usr/lib/x86_64-linux-gnu
+# GLFW_INCL_DIR=/usr/include/GL
+# GLFW_LIB_DIR=/usr/lib/x86_64-linux-gnu
+# EPYDOC=/usr/bin/epydoc
+
+# PYTHON_INCL_DIR=/usr/include/python2.7
+# PYTHON_LIB_DIR=/usr/lib/x86_64-linux-gnu
+# BOOST_PYTHON_LIB_DIR=/usr/lib/x86_64-linux-gnu
+# BOOST_PYTHON_LIB=-lboost_python
+
+declare -A CMAKE_DICT
+
+CMAKE_DICT["CMAKE_CXX_COMPILER"]=$COMPILER
+CMAKE_DICT["CMAKE_C_COMPILER"]=$COMPILER
+
+CMAKE_DICT["CMAKE_BUILD_TYPE"]=$MODE
+CMAKE_DICT["OPENVDB_ABI_VERSION_NUMBER"]=$ABI
+CMAKE_DICT["OPENVDB_BUILD_CORE"]="ON"
+CMAKE_DICT["OPENVDB_BUILD_DOCS"]="ON"
+CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]="ON"
+CMAKE_DICT["OPENVDB_BUILD_UNITTESTS"]="ON"
+CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]="OFF"
+CMAKE_DICT["OPENVDB_BUILD_MAYA_PLUGIN"]="OFF"
+CMAKE_DICT["OPENVDB_ENABLE_RPATH"]="ON"
+CMAKE_DICT["OPENVDB_CXX_STRICT"]="ON"
+CMAKE_DICT["OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES"]="ON"
+CMAKE_DICT["USE_SYSTEM_LIBRARY_PATHS"]="ON"
+
+CMAKE_DICT["USE_GLFW3"]="ON"
+CMAKE_DICT["GLFW3_USE_STATIC_LIBS"]="ON"
+CMAKE_DICT["MINIMUM_BOOST_VERSION"]="1.55"
+CMAKE_DICT["ILMBASE_NAMESPACE_VERSIONING"]="OFF"
+CMAKE_DICT["OPENEXR_NAMESPACE_VERSIONING"]="OFF"
+CMAKE_DICT["BOOST_PYTHON_NAMESPACE_VERSIONING"]="OFF"
+
+CMAKE_DICT["CMAKE_INSTALL_PREFIX"]="/tmp/OpenVDB"
+
+# format arguments for command line
+
+CMD_STR=""
+for i in "${!PARMS[@]}"; do
+    CMD_STR+="-D $i ${PARMS[$i]} ";
+done
+
+rm -rf .build
+mkdir -p .build
+cd .build
+
+# zero ccache stats
+ccache -z
+
+cmake $CMD_STR ../
+make install -j4
+
+# output ccache stats
+ccache -s
+
+cd -

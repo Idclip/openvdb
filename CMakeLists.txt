@@ -34,7 +34,7 @@ CMAKE_MINIMUM_REQUIRED ( VERSION 3.1 )
 
 # @todo vdb_binary options
 # @todo SSE/AVX instruction options
-# @todo static/shared core library options
+# @todo static/shared library options
 OPTION ( OPENVDB_BUILD_CORE "Build the OpenVDB core" ON )
 OPTION ( OPENVDB_BUILD_PYTHON_MODULE "Build the pyopenvdb Python module" ON )
 OPTION ( OPENVDB_BUILD_UNITTESTS "Build the OpenVDB unit tests" ON )
