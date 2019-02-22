@@ -49,8 +49,6 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS ( OpenEXR
   REQUIRED_VARS OPENEXR_LOCATION
   )
 
-OPTION ( OPENEXR_NAMESPACE_VERSIONING "Namespace versioning of libraries" ON )
-
 IF ( OPENEXR_FOUND )
 
   FILE ( STRINGS "${OPENEXR_LOCATION}/include/OpenEXR/OpenEXRConfig.h" _openexr_version_major_string REGEX "#define OPENEXR_VERSION_MAJOR ")

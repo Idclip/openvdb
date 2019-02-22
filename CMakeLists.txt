@@ -27,45 +27,66 @@
 
 # yue.nicholas@gmail.com
 
+PROJECT ( OpenVDB )
 CMAKE_MINIMUM_REQUIRED ( VERSION 3.1 )
 
-SET ( CMAKE_CXX_STANDARD 11 )
-SET ( CMAKE_DISABLE_SOURCE_CHANGES ON )
-SET ( CMAKE_DISABLE_IN_SOURCE_BUILD ON )
+###### CMake Options
 
-PROJECT ( OpenVDB )
-
-ENABLE_TESTING ()
-
-FIND_PROGRAM ( CCACHE_FOUND ccache )
-IF ( CCACHE_FOUND )
-    SET_PROPERTY ( GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache )
-    SET_PROPERTY ( GLOBAL PROPERTY RULE_LAUNCH_LINK ccache )
-ENDIF ( CCACHE_FOUND )
-
+# @todo vdb_binary options
+# @todo SSE/AVX instruction options
+# @todo static/shared core library options
+OPTION ( OPENVDB_BUILD_CORE "Build the OpenVDB core" ON )
+OPTION ( OPENVDB_BUILD_PYTHON_MODULE "Build the pyopenvdb Python module" ON )
 OPTION ( OPENVDB_BUILD_UNITTESTS "Build the OpenVDB unit tests" ON )
 OPTION ( OPENVDB_BUILD_DOCS "Build the OpenVDB documentation" OFF )
-OPTION ( OPENVDB_BUILD_PYTHON_MODULE "Build the pyopenvdb Python module" OFF )
 OPTION ( OPENVDB_BUILD_HOUDINI_SOPS "Build the Houdini SOPs" OFF )
 OPTION ( OPENVDB_BUILD_MAYA_PLUGIN "Build the Maya plugin" OFF )
-OPTION ( OPENVDB_BUILD_CORE "Build the OpenVDB core" ON )
 OPTION ( OPENVDB_ENABLE_RPATH "Build with RPATH information" ON )
-OPTION ( OPENVDB_DISABLE_BOOST_IMPLICIT_LINKING "Disable the implicit linking of Boost libraries on Windows" ON )
 OPTION ( OPENVDB_CXX_STRICT "Enable or disable a set of pre-defined compiler warnings for clang and gcc" OFF )
 OPTION ( OPENVDB_ENABLE_3_ABI_COMPATIBLE "Build with OpenVDB ABI 3 (deprecated - see OPENVDB_ABI_VERSION_NUMBER)" OFF )
+OPTION ( OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES [=[
+Expose (almost) all of the grid types in the python module. Otherwise, only FloatGrid, BoolGrid and
+Vec3SGrid will be exposed (see, e.g., exportIntGrid() in python/pyIntGrid.cc). Compiling the Python
+module with this ON can be very memory-intensive.]=] OFF )
+
+###### Dependency options
+
+# @todo scalable/concurrent malloc option(s)
+# @todo OPENVDB_USE_LOG4CPLUS option for log4cplus support
+# @todo non-required behavior for blosc (i.e. use if available)
+# @todo OPENVDB_USE_NUMPY options for NumPy
+OPTION ( OPENVDB_USE_BLOSC "Build the library with blosc support" ON )
+OPTION ( OPENEXR_NAMESPACE_VERSIONING "Set the expected names of OpenEXR libraries to be version suffixed" ON )
+OPTION ( ILMBASE_NAMESPACE_VERSIONING "Set the expected names of ILM Base libraries to be version suffixed" ON )
+OPTION ( BOOST_PYTHON_NAMESPACE_VERSIONING "Set the expected names of Boost.Python libraries to be version suffixed" ON )
+OPTION ( OPENVDB_DISABLE_BOOST_IMPLICIT_LINKING "Disable the implicit linking of Boost libraries on Windows" ON )
 OPTION ( USE_SYSTEM_LIBRARY_PATHS "Build with system library paths" ON )
 
 SET ( OPENVDB_ABI_VERSION_NUMBER "" CACHE STRING "Build for compatibility with version N of the
     OpenVDB Grid ABI, where N is 3, 4, 5 etc. (some newer features will be disabled)")
 
-IF (OPENVDB_BUILD_HOUDINI_SOPS)
+IF ( OPENVDB_BUILD_HOUDINI_SOPS )
   # Prior to the introduction of HBoost (Houdini's namespaced and shipped Boost version from 16.5),
   # we built against Houdini's version of Boost which didn't include Boost.Python
   # @todo Enable this for Houdini Versions >= 16.5 (and add additional Boost branching options)
   SET ( OPENVDB_BUILD_PYTHON_MODULE OFF )
 ENDIF ()
 
-# Some platform checks
+######
+
+SET ( CMAKE_CXX_STANDARD 11 )
+SET ( CMAKE_DISABLE_SOURCE_CHANGES ON )
+SET ( CMAKE_DISABLE_IN_SOURCE_BUILD ON )
+ENABLE_TESTING ()
+
+# Build type configuration - default to Release if none is set
+
+IF ( NOT CMAKE_BUILD_TYPE )
+  SET ( CMAKE_BUILD_TYPE Release )
+ENDIF ()
+MESSAGE ( STATUS "CMake Build Type: ${CMAKE_BUILD_TYPE}" )
+
+# Some option/platform checks
 
 IF ( USE_SYSTEM_LIBRARY_PATHS )
   SET ( SYSTEM_LIBRARY_PATHS
@@ -88,6 +109,23 @@ IF ( APPLE )
   ENDIF ()
 ENDIF ()
 
+IF ( OPENVDB_BUILD_HOUDINI_SOPS )
+  # Prior to the introduction of HBoost (Houdini's namespaced and shipped Boost version from 16.5),
+  # we built against Houdini's version of Boost which didn't include Boost.Python
+  # @todo Enable this for Houdini Versions >= 16.5 (and add additional Boost branching options)
+  SET ( OPENVDB_BUILD_PYTHON_MODULE OFF )
+  MESSAGE ( WARNING "Disabling compilation of the OpenVDB Python module. Cannot currently be built with "
+    "the Houdini plugin." )
+ENDIF ()
+
+# ccache setup
+
+FIND_PROGRAM ( CCACHE_FOUND ccache )
+IF ( CCACHE_FOUND )
+    SET_PROPERTY ( GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache )
+    SET_PROPERTY ( GLOBAL PROPERTY RULE_LAUNCH_LINK ccache )
+ENDIF ( CCACHE_FOUND )
+
 # Determine OpenVDB version
 
 SET ( OPENVDB_VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/openvdb/version.h )
@@ -106,6 +144,10 @@ SET ( OPENVDB_MAJOR_VERSION_NUMBER ${_openvdb_major_version_number} CACHE STRING
 SET ( OPENVDB_MINOR_VERSION_NUMBER ${_openvdb_minor_version_number} CACHE STRING "OpenVDB Minor Version Number" )
 SET ( OPENVDB_PATCH_VERSION_NUMBER ${_openvdb_patch_version_number} CACHE STRING "OpenVDB Build Version Number" )
 
+UNSET (_openvdb_major_version_number)
+UNSET (_openvdb_minor_version_number)
+UNSET (_openvdb_patch_version_number)
+
 # Determine the OpenVDB ABI Version. If OPENVDB_ABI_VERSION_NUMBER is defined, use that value,
 # otherwise check the legacy OPENVDB_ENABLE_3_ABI_COMPATIBLE option, falling back to the major
 # library version number
@@ -113,8 +155,8 @@ SET ( OPENVDB_PATCH_VERSION_NUMBER ${_openvdb_patch_version_number} CACHE STRING
 IF ( OPENVDB_ABI_VERSION_NUMBER STREQUAL "" )
   IF ( OPENVDB_ENABLE_3_ABI_COMPATIBLE )
     SET ( OPENVDB_ABI_VERSION_NUMBER 3 )
-    MESSAGE ( DEPRECATION "OPENVDB_ENABLE_3_ABI_COMPATIBLE is deprecated. Instead use
-      -D OPENVDB_ABI_VERSION_NUMBER=N, where N is the abi version." )
+    MESSAGE ( DEPRECATION "OPENVDB_ENABLE_3_ABI_COMPATIBLE is deprecated. Instead use "
+      "-D OPENVDB_ABI_VERSION_NUMBER=N, where N is the abi version." )
   ELSE ()
     SET ( OPENVDB_ABI_VERSION_NUMBER ${OPENVDB_MAJOR_VERSION_NUMBER} )
   ENDIF ()
@@ -129,6 +171,8 @@ ADD_DEFINITIONS ( -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_ABI_VERSION_NUMBER} )
 
 # Configure the top level dir to make sure we pick up headers from this version of OpenVDB we
 # are building
+# @todo Don't do this if OPENVDB_BUILD_CORE is off (although the python module in the Makefile
+# system still uses these headers)
 
 LIST ( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
 SET ( OPENVDB_TOP_LEVEL_DIR ${PROJECT_SOURCE_DIR} CACHE PATH

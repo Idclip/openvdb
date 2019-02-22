@@ -54,8 +54,6 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS ( ILMBase
   REQUIRED_VARS ILMBASE_LOCATION
   )
 
-OPTION ( ILMBASE_NAMESPACE_VERSIONING "Namespace versioning of libraries" ON )
-
 IF ( ILMBASE_FOUND )
 
   FILE ( STRINGS "${ILMBASE_LOCATION}/include/OpenEXR/IlmBaseConfig.h" _ilmbase_version_major_string REGEX "#define ILMBASE_VERSION_MAJOR ")
