@@ -32,16 +32,15 @@
 #
 # BLOSC_FOUND            set if Blosc is found.
 # BLOSC_INCLUDE_DIR      Blosc's include directory
-# BLOSC_LIBRARYDIR      Blosc's library directory
+# BLOSC_LIBRARYDIR       Blosc's library directory
 # BLOSC_LIBRARIES        all Blosc libraries
 
 FIND_PACKAGE ( PackageHandleStandardArgs )
 
 FIND_PATH( BLOSC_LOCATION include/blosc.h
-  "$ENV{BLOSC_ROOT}"
   NO_DEFAULT_PATH
   NO_SYSTEM_ENVIRONMENT_PATH
-  PATHS ${SYSTEM_LIBRARY_PATHS}
+  PATHS $ENV{BLOSC_ROOT} ${SYSTEM_LIBRARY_PATHS}
   )
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS ( Blosc
@@ -50,25 +49,37 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS ( Blosc
 
 IF ( BLOSC_FOUND )
 
-  SET ( BLOSC_LIBRARYDIR ${BLOSC_LOCATION}/lib
-    CACHE STRING "Blosc library directories")
+  SET ( BLOSC_LIB_DIRECTORIES
+    ${BLOSC_LOCATION}
+    ${SYSTEM_LIBRARY_PATHS}
+  )
+
+  IF ( ${CMAKE_VERSION} VERSION_LESS "3.12.0" )
+    FOREACH ( dir ${BLOSC_LIB_DIRECTORIES} )
+      LIST (APPEND tmp_list "${dir}/lib")
+    ENDFOREACH ()
+    SET (BLOSC_LIB_DIRECTORIES ${tmp_list}
+      CACHE STRING "Blosc library directories to search for blosc.")
+  ELSE ()
+    LIST ( TRANSFORM ${BLOSC_LIB_DIRECTORIES} APPEND "/lib" )
+  ENDIF ()
 
   SET ( _blosc_library_name "blosc" )
 
   # Static library setup
   IF (Blosc_USE_STATIC_LIBS)
     SET(CMAKE_FIND_LIBRARY_SUFFIXES_BACKUP ${CMAKE_FIND_LIBRARY_SUFFIXES})
-	IF (WIN32)
-	  SET ( _blosc_library_name "libblosc" )
-	ELSE ()
-	  SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-	ENDIF ()
+    IF (WIN32)
+      SET ( _blosc_library_name "libblosc" )
+    ELSE ()
+      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    ENDIF ()
   ENDIF()
 
   FIND_LIBRARY ( BLOSC_blosc_LIBRARY ${_blosc_library_name}
-    PATHS ${BLOSC_LIBRARYDIR}
     NO_DEFAULT_PATH
     NO_SYSTEM_ENVIRONMENT_PATH
+    PATHS ${BLOSC_LIB_DIRECTORIES}
     )
 
   # Static library tear down
@@ -76,6 +87,9 @@ IF ( BLOSC_FOUND )
     SET( CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_BACKUP} )
   ENDIF()
 
-  SET( BLOSC_INCLUDE_DIR "${BLOSC_LOCATION}/include" CACHE STRING "Blosc include directory" )
+  GET_FILENAME_COMPONENT ( BLOSC_LIBRARYDIR ${BLOSC_blosc_LIBRARY} DIRECTORY CACHE )
+  SET ( BLOSC_INCLUDE_DIR "${BLOSC_LOCATION}/include"
+    CACHE STRING "Blosc include directory"
+  )
 
 ENDIF ( BLOSC_FOUND )
