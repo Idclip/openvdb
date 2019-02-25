@@ -54,6 +54,11 @@ IF ( BLOSC_FOUND )
     ${SYSTEM_LIBRARY_PATHS}
   )
 
+  SET ( BLOSC_PATH_SUFFIXES
+    lib64
+    lib
+  )
+
   SET ( _blosc_library_name "blosc" )
 
   # Static library setup
@@ -70,7 +75,7 @@ IF ( BLOSC_FOUND )
     NO_DEFAULT_PATH
     NO_SYSTEM_ENVIRONMENT_PATH
     PATHS ${BLOSC_BASE_LIB_DIRECTORIES}
-    PATH_SUFFIXES lib64 lib
+    PATH_SUFFIXES ${BLOSC_PATH_SUFFIXES}
   )
 
   # Static library tear down

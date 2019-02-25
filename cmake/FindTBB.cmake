@@ -61,6 +61,11 @@ IF ( TBB_FOUND )
     ${SYSTEM_LIBRARY_PATHS}
   )
 
+  SET ( TBB_PATH_SUFFIXES
+    lib64
+    lib
+  )
+
   IF (APPLE)
 
     IF (TBB_FOR_CLANG)
@@ -74,17 +79,17 @@ IF ( TBB_FOUND )
 
     FIND_LIBRARY ( TBB_LIBRARY_PATH tbb
       PATHS ${TBB_BASE_LIB_DIRECTORIES}
-      PATH_SUFFIXES lib64 lib
+      PATH_SUFFIXES ${TBB_PATH_SUFFIXES}
     )
 
     FIND_LIBRARY ( TBB_PREVIEW_LIBRARY_PATH tbb_preview
       PATHS ${TBB_BASE_LIB_DIRECTORIES}
-      PATH_SUFFIXES lib64 lib
+      PATH_SUFFIXES ${TBB_PATH_SUFFIXES}
     )
 
     FIND_LIBRARY ( TBBMALLOC_LIBRARY_PATH tbbmalloc
       PATHS ${TBB_BASE_LIB_DIRECTORIES}
-      PATH_SUFFIXES lib64 lib
+      PATH_SUFFIXES ${TBB_PATH_SUFFIXES}
     )
 
   ELSEIF (WIN32)
@@ -100,8 +105,7 @@ IF ( TBB_FOUND )
 
     SET ( TBB_PATH_SUFFIXES
       lib/intel64/${TBB_VC_DIR}
-      lib64
-      lib
+      ${TBB_PATH_SUFFIXES}
     )
 
     FIND_LIBRARY ( TBB_LIBRARY_PATH tbb
@@ -129,22 +133,18 @@ IF ( TBB_FOUND )
         SET ( TBB_PATH_SUFFIXES
           lib/intel64/gcc${GCC_MAJOR}.${GCC_MINOR}
           lib/x86_64-linux-gnu
+          ${TBB_PATH_SUFFIXES}
         )
       ELSE ()
         SET ( TBB_PATH_SUFFIXES
           lib/intel64/gcc4.4
           lib/x86_64-linux-gnu
+          ${TBB_PATH_SUFFIXES}
         )
       ENDIF ()
     ELSE ()
       MESSAGE ( FATAL_ERROR "Can't handle non-GCC compiler")
     ENDIF ()
-
-    SET ( TBB_PATH_SUFFIXES
-      ${TBB_PATH_SUFFIXES}
-      lib64
-      lib
-    )
 
     FIND_LIBRARY ( TBB_LIBRARY_PATH tbb
       PATHS ${TBB_BASE_LIB_DIRECTORIES}
