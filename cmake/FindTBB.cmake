@@ -34,7 +34,7 @@
 #
 # TBB_FOUND                  set if TBB is found.
 # Tbb_INCLUDE_DIR            TBB's include directory
-# Tbb_LIBRARY_DIRS           TBB's lib directory
+# Tbb_LIBRARY_DIR            TBB's lib directory
 # Tbb_TBB_LIBRARY            TBB libraries
 # Tbb_TBB_PREVIEW_LIBRARY    TBB preview libraries (Mulitple Rendering Context)
 # Tbb_TBBMALLOC_LIBRARY      TBB malloc libraries (Mulitple Rendering Context)
@@ -178,7 +178,7 @@ IF ( TBB_FOUND )
 
   ENDIF (APPLE)
 
-  GET_FILENAME_COMPONENT ( Tbb_LIBRARY_DIRS ${TBB_LIBRARY_PATH} DIRECTORY CACHE )
+  GET_FILENAME_COMPONENT ( Tbb_LIBRARY_DIR ${TBB_LIBRARY_PATH} DIRECTORY CACHE )
   SET( Tbb_INCLUDE_DIR "${TBB_LOCATION}/include"
     CACHE STRING "TBB include directory")
 

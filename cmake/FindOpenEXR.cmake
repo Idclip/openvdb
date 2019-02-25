@@ -32,7 +32,7 @@
 #
 # This module will define the following variables:
 #  OPENEXR_INCLUDE_DIRS - Location of the openexr includes
-#  OPENEXR_LIBRARY_DIRS - the lib directory containing IlmImf
+#  OPENEXR_LIBRARY_DIR - the lib directory containing IlmImf
 #  OPENEXR_FOUND - true if OPENEXR was found on the system
 #  Openexr_ILMIMF_LIBRARY - OpenEXR's IlmImf library
 
@@ -135,7 +135,7 @@ IF ( OPENEXR_FOUND )
     ENDIF (APPLE)
   ENDIF ()
 
-  GET_FILENAME_COMPONENT ( OPENEXR_LIBRARY_DIRS ${Openexr_ILMIMF_LIBRARY} DIRECTORY CACHE )
+  GET_FILENAME_COMPONENT ( OPENEXR_LIBRARY_DIR ${Openexr_ILMIMF_LIBRARY} DIRECTORY CACHE )
   SET ( OPENEXR_INCLUDE_DIRS
     ${OPENEXR_LOCATION}/include
     ${OPENEXR_LOCATION}/include/OpenEXR

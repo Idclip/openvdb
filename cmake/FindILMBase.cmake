@@ -34,7 +34,7 @@
 #
 # ILMBASE_FOUND                  set if ILMBASE is found.
 # ILMBASE_INCLUDE_DIR            ILMBASE's include directory
-# ILMBASE_LIBRARY_DIRS           ILMBASE's library directory
+# ILMBASE_LIBRARY_DIR           ILMBASE's library directory
 # Ilmbase_HALF_LIBRARY           ILMBASE's Half libraries
 # Ilmbase_IEX_LIBRARY            ILMBASE's Iex libraries
 # Ilmbase_IEXMATH_LIBRARY        ILMBASE's IexMath libraries
@@ -257,7 +257,7 @@ IF ( ILMBASE_FOUND )
     ENDIF (APPLE)
   ENDIF ()
 
-  GET_FILENAME_COMPONENT ( ILMBASE_LIBRARY_DIRS ${Ilmbase_HALF_LIBRARY} DIRECTORY CACHE )
+  GET_FILENAME_COMPONENT ( ILMBASE_LIBRARY_DIR ${Ilmbase_HALF_LIBRARY} DIRECTORY CACHE )
   SET ( ILMBASE_INCLUDE_DIRS
     ${ILMBASE_LOCATION}/include
     ${ILMBASE_LOCATION}/include/OpenEXR
