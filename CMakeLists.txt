@@ -98,7 +98,6 @@ IF ( USE_SYSTEM_LIBRARY_PATHS )
     /opt/local  # DarwinPorts
     /opt/csw  # Blastwave
     /opt
-    / # Root
     )
 ENDIF ()
 

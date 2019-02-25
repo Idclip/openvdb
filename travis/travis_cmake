@@ -61,12 +61,11 @@ export BLOSC_ROOT=$HOME/blosc
 # BOOST_PYTHON_LIB_DIR=/usr/lib/x86_64-linux-gnu
 # BOOST_PYTHON_LIB=-lboost_python
 
-ldconfig -p | grep libHalf
+ldconfig -p | grep libIex
 
 declare -A CMAKE_DICT
 
 CMAKE_DICT["CMAKE_CXX_COMPILER"]=$COMPILER
-CMAKE_DICT["CMAKE_C_COMPILER"]=$COMPILER
 
 CMAKE_DICT["CMAKE_BUILD_TYPE"]=$MODE
 CMAKE_DICT["OPENVDB_ABI_VERSION_NUMBER"]=$ABI
@@ -84,18 +83,17 @@ CMAKE_DICT["USE_SYSTEM_LIBRARY_PATHS"]="ON"
 CMAKE_DICT["USE_GLFW3"]="ON"
 CMAKE_DICT["GLFW3_USE_STATIC_LIBS"]="ON"
 CMAKE_DICT["MINIMUM_BOOST_VERSION"]="1.55"
-# Using system versions, version suffix is enabled
 CMAKE_DICT["ILMBASE_NAMESPACE_VERSIONING"]="ON"
 CMAKE_DICT["OPENEXR_NAMESPACE_VERSIONING"]="ON"
 CMAKE_DICT["BOOST_PYTHON_NAMESPACE_VERSIONING"]="ON"
 
 CMAKE_DICT["CMAKE_INSTALL_PREFIX"]="/tmp/OpenVDB"
 
-# format arguments for command line
+# Format arguments for command line
 
 CMD_STR=""
-for i in "${!PARMS[@]}"; do
-    CMD_STR+="-D $i ${PARMS[$i]} ";
+for i in "${!CMAKE_DICT[@]}"; do
+    CMD_STR+="-D $i=${CMAKE_DICT[$i]} ";
 done
 
 rm -rf .build
