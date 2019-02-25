@@ -32,7 +32,7 @@
 #
 # BLOSC_FOUND            set if Blosc is found.
 # BLOSC_INCLUDE_DIR      Blosc's include directory
-# BLOSC_LIBRARYDIR       Blosc's library directory
+# BLOSC_LIBRARY_DIR      Blosc's library directory
 # BLOSC_LIBRARIES        all Blosc libraries
 
 FIND_PACKAGE ( PackageHandleStandardArgs )
@@ -49,20 +49,10 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS ( Blosc
 
 IF ( BLOSC_FOUND )
 
-  SET ( BLOSC_LIB_DIRECTORIES
+  SET ( BLOSC_BASE_LIB_DIRECTORIES
     ${BLOSC_LOCATION}
     ${SYSTEM_LIBRARY_PATHS}
   )
-
-  IF ( ${CMAKE_VERSION} VERSION_LESS "3.12.0" )
-    FOREACH ( dir ${BLOSC_LIB_DIRECTORIES} )
-      LIST (APPEND blosc_tmp_list "${dir}/lib")
-    ENDFOREACH ()
-    SET (BLOSC_LIB_DIRECTORIES ${blosc_tmp_list}
-      CACHE STRING "Blosc library directories to search for blosc.")
-  ELSE ()
-    LIST ( TRANSFORM BLOSC_LIB_DIRECTORIES APPEND "/lib" )
-  ENDIF ()
 
   SET ( _blosc_library_name "blosc" )
 
@@ -79,15 +69,16 @@ IF ( BLOSC_FOUND )
   FIND_LIBRARY ( BLOSC_blosc_LIBRARY ${_blosc_library_name}
     NO_DEFAULT_PATH
     NO_SYSTEM_ENVIRONMENT_PATH
-    PATHS ${BLOSC_LIB_DIRECTORIES}
-    )
+    PATHS ${BLOSC_BASE_LIB_DIRECTORIES}
+    PATH_SUFFIXES lib64 lib
+  )
 
   # Static library tear down
   IF (Blosc_USE_STATIC_LIBS)
     SET( CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES_BACKUP} )
   ENDIF()
 
-  GET_FILENAME_COMPONENT ( BLOSC_LIBRARYDIR ${BLOSC_blosc_LIBRARY} DIRECTORY CACHE )
+  GET_FILENAME_COMPONENT ( BLOSC_LIBRARY_DIR ${BLOSC_blosc_LIBRARY} DIRECTORY CACHE )
   SET ( BLOSC_INCLUDE_DIR "${BLOSC_LOCATION}/include"
     CACHE STRING "Blosc include directory"
   )

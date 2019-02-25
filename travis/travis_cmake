@@ -41,10 +41,6 @@ echo ""
 #### Export some manual library locations
 #### @note These locations will be empty if they're disabled (see travis.setup)
 
-ldconfig -p | grep libtbb
-ldconfig -p | grep libglfw3
-ldconfig -p | grep libglfw
-
 export CPPUNIT_ROOT=$HOME/cppunit
 export BLOSC_ROOT=$HOME/blosc
 
