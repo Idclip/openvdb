@@ -58,7 +58,7 @@ jobs:
   include:
     # build core OpenVDB library
     - stage: build_core
-      script: bash travis/travis_cmake $ABI $COMPILER
+      script: bash travis/travis_cmake --abi=$ABI --compiler=$COMPILER --prefix=$HOME/builds/$TRAVIS_BUILD_ID/install
       env: ABI=6 BLOSC=yes MODE=release HOUDINI_MAJOR=none COMPILER=g++
 
 after_failure:

@@ -72,8 +72,8 @@ if [ "$HOUDINI_MAJOR" = "none" ]; then
     sudo apt-get install -y libboost-iostreams-dev
     sudo apt-get install -y libboost-system-dev
     sudo apt-get install -y libboost-thread-dev
-    #sudo apt-get install -y libilmbase-dev
-    #sudo apt-get install -y libopenexr-dev
+    sudo apt-get install -y libilmbase-dev
+    sudo apt-get install -y libopenexr-dev
     sudo apt-get install -y libtbb-dev
     # download and build Blosc 1.5.0 if required
     if [ "$BLOSC" = "yes" ]; then

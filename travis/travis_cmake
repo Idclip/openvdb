@@ -29,10 +29,74 @@
 #
 # Travis build script
 
-set -ex
+set -e
 
-ABI="$1"
-COMPILER="$2"
+declare -A PARMS
+
+# Specify defaults.
+
+PARMS[--houdini]=none
+PARMS[--prefix]="/tmp/OpenVDB"
+PARMS[--abi]=6
+PARMS[--compiler]="g++"
+PARMS[-t]=all
+PARMS[-j]=4
+
+OPTIONAL_SHORT_ARGS+=("j:")  ## Thread usage
+OPTIONAL_SHORT_ARGS+=("u")   ## Builds the unit tests
+
+OPTIONAL_LONG_ARGS+=("abi:")      ## VDB ABI to use
+OPTIONAL_LONG_ARGS+=("target:")   ## Specify a make target
+OPTIONAL_LONG_ARGS+=("houdini:")  ## Houdini version to use
+OPTIONAL_LONG_ARGS+=("prefix:")   ## Location for root install folder
+OPTIONAL_LONG_ARGS+=("debug")     ## Debug build
+OPTIONAL_LONG_ARGS+=("blosc")     ## Use blosc
+OPTIONAL_LONG_ARGS+=("compiler:") ## Compiler to use
+OPTIONAL_LONG_ARGS+=("verbose")   ## Verbose make output
+
+
+############################################################################
+############################################################################
+
+HAS_PARM() {
+    if [ -z ${PARMS[$1]} ]; then return 1
+    else return 0; fi
+}
+
+# Format to string and replace spaces with commas
+
+LONG_ARGS_STR="${OPTIONAL_LONG_ARGS[@]}"
+LONG_ARGS_STR=${LONG_ARGS_STR// /,}
+SHORT_ARGS_STR="${OPTIONAL_SHORT_ARGS[@]}"
+SHORT_ARGS_STR=${SHORT_ARGS_STR// /,}
+
+# Parse all arguments. Error if unsupported
+
+ARGS=($(eval getopt -u --options=$SHORT_ARGS_STR --longoptions=$LONG_ARGS_STR -- $@))
+TMP_ARG_STR="${ARGS[@]}"
+
+# Parse all user supplied command line arguments into an assosiate array
+
+NUM_ARGS=${#ARGS[@]}
+USED_ARGS=0
+for ARG in "${ARGS[@]}"; do
+    USED_ARGS=$((USED_ARGS+1))
+    if [[ $ARG == "--" ]]; then break; fi
+    if [[ $ARG == "--"* ]] || [[ $ARG == "-"* ]]; then
+        PARMS[$ARG]=$ARG
+        prev=$ARG
+    elif [ ! -z $prev ]; then
+        PARMS[$prev]=$ARG
+        prev=""
+    fi
+done
+
+if [ $USED_ARGS -ne $NUM_ARGS ]; then
+    for ARG in $(seq $USED_ARGS $NUM_ARGS); do
+        IGNORED+=${ARGS[$ARG]}
+    done
+    echo "Warning: The following arguments were ignored -- "$IGNORED
+fi
 
 echo "CMake Version Details"
 cmake --version
@@ -44,7 +108,7 @@ echo ""
 export CPPUNIT_ROOT=$HOME/cppunit
 export BLOSC_ROOT=$HOME/blosc
 
-#### All other library locations, handled by USE_SYSTEM_LIBRARY_PATHS
+#### All other library locations are handled by USE_SYSTEM_LIBRARY_PATHS:
 
 # BOOST_LIB_DIR=/usr/lib/x86_64-linux-gnu
 # EXR_INCL_DIR=/usr/include/OpenEXR
@@ -55,7 +119,6 @@ export BLOSC_ROOT=$HOME/blosc
 # GLFW_INCL_DIR=/usr/include/GL
 # GLFW_LIB_DIR=/usr/lib/x86_64-linux-gnu
 # EPYDOC=/usr/bin/epydoc
-
 # PYTHON_INCL_DIR=/usr/include/python2.7
 # PYTHON_LIB_DIR=/usr/lib/x86_64-linux-gnu
 # BOOST_PYTHON_LIB_DIR=/usr/lib/x86_64-linux-gnu
@@ -63,10 +126,10 @@ export BLOSC_ROOT=$HOME/blosc
 
 declare -A CMAKE_DICT
 
-CMAKE_DICT["CMAKE_CXX_COMPILER"]=$COMPILER
+CMAKE_DICT["CMAKE_CXX_COMPILER"]=${PARMS[--compiler]}
+CMAKE_DICT["CMAKE_INSTALL_PREFIX"]=${PARMS[--prefix]}
+CMAKE_DICT["OPENVDB_ABI_VERSION_NUMBER"]=${PARMS[--abi]}
 
-CMAKE_DICT["CMAKE_BUILD_TYPE"]=$MODE
-CMAKE_DICT["OPENVDB_ABI_VERSION_NUMBER"]=$ABI
 CMAKE_DICT["OPENVDB_BUILD_CORE"]="ON"
 CMAKE_DICT["OPENVDB_BUILD_DOCS"]="ON"
 CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]="ON"
@@ -78,7 +141,6 @@ CMAKE_DICT["OPENVDB_CXX_STRICT"]="ON"
 CMAKE_DICT["OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES"]="ON"
 
 CMAKE_DICT["USE_GLFW3"]="ON"
-CMAKE_DICT["USE_BLOSC"]="ON"
 CMAKE_DICT["GLFW3_USE_STATIC_LIBS"]="ON"
 CMAKE_DICT["MINIMUM_BOOST_VERSION"]="1.55"
 CMAKE_DICT["ILMBASE_NAMESPACE_VERSIONING"]="OFF"
@@ -86,27 +148,55 @@ CMAKE_DICT["OPENEXR_NAMESPACE_VERSIONING"]="OFF"
 CMAKE_DICT["BOOST_PYTHON_NAMESPACE_VERSIONING"]="ON"
 CMAKE_DICT["USE_SYSTEM_LIBRARY_PATHS"]="ON"
 
-CMAKE_DICT["CMAKE_INSTALL_PREFIX"]="/tmp/OpenVDB"
+# build type
+
+if HAS_PARM --debug; then CMAKE_DICT["CMAKE_BUILD_TYPE"]="Debug"
+else                      CMAKE_DICT["CMAKE_BUILD_TYPE"]="Release"
+fi
+
+# Blosc support
+
+if HAS_PARM --blosc; then CMAKE_DICT["USE_BLOSC"]="ON"
+else                      CMAKE_DICT["USE_BLOSC"]="OFF"
+fi
 
 # Format arguments for command line
 
-CMD_STR=""
+CMAKE_COMMAND_STRING=""
 for i in "${!CMAKE_DICT[@]}"; do
-    CMD_STR+="-D $i=${CMAKE_DICT[$i]} ";
+    CMAKE_COMMAND_STRING+="-D $i=${CMAKE_DICT[$i]} ";
 done
 
 rm -rf .build
 mkdir -p .build
 cd .build
 
-# zero ccache stats
-ccache -z
+# Run cmake
 
-cmake $CMD_STR ../
-make -j4
-make install -j4
+echo -e "Running Command:\ncmake $CMAKE_COMMAND_STRING ../\n"
+cmake $CMAKE_COMMAND_STRING ../
 
-# output ccache stats
-ccache -s
+# Build any targets
+
+if HAS_PARM --target; then
+
+    # zero ccache stats
+    ccache -z
+
+    MAKE_COMMAND_STRING=""
+    MAKE_COMMAND_STRING+="${PARMS[--target]} "
+    MAKE_COMMAND_STRING+="-j${PARMS[-j]} "
+
+    if HAS_PARM --verbose; then
+        MAKE_COMMAND_STRING+="VERBOSE=1 "
+    fi
+
+    echo "Running command make $MAKE_COMMAND_STRING"
+    make $MAKE_COMMAND_STRING
+    make install $MAKE_COMMAND_STRING
+
+    # output ccache stats
+    ccache -s
+fi
 
 cd -
