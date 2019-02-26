@@ -34,7 +34,7 @@
 #
 # ILMBASE_FOUND                  set if ILMBASE is found.
 # ILMBASE_INCLUDE_DIR            ILMBASE's include directory
-# ILMBASE_LIBRARY_DIR           ILMBASE's library directory
+# ILMBASE_LIBRARY_DIR            ILMBASE's library directory
 # Ilmbase_HALF_LIBRARY           ILMBASE's Half libraries
 # Ilmbase_IEX_LIBRARY            ILMBASE's Iex libraries
 # Ilmbase_IEXMATH_LIBRARY        ILMBASE's IexMath libraries
@@ -105,12 +105,21 @@ IF ( ILMBASE_FOUND )
     IF ( Ilmbase_USE_STATIC_LIBS )
       SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".a")
     ENDIF ()
+
+    message("suffixes: ${CMAKE_FIND_LIBRARY_SUFFIXES}")
+    message("prefixes: ${CMAKE_FIND_LIBRARY_PREFIXES}")
+    message ( "Looking for ${IEX_LIBRARY_NAME} ")
+    message ( "Looking for ${IEXMATH_LIBRARY_NAME} ")
+    message ( "Looking for ${ILMTHREAD_LIBRARY_NAME} ")
+    message ( "Looking for ${IMATH_LIBRARY_NAME} ")
+
     FIND_LIBRARY ( Ilmbase_HALF_LIBRARY Half
       PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
       PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
       NO_DEFAULT_PATH
       NO_SYSTEM_ENVIRONMENT_PATH
       )
+     message ( "Ilmbase_HALF_LIBRARY ${Ilmbase_HALF_LIBRARY} ")
     FIND_LIBRARY ( Ilmbase_IEX_LIBRARY ${IEX_LIBRARY_NAME}
       PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
       PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
