@@ -55,7 +55,8 @@ module with this ON can be very memory-intensive.]=] OFF )
 # @todo OPENVDB_USE_LOG4CPLUS option for log4cplus support
 # @todo non-required behavior for blosc (i.e. use if available)
 # @todo OPENVDB_USE_NUMPY options for NumPy
-OPTION ( OPENVDB_USE_BLOSC "Build the library with blosc support" ON )
+OPTION ( USE_BLOSC "Build the library with blosc support" ON )
+OPTION ( USE_GLFW3 "Build the vdb_view vdb_binary with glfw3" ON )
 OPTION ( OPENEXR_NAMESPACE_VERSIONING "Set the expected names of OpenEXR libraries to be version suffixed" ON )
 OPTION ( ILMBASE_NAMESPACE_VERSIONING "Set the expected names of ILM Base libraries to be version suffixed" ON )
 OPTION ( BOOST_PYTHON_NAMESPACE_VERSIONING "Set the expected names of Boost.Python libraries to be version suffixed" ON )

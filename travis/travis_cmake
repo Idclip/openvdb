@@ -61,7 +61,8 @@ export BLOSC_ROOT=$HOME/blosc
 # BOOST_PYTHON_LIB_DIR=/usr/lib/x86_64-linux-gnu
 # BOOST_PYTHON_LIB=-lboost_python
 
-ldconfig -p | grep libIex
+#ldconfig -p | grep libIex
+#ls -al /usr/lib/x86_64-linux-gnu/
 
 declare -A CMAKE_DICT
 
