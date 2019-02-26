@@ -57,7 +57,6 @@ endif()
 FIND_PATH( HDK_LOCATION ${HDK_VERSION_FILE_PATH}
   "$ENV{HFS}"
   NO_DEFAULT_PATH
-  NO_SYSTEM_ENVIRONMENT_PATH
   PATHS ${SYSTEM_LIBRARY_PATHS}
   )
 
@@ -69,10 +68,9 @@ IF (NOT HDK_LOCATION)
   SET ( HDK_VERSION_FILE_PATH "toolkit/include/UT/UT_Version.h" )
   # MESSAGE ( "NICHOLAS 0200 HDK_VERSION_FILE_PATH = ${HDK_VERSION_FILE_PATH}" )
   FIND_PATH( HDK_LOCATION ${HDK_VERSION_FILE_PATH}
-	"$ENV{HFS}"
-	NO_DEFAULT_PATH
-	NO_SYSTEM_ENVIRONMENT_PATH
-	)
+    "$ENV{HFS}"
+    NO_DEFAULT_PATH
+    )
   # MESSAGE ( "NICHOLAS 0300 HDK_LOCATION = ${HDK_LOCATION}" )
   SET ( HDK_VERSION_IN_SYS_SYS_VERSION_H OFF )
 ENDIF ()
@@ -89,13 +87,13 @@ IF ( HDK_VERSION_IN_SYS_SYS_VERSION_H )
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_patch_version_str REGEX "^#define[\t ]+SYS_VERSION_PATCH_INT[\t ]+.*")
   #
   STRING (REGEX REPLACE "^.*SYS_VERSION_MAJOR_INT[\t ]+([0-9]*).*$" "\\1"
-	HDK_MAJOR_VERSION_STRING "${hdk_major_version_str}")
+    HDK_MAJOR_VERSION_STRING "${hdk_major_version_str}")
   STRING (REGEX REPLACE "^.*SYS_VERSION_MINOR_INT[\t ]+([0-9]*).*$" "\\1"
-	HDK_MINOR_VERSION_STRING "${hdk_minor_version_str}")
+    HDK_MINOR_VERSION_STRING "${hdk_minor_version_str}")
   STRING (REGEX REPLACE "^.*SYS_VERSION_BUILD_INT[\t ]+([0-9]*).*$" "\\1"
-	HDK_BUILD_VERSION_STRING "${hdk_build_version_str}")
+    HDK_BUILD_VERSION_STRING "${hdk_build_version_str}")
   STRING (REGEX REPLACE "^.*SYS_VERSION_PATCH_INT[\t ]+([0-9]*).*$" "\\1"
-	HDK_PATCH_VERSION_STRING "${hdk_patch_version_str}")
+    HDK_PATCH_VERSION_STRING "${hdk_patch_version_str}")
   #
   UNSET (hdk_major_version_str)
   UNSET (hdk_minor_version_str)
@@ -109,13 +107,13 @@ ELSE ()
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_patch_version_str REGEX "^#define[\t ]+UT_PATCH_VERSION_INT[\t ]+.*")
   #
   STRING (REGEX REPLACE "^.*UT_MAJOR_VERSION_INT[\t ]+([0-9]*).*$" "\\1"
-	HDK_MAJOR_VERSION_STRING "${hdk_major_version_str}")
+    HDK_MAJOR_VERSION_STRING "${hdk_major_version_str}")
   STRING (REGEX REPLACE "^.*UT_MINOR_VERSION_INT[\t ]+([0-9]*).*$" "\\1"
-	HDK_MINOR_VERSION_STRING "${hdk_minor_version_str}")
+    HDK_MINOR_VERSION_STRING "${hdk_minor_version_str}")
   STRING (REGEX REPLACE "^.*UT_BUILD_VERSION_INT[\t ]+([0-9]*).*$" "\\1"
-	HDK_BUILD_VERSION_STRING "${hdk_build_version_str}")
+    HDK_BUILD_VERSION_STRING "${hdk_build_version_str}")
   STRING (REGEX REPLACE "^.*UT_PATCH_VERSION_INT[\t ]+([0-9]*).*$" "\\1"
-	HDK_PATCH_VERSION_STRING "${hdk_patch_version_str}")
+    HDK_PATCH_VERSION_STRING "${hdk_patch_version_str}")
   #
   UNSET (hdk_major_version_str)
   UNSET (hdk_minor_version_str)
@@ -139,9 +137,9 @@ IF (HDK_FOUND)
 
   IF (APPLE)
   ELSE ()
-	SET ( HDK_HOME_HFS
-	  $ENV{HOME}/houdini${HDK_MAJOR_VERSION_STRING}.${HDK_MINOR_VERSION_STRING}
-	  )
+    SET ( HDK_HOME_HFS
+      $ENV{HOME}/houdini${HDK_MAJOR_VERSION_STRING}.${HDK_MINOR_VERSION_STRING}
+      )
   ENDIF()
   # MESSAGE ( "HDK_VERSION_STRING = ${HDK_VERSION_STRING}")
   SET ( HCUSTOM_COMMAND $ENV{HFS}/bin/hcustom )
@@ -150,28 +148,28 @@ IF (HDK_FOUND)
   SET ( HDK_INCLUDE_DIR "${HDK_LOCATION}/toolkit/include;${HDK_LOCATION}/toolkit/include/htools" CACHE STRING "HDK include directory" )
 
   IF ( HDK_VERSION VERSION_GREATER 14 )
-	EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -g -c OUTPUT_VARIABLE DEBUG_TEMP_DEFINITIONS )
-	EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -c OUTPUT_VARIABLE TEMP_DEFINITIONS )
-	EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -m OUTPUT_VARIABLE TEMP_LINK_FLAGS )
-	STRING ( STRIP ${TEMP_LINK_FLAGS}  HDK_LINK_FLAGS )
+    EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -g -c OUTPUT_VARIABLE DEBUG_TEMP_DEFINITIONS )
+    EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -c OUTPUT_VARIABLE TEMP_DEFINITIONS )
+    EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -m OUTPUT_VARIABLE TEMP_LINK_FLAGS )
+    STRING ( STRIP ${TEMP_LINK_FLAGS}  HDK_LINK_FLAGS )
   ELSE ()
-	EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -g OUTPUT_VARIABLE DEBUG_TEMP_DEFINITIONS )
+    EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -g OUTPUT_VARIABLE DEBUG_TEMP_DEFINITIONS )
   ENDIF ()
 
   IF (HDK_DEBUG_REGEX)
-	# Keep this around, it is useful
-	# MESSAGE ( "HDK_DEBUG_REGEX : START")
-	# MESSAGE("TEMP_DEFINITIONS = ${TEMP_DEFINITIONS}")
+    # Keep this around, it is useful
+    # MESSAGE ( "HDK_DEBUG_REGEX : START")
+    # MESSAGE("TEMP_DEFINITIONS = ${TEMP_DEFINITIONS}")
 
-	IF (WIN32)
-	ELSE()
-	  # Original : This handles strict x.y.z 3 component
+    IF (WIN32)
+    ELSE()
+      # Original : This handles strict x.y.z 3 component
       # Reference STRING ( REGEX REPLACE "-DVERSION=..[0-9]+.[0-9]+.[0-9]+.. " "" HDK_DEFINITIONS "${TEMP_DEFINITIONS}")
-	  # Improves : This handles x.y.z 3 component and optionally w.x.y.z 4 components
+      # Improves : This handles x.y.z 3 component and optionally w.x.y.z 4 components
       STRING ( REGEX REPLACE "-DVERSION=..[0-9]+.[0-9]+.[0-9]*.[0-9]+.. " "" HDK_DEFINITIONS "${TEMP_DEFINITIONS}")
-	  # MESSAGE("HDK_DEFINITIONS = ${HDK_DEFINITIONS}")
-	ENDIF()
-	# MESSAGE ( "HDK_DEBUG_REGEX : END")
+      # MESSAGE("HDK_DEFINITIONS = ${HDK_DEFINITIONS}")
+    ENDIF()
+    # MESSAGE ( "HDK_DEBUG_REGEX : END")
   ENDIF ()
 
   IF (WIN32)
@@ -213,11 +211,11 @@ IF (HDK_FOUND)
     # STRING ( REGEX REPLACE "-DVERSION=..[0-9]+.[0-9]+.[0-9]+.. " "" DEBUG_HDK_DEFINITIONS "${STRIP_TEMP_DEFINITIONS}")
     STRING ( REGEX REPLACE "-DVERSION=..[0-9]+.[0-9]+.[0-9]*.[0-9]+.. " "" DEBUG_HDK_DEFINITIONS "${STRIP_TEMP_DEFINITIONS}")
 
-	IF ( NOT HDK_VERSION_IN_SYS_SYS_VERSION_H )
-	  # Very old HDK, need to set things manually
-	  SET ( HDK_DEFINITIONS " -DDLLEXPORT= -D_GNU_SOURCE -DLINUX -DAMD64 -m64 -fPIC -DSIZEOF_VOID_P=8 -DSESI_LITTLE_ENDIAN -DENABLE_THREADS -DUSE_PTHREADS -D_REENTRANT -D_FILE_OFFSET_BITS=64 -c -DGCC4 -DGCC3 -Wno-deprecated")
-	  SET ( DEBUG_HDK_DEFINITIONS " -DDLLEXPORT= -D_GNU_SOURCE -DLINUX -DAMD64 -m64 -fPIC -DSIZEOF_VOID_P=8 -DSESI_LITTLE_ENDIAN -DENABLE_THREADS -DUSE_PTHREADS -D_REENTRANT -D_FILE_OFFSET_BITS=64 -c -DGCC4 -DGCC3 -Wno-deprecated -g")
-	ENDIF ()
+    IF ( NOT HDK_VERSION_IN_SYS_SYS_VERSION_H )
+      # Very old HDK, need to set things manually
+      SET ( HDK_DEFINITIONS " -DDLLEXPORT= -D_GNU_SOURCE -DLINUX -DAMD64 -m64 -fPIC -DSIZEOF_VOID_P=8 -DSESI_LITTLE_ENDIAN -DENABLE_THREADS -DUSE_PTHREADS -D_REENTRANT -D_FILE_OFFSET_BITS=64 -c -DGCC4 -DGCC3 -Wno-deprecated")
+      SET ( DEBUG_HDK_DEFINITIONS " -DDLLEXPORT= -D_GNU_SOURCE -DLINUX -DAMD64 -m64 -fPIC -DSIZEOF_VOID_P=8 -DSESI_LITTLE_ENDIAN -DENABLE_THREADS -DUSE_PTHREADS -D_REENTRANT -D_FILE_OFFSET_BITS=64 -c -DGCC4 -DGCC3 -Wno-deprecated -g")
+    ENDIF ()
 
     # Split each definition and add them separately (otherwise we can get into weird string manipulation issues within CMake)
     SEPARATE_ARGUMENTS( DEBUG_HDK_DEFINITIONS )
@@ -240,7 +238,7 @@ IF (HDK_FOUND)
   IF (WIN32)
     FILE ( GLOB DSOLIB_A $ENV{HFS}/custom/houdini/dsolib/*.a )
     FILE ( GLOB DSOLIB_LIB $ENV{HFS}/custom/houdini/dsolib/*.lib )
-	#ELSEIF (APPLE)
+    #ELSEIF (APPLE)
     # FILE ( GLOB DSOLIB_DYLIB $ENV{HFS}/../Libraries/*.dylib )
   ELSE (WIN32)
     # Linux/OSX
@@ -277,37 +275,37 @@ IF (HDK_FOUND)
       SET ( HDK_LIBRARY_DIRS $ENV{HFS}/dsolib )
       SET ( HDK_HOUDINI_LOCATION $ENV{HFS}/../Houdini )
     ENDIF ()
-	IF ( HDK_AUTO_GENERATE_SESITAG )
+    IF ( HDK_AUTO_GENERATE_SESITAG )
       SET ( HDK_SESITAG_FILE ${CMAKE_BINARY_DIR}/${_exe_NAME}_sesitag.C )
       HDK_CREATE_SESITAG ( ${HDK_SESITAG_FILE} )
-	ENDIF()
+    ENDIF()
     ADD_EXECUTABLE ( ${_exe_NAME} ${ARGN} ${HDK_SESITAG_FILE} )
     IF (APPLE)
       SET_TARGET_PROPERTIES ( ${_exe_NAME} PROPERTIES
-		LINK_FLAGS "${HDK_LINK_FLAGS} -L${HDK_LIBRARY_DIRS} ${HDK_HOUDINI_LOCATION}"
-		)
+        LINK_FLAGS "${HDK_LINK_FLAGS} -L${HDK_LIBRARY_DIRS} ${HDK_HOUDINI_LOCATION}"
+        )
     ELSEIF (WIN32)
       # windows
       TARGET_LINK_LIBRARIES ( ${_exe_NAME}
-		${DSOLIB_A}
+        ${DSOLIB_A}
         ${DSOLIB_LIB}
         )
     ELSE()
       # Linux
       TARGET_LINK_LIBRARIES ( ${_exe_NAME}
-		pthread
-		HoudiniUI
-		HoudiniOPZ
-		HoudiniOP3
-		HoudiniOP2
-		HoudiniOP1
-		HoudiniSIM
-		HoudiniGEO
-		HoudiniPRM
-		HoudiniUT
-		boost_system
-		boost_program_options
-		tbb
+        pthread
+        HoudiniUI
+        HoudiniOPZ
+        HoudiniOP3
+        HoudiniOP2
+        HoudiniOP1
+        HoudiniSIM
+        HoudiniGEO
+        HoudiniPRM
+        HoudiniUT
+        boost_system
+        boost_program_options
+        tbb
         )
     ENDIF (APPLE)
 
@@ -320,10 +318,10 @@ IF (HDK_FOUND)
 
     # MESSAGE ( "HDK_LIBRARY_DIRS = ${HDK_LIBRARY_DIRS}")
     # MESSAGE ( "HDK_HOUDINI_LOCATION = ${HDK_HOUDINI_LOCATION}")
-	IF ( HDK_AUTO_GENERATE_SESITAG )
+    IF ( HDK_AUTO_GENERATE_SESITAG )
       SET ( HDK_SESITAG_FILE ${CMAKE_BINARY_DIR}/${_lib_NAME}_sesitag.C )
       HDK_CREATE_SESITAG ( ${HDK_SESITAG_FILE} )
-	ENDIF ()
+    ENDIF ()
     ADD_LIBRARY ( ${_lib_NAME} ${HDK_LIBRARY_TYPE} ${ARGN} ${HDK_SESITAG_FILE} )
 
     SET_TARGET_PROPERTIES ( ${_lib_NAME} PROPERTIES
@@ -332,21 +330,21 @@ IF (HDK_FOUND)
 
     IF (APPLE)
       SET_TARGET_PROPERTIES ( ${_lib_NAME} PROPERTIES
-		LINK_FLAGS "${HDK_LINK_FLAGS} -L${HDK_LIBRARY_DIRS} ${HDK_HOUDINI_LOCATION}"
-		PREFIX ""
-		SUFFIX ".dylib"
-		)
+        LINK_FLAGS "${HDK_LINK_FLAGS} -L${HDK_LIBRARY_DIRS} ${HDK_HOUDINI_LOCATION}"
+        PREFIX ""
+        SUFFIX ".dylib"
+        )
     ELSEIF (WIN32)
       # windows
       TARGET_LINK_LIBRARIES ( ${_lib_NAME}
-		${DSOLIB_A}
+        ${DSOLIB_A}
         ${DSOLIB_LIB}
         )
     ELSE()
       # Linux
       SET_TARGET_PROPERTIES ( ${_lib_NAME} PROPERTIES
-		PREFIX ""
-		)
+        PREFIX ""
+        )
     ENDIF (APPLE)
 
   ENDFUNCTION ()
@@ -370,27 +368,27 @@ IF (HDK_FOUND)
 
     IF (APPLE)
       SET_TARGET_PROPERTIES ( ${_lib_NAME} PROPERTIES
-		LINK_FLAGS "${HDK_LINK_FLAGS} -L${HDK_LIBRARY_DIRS} ${HDK_HOUDINI_LOCATION}"
-		PREFIX ""
-		SUFFIX ".dylib"
-		)
+        LINK_FLAGS "${HDK_LINK_FLAGS} -L${HDK_LIBRARY_DIRS} ${HDK_HOUDINI_LOCATION}"
+        PREFIX ""
+        SUFFIX ".dylib"
+        )
       TARGET_LINK_LIBRARIES ( ${_lib_NAME}
-		HoudiniUI
-		HoudiniOPZ
-		HoudiniOP3
-		HoudiniOP2
-		HoudiniOP1
-		HoudiniSIM
-		HoudiniGEO
-		HoudiniPRM
-		HoudiniUT
-		)
+        HoudiniUI
+        HoudiniOPZ
+        HoudiniOP3
+        HoudiniOP2
+        HoudiniOP1
+        HoudiniSIM
+        HoudiniGEO
+        HoudiniPRM
+        HoudiniUT
+        )
     ELSEIF (WIN32)
       # windows
       TARGET_LINK_LIBRARIES ( ${_lib_NAME}
-		${DSOLIB_A}
+        ${DSOLIB_A}
         ${DSOLIB_LIB}
-		)
+        )
       #TARGET_LINK_LIBRARIES ( ${_lib_NAME}
       #  ${DSOLIB_A}
       #  ${DSOLIB_LIB}
@@ -398,19 +396,19 @@ IF (HDK_FOUND)
     ELSE()
       # Linux
       SET_TARGET_PROPERTIES ( ${_lib_NAME} PROPERTIES
-		PREFIX ""
-		)
+        PREFIX ""
+        )
       TARGET_LINK_LIBRARIES ( ${_lib_NAME}
-		HoudiniUI
-		HoudiniOPZ
-		HoudiniOP3
-		HoudiniOP2
-		HoudiniOP1
-		HoudiniSIM
-		HoudiniGEO
-		HoudiniPRM
-		HoudiniUT
-		)
+        HoudiniUI
+        HoudiniOPZ
+        HoudiniOP3
+        HoudiniOP2
+        HoudiniOP1
+        HoudiniSIM
+        HoudiniGEO
+        HoudiniPRM
+        HoudiniUT
+        )
     ENDIF (APPLE)
 
   ENDFUNCTION ()
@@ -422,14 +420,14 @@ IF (HDK_FOUND)
     FILE ( MAKE_DIRECTORY ${DIR_NAME})
 
 
-	SET ( ARGS --directory ${DIR_NAME} --operator ${_op_NAME} --label ${_label_NAME} )
+    SET ( ARGS --directory ${DIR_NAME} --operator ${_op_NAME} --label ${_label_NAME} )
     IF ( _ds_FILENAME STRGREATER "" )
-	  LIST ( APPEND ARGS --dialogscript ${_ds_FILENAME} )
-	ENDIF ()
+      LIST ( APPEND ARGS --dialogscript ${_ds_FILENAME} )
+    ENDIF ()
     IF ( _icn_FILENAME STRGREATER "" )
-	  LIST ( APPEND ARGS --icon ${_icn_FILENAME} )
-	ENDIF ()
-	EXECUTE_PROCESS ( COMMAND ${CREATE_OTL_DIR_EXECUTABLE} ${ARGS} )
+      LIST ( APPEND ARGS --icon ${_icn_FILENAME} )
+    ENDIF ()
+    EXECUTE_PROCESS ( COMMAND ${CREATE_OTL_DIR_EXECUTABLE} ${ARGS} )
     EXECUTE_PROCESS ( COMMAND ${HOTL_COMMAND} -c ${DIR_NAME} ${CMAKE_CURRENT_BINARY_DIR}/${_otl_NAME} )
   ENDFUNCTION ()
 
@@ -437,40 +435,40 @@ IF (HDK_FOUND)
     FILE ( REMOVE ${_otl_NAME})
     FOREACH(arg ${ARGN})
       EXECUTE_PROCESS ( COMMAND ${HOTL_COMMAND} -M ${CMAKE_CURRENT_BINARY_DIR}/${arg} ${CMAKE_CURRENT_BINARY_DIR}/${_otl_NAME} )
-	ENDFOREACH (arg)
+    ENDFOREACH (arg)
   ENDFUNCTION ()
 
   # The vargs must be in the form "<operator-name>;<dso-name>" for each
   # of the pair to be successfully composed into the VRAYprocedural
   # file
   FUNCTION ( HDK_COMPOSE_VRAYPROCEDURAL_FILE _vrayprocedural_FILENAME )
-	LIST ( LENGTH ARGN NUM_ITEMS )
-	MATH ( EXPR NUM_ITEMS_MODULO "${NUM_ITEMS} % 2" )
-	# MATH ( EXPR NUM_ITEMS_LESS_ONE "${NUM_ITEMS} - 1" )
-	IF ( ${NUM_ITEMS_MODULO} EQUAL 0 )
-	  MATH ( EXPR NUM_PAIRS "${NUM_ITEMS} / 2" )
-	  MATH ( EXPR NUM_PAIRS_LESS_ONE "${NUM_PAIRS} - 1" )
+    LIST ( LENGTH ARGN NUM_ITEMS )
+    MATH ( EXPR NUM_ITEMS_MODULO "${NUM_ITEMS} % 2" )
+    # MATH ( EXPR NUM_ITEMS_LESS_ONE "${NUM_ITEMS} - 1" )
+    IF ( ${NUM_ITEMS_MODULO} EQUAL 0 )
+      MATH ( EXPR NUM_PAIRS "${NUM_ITEMS} / 2" )
+      MATH ( EXPR NUM_PAIRS_LESS_ONE "${NUM_PAIRS} - 1" )
 
-	  FILE ( WRITE  ${_vrayprocedural_FILENAME} "// Procedural Insight Pty. Ltd.\n" )
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "#if defined(WIN32)\n" )
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "    #define DSO_FILE(filename)mantra/filename.dll\n" )
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "#elif defined(MBSD)\n" )
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "    #define DSO_FILE(filename)mantra/filename.dylib\n" )
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "#else\n" )
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "    #define DSO_FILE(filename)mantra/filename.so\n" )
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "#endif\n" )
+      FILE ( WRITE  ${_vrayprocedural_FILENAME} "// Procedural Insight Pty. Ltd.\n" )
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "#if defined(WIN32)\n" )
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "    #define DSO_FILE(filename)mantra/filename.dll\n" )
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "#elif defined(MBSD)\n" )
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "    #define DSO_FILE(filename)mantra/filename.dylib\n" )
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "#else\n" )
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "    #define DSO_FILE(filename)mantra/filename.so\n" )
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "#endif\n" )
 
-	  FOREACH ( PAIR_INDEX RANGE ${NUM_PAIRS_LESS_ONE} )
-		MATH ( EXPR OPERATOR_ITEM_INDEX "${PAIR_INDEX} * 2" )
-		MATH ( EXPR DSO_ITEM_INDEX "${OPERATOR_ITEM_INDEX} + 1" )
-		LIST ( GET ARGN ${OPERATOR_ITEM_INDEX} OPERATOR_ITEM )
-		LIST ( GET ARGN ${DSO_ITEM_INDEX} DSO_ITEM )
-		FILE ( APPEND ${_vrayprocedural_FILENAME} "${OPERATOR_ITEM}\tDSO_FILE(${DSO_ITEM})\n")
-	  ENDFOREACH ()
+      FOREACH ( PAIR_INDEX RANGE ${NUM_PAIRS_LESS_ONE} )
+        MATH ( EXPR OPERATOR_ITEM_INDEX "${PAIR_INDEX} * 2" )
+        MATH ( EXPR DSO_ITEM_INDEX "${OPERATOR_ITEM_INDEX} + 1" )
+        LIST ( GET ARGN ${OPERATOR_ITEM_INDEX} OPERATOR_ITEM )
+        LIST ( GET ARGN ${DSO_ITEM_INDEX} DSO_ITEM )
+        FILE ( APPEND ${_vrayprocedural_FILENAME} "${OPERATOR_ITEM}\tDSO_FILE(${DSO_ITEM})\n")
+      ENDFOREACH ()
 
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "#undef DSO_FILE\n\n" )
-	  FILE ( APPEND ${_vrayprocedural_FILENAME} "#include \"$HFS/houdini/VRAYprocedural\"\n" )
-	ENDIF ()
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "#undef DSO_FILE\n\n" )
+      FILE ( APPEND ${_vrayprocedural_FILENAME} "#include \"$HFS/houdini/VRAYprocedural\"\n" )
+    ENDIF ()
   ENDFUNCTION ()
 
 ENDIF (HDK_FOUND)
