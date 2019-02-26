@@ -167,7 +167,7 @@ SET_TARGET_PROPERTIES(
   VERSION ${OPENVDB_MAJOR_VERSION_NUMBER}.${OPENVDB_MINOR_VERSION_NUMBER}.${OPENVDB_PATCH_VERSION_NUMBER}
   )
 
-SET ( OPENVDB_SOP_NAMES
+SET ( OPENVDB_DSO_NAMES
   GR_PrimVDBPoints
   SHOP_OpenVDB_Points
   SOP_OpenVDB_Advect
@@ -215,32 +215,34 @@ SET ( OPENVDB_SOP_NAMES
   SOP_OpenVDB_Vector_Split
   SOP_OpenVDB_Visualize
   SOP_OpenVDB_Write
+  VRAY_OpenVDB_Points
   )
 
-FOREACH ( SOP_NAME ${OPENVDB_SOP_NAMES} )
+ADD_CUSTOM_TARGET ( Houdini_DSOs
+  COMMENT "Group target which corresponds to all Houdini Nodes and DSOs "
+  "which aren't part of the shared library i.e. all targets in OPENVDB_DSO_NAMES."
+  )
 
-  HDK_ADD_LIBRARY ( ${SOP_NAME}
-    houdini/${SOP_NAME}.cc
+FOREACH ( DSO_NAME ${OPENVDB_DSO_NAMES} )
+
+  HDK_ADD_LIBRARY ( ${DSO_NAME}
+    houdini/${DSO_NAME}.cc
     )
 
-  TARGET_COMPILE_OPTIONS ( ${SOP_NAME} PRIVATE -fext-numeric-literals )
+  TARGET_COMPILE_OPTIONS ( ${DSO_NAME} PRIVATE -fext-numeric-literals )
 
-  TARGET_LINK_LIBRARIES ( ${SOP_NAME}
+  TARGET_LINK_LIBRARIES ( ${DSO_NAME}
     openvdb_houdini
     ${OPENVDB_SHARED_LIB}
     )
 
+  ADD_DEPENDENCIES ( Houdini_DSOs ${DSO_NAME} )
+
 ENDFOREACH ()
 
-HDK_ADD_LIBRARY ( VRAY_OpenVDB_Points
-  houdini/VRAY_OpenVDB_Points.cc
-  )
-
-TARGET_COMPILE_OPTIONS ( VRAY_OpenVDB_Points PRIVATE -fext-numeric-literals )
+# Additionally link HoudiniRAY to VRAY_OpenVDB_Points
 
 TARGET_LINK_LIBRARIES ( VRAY_OpenVDB_Points
-  openvdb_houdini
-  ${OPENVDB_SHARED_LIB}
   HoudiniRAY
   )
 
@@ -270,10 +272,10 @@ ELSE ()
 
 ENDIF ()
 
-FOREACH ( SOP_NAME ${OPENVDB_SOP_NAMES} )
+FOREACH ( DSO_NAME ${OPENVDB_DSO_NAMES} )
 
   INSTALL ( TARGETS
-    ${SOP_NAME}
+    ${DSO_NAME}
     DESTINATION ${OPENVDB_HOUDINI_INSTALL_BASE_DIR}/dso
     )
 

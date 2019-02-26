@@ -59,6 +59,7 @@ OPTION ( USE_BLOSC "Build the library with blosc support" ON )
 OPTION ( USE_GLFW3 "Build the vdb_view vdb_binary with glfw3" ON )
 OPTION ( OPENEXR_NAMESPACE_VERSIONING "Set the expected names of OpenEXR libraries to be version suffixed" ON )
 OPTION ( ILMBASE_NAMESPACE_VERSIONING "Set the expected names of ILM Base libraries to be version suffixed" ON )
+OPTION ( GLFW3_NAMESPACE_VERSIONING "Set the expected names of GLFW3 libraries to be version suffixed" ON )
 OPTION ( BOOST_PYTHON_NAMESPACE_VERSIONING "Set the expected names of Boost.Python libraries to be version suffixed" ON )
 OPTION ( OPENVDB_DISABLE_BOOST_IMPLICIT_LINKING "Disable the implicit linking of Boost libraries on Windows" ON )
 OPTION ( USE_SYSTEM_LIBRARY_PATHS "Build with system library paths" ON )
@@ -66,11 +67,13 @@ OPTION ( USE_SYSTEM_LIBRARY_PATHS "Build with system library paths" ON )
 SET ( OPENVDB_ABI_VERSION_NUMBER "" CACHE STRING "Build for compatibility with version N of the
     OpenVDB Grid ABI, where N is 3, 4, 5 etc. (some newer features will be disabled)")
 
-IF ( OPENVDB_BUILD_HOUDINI_SOPS )
+IF ( OPENVDB_BUILD_HOUDINI_SOPS AND OPENVDB_BUILD_PYTHON_MODULE )
   # Prior to the introduction of HBoost (Houdini's namespaced and shipped Boost version from 16.5),
   # we built against Houdini's version of Boost which didn't include Boost.Python
   # @todo Enable this for Houdini Versions >= 16.5 (and add additional Boost branching options)
   SET ( OPENVDB_BUILD_PYTHON_MODULE OFF )
+  MESSAGE ( WARNING "Disabling compilation of the OpenVDB Python module. Cannot currently be built with "
+    "the Houdini plugin." )
 ENDIF ()
 
 ######
@@ -108,15 +111,6 @@ IF ( APPLE )
       "The different runtimes are not mutually compatible, so build the Houdini and Maya plugins separately "
       "with the requisite DCC's compiler." )
   ENDIF ()
-ENDIF ()
-
-IF ( OPENVDB_BUILD_HOUDINI_SOPS )
-  # Prior to the introduction of HBoost (Houdini's namespaced and shipped Boost version from 16.5),
-  # we built against Houdini's version of Boost which didn't include Boost.Python
-  # @todo Enable this for Houdini Versions >= 16.5 (and add additional Boost branching options)
-  SET ( OPENVDB_BUILD_PYTHON_MODULE OFF )
-  MESSAGE ( WARNING "Disabling compilation of the OpenVDB Python module. Cannot currently be built with "
-    "the Houdini plugin." )
 ENDIF ()
 
 # ccache setup

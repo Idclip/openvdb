@@ -33,27 +33,32 @@ set -e
 
 declare -A PARMS
 
-# Specify defaults.
+# Specify defaults from env
 
-PARMS[--houdini]=none
+PARMS[--houdini]=$HOUDINI_MAJOR
+PARMS[--build_type]=$BUILD_TYPE
+PARMS[--abi]=$ABI
+PARMS[--compiler]=$COMPILER
+PARMS[--blosc]=$BLOSC
+PARMS[--core]=yes
+PARMS[--houdini_dir]=hou
 PARMS[--prefix]="/tmp/OpenVDB"
-PARMS[--abi]=6
-PARMS[--compiler]="g++"
-PARMS[-t]=all
+PARMS[--targets]=all
 PARMS[-j]=4
 
 OPTIONAL_SHORT_ARGS+=("j:")  ## Thread usage
 OPTIONAL_SHORT_ARGS+=("u")   ## Builds the unit tests
 
-OPTIONAL_LONG_ARGS+=("abi:")      ## VDB ABI to use
-OPTIONAL_LONG_ARGS+=("target:")   ## Specify a make target
-OPTIONAL_LONG_ARGS+=("houdini:")  ## Houdini version to use
-OPTIONAL_LONG_ARGS+=("prefix:")   ## Location for root install folder
-OPTIONAL_LONG_ARGS+=("debug")     ## Debug build
-OPTIONAL_LONG_ARGS+=("blosc")     ## Use blosc
-OPTIONAL_LONG_ARGS+=("compiler:") ## Compiler to use
-OPTIONAL_LONG_ARGS+=("verbose")   ## Verbose make output
-
+OPTIONAL_LONG_ARGS+=("abi:")         ## VDB ABI to use
+OPTIONAL_LONG_ARGS+=("core")
+OPTIONAL_LONG_ARGS+=("targets:")     ## Specify make targets (comma separated)
+OPTIONAL_LONG_ARGS+=("houdini:")     ## Houdini version to use
+OPTIONAL_LONG_ARGS+=("houdini_dir:") ## Directory of houdini installation
+OPTIONAL_LONG_ARGS+=("prefix:")      ## Location for root install folder
+OPTIONAL_LONG_ARGS+=("build_type:")  ## Debug build
+OPTIONAL_LONG_ARGS+=("blosc:")       ## Use blosc
+OPTIONAL_LONG_ARGS+=("compiler:")    ## Compiler to use
+OPTIONAL_LONG_ARGS+=("verbose")      ## Verbose make output
 
 ############################################################################
 ############################################################################
@@ -73,7 +78,6 @@ SHORT_ARGS_STR=${SHORT_ARGS_STR// /,}
 # Parse all arguments. Error if unsupported
 
 ARGS=($(eval getopt -u --options=$SHORT_ARGS_STR --longoptions=$LONG_ARGS_STR -- $@))
-TMP_ARG_STR="${ARGS[@]}"
 
 # Parse all user supplied command line arguments into an assosiate array
 
@@ -98,66 +102,81 @@ if [ $USED_ARGS -ne $NUM_ARGS ]; then
     echo "Warning: The following arguments were ignored -- "$IGNORED
 fi
 
-echo "CMake Version Details"
-cmake --version
-echo ""
-
 #### Export some manual library locations
 #### @note These locations will be empty if they're disabled (see travis.setup)
-
-export CPPUNIT_ROOT=$HOME/cppunit
-export BLOSC_ROOT=$HOME/blosc
-
-#### All other library locations are handled by USE_SYSTEM_LIBRARY_PATHS:
-
-# BOOST_LIB_DIR=/usr/lib/x86_64-linux-gnu
-# EXR_INCL_DIR=/usr/include/OpenEXR
-# EXR_LIB_DIR=/usr/local/lib
-# TBB_LIB_DIR=/usr/lib
-# LOG4CPLUS_INCL_DIR=/usr/include
-# LOG4CPLUS_LIB_DIR=/usr/lib/x86_64-linux-gnu
-# GLFW_INCL_DIR=/usr/include/GL
-# GLFW_LIB_DIR=/usr/lib/x86_64-linux-gnu
-# EPYDOC=/usr/bin/epydoc
-# PYTHON_INCL_DIR=/usr/include/python2.7
-# PYTHON_LIB_DIR=/usr/lib/x86_64-linux-gnu
-# BOOST_PYTHON_LIB_DIR=/usr/lib/x86_64-linux-gnu
-# BOOST_PYTHON_LIB=-lboost_python
+#### All other library locations are handled by USE_SYSTEM_LIBRARY_PATHS
 
 declare -A CMAKE_DICT
 
+HOUDINI=${PARMS[--houdini]}
+USE_BLOSC=${PARMS[--blosc]}
+CORE=${PARMS[--core]}
+
+# export CPPUNIT_ROOT=$HOME/cppunit
+# export BLOSC_ROOT=$HOME/blosc
+
+export ILMBASE_ROOT=$BOB_WORLD_SLOT_ilmbase
+export OPENEXR_ROOT=$BOB_WORLD_SLOT_openexr
+#export BOOST_ROOT=$BOB_WORLD_SLOT_boost
+export TBB_ROOT=$BOB_WORLD_SLOT_tbb
+export BLOSC_ROOT=$BOB_WORLD_SLOT_blosc
+export LLVM_ROOT=$BOB_WORLD_SLOT_llvm
+export CPPUNIT_ROOT=$BOB_WORLD_SLOT_cppunit
+export GLFW3_ROOT=$BOB_WORLD_SLOT_glfw
+export OPENVDB_ROOT=$BOB_WORLD_SLOT_openvdb
+export OPENVDB_AX_ROOT=$BOB_WORLD_SLOT_openvdb_ax
+export OPENVDB_ROOT="/hosts/bulwell/user_data/RND/dev/git/rndfx/3rdparty-openvdb/install"
+
+if [ ! "$CORE" = "yes" ]; then
+    export OPENVDB_ROOT=${PARMS[--prefix]}
+    CMAKE_DICT["OPENVDB_BUILD_CORE"]="OFF"
+else
+    CMAKE_DICT["OPENVDB_BUILD_CORE"]="ON"
+fi
+
 CMAKE_DICT["CMAKE_CXX_COMPILER"]=${PARMS[--compiler]}
 CMAKE_DICT["CMAKE_INSTALL_PREFIX"]=${PARMS[--prefix]}
+CMAKE_DICT["CMAKE_BUILD_TYPE"]=${PARMS[--build_type]}
 CMAKE_DICT["OPENVDB_ABI_VERSION_NUMBER"]=${PARMS[--abi]}
 
-CMAKE_DICT["OPENVDB_BUILD_CORE"]="ON"
-CMAKE_DICT["OPENVDB_BUILD_DOCS"]="ON"
-CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]="ON"
-CMAKE_DICT["OPENVDB_BUILD_UNITTESTS"]="ON"
-CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]="OFF"
 CMAKE_DICT["OPENVDB_BUILD_MAYA_PLUGIN"]="OFF"
+CMAKE_DICT["OPENVDB_BUILD_DOCS"]="ON"
+CMAKE_DICT["OPENVDB_BUILD_UNITTESTS"]="ON"
 CMAKE_DICT["OPENVDB_ENABLE_RPATH"]="ON"
 CMAKE_DICT["OPENVDB_CXX_STRICT"]="ON"
-CMAKE_DICT["OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES"]="ON"
+
+# If building with Houdini dependencies, turn off the python
+# module as the CMake doesn't current support this build set
+
+if [ "$HOUDINI" = "none" ]; then
+    CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]="OFF"
+    CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]="ON"
+    CMAKE_DICT["OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES"]="ON"
+else
+    # Source houdini env
+    cd ${PARMS[--houdini_dir]}
+    source houdini_setup
+    cd -
+    CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]="ON"
+    CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]="OFF"
+    CMAKE_DICT["OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES"]="OFF"
+fi
 
 CMAKE_DICT["USE_GLFW3"]="ON"
 CMAKE_DICT["GLFW3_USE_STATIC_LIBS"]="ON"
 CMAKE_DICT["MINIMUM_BOOST_VERSION"]="1.55"
 CMAKE_DICT["ILMBASE_NAMESPACE_VERSIONING"]="OFF"
 CMAKE_DICT["OPENEXR_NAMESPACE_VERSIONING"]="OFF"
-CMAKE_DICT["BOOST_PYTHON_NAMESPACE_VERSIONING"]="ON"
+CMAKE_DICT["BOOST_PYTHON_NAMESPACE_VERSIONING"]="OFF"
+CMAKE_DICT["GLFW3_NAMESPACE_VERSIONING"]="ON" # libglfw3-dev installs glfw (no version)
 CMAKE_DICT["USE_SYSTEM_LIBRARY_PATHS"]="ON"
-
-# build type
-
-if HAS_PARM --debug; then CMAKE_DICT["CMAKE_BUILD_TYPE"]="Debug"
-else                      CMAKE_DICT["CMAKE_BUILD_TYPE"]="Release"
-fi
 
 # Blosc support
 
-if HAS_PARM --blosc; then CMAKE_DICT["USE_BLOSC"]="ON"
-else                      CMAKE_DICT["USE_BLOSC"]="OFF"
+if [ "$USE_BLOSC" = "yes" ]; then
+    CMAKE_DICT["USE_BLOSC"]="ON"
+else
+    CMAKE_DICT["USE_BLOSC"]="OFF"
 fi
 
 # Format arguments for command line
@@ -173,25 +192,31 @@ cd .build
 
 # Run cmake
 
+echo -e "CMake Version Details\n"
+cmake --version
+
 echo -e "Running Command:\ncmake $CMAKE_COMMAND_STRING ../\n"
 cmake $CMAKE_COMMAND_STRING ../
 
 # Build any targets
 
-if HAS_PARM --target; then
+if HAS_PARM --targets; then
 
     # zero ccache stats
     ccache -z
 
+    TARGETS=${PARMS[--targets]}
+    TARGETS=${TARGETS//,/ }
+
     MAKE_COMMAND_STRING=""
-    MAKE_COMMAND_STRING+="${PARMS[--target]} "
+    MAKE_COMMAND_STRING+="$TARGETS "
     MAKE_COMMAND_STRING+="-j${PARMS[-j]} "
 
     if HAS_PARM --verbose; then
         MAKE_COMMAND_STRING+="VERBOSE=1 "
     fi
 
-    echo "Running command make $MAKE_COMMAND_STRING"
+    echo -e "Running Command:\nmake $MAKE_COMMAND_STRING\n"
     make $MAKE_COMMAND_STRING
     make install $MAKE_COMMAND_STRING
 
