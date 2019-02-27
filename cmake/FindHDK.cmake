@@ -39,53 +39,54 @@
 
 FIND_PACKAGE ( PackageHandleStandardArgs )
 
-GET_FILENAME_COMPONENT ( HDK_PACKAGE_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-# MESSAGE ( "CMAKE_CURRENT_LIST_FILE ${CMAKE_CURRENT_LIST_FILE}" )
-# MESSAGE ( "HDK_PACKAGE_DIR ${HDK_PACKAGE_DIR}" )
-
-SET ( HDK_VERSION_IN_SYS_SYS_VERSION_H ON )
 OPTION ( HDK_AUTO_GENERATE_SESITAG "Automatically generate <Target>_sesitag.C and add to SOP being built" OFF )
+
+# @todo remove all Houdini support prior to 15
+
+GET_FILENAME_COMPONENT ( HDK_PACKAGE_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+
+# Expected the Houdini environment to be initialised and HFS to be available
+# @todo probably shouldn't write to HFS, update to internal var
+# @todo HDK_LOCATION -> HDK_ROOT to match other conventions
+
+IF ( NOT DEFINED ENV{HFS} )
+  MESSAGE ( STATUS "$HFS not set, using provided HDK_LOCATION: " ${HDK_LOCATION} )
+  SET ( ENV{HFS} ${HDK_LOCATION} )
+ENDIF ()
 
 # Houdini 15 and above defines version in SYS/SYS_Version.h
 SET ( HDK_VERSION_FILE_PATH "toolkit/include/SYS/SYS_Version.h" )
+SET ( HDK_VERSION_IN_SYS_SYS_VERSION_H ON )
 
-if(NOT DEFINED ENV{HFS})
-  message (STATUS "$HFS not set, using provided HDK_LOCATION: " ${HDK_LOCATION} )
-  SET(ENV{HFS} ${HDK_LOCATION})
-endif()
-
-FIND_PATH( HDK_LOCATION ${HDK_VERSION_FILE_PATH}
-  "$ENV{HFS}"
+FIND_PATH ( HDK_LOCATION ${HDK_VERSION_FILE_PATH}
   NO_DEFAULT_PATH
-  PATHS ${SYSTEM_LIBRARY_PATHS}
+  PATHS $ENV{HFS} ${SYSTEM_LIBRARY_PATHS}
   )
 
-# MESSAGE ( "NICHOLAS 0000" )
-
 # Fall back for Houdini version less than 15.0
-IF (NOT HDK_LOCATION)
-  # MESSAGE ( "NICHOLAS 0100" )
+IF ( NOT HDK_LOCATION )
   SET ( HDK_VERSION_FILE_PATH "toolkit/include/UT/UT_Version.h" )
-  # MESSAGE ( "NICHOLAS 0200 HDK_VERSION_FILE_PATH = ${HDK_VERSION_FILE_PATH}" )
   FIND_PATH( HDK_LOCATION ${HDK_VERSION_FILE_PATH}
-    "$ENV{HFS}"
     NO_DEFAULT_PATH
+    PATHS $ENV{HFS} ${SYSTEM_LIBRARY_PATHS}
     )
-  # MESSAGE ( "NICHOLAS 0300 HDK_LOCATION = ${HDK_LOCATION}" )
   SET ( HDK_VERSION_IN_SYS_SYS_VERSION_H OFF )
 ENDIF ()
 
+IF ( NOT HDK_LOCATION )
+    MESSAGE ( FATAL_ERROR "Unable to locate HDK." )
+ENDIF ()
+
 SET ( HDK_VERSION_FILE ${HDK_LOCATION}/${HDK_VERSION_FILE_PATH} )
-# MESSAGE ( "HDK_VERSION_FILE = ${HDK_VERSION_FILE}")
 
 # Find out the current version
 IF ( HDK_VERSION_IN_SYS_SYS_VERSION_H )
-  #
+
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_major_version_str REGEX "^#define[\t ]+SYS_VERSION_MAJOR_INT[\t ]+.*")
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_minor_version_str REGEX "^#define[\t ]+SYS_VERSION_MINOR_INT[\t ]+.*")
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_build_version_str REGEX "^#define[\t ]+SYS_VERSION_BUILD_INT[\t ]+.*")
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_patch_version_str REGEX "^#define[\t ]+SYS_VERSION_PATCH_INT[\t ]+.*")
-  #
+
   STRING (REGEX REPLACE "^.*SYS_VERSION_MAJOR_INT[\t ]+([0-9]*).*$" "\\1"
     HDK_MAJOR_VERSION_STRING "${hdk_major_version_str}")
   STRING (REGEX REPLACE "^.*SYS_VERSION_MINOR_INT[\t ]+([0-9]*).*$" "\\1"
@@ -94,18 +95,18 @@ IF ( HDK_VERSION_IN_SYS_SYS_VERSION_H )
     HDK_BUILD_VERSION_STRING "${hdk_build_version_str}")
   STRING (REGEX REPLACE "^.*SYS_VERSION_PATCH_INT[\t ]+([0-9]*).*$" "\\1"
     HDK_PATCH_VERSION_STRING "${hdk_patch_version_str}")
-  #
+
   UNSET (hdk_major_version_str)
   UNSET (hdk_minor_version_str)
   UNSET (hdk_build_version_str)
   UNSET (hdk_patch_version_str)
 ELSE ()
-  #
+
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_major_version_str REGEX "^#define[\t ]+UT_MAJOR_VERSION_INT[\t ]+.*")
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_minor_version_str REGEX "^#define[\t ]+UT_MINOR_VERSION_INT[\t ]+.*")
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_build_version_str REGEX "^#define[\t ]+UT_BUILD_VERSION_INT[\t ]+.*")
   FILE ( STRINGS "${HDK_VERSION_FILE}" hdk_patch_version_str REGEX "^#define[\t ]+UT_PATCH_VERSION_INT[\t ]+.*")
-  #
+
   STRING (REGEX REPLACE "^.*UT_MAJOR_VERSION_INT[\t ]+([0-9]*).*$" "\\1"
     HDK_MAJOR_VERSION_STRING "${hdk_major_version_str}")
   STRING (REGEX REPLACE "^.*UT_MINOR_VERSION_INT[\t ]+([0-9]*).*$" "\\1"
@@ -114,7 +115,7 @@ ELSE ()
     HDK_BUILD_VERSION_STRING "${hdk_build_version_str}")
   STRING (REGEX REPLACE "^.*UT_PATCH_VERSION_INT[\t ]+([0-9]*).*$" "\\1"
     HDK_PATCH_VERSION_STRING "${hdk_patch_version_str}")
-  #
+
   UNSET (hdk_major_version_str)
   UNSET (hdk_minor_version_str)
   UNSET (hdk_build_version_str)
@@ -126,11 +127,10 @@ SET ( HDK_VERSION_MINOR ${HDK_MINOR_VERSION_STRING} CACHE STRING "HDK minor vers
 SET ( HDK_VERSION_BUILD ${HDK_BUILD_VERSION_STRING} CACHE STRING "HDK build version")
 SET ( HDK_VERSION "${HDK_MAJOR_VERSION_STRING}.${HDK_MINOR_VERSION_STRING}.${HDK_BUILD_VERSION_STRING}.${HDK_PATCH_VERSION_STRING}" CACHE STRING "HDK version")
 
-# MESSAGE ( "HDK_VERSION = ${HDK_VERSION}")
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS ( HDK
   REQUIRED_VARS HDK_LOCATION
-  VERSION_VAR   HDK_VERSION
+  VERSION_VAR HDK_VERSION
   )
 
 IF (HDK_FOUND)
@@ -145,7 +145,9 @@ IF (HDK_FOUND)
   SET ( HCUSTOM_COMMAND $ENV{HFS}/bin/hcustom )
   SET ( HOTL_COMMAND $ENV{HFS}/bin/hotl )
 
-  SET ( HDK_INCLUDE_DIR "${HDK_LOCATION}/toolkit/include;${HDK_LOCATION}/toolkit/include/htools" CACHE STRING "HDK include directory" )
+  SET ( HDK_INCLUDE_DIR "${HDK_LOCATION}/toolkit/include;${HDK_LOCATION}/toolkit/include/htools"
+    CACHE STRING "HDK include directory"
+    )
 
   IF ( HDK_VERSION VERSION_GREATER 14 )
     EXECUTE_PROCESS ( COMMAND ${HCUSTOM_COMMAND} -g -c OUTPUT_VARIABLE DEBUG_TEMP_DEFINITIONS )
@@ -177,17 +179,17 @@ IF (HDK_FOUND)
     # Release flags
     # STRING ( REGEX REPLACE "-DVERSION=\"[0-9]+.[0-9]+.[0-9]+\" " "" HDK_DEFINITIONS_RAW "${TEMP_DEFINITIONS}")
     STRING ( REGEX REPLACE " -I \\.| -I \".*\"|-DVERSION=\"[0-9]+.[0-9]+.[0-9]+\" " "" HDK_DEFINITIONS_RAW "${TEMP_DEFINITIONS}")
-
     STRING ( STRIP ${HDK_DEFINITIONS_RAW} HDK_DEFINITIONS)
+
     # SET ( CMAKE_C_FLAGS ${HDK_DEFINITIONS})
     # SET ( CMAKE_CXX_FLAGS ${HDK_DEFINITIONS})
-
     # MESSAGE ( "HDK_DEFINITIONS = ${HDK_DEFINITIONS}" )
     # MESSAGE ( "CMAKE_C_FLAGS = ${CMAKE_C_FLAGS}")
     # MESSAGE ( "CMAKE_CXX_FLAGS = ${CMAKE_CXX_FLAGS}")
 
     # Debug flags
     STRING ( REGEX REPLACE "Making DEBUG version" "" STRIP_TEMP_DEFINITIONS "${DEBUG_TEMP_DEFINITIONS}")
+
     # STRING ( REGEX REPLACE "-DVERSION=\"[0-9]+.[0-9]+.[0-9]+\" " "" DEBUG_HDK_DEFINITIONS "${STRIP_TEMP_DEFINITIONS}")
     STRING ( REGEX REPLACE " -I \\.| -I \".*\"|-DVERSION=\"[0-9]+.[0-9]+.[0-9]+\" " "" DEBUG_HDK_DEFINITIONS "${STRIP_TEMP_DEFINITIONS}")
     # SET ( CMAKE_C_FLAGS_DEBUG ${DEBUG_HDK_DEFINITIONS})
@@ -252,10 +254,10 @@ IF (HDK_FOUND)
     SET ( HDK_LIBRARY_TYPE SHARED )
   ENDIF (APPLE)
 
-  FUNCTION ( HDK_CREATE_SESITAG
-      # _input_name
-      _src_name )
-    SET ( _input_name abc )
+  # Define a bunch of useful functions for creating houdini libraries
+
+  FUNCTION ( HDK_CREATE_SESITAG _src_name )
+
     SET ( PYTHON_SCRIPT ${HDK_PACKAGE_DIR}/gen_sesitag.py )
     IF ( WIN32 )
       # Houdini uses the python bundled with the distribution, use that

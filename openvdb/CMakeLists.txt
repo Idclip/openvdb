@@ -27,59 +27,25 @@
 PROJECT ( OpenVDBCore )
 CMAKE_MINIMUM_REQUIRED ( VERSION 3.1 )
 
-# @todo GLFW, GLEW, glu, gl should only be dependent on vdb_view. Add
-# CMake options to ignore these should vdb_view not be desired.
-IF ( USE_GLFW3 )
-  FIND_PACKAGE ( GLFW3 REQUIRED )
-  SET ( OPENVDB_USE_GLFW_FLAG "-DOPENVDB_USE_GLFW_3" )
-  IF ( UNIX AND NOT APPLE )
-    SET ( GLFW_DEPENDENT_LIBRARIES "X11;Xi;Xrandr;Xinerama;Xcursor;Xxf86vm" )
-  ENDIF ( UNIX AND NOT APPLE )
-  SET ( GLFW_LINK_LIBRARY ${GLFW3_glfw_LIBRARY} )
-  SET ( GLFW_INCLUDE_DIRECTORY ${GLFW3_INCLUDE_DIR} CACHE STRING "GLFW3 include directory")
-ELSE ()
-  FIND_PACKAGE ( GLFW REQUIRED )
-  IF ( UNIX AND NOT APPLE )
-    SET ( GLFW_DEPENDENT_LIBRARIES "X11;Xi;Xrandr;Xinerama;Xcursor;Xxf86vm" )
-  ENDIF ()
-  SET ( GLFW_LINK_LIBRARY ${GLFW_glfw_LIBRARY} )
-  SET ( GLFW_INCLUDE_DIRECTORY ${GLFW_INCLUDE_DIR} CACHE STRING "GLFW include directory")
+FIND_PACKAGE ( ILMBase REQUIRED )
+FIND_PACKAGE ( OpenEXR REQUIRED )
+FIND_PACKAGE ( TBB REQUIRED )
+FIND_PACKAGE ( ZLIB REQUIRED )
+
+IF ( UNIX )
+  FIND_PACKAGE ( Threads REQUIRED )
 ENDIF ()
 
-IF ( WIN32 )
-  FIND_PACKAGE ( GLEW REQUIRED )
-ELSE ()
-  FIND_PACKAGE ( Threads REQUIRED )
-ENDIF()
-
-# @todo thread is only needed for vdb_view
-FIND_PACKAGE ( Boost ${MINIMUM_BOOST_VERSION} REQUIRED COMPONENTS iostreams system thread )
+FIND_PACKAGE ( Boost ${MINIMUM_BOOST_VERSION} REQUIRED COMPONENTS iostreams system )
 IF ( WIN32 AND OPENVDB_DISABLE_BOOST_IMPLICIT_LINKING )
   ADD_DEFINITIONS ( -DBOOST_ALL_NO_LIB )
 ENDIF ()
 
-FIND_PACKAGE ( TBB REQUIRED )
-FIND_PACKAGE ( ZLIB REQUIRED )
-FIND_PACKAGE ( ILMBase REQUIRED )
-FIND_PACKAGE ( OpenEXR REQUIRED )
-FIND_PACKAGE ( OpenGL REQUIRED )
+INCLUDE_DIRECTORIES ( ../ )
 
-IF ( OPENVDB_BUILD_DOCS )
-  FIND_PACKAGE ( Doxygen REQUIRED )
-ENDIF ()
-IF ( OPENVDB_BUILD_UNITTESTS )
-  FIND_PACKAGE ( CPPUnit REQUIRED )
-  INCLUDE_DIRECTORIES ( SYSTEM ${CPPUNIT_INCLUDE_DIR} )
-ENDIF ()
 IF ( USE_BLOSC )
     FIND_PACKAGE ( Blosc REQUIRED )
     INCLUDE_DIRECTORIES ( SYSTEM ${BLOSC_INCLUDE_DIR} )
-ENDIF ()
-
-IF ( APPLE )
-  FIND_LIBRARY ( COCOA_LIBRARY Cocoa )
-  FIND_LIBRARY ( IOKIT_LIBRARY IOKit )
-  FIND_LIBRARY ( COREVIDEO_LIBRARY CoreVideo )
 ENDIF ()
 
 # Configure include paths
@@ -94,11 +60,6 @@ ENDIF ()
 
 INCLUDE_DIRECTORIES ( SYSTEM ${ILMBASE_INCLUDE_DIRS} )
 INCLUDE_DIRECTORIES ( SYSTEM ${OPENEXR_INCLUDE_DIRS} )
-INCLUDE_DIRECTORIES ( SYSTEM ${GLFW_INCLUDE_DIRECTORY} )
-
-IF ( WIN32 )
-  INCLUDE_DIRECTORIES ( SYSTEM ${GLEW_INCLUDE_DIR} )
-ENDIF ()
 
 # So they can simulate referencing installed headers
 INCLUDE_DIRECTORIES ( . )
@@ -113,12 +74,6 @@ IF ( WIN32 )
 ELSE ()
   ADD_DEFINITIONS ( -pthread -fPIC )
 ENDIF ()
-
-# Working around hardcoding of path at DWA
-FILE ( GLOB VIEWER_SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} viewer/* )
-FILE ( MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/dwa/openvdb_viewer )
-FILE ( COPY ${VIEWER_SOURCE_FILES} DESTINATION ${CMAKE_BINARY_DIR}/dwa/openvdb_viewer )
-INCLUDE_DIRECTORIES ( ${CMAKE_BINARY_DIR}/dwa )
 
 ##### Core library configuration
 
@@ -345,211 +300,7 @@ SET_TARGET_PROPERTIES (
   VERSION ${OPENVDB_MAJOR_VERSION_NUMBER}.${OPENVDB_MINOR_VERSION_NUMBER}.${OPENVDB_PATCH_VERSION_NUMBER}
   )
 
-##### VDB binaries
-
-SET ( OPENVDB_BINARIES_DEPENDANT_LIBS
-  openvdb_shared
-  ${OPENVDB_CORE_DEPENDANT_LIBS}
-  ${CMAKE_THREAD_LIBS_INIT}
-  m
-  stdc++
-)
-
-# vdb_print
-
-SET ( VDB_PRINT_SOURCE_FILES cmd/openvdb_print/main.cc )
-ADD_EXECUTABLE ( vdb_print ${VDB_PRINT_SOURCE_FILES} )
-TARGET_LINK_LIBRARIES ( vdb_print
-  ${OPENVDB_BINARIES_DEPENDANT_LIBS}
-  )
-
-# vdb_render
-
-SET ( VDB_RENDER_SOURCE_FILES cmd/openvdb_render/main.cc )
-ADD_EXECUTABLE ( vdb_render ${VDB_RENDER_SOURCE_FILES} )
-TARGET_LINK_LIBRARIES ( vdb_render
-  ${OPENVDB_BINARIES_DEPENDANT_LIBS}
-  ${Openexr_ILMIMF_LIBRARY}
-  ${Ilmbase_ILMTHREAD_LIBRARY}
-  ${Ilmbase_IEX_LIBRARY}
-  )
-
-# vdb_view
-
-SET ( VDB_VIEW_SOURCE_FILES
-  cmd/openvdb_view/main.cc
-  viewer/Camera.cc
-  viewer/ClipBox.cc
-  viewer/Font.cc
-  viewer/RenderModules.cc
-  viewer/Viewer.cc
-  )
-SET_SOURCE_FILES_PROPERTIES ( ${VDB_VIEW_SOURCE_FILES}
-  PROPERTIES
-  COMPILE_FLAGS "${OPENVDB_USE_GLFW_FLAG} -DGL_GLEXT_PROTOTYPES=1"
-  )
-
-IF ( NOT WIN32 )
-  ADD_EXECUTABLE ( vdb_view ${VDB_VIEW_SOURCE_FILES} )
-  TARGET_INCLUDE_DIRECTORIES ( vdb_view SYSTEM PRIVATE ${Boost_INCLUDE_DIR} )
-  TARGET_LINK_LIBRARIES ( vdb_view
-    ${OPENVDB_BINARIES_DEPENDANT_LIBS}
-    ${Boost_THREAD_LIBRARY}
-    ${OPENGL_gl_LIBRARY}
-    ${OPENGL_glu_LIBRARY}
-    ${COCOA_LIBRARY}
-    ${IOKIT_LIBRARY}
-    ${COREVIDEO_LIBRARY}
-    ${GLFW_LINK_LIBRARY}
-    ${GLFW_DEPENDENT_LIBRARIES}
-    ${GLEW_GLEW_LIBRARY}
-    dl
-    )
-ELSE ()
-  # @todo vdb_view on windows
-  MESSAGE ( WARNING "Currently no CMake support for building vdb_view binary on Windows." )
-ENDIF ()
-
-##### VDB unit tests
-
-SET ( UNITTEST_SOURCE_FILES
-  unittest/main.cc
-  unittest/TestAttributeArray.cc
-  unittest/TestAttributeArrayString.cc
-  unittest/TestAttributeGroup.cc
-  unittest/TestAttributeSet.cc
-  unittest/TestBBox.cc
-  unittest/TestConjGradient.cc
-  unittest/TestCoord.cc
-  unittest/TestCpt.cc
-  unittest/TestCurl.cc
-  unittest/TestDense.cc
-  unittest/TestDenseSparseTools.cc
-  unittest/TestDiagnostics.cc
-  unittest/TestDivergence.cc
-  unittest/TestDoubleMetadata.cc
-  unittest/TestExceptions.cc
-  unittest/TestFile.cc
-  unittest/TestFloatMetadata.cc
-  unittest/TestGradient.cc
-  unittest/TestGrid.cc
-  unittest/TestGridBbox.cc
-  unittest/TestGridDescriptor.cc
-  unittest/TestGridIO.cc
-  unittest/TestGridTransformer.cc
-  unittest/TestIndexFilter.cc
-  unittest/TestIndexIterator.cc
-  unittest/TestInit.cc
-  unittest/TestInt32Metadata.cc
-  unittest/TestInt64Metadata.cc
-  unittest/TestInternalOrigin.cc
-  unittest/TestLaplacian.cc
-  unittest/TestLeaf.cc
-  unittest/TestLeafBool.cc
-  unittest/TestLeafManager.cc
-  unittest/TestLeafMask.cc
-  unittest/TestLeafIO.cc
-  unittest/TestLeafOrigin.cc
-  unittest/TestLevelSetRayIntersector.cc
-  unittest/TestLevelSetUtil.cc
-  unittest/TestLinearInterp.cc
-  unittest/TestMaps.cc
-  unittest/TestMat4Metadata.cc
-  unittest/TestMath.cc
-  unittest/TestMeanCurvature.cc
-  unittest/TestMeshToVolume.cc
-  unittest/TestMetadata.cc
-  unittest/TestMetadataIO.cc
-  unittest/TestMetaMap.cc
-  unittest/TestMultiResGrid.cc
-  unittest/TestName.cc
-  unittest/TestNodeIterator.cc
-  unittest/TestNodeManager.cc
-  unittest/TestNodeMask.cc
-  unittest/TestParticleAtlas.cc
-  unittest/TestParticlesToLevelSet.cc
-  unittest/TestPointAttribute.cc
-  unittest/TestPointConversion.cc
-  unittest/TestPointCount.cc
-  unittest/TestPointDataLeaf.cc
-  unittest/TestPointGroup.cc
-  unittest/TestPointIndexGrid.cc
-  unittest/TestPointPartitioner.cc
-  unittest/TestPointsToMask.cc
-  unittest/TestPoissonSolver.cc
-  unittest/TestPrePostAPI.cc
-  unittest/TestQuadraticInterp.cc
-  unittest/TestQuantizedUnitVec.cc
-  unittest/TestQuat.cc
-  unittest/TestRay.cc
-  unittest/TestStats.cc
-  unittest/TestStream.cc
-  unittest/TestStreamCompression.cc
-  unittest/TestStringMetadata.cc
-  unittest/TestTools.cc
-  unittest/TestTopologyToLevelSet.cc
-  unittest/TestTransform.cc
-  unittest/TestTree.cc
-  unittest/TestTreeCombine.cc
-  unittest/TestTreeGetSetValues.cc
-  unittest/TestTreeIterators.cc
-  unittest/TestTreeVisitor.cc
-  unittest/TestTypes.cc
-  unittest/TestUtil.cc
-  unittest/TestValueAccessor.cc
-  unittest/TestVec2Metadata.cc
-  unittest/TestVec3Metadata.cc
-  unittest/TestVolumeRayIntersector.cc
-  unittest/TestVolumeToMesh.cc
-  )
-
-IF ( OPENVDB_BUILD_UNITTESTS )
-
-  ADD_EXECUTABLE ( vdb_test ${UNITTEST_SOURCE_FILES} )
-
-  TARGET_LINK_LIBRARIES ( vdb_test
-    ${OPENVDB_BINARIES_DEPENDANT_LIBS}
-    ${CPPUnit_cppunit_LIBRARY}
-    )
-
-  ADD_TEST ( vdb_unit_test vdb_test )
-
-ENDIF ( OPENVDB_BUILD_UNITTESTS )
-
-# Doxygen docmentation
-IF ( OPENVDB_BUILD_DOCS )
-
-  FILE ( READ ${CMAKE_CURRENT_SOURCE_DIR}/doxygen-config DOXYGEN_CONFIG_CONTENT )
-  FILE ( WRITE ${CMAKE_CURRENT_BINARY_DIR}/cmake-doxygen-config ${DOXYGEN_CONFIG_CONTENT} )
-  FILE ( APPEND ${CMAKE_CURRENT_BINARY_DIR}/cmake-doxygen-config "OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}/doc\n" )
-
-  ADD_CUSTOM_TARGET ( doc
-    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/cmake-doxygen-config
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMENT "Generating API documentation with Doxygen" VERBATIM
-    )
-
-  INSTALL ( CODE "EXECUTE_PROCESS(COMMAND \"${CMAKE_COMMAND}\" --build  \"${PROJECT_BINARY_DIR}\" --target doc)")
-  INSTALL ( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html DESTINATION docs)
-
-ENDIF ()
-
 # Installation
-
-IF ( NOT WIN32 )
-  INSTALL ( TARGETS
-    vdb_view
-    DESTINATION
-    bin
-    )
-ENDIF ()
-
-INSTALL ( TARGETS
-  vdb_print
-  vdb_render
-  DESTINATION
-  bin
-  )
 
 INSTALL ( TARGETS
   openvdb_static

@@ -36,6 +36,7 @@ CMAKE_MINIMUM_REQUIRED ( VERSION 3.1 )
 # @todo SSE/AVX instruction options
 # @todo static/shared library options
 OPTION ( OPENVDB_BUILD_CORE "Build the OpenVDB core" ON )
+OPTION ( OPENVDB_BUILD_BINARIES "Build the vdb binaries" ON )
 OPTION ( OPENVDB_BUILD_PYTHON_MODULE "Build the pyopenvdb Python module" ON )
 OPTION ( OPENVDB_BUILD_UNITTESTS "Build the OpenVDB unit tests" ON )
 OPTION ( OPENVDB_BUILD_DOCS "Build the OpenVDB documentation" OFF )
@@ -89,8 +90,6 @@ IF ( NOT CMAKE_BUILD_TYPE )
   SET ( CMAKE_BUILD_TYPE Release )
 ENDIF ()
 MESSAGE ( STATUS "CMake Build Type: ${CMAKE_BUILD_TYPE}" )
-
-# Some option/platform checks
 
 IF ( USE_SYSTEM_LIBRARY_PATHS )
   SET ( SYSTEM_LIBRARY_PATHS
@@ -164,15 +163,9 @@ ENDIF ()
 MESSAGE ( STATUS "Using OpenVDB ABI Version ${OPENVDB_ABI_VERSION_NUMBER}" )
 ADD_DEFINITIONS ( -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_ABI_VERSION_NUMBER} )
 
-# Configure the top level dir to make sure we pick up headers from this version of OpenVDB we
-# are building
-# @todo Don't do this if OPENVDB_BUILD_CORE is off (although the python module in the Makefile
-# system still uses these headers)
+# Add our cmake modules
 
 LIST ( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
-SET ( OPENVDB_TOP_LEVEL_DIR ${PROJECT_SOURCE_DIR} CACHE PATH
-    "OpenVDB Top Level Directory to share among sub projects" )
-INCLUDE_DIRECTORIES ( ${OPENVDB_TOP_LEVEL_DIR} )
 
 # Compiler options
 
@@ -207,8 +200,16 @@ IF ( OPENVDB_BUILD_CORE )
   ADD_SUBDIRECTORY ( openvdb )
 ENDIF ()
 
-IF (OPENVDB_BUILD_PYTHON_MODULE)
+IF ( OPENVDB_BUILD_PYTHON_MODULE )
   ADD_SUBDIRECTORY ( openvdb/python )
+ENDIF ()
+
+IF ( OPENVDB_BUILD_BINARIES )
+  ADD_SUBDIRECTORY ( openvdb/cmd )
+ENDIF ()
+
+IF ( OPENVDB_BUILD_UNITTESTS )
+  ADD_SUBDIRECTORY ( openvdb/unittest )
 ENDIF ()
 
 IF ( OPENVDB_BUILD_HOUDINI_SOPS )
@@ -217,4 +218,22 @@ ENDIF ()
 
 IF ( OPENVDB_BUILD_MAYA_PLUGIN )
   ADD_SUBDIRECTORY ( openvdb_maya )
+ENDIF ()
+
+IF ( OPENVDB_BUILD_DOCS )
+  FIND_PACKAGE ( Doxygen REQUIRED )
+
+  FILE ( READ ${CMAKE_CURRENT_SOURCE_DIR}/openvdb/doxygen-config DOXYGEN_CONFIG_CONTENT )
+  FILE ( WRITE ${CMAKE_CURRENT_BINARY_DIR}/openvdb/cmake-doxygen-config ${DOXYGEN_CONFIG_CONTENT} )
+  FILE ( APPEND ${CMAKE_CURRENT_BINARY_DIR}/openvdb/cmake-doxygen-config "OUTPUT_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}/openvdb/doc\n" )
+
+  ADD_CUSTOM_TARGET ( doc
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/openvdb/cmake-doxygen-config
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+
+  INSTALL ( CODE "EXECUTE_PROCESS(COMMAND \"${CMAKE_COMMAND}\" --build  \"${PROJECT_BINARY_DIR}\" --target doc)")
+  INSTALL ( DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/openvdb/doc/html DESTINATION docs)
+
 ENDIF ()

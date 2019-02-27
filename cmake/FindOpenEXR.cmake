@@ -24,128 +24,183 @@
 # IN NO EVENT SHALL THE COPYRIGHT HOLDERS' AND CONTRIBUTORS' AGGREGATE
 # LIABILITY FOR ALL CLAIMS REGARDLESS OF THEIR BASIS EXCEED US$250.00.
 #
+#[=======================================================================[
 
-# -*- cmake -*-
-# - Find OpenEXR
-#
-# Author : Nicholas Yue yue.nicholas@gmail.com
-#
-# This module will define the following variables:
-#  OPENEXR_INCLUDE_DIRS - Location of the openexr includes
-#  OPENEXR_LIBRARY_DIR - the lib directory containing IlmImf
-#  OPENEXR_FOUND - true if OPENEXR was found on the system
-#  Openexr_ILMIMF_LIBRARY - OpenEXR's IlmImf library
+FindOpenEXR
+---------
+
+Find OpenEXR include dirs and ilmimf library::
+
+  OPENEXR_FOUND            - True if headers and requested libraries were found
+  OPENEXR_INCLUDE_DIRS     - OpenEXR include directories
+  OPENEXR_LIBRARY_DIRS     - Link directories for OpenEXR libraries
+  Openexr_ILMIMF_LIBRARY   - OpenEXR's IlmImf library
+  Openexr_ILMIMF_DLL       - Windows runtime dll
+
+This module reads hints about search locations from variables::
+
+  OPENEXR_ROOT             - Preferred installation prefix
+  OPENEXR_INCLUDEDIR       - Preferred include directory e.g. <prefix>/include
+  OPENEXR_LIBRARYDIR       - Preferred library directory e.g. <prefix>/lib
+  SYSTEM_LIBRARY_PATHS     - Paths appended to all include and lib searches
+
+#]=======================================================================]
 
 FIND_PACKAGE ( PackageHandleStandardArgs )
 
-SET ( OPENEXR_CONFIG_FILE include/OpenEXR/OpenEXRConfig.h
-  CACHE STRING "The config file defining OpenEXR's version and used to detect the include installation path."
+# Append OPENEXR_ROOT or $ENV{OPENEXR_ROOT} if set (prioritize the direct cmake var)
+SET ( _OPENEXR_ROOT_SEARCH_DIR "" )
+
+IF ( OPENEXR_ROOT )
+  LIST ( APPEND _OPENEXR_ROOT_SEARCH_DIR ${OPENEXR_ROOT} )
+ELSE ( _ENV_OPENEXR_ROOT )
+  SET ( _ENV_OPENEXR_ROOT $ENV{OPENEXR_ROOT} )
+  IF ( _ENV_OPENEXR_ROOT )
+    LIST ( APPEND _OPENEXR_ROOT_SEARCH_DIR ${_ENV_OPENEXR_ROOT} )
+  ENDIF ()
+ENDIF ()
+
+# ------------------------------------------------------------------------
+#  Search for OpenEXR include DIR
+# ------------------------------------------------------------------------
+
+# Skip if OPENEXR_INCLUDE_DIR has been manually provided
+
+IF ( NOT OPENEXR_INCLUDE_DIRS )
+  SET ( _OPENEXR_INCLUDE_SEARCH_DIRS "" )
+
+  # Append to _OPENEXR_INCLUDE_SEARCH_DIRS in priority order
+
+  IF ( OPENEXR_INCLUDEDIR )
+    LIST ( APPEND _OPENEXR_INCLUDE_SEARCH_DIRS ${OPENEXR_INCLUDEDIR} )
+  ENDIF ()
+  LIST ( APPEND _OPENEXR_INCLUDE_SEARCH_DIRS ${_OPENEXR_ROOT_SEARCH_DIR} )
+  LIST ( APPEND _OPENEXR_INCLUDE_SEARCH_DIRS ${SYSTEM_LIBRARY_PATHS} )
+
+  # Look for a standard OpeneXR header file.
+  FIND_PATH ( OPENEXR_INCLUDE_DIRS OpenEXR/OpenEXRConfig.h
+    NO_DEFAULT_PATH
+    PATHS ${_OPENEXR_INCLUDE_SEARCH_DIRS}
+    PATH_SUFFIXES include
+    )
+ENDIF ()
+
+# Get the EXR version information from the config header
+
+FILE ( STRINGS "${OPENEXR_INCLUDE_DIRS}/OpenEXR/OpenEXRConfig.h"
+  _openexr_version_major_string REGEX "#define OPENEXR_VERSION_MAJOR "
+  )
+STRING ( REGEX REPLACE "#define OPENEXR_VERSION_MAJOR" ""
+  _openexr_version_major_string "${_openexr_version_major_string}"
+  )
+STRING ( STRIP "${_openexr_version_major_string}" OPENEXR_VERSION_MAJOR )
+
+FILE ( STRINGS "${OPENEXR_INCLUDE_DIRS}/OpenEXR/OpenEXRConfig.h"
+   _openexr_version_minor_string REGEX "#define OPENEXR_VERSION_MINOR "
+  )
+STRING ( REGEX REPLACE "#define OPENEXR_VERSION_MINOR" ""
+  _openexr_version_minor_string "${_openexr_version_minor_string}"
+  )
+STRING ( STRIP "${_openexr_version_minor_string}" OPENEXR_VERSION_MINOR )
+
+UNSET ( _openexr_version_major_string )
+UNSET ( _openexr_version_minor_string )
+
+SET ( OPENEXR_VERSION ${OPENEXR_VERSION_MAJOR}.${OPENEXR_VERSION_MINOR} )
+
+# ------------------------------------------------------------------------
+#  Search for OpenEXR lib DIR
+# ------------------------------------------------------------------------
+
+IF ( OPENEXR_NAMESPACE_VERSIONING )
+  SET ( ILMIMF_LIBRARY_NAME IlmImf-${OPENEXR_VERSION_MAJOR}_${OPENEXR_VERSION_MINOR} )
+ELSE ()
+  SET ( ILMIMF_LIBRARY_NAME IlmImf )
+ENDIF ()
+
+SET ( _OPENEXR_LIBRARYDIR_SEARCH_DIRS "" )
+
+# Append to _OPENEXR_LIBRARYDIR_SEARCH_DIRS in priority order
+
+IF ( OPENEXR_LIBRARYDIR )
+  LIST ( APPEND _OPENEXR_LIBRARYDIR_SEARCH_DIRS ${OPENEXR_LIBRARYDIR} )
+ENDIF ()
+LIST ( APPEND _OPENEXR_LIBRARYDIR_SEARCH_DIRS ${_OPENEXR_ROOT_SEARCH_DIR} )
+LIST ( APPEND _OPENEXR_LIBRARYDIR_SEARCH_DIRS ${SYSTEM_LIBRARY_PATHS} )
+
+# Build suffix directories
+
+SET ( OPENEXR_PATH_SUFFIXES
+  lib64
+  lib
 )
 
-FIND_PATH ( OPENEXR_LOCATION ${OPENEXR_CONFIG_FILE}
+IF ( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
+  LIST ( INSERT OPENEXR_PATH_SUFFIXES 0 lib/x86_64-linux-gnu )
+ENDIF ()
+
+SET ( _OPENEXR_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES} )
+
+# library suffix handling
+
+IF ( WIN32 )
+  SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".lib" )
+ENDIF ()
+
+IF ( OPENEXR_USE_STATIC_LIBS )
+  IF ( UNIX )
+    SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".a" )
+  ENDIF ()
+ELSE ()
+  IF ( APPLE )
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dylib")
+  ENDIF ()
+ENDIF ()
+
+FIND_LIBRARY ( Openexr_ILMIMF_LIBRARY ${ILMIMF_LIBRARY_NAME}
   NO_DEFAULT_PATH
-  PATHS $ENV{OPENEXR_ROOT} ${SYSTEM_LIBRARY_PATHS}
+  PATHS ${_OPENEXR_LIBRARYDIR_SEARCH_DIRS}
+  PATH_SUFFIXES ${OPENEXR_PATH_SUFFIXES}
   )
 
+IF ( NOT OPENEXR_USE_STATIC_LIBS AND WIN32 )
+  # Load library
+  SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".dll" )
+  FIND_LIBRARY ( Openexr_ILMIMF_DLL ${ILMIMF_LIBRARY_NAME}
+    NO_DEFAULT_PATH
+    PATHS ${_OPENEXR_LIBRARYDIR_SEARCH_DIRS}
+    PATH_SUFFIXES bin
+    )
+ENDIF ()
+
+# reset lib suffix
+
+SET ( CMAKE_FIND_LIBRARY_SUFFIXES ${_OPENEXR_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES})
+
+GET_FILENAME_COMPONENT ( OPENEXR_LIBRARY_DIRS ${Openexr_ILMIMF_LIBRARY} DIRECTORY )
+
+# ------------------------------------------------------------------------
+#  Cache and set OPENEXR_FOUND
+# ------------------------------------------------------------------------
+
 FIND_PACKAGE_HANDLE_STANDARD_ARGS ( OpenEXR
-  REQUIRED_VARS OPENEXR_LOCATION
+  REQUIRED_VARS OPENEXR_INCLUDE_DIRS OPENEXR_LIBRARY_DIRS Openexr_ILMIMF_LIBRARY
+  VERSION_VAR OPENEXR_VERSION
   )
 
 IF ( OPENEXR_FOUND )
-
-  FILE ( STRINGS "${OPENEXR_LOCATION}/${OPENEXR_CONFIG_FILE}" _openexr_version_major_string REGEX "#define OPENEXR_VERSION_MAJOR ")
-  STRING ( REGEX REPLACE "#define OPENEXR_VERSION_MAJOR" "" _openexr_version_major_unstrip "${_openexr_version_major_string}")
-  STRING ( STRIP "${_openexr_version_major_unstrip}" OPENEXR_VERSION_MAJOR )
-
-  FILE ( STRINGS "${OPENEXR_LOCATION}/${OPENEXR_CONFIG_FILE}" _openexr_version_minor_string REGEX "#define OPENEXR_VERSION_MINOR ")
-  STRING ( REGEX REPLACE "#define OPENEXR_VERSION_MINOR" "" _openexr_version_minor_unstrip "${_openexr_version_minor_string}")
-  STRING ( STRIP "${_openexr_version_minor_unstrip}" OPENEXR_VERSION_MINOR )
-
-  MESSAGE ( STATUS "Found OpenEXR v${OPENEXR_VERSION_MAJOR}.${OPENEXR_VERSION_MINOR} at ${OPENEXR_LOCATION}" )
-
-  IF ( OPENEXR_NAMESPACE_VERSIONING )
-    SET ( ILMIMF_LIBRARY_NAME IlmImf-${OPENEXR_VERSION_MAJOR}_${OPENEXR_VERSION_MINOR} )
-  ELSE ( OPENEXR_NAMESPACE_VERSIONING )
-    SET ( ILMIMF_LIBRARY_NAME IlmImf )
-  ENDIF ( OPENEXR_NAMESPACE_VERSIONING )
-
-  SET ( OPENEXR_BASE_LIB_DIRECTORIES
-    ${OPENEXR_LOCATION}
-    ${SYSTEM_LIBRARY_PATHS}
-  )
-
-  SET ( OPENEXR_PATH_SUFFIXES
-    lib64
-    lib
-  )
-
-  IF ( ${CMAKE_COMPILER_IS_GNUCXX} )
-    SET ( OPENEXR_PATH_SUFFIXES
-      lib/x86_64-linux-gnu
-      ${OPENEXR_PATH_SUFFIXES}
-    )
-  ENDIF ()
-
-  IF (Openexr_USE_STATIC_LIBS)
-    IF (APPLE)
-      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-      FIND_LIBRARY ( Openexr_ILMIMF_LIBRARY ${ILMIMF_LIBRARY_NAME}
-        PATHS ${OPENEXR_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${OPENEXR_PATH_SUFFIXES}
-      )
-    ELSEIF (WIN32)
-      # Link library
-      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-      FIND_LIBRARY ( Openexr_ILMIMF_LIBRARY ${ILMIMF_LIBRARY_NAME}
-        PATHS ${OPENEXR_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${OPENEXR_PATH_SUFFIXES}
-      )
-    ELSE (APPLE)
-      # MESSAGE ( "CMAKE_FIND_LIBRARY_SUFFIXES = " ${CMAKE_FIND_LIBRARY_SUFFIXES})
-      SET ( ORIGINAL_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
-      SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-      FIND_LIBRARY ( Openexr_ILMIMF_LIBRARY ${ILMIMF_LIBRARY_NAME}
-        PATHS ${OPENEXR_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${OPENEXR_PATH_SUFFIXES}
-        NO_DEFAULT_PATH
-        )
-      SET ( CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_CMAKE_FIND_LIBRARY_SUFFIXES})
-    ENDIF (APPLE)
-  ELSE ()
-    IF (APPLE)
-      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dylib")
-      FIND_LIBRARY ( Openexr_ILMIMF_LIBRARY ${ILMIMF_LIBRARY_NAME}
-        PATHS ${OPENEXR_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${OPENEXR_PATH_SUFFIXES}
-      )
-    ELSEIF (WIN32)
-      # Link library
-      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-      FIND_LIBRARY ( Openexr_ILMIMF_LIBRARY ${ILMIMF_LIBRARY_NAME}
-        PATHS ${OPENEXR_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${OPENEXR_PATH_SUFFIXES}
-      )
-      # Load library
-      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
-      FIND_LIBRARY ( Openexr_ILMIMF_DLL ${ILMIMF_LIBRARY_NAME}
-        PATHS ${OPENEXR_LOCATION}/bin
-        )
-      # MUST reset
-      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-    ELSE (APPLE)
-      FIND_LIBRARY ( Openexr_ILMIMF_LIBRARY ${ILMIMF_LIBRARY_NAME}
-        PATHS ${OPENEXR_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${OPENEXR_PATH_SUFFIXES}
-        NO_DEFAULT_PATH
-      )
-    ENDIF (APPLE)
-  ENDIF ()
-
-  GET_FILENAME_COMPONENT ( OPENEXR_LIBRARY_DIR ${Openexr_ILMIMF_LIBRARY} DIRECTORY CACHE )
   SET ( OPENEXR_INCLUDE_DIRS
-    ${OPENEXR_LOCATION}/include
-    ${OPENEXR_LOCATION}/include/OpenEXR
-    CACHE STRING "Openexr include directories"
+    ${OPENEXR_INCLUDE_DIRS}
+    ${OPENEXR_INCLUDE_DIRS}/OpenEXR
+    CACHE STRING "Blosc include directory"
   )
+  SET ( OPENEXR_LIBRARY_DIRS ${OPENEXR_LIBRARY_DIRS}
+    CACHE STRING "Blosc library directory"
+  )
+  SET ( OPENEXR_ILMIMF_LIBRARY ${OPENEXR_ILMIMF_LIBRARY}
+    CACHE STRING "Blosc library"
+  )
+ELSE ()
+  MESSAGE ( FATAL_ERROR "Unable to find OpenEXR")
+ENDIF ()
 
-ENDIF ( OPENEXR_FOUND )

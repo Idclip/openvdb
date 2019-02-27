@@ -31,6 +31,23 @@ OPTION ( OPENVDB_HOUDINI_SUBDIR "Install plugins to <prefix>/houdini/<version> i
 OPTION ( OPENVDB_HOUDINI_SHORT_VERSION "User major.minor as <version> instead of major.minor.patch" ON )
 OPTION ( OPENVDB_HOUDINI_INSTALL_LIBRARY "Install headers and place the shared library in a lib directory." OFF )
 
+IF ( NOT OPENVDB_BUILD_CORE )
+  FIND_PACKAGE ( OpenVDB REQUIRED )
+
+  # Set the variables that are otherwise defined in the core module.
+  SET ( OPENVDB_MAJOR_VERSION_NUMBER ${OpenVDB_MAJOR_VERSION} )
+  SET ( OPENVDB_MINOR_VERSION_NUMBER ${OpenVDB_MINOR_VERSION} )
+  SET ( OPENVDB_PATCH_VERSION_NUMBER ${OpenVDB_PATCH_VERSION} )
+
+  # Use the library installed
+  SET ( OPENVDB_SHARED_LIB ${OpenVDB_OPENVDB_LIBRARY} )
+  INCLUDE_DIRECTORIES ( ${OpenVDB_INCLUDE_DIR} )
+ELSE ()
+  # Use the target
+  SET ( OPENVDB_SHARED_LIB openvdb_shared )
+  INCLUDE_DIRECTORIES ( ../ )
+ENDIF ( NOT OPENVDB_BUILD_CORE )
+
 FIND_PACKAGE ( HDK REQUIRED )
 
 SET ( HOUDINI_FOLDER_VERSION "${HDK_VERSION_MAJOR}.${HDK_VERSION_MINOR}" )
@@ -63,21 +80,6 @@ IF (( HDK_VERSION_MAJOR GREATER 16 ) OR
 
 ENDIF ()
 
-IF ( NOT OPENVDB_BUILD_CORE )
-  FIND_PACKAGE ( OpenVDB REQUIRED )
-
-  # Set the variables that are otherwise defined in the core module.
-  SET ( OPENVDB_MAJOR_VERSION_NUMBER ${OpenVDB_MAJOR_VERSION} )
-  SET ( OPENVDB_MINOR_VERSION_NUMBER ${OpenVDB_MINOR_VERSION} )
-  SET ( OPENVDB_PATCH_VERSION_NUMBER ${OpenVDB_PATCH_VERSION} )
-
-  # Use the library installed
-  SET ( OPENVDB_SHARED_LIB ${OpenVDB_OPENVDB_LIBRARY} )
-ELSE ()
-  # Use the target
-  SET ( OPENVDB_SHARED_LIB openvdb_shared)
-ENDIF ( NOT OPENVDB_BUILD_CORE )
-
 # This is to work around DWA way of doing stuff - REPEATED WITH VARIATION
 FILE ( GLOB HOUDINI_UTILS_HEADER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} houdini/*.h )
 
@@ -101,7 +103,6 @@ FILE ( COPY ${HOUDINI_UTILS_HEADER} DESTINATION ${OPENVDB_HOUDINI_LOCAL_DIR}
   )
 
 INCLUDE_DIRECTORIES (
-  ${OpenVDB_INCLUDE_DIR}
   # houdini
   ${OPENVDB_HOUDINI_UTILS_DIR}
   ${OPENVDB_HOUDINI_LOCAL_DIR}

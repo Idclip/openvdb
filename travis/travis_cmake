@@ -33,40 +33,38 @@ set -e
 
 declare -A PARMS
 
-# Specify defaults from env
+# Specify defaults from env and some standard settings
 
-PARMS[--houdini]=$HOUDINI_MAJOR
 PARMS[--build_type]=$BUILD_TYPE
 PARMS[--abi]=$ABI
 PARMS[--compiler]=$COMPILER
 PARMS[--blosc]=$BLOSC
-PARMS[--core]=yes
-PARMS[--houdini_dir]=hou
-PARMS[--prefix]="/tmp/OpenVDB"
-PARMS[--targets]=all
+PARMS[--openvdb_dir]=""
+PARMS[--houdini_dir]=""
+PARMS[--prefix]=/tmp/OpenVDB
 PARMS[-j]=4
 
+# This script should execute make with a list of targets, but as we call make install,
+# the CMake build system is setup to depend on all if install is called, making this
+# option irrelevant. In lieu of this, a mode option exists.
+#PARMS[--targets]=all
+PARMS[--mode]=core
+
 OPTIONAL_SHORT_ARGS+=("j:")  ## Thread usage
-OPTIONAL_SHORT_ARGS+=("u")   ## Builds the unit tests
 
-OPTIONAL_LONG_ARGS+=("abi:")         ## VDB ABI to use
-OPTIONAL_LONG_ARGS+=("core")
-OPTIONAL_LONG_ARGS+=("targets:")     ## Specify make targets (comma separated)
-OPTIONAL_LONG_ARGS+=("houdini:")     ## Houdini version to use
+OPTIONAL_LONG_ARGS+=("abi:")         ## VDB ABI to use (3/4/5/6)
+OPTIONAL_LONG_ARGS+=("mode:")        ## core, hou, test, runtest
+#OPTIONAL_LONG_ARGS+=("targets:")    ## Specify make targets (comma separated)
 OPTIONAL_LONG_ARGS+=("houdini_dir:") ## Directory of houdini installation
-OPTIONAL_LONG_ARGS+=("prefix:")      ## Location for root install folder
-OPTIONAL_LONG_ARGS+=("build_type:")  ## Debug build
-OPTIONAL_LONG_ARGS+=("blosc:")       ## Use blosc
-OPTIONAL_LONG_ARGS+=("compiler:")    ## Compiler to use
-OPTIONAL_LONG_ARGS+=("verbose")      ## Verbose make output
+OPTIONAL_LONG_ARGS+=("openvdb_dir:") ## Directory of vdb installation (only necessary with hou/test modes)
+OPTIONAL_LONG_ARGS+=("prefix:")      ## Location for install folder
+OPTIONAL_LONG_ARGS+=("build_type:")  ## Debug build (Release/Debug)
+OPTIONAL_LONG_ARGS+=("blosc:")       ## Use blosc (yes/no)
+OPTIONAL_LONG_ARGS+=("compiler:")    ## cxx compiler to use (clang/g++)
+OPTIONAL_LONG_ARGS+=("verbose:")      ## Verbose make output (yes/no)
 
 ############################################################################
 ############################################################################
-
-HAS_PARM() {
-    if [ -z ${PARMS[$1]} ]; then return 1
-    else return 0; fi
-}
 
 # Format to string and replace spaces with commas
 
@@ -76,11 +74,9 @@ SHORT_ARGS_STR="${OPTIONAL_SHORT_ARGS[@]}"
 SHORT_ARGS_STR=${SHORT_ARGS_STR// /,}
 
 # Parse all arguments. Error if unsupported
-
 ARGS=($(eval getopt -u --options=$SHORT_ARGS_STR --longoptions=$LONG_ARGS_STR -- $@))
 
 # Parse all user supplied command line arguments into an assosiate array
-
 NUM_ARGS=${#ARGS[@]}
 USED_ARGS=0
 for ARG in "${ARGS[@]}"; do
@@ -102,82 +98,101 @@ if [ $USED_ARGS -ne $NUM_ARGS ]; then
     echo "Warning: The following arguments were ignored -- "$IGNORED
 fi
 
+############################################################################
+############################################################################
+
+if [ "${PARMS[--blosc]}" = "yes" ]; then
+    USE_BLOSC=ON
+else
+    USE_BLOSC=OFF
+fi
+
 #### Export some manual library locations
 #### @note These locations will be empty if they're disabled (see travis.setup)
 #### All other library locations are handled by USE_SYSTEM_LIBRARY_PATHS
 
 declare -A CMAKE_DICT
 
-HOUDINI=${PARMS[--houdini]}
-USE_BLOSC=${PARMS[--blosc]}
-CORE=${PARMS[--core]}
+export OPENVDB_ROOT=${PARMS[--openvdb_dir]}
+export BLOSC_ROOT=$HOME/blosc
+export CPPUNIT_ROOT=$HOME/cppunit
 
-# export CPPUNIT_ROOT=$HOME/cppunit
-# export BLOSC_ROOT=$HOME/blosc
+# Mode handling
+# @todo replace with --targets
 
-export ILMBASE_ROOT=$BOB_WORLD_SLOT_ilmbase
-export OPENEXR_ROOT=$BOB_WORLD_SLOT_openexr
-#export BOOST_ROOT=$BOB_WORLD_SLOT_boost
-export TBB_ROOT=$BOB_WORLD_SLOT_tbb
-export BLOSC_ROOT=$BOB_WORLD_SLOT_blosc
-export LLVM_ROOT=$BOB_WORLD_SLOT_llvm
-export CPPUNIT_ROOT=$BOB_WORLD_SLOT_cppunit
-export GLFW3_ROOT=$BOB_WORLD_SLOT_glfw
-export OPENVDB_ROOT=$BOB_WORLD_SLOT_openvdb
-export OPENVDB_AX_ROOT=$BOB_WORLD_SLOT_openvdb_ax
-export OPENVDB_ROOT="/hosts/bulwell/user_data/RND/dev/git/rndfx/3rdparty-openvdb/install"
-
-if [ ! "$CORE" = "yes" ]; then
-    export OPENVDB_ROOT=${PARMS[--prefix]}
-    CMAKE_DICT["OPENVDB_BUILD_CORE"]="OFF"
+MODE=${PARMS[--mode]}
+if [ "$MODE" = "core" ]; then
+    CMAKE_DICT["OPENVDB_BUILD_CORE"]=ON
+    CMAKE_DICT["OPENVDB_BUILD_BINARIES"]=ON
+    CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]=ON
+    CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]=OFF
+    CMAKE_DICT["OPENVDB_BUILD_UNITTESTS"]=OFF
+elif [ "$MODE" = "hou" ]; then
+    CMAKE_DICT["OPENVDB_BUILD_CORE"]=OFF
+    CMAKE_DICT["OPENVDB_BUILD_BINARIES"]=OFF
+    CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]=OFF
+    CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]=ON
+    CMAKE_DICT["OPENVDB_BUILD_UNITTESTS"]=OFF
+elif [ "$MODE" = "test" ]; then
+    CMAKE_DICT["OPENVDB_BUILD_CORE"]=OFF
+    CMAKE_DICT["OPENVDB_BUILD_BINARIES"]=OFF
+    CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]=OFF
+    CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]=OFF
+    CMAKE_DICT["OPENVDB_BUILD_UNITTESTS"]=ON
+    elif [ "$MODE" = "runtest" ]; then
+    echo ""
 else
-    CMAKE_DICT["OPENVDB_BUILD_CORE"]="ON"
+    echo "Unrecognised mode"
+    exit -1
 fi
 
-CMAKE_DICT["CMAKE_CXX_COMPILER"]=${PARMS[--compiler]}
-CMAKE_DICT["CMAKE_INSTALL_PREFIX"]=${PARMS[--prefix]}
-CMAKE_DICT["CMAKE_BUILD_TYPE"]=${PARMS[--build_type]}
-CMAKE_DICT["OPENVDB_ABI_VERSION_NUMBER"]=${PARMS[--abi]}
+# if --houdini-dir has been specified, we're building against a houdini install
 
-CMAKE_DICT["OPENVDB_BUILD_MAYA_PLUGIN"]="OFF"
-CMAKE_DICT["OPENVDB_BUILD_DOCS"]="ON"
-CMAKE_DICT["OPENVDB_BUILD_UNITTESTS"]="ON"
-CMAKE_DICT["OPENVDB_ENABLE_RPATH"]="ON"
-CMAKE_DICT["OPENVDB_CXX_STRICT"]="ON"
-
-# If building with Houdini dependencies, turn off the python
-# module as the CMake doesn't current support this build set
-
-if [ "$HOUDINI" = "none" ]; then
-    CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]="OFF"
-    CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]="ON"
-    CMAKE_DICT["OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES"]="ON"
-else
-    # Source houdini env
+if [ ! "${PARMS[--houdini_dir]}" = "" ]; then
+    # Source houdini env and re-export blosc location
+    echo "Sourcing Houdini Environment"
     cd ${PARMS[--houdini_dir]}
     source houdini_setup
     cd -
-    CMAKE_DICT["OPENVDB_BUILD_HOUDINI_SOPS"]="ON"
-    CMAKE_DICT["OPENVDB_BUILD_PYTHON_MODULE"]="OFF"
-    CMAKE_DICT["OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES"]="OFF"
+
+    # Set some houdini lib locations
+
+    if [ "$USE_BLOSC" = "yes" ]; then
+        CMAKE_DICT["BLOSC_INCLUDEDIR"]="/test/hou/toolkit/include"
+        CMAKE_DICT["BLOSC_LIBRARYDIR"]="/test/hou/dsolib"
+    fi
+
+    CMAKE_DICT["BOOST_INCLUDEDIR"]="/test/hou/toolkit/include"
+    CMAKE_DICT["BOOST_LIBRARYDIR"]="/test/hou/dsolib"
+    CMAKE_DICT["OPENEXR_INCLUDEDIR"]="/test/hou/toolkit/include"
+    CMAKE_DICT["OPENEXR_LIBRARYDIR"]="/test/hou/dsolib"
+    CMAKE_DICT["ILMBASE_INCLUDEDIR"]="/test/hou/toolkit/include"
+    CMAKE_DICT["ILMBASE_LIBRARYDIR"]="/test/hou/dsolib"
 fi
 
+# other core lib options which can always be set
+
+CMAKE_DICT["OPENVDB_ABI_VERSION_NUMBER"]=${PARMS[--abi]}
+CMAKE_DICT["CMAKE_CXX_COMPILER"]=${PARMS[--compiler]}
+CMAKE_DICT["CMAKE_INSTALL_PREFIX"]=${PARMS[--prefix]}
+CMAKE_DICT["CMAKE_BUILD_TYPE"]=${PARMS[--build_type]}
+CMAKE_DICT["OPENVDB_BUILD_MAYA_PLUGIN"]="OFF"
+CMAKE_DICT["OPENVDB_BUILD_DOCS"]="OFF"
+CMAKE_DICT["OPENVDB_ENABLE_RPATH"]="ON"
+CMAKE_DICT["OPENVDB_CXX_STRICT"]="ON"
+CMAKE_DICT["OPENVDB_PYTHON_WRAP_ALL_GRID_TYPES"]="ON"
+
+# dep options
+
+CMAKE_DICT["USE_BLOSC"]=$USE_BLOSC
 CMAKE_DICT["USE_GLFW3"]="ON"
 CMAKE_DICT["GLFW3_USE_STATIC_LIBS"]="ON"
 CMAKE_DICT["MINIMUM_BOOST_VERSION"]="1.55"
 CMAKE_DICT["ILMBASE_NAMESPACE_VERSIONING"]="OFF"
 CMAKE_DICT["OPENEXR_NAMESPACE_VERSIONING"]="OFF"
-CMAKE_DICT["BOOST_PYTHON_NAMESPACE_VERSIONING"]="OFF"
-CMAKE_DICT["GLFW3_NAMESPACE_VERSIONING"]="ON" # libglfw3-dev installs glfw (no version)
+CMAKE_DICT["BOOST_PYTHON_NAMESPACE_VERSIONING"]="ON"
+CMAKE_DICT["GLFW3_NAMESPACE_VERSIONING"]="OFF" # libglfw3-dev installs glfw (no version)
 CMAKE_DICT["USE_SYSTEM_LIBRARY_PATHS"]="ON"
-
-# Blosc support
-
-if [ "$USE_BLOSC" = "yes" ]; then
-    CMAKE_DICT["USE_BLOSC"]="ON"
-else
-    CMAKE_DICT["USE_BLOSC"]="OFF"
-fi
 
 # Format arguments for command line
 
@@ -200,28 +215,22 @@ cmake $CMAKE_COMMAND_STRING ../
 
 # Build any targets
 
-if HAS_PARM --targets; then
+# zero ccache stats
+ccache -z
 
-    # zero ccache stats
-    ccache -z
+MAKE_COMMAND_STRING=""
+MAKE_COMMAND_STRING+="-j${PARMS[-j]} "
 
-    TARGETS=${PARMS[--targets]}
-    TARGETS=${TARGETS//,/ }
-
-    MAKE_COMMAND_STRING=""
-    MAKE_COMMAND_STRING+="$TARGETS "
-    MAKE_COMMAND_STRING+="-j${PARMS[-j]} "
-
-    if HAS_PARM --verbose; then
-        MAKE_COMMAND_STRING+="VERBOSE=1 "
-    fi
-
-    echo -e "Running Command:\nmake $MAKE_COMMAND_STRING\n"
-    make $MAKE_COMMAND_STRING
-    make install $MAKE_COMMAND_STRING
-
-    # output ccache stats
-    ccache -s
+if [ "${PARMS[--verbose]}" = "yes" ]; then
+    MAKE_COMMAND_STRING+="VERBOSE=1 "
 fi
+
+echo -e "Running Command:\nmake $MAKE_COMMAND_STRING\n"
+make $MAKE_COMMAND_STRING
+echo -e "Running Command:\nmake install\n"
+make install
+
+# output ccache stats
+ccache -s
 
 cd -

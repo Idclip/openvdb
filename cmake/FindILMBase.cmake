@@ -24,187 +24,233 @@
 # IN NO EVENT SHALL THE COPYRIGHT HOLDERS' AND CONTRIBUTORS' AGGREGATE
 # LIABILITY FOR ALL CLAIMS REGARDLESS OF THEIR BASIS EXCEED US$250.00.
 #
+#[=======================================================================[
 
-#-*-cmake-*-
-# - Find ILMBase
-#
-# Author : Nicholas Yue yue.nicholas@gmail.com
-#
-# This auxiliary CMake file helps in find the ILMBASE headers and libraries
-#
-# ILMBASE_FOUND                  set if ILMBASE is found.
-# ILMBASE_INCLUDE_DIR            ILMBASE's include directory
-# ILMBASE_LIBRARY_DIR            ILMBASE's library directory
-# Ilmbase_HALF_LIBRARY           ILMBASE's Half libraries
-# Ilmbase_IEX_LIBRARY            ILMBASE's Iex libraries
-# Ilmbase_IEXMATH_LIBRARY        ILMBASE's IexMath libraries
-# Ilmbase_ILMTHREAD_LIBRARY      ILMBASE's IlmThread libraries
-# Ilmbase_IMATH_LIBRARY          ILMBASE's Imath libraries
+FindILMBase
+---------
+
+Find OpenEXR include dirs and ilmimf library::
+
+  ILMBASE_FOUND              - True if headers and requested libraries were found
+  ILMBASE_INCLUDE_DIRS       - OpenEXR include directories
+  ILMBASE_LIBRARY_DIRS       - Link directories for OpenEXR libraries
+  Ilmbase_HALF_LIBRARY       - ILMBASE's Half libraries
+  Ilmbase_IEX_LIBRARY        - ILMBASE's Iex libraries
+  Ilmbase_IEXMATH_LIBRARY    - ILMBASE's IexMath libraries
+  Ilmbase_ILMTHREAD_LIBRARY  - ILMBASE's IlmThread libraries
+  Ilmbase_IMATH_LIBRARY      - ILMBASE's Imath libraries
+  Ilmbase_HALF_DLL
+  Ilmbase_IEX_DLL
+  Ilmbase_IEXMATH_DLL
+  Ilmbase_ILMTHREAD_DLL
+  Ilmbase_IMATH_DLL
+
+This module reads hints about search locations from variables::
+
+  ILMBASE_ROOT             - Preferred installation prefix
+  ILMBASE_INCLUDEDIR       - Preferred include directory e.g. <prefix>/include
+  ILMBASE_LIBRARYDIR       - Preferred library directory e.g. <prefix>/lib
+  SYSTEM_LIBRARY_PATHS     - Paths appended to all include and lib searches
+
+#]=======================================================================]
 
 FIND_PACKAGE ( PackageHandleStandardArgs )
 
-SET ( ILMBASE_CONFIG_FILE include/OpenEXR/IlmBaseConfig.h
-  CACHE STRING "The config file defining ILMBase's version and used to detect the include installation path."
-  )
+# Append ILMBASE_ROOT or $ENV{ILMBASE_ROOT} if set (prioritize the direct cmake var)
+SET ( _ILMBASE_ROOT_SEARCH_DIR "" )
 
-FIND_PATH ( ILMBASE_LOCATION ${ILMBASE_CONFIG_FILE}
+IF ( ILMBASE_ROOT )
+  LIST ( APPEND _ILMBASE_ROOT_SEARCH_DIR ${ILMBASE_ROOT} )
+ELSE ( _ENV_ILMBASE_ROOT )
+  SET ( _ENV_ILMBASE_ROOT $ENV{ILMBASE_ROOT} )
+  IF ( _ENV_ILMBASE_ROOT )
+    LIST ( APPEND _ILMBASE_ROOT_SEARCH_DIR ${_ENV_ILMBASE_ROOT} )
+  ENDIF ()
+ENDIF ()
+
+# ------------------------------------------------------------------------
+#  Search for ILMBase include DIR
+# ------------------------------------------------------------------------
+
+# Skip if ILMBASE_INCLUDE_DIR has been manually provided
+
+IF ( NOT ILMBASE_INCLUDE_DIRS )
+  SET ( _ILMBASE_INCLUDE_SEARCH_DIRS "" )
+
+  # Append to _ILMBASE_INCLUDE_SEARCH_DIRS in priority order
+
+  IF ( ILMBASE_INCLUDEDIR )
+    LIST ( APPEND _ILMBASE_INCLUDE_SEARCH_DIRS ${ILMBASE_INCLUDEDIR} )
+  ENDIF ()
+  LIST ( APPEND _ILMBASE_INCLUDE_SEARCH_DIRS ${_ILMBASE_ROOT_SEARCH_DIR} )
+  LIST ( APPEND _ILMBASE_INCLUDE_SEARCH_DIRS ${SYSTEM_LIBRARY_PATHS} )
+
+  # Look for a standard OpenEXR header file.
+  FIND_PATH ( ILMBASE_INCLUDE_DIRS OpenEXR/IlmBaseConfig.h
+    NO_DEFAULT_PATH
+    PATHS ${_ILMBASE_INCLUDE_SEARCH_DIRS}
+    PATH_SUFFIXES include
+    )
+ENDIF ()
+
+# Get the ILMBASE version information from the config header
+
+FILE ( STRINGS "${ILMBASE_INCLUDE_DIRS}/OpenEXR/IlmBaseConfig.h"
+  _ilmbase_version_major_string REGEX "#define ILMBASE_VERSION_MAJOR "
+  )
+STRING ( REGEX REPLACE "#define ILMBASE_VERSION_MAJOR" ""
+  _ilmbase_version_major_string "${_ilmbase_version_major_string}"
+  )
+STRING ( STRIP "${_ilmbase_version_major_string}" ILMBASE_VERSION_MAJOR )
+
+FILE ( STRINGS "${ILMBASE_INCLUDE_DIRS}/OpenEXR/IlmBaseConfig.h"
+   _ilmbase_version_minor_string REGEX "#define ILMBASE_VERSION_MINOR "
+  )
+STRING ( REGEX REPLACE "#define ILMBASE_VERSION_MINOR" ""
+  _ilmbase_version_minor_string "${_ilmbase_version_minor_string}"
+  )
+STRING ( STRIP "${_ilmbase_version_minor_string}" ILMBASE_VERSION_MINOR )
+
+UNSET ( _ilmbase_version_major_string )
+UNSET ( _ilmbase_version_minor_string )
+
+SET ( ILMBASE_VERSION ${ILMBASE_VERSION_MAJOR}.${ILMBASE_VERSION_MINOR} )
+
+# ------------------------------------------------------------------------
+#  Search for ILMBASE lib DIR
+# ------------------------------------------------------------------------
+
+SET ( IEX_LIBRARY_NAME Iex )
+# @todo don't think IexMath is needed, but it's in the windows build
+SET ( IEXMATH_LIBRARY_NAME IexMath )
+SET ( ILMTHREAD_LIBRARY_NAME IlmThread )
+SET ( IMATH_LIBRARY_NAME Imath )
+
+IF ( ILMBASE_NAMESPACE_VERSIONING )
+  SET ( IEX_LIBRARY_NAME ${IEX_LIBRARY_NAME}-${ILMBASE_VERSION_MAJOR}_${ILMBASE_VERSION_MINOR} )
+  SET ( IEXMATH_LIBRARY_NAME ${IEXMATH_LIBRARY_NAME}-${ILMBASE_VERSION_MAJOR}_${ILMBASE_VERSION_MINOR} )
+  SET ( ILMTHREAD_LIBRARY_NAME ${ILMTHREAD_LIBRARY_NAME}-${ILMBASE_VERSION_MAJOR}_${ILMBASE_VERSION_MINOR} )
+  SET ( IMATH_LIBRARY_NAME ${IMATH_LIBRARY_NAME}-${ILMBASE_VERSION_MAJOR}_${ILMBASE_VERSION_MINOR} )
+ENDIF ( ILMBASE_NAMESPACE_VERSIONING )
+
+
+SET ( _ILMBASE_LIBRARYDIR_SEARCH_DIRS "" )
+
+# Append to _ILMBASE_LIBRARYDIR_SEARCH_DIRS in priority order
+
+IF ( ILMBASE_LIBRARYDIR )
+  LIST ( APPEND _ILMBASE_LIBRARYDIR_SEARCH_DIRS ${ILMBASE_LIBRARYDIR} )
+ENDIF ()
+LIST ( APPEND _ILMBASE_LIBRARYDIR_SEARCH_DIRS ${_ILMBASE_ROOT_SEARCH_DIR} )
+LIST ( APPEND _ILMBASE_LIBRARYDIR_SEARCH_DIRS ${SYSTEM_LIBRARY_PATHS} )
+
+# Build suffix directories
+
+SET ( ILMBASE_PATH_SUFFIXES
+  lib64
+  lib
+)
+
+IF ( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
+  LIST ( INSERT ILMBASE_PATH_SUFFIXES 0 lib/x86_64-linux-gnu )
+ENDIF ()
+
+SET ( _ILMBASE_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES} )
+
+# library suffix handling
+
+IF ( WIN32 )
+  SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".lib" )
+ENDIF ()
+
+IF ( ILMBASE_USE_STATIC_LIBS )
+  IF ( UNIX )
+    SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".a" )
+  ENDIF ()
+ELSE ()
+  IF ( APPLE )
+    SET( CMAKE_FIND_LIBRARY_SUFFIXES ".dylib" )
+  ENDIF ()
+ENDIF ()
+
+FIND_LIBRARY ( Ilmbase_HALF_LIBRARY Half
   NO_DEFAULT_PATH
-  PATHS $ENV{ILMBASE_ROOT} ${SYSTEM_LIBRARY_PATHS}
+  PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+  PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
+  )
+FIND_LIBRARY ( Ilmbase_IEX_LIBRARY ${IEX_LIBRARY_NAME}
+  NO_DEFAULT_PATH
+  PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+  PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
+  )
+FIND_LIBRARY ( Ilmbase_ILMTHREAD_LIBRARY ${ILMTHREAD_LIBRARY_NAME}
+  NO_DEFAULT_PATH
+  PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+  PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
+  )
+FIND_LIBRARY ( Ilmbase_IMATH_LIBRARY ${IMATH_LIBRARY_NAME}
+  NO_DEFAULT_PATH
+  PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+  PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
   )
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS ( ILMBase
-  REQUIRED_VARS ILMBASE_LOCATION
+IF ( NOT ILMBASE_USE_STATIC_LIBS AND WIN32 )
+  # Load library
+  SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".dll" )
+  FIND_LIBRARY ( Ilmbase_HALF_DLL Half
+    NO_DEFAULT_PATH
+    PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+    PATH_SUFFIXES bin
+    )
+  FIND_LIBRARY ( Ilmbase_IEX_DLL ${IEX_LIBRARY_NAME}
+    NO_DEFAULT_PATH
+    PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+    PATH_SUFFIXES bin
+    )
+  FIND_LIBRARY ( Ilmbase_IEXMATH_DLL ${IEXMATH_LIBRARY_NAME}
+    NO_DEFAULT_PATH
+    PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+    PATH_SUFFIXES bin
+    )
+  FIND_LIBRARY ( Ilmbase_ILMTHREAD_DLL ${ILMTHREAD_LIBRARY_NAME}
+    NO_DEFAULT_PATH
+    PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+    PATH_SUFFIXES bin
+    )
+  FIND_LIBRARY ( Ilmbase_IMATH_DLL ${IMATH_LIBRARY_NAME}
+    NO_DEFAULT_PATH
+    PATHS ${_ILMBASE_LIBRARYDIR_SEARCH_DIRS}
+    PATH_SUFFIXES bin
+    )
+ENDIF ()
+
+# reset lib suffix
+
+SET ( CMAKE_FIND_LIBRARY_SUFFIXES ${_ILMBASE_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES})
+
+GET_FILENAME_COMPONENT ( ILMBASE_LIBRARY_DIRS ${Ilmbase_HALF_LIBRARY} DIRECTORY )
+
+# ------------------------------------------------------------------------
+#  Cache and set ILMBASE_FOUND
+# ------------------------------------------------------------------------
+
+FIND_PACKAGE_HANDLE_STANDARD_ARGS ( IlmBase
+  REQUIRED_VARS ILMBASE_INCLUDE_DIRS ILMBASE_LIBRARY_DIRS Ilmbase_HALF_LIBRARY Ilmbase_IEX_LIBRARY Ilmbase_ILMTHREAD_LIBRARY Ilmbase_IMATH_LIBRARY
+  VERSION_VAR ILMBASE_VERSION
   )
 
 IF ( ILMBASE_FOUND )
-
-  FILE ( STRINGS "${ILMBASE_LOCATION}/${ILMBASE_CONFIG_FILE}" _ilmbase_version_major_string REGEX "#define ILMBASE_VERSION_MAJOR ")
-  STRING ( REGEX REPLACE "#define ILMBASE_VERSION_MAJOR" "" _ilmbase_version_major_unstrip "${_ilmbase_version_major_string}")
-  STRING ( STRIP "${_ilmbase_version_major_unstrip}" ILMBASE_VERSION_MAJOR )
-
-  FILE ( STRINGS "${ILMBASE_LOCATION}/${ILMBASE_CONFIG_FILE}" _ilmbase_version_minor_string REGEX "#define ILMBASE_VERSION_MINOR ")
-  STRING ( REGEX REPLACE "#define ILMBASE_VERSION_MINOR" "" _ilmbase_version_minor_unstrip "${_ilmbase_version_minor_string}")
-  STRING ( STRIP "${_ilmbase_version_minor_unstrip}" ILMBASE_VERSION_MINOR )
-
-  MESSAGE ( STATUS "Found ILMBase v${ILMBASE_VERSION_MAJOR}.${ILMBASE_VERSION_MINOR} at ${ILMBASE_LOCATION}" )
-
-  SET ( IEX_LIBRARY_NAME Iex )
-  # @todo don't think IexMath is needed, but it's in the windows build
-  SET ( IEXMATH_LIBRARY_NAME IexMath )
-  SET ( ILMTHREAD_LIBRARY_NAME IlmThread )
-  SET ( IMATH_LIBRARY_NAME Imath )
-
-  IF ( ILMBASE_NAMESPACE_VERSIONING )
-    SET ( IEX_LIBRARY_NAME ${IEX_LIBRARY_NAME}-${ILMBASE_VERSION_MAJOR}_${ILMBASE_VERSION_MINOR} )
-    SET ( IEXMATH_LIBRARY_NAME ${IEXMATH_LIBRARY_NAME}-${ILMBASE_VERSION_MAJOR}_${ILMBASE_VERSION_MINOR} )
-    SET ( ILMTHREAD_LIBRARY_NAME ${ILMTHREAD_LIBRARY_NAME}-${ILMBASE_VERSION_MAJOR}_${ILMBASE_VERSION_MINOR} )
-    SET ( IMATH_LIBRARY_NAME ${IMATH_LIBRARY_NAME}-${ILMBASE_VERSION_MAJOR}_${ILMBASE_VERSION_MINOR} )
-  ENDIF ( ILMBASE_NAMESPACE_VERSIONING )
-
-  SET ( ILMBASE_BASE_LIB_DIRECTORIES
-    ${ILMBASE_LOCATION}
-    ${SYSTEM_LIBRARY_PATHS}
-  )
-
-  SET ( ILMBASE_PATH_SUFFIXES
-    lib64
-    lib
-  )
-
-  IF ( ${CMAKE_CXX_COMPILER_ID} STREQUAL GNU )
-    SET ( ILMBASE_PATH_SUFFIXES
-      lib/x86_64-linux-gnu
-      ${ILMBASE_PATH_SUFFIXES}
-    )
-  ENDIF ()
-
-  SET ( ORIGINAL_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES} )
-
-  IF ( UNIX )
-    IF ( Ilmbase_USE_STATIC_LIBS )
-      SET ( CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-    ENDIF ()
-
-    FIND_LIBRARY ( Ilmbase_HALF_LIBRARY Half
-      PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-      PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-      NO_DEFAULT_PATH
-      )
-    FIND_LIBRARY ( Ilmbase_IEX_LIBRARY ${IEX_LIBRARY_NAME}
-      PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-      PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-      NO_DEFAULT_PATH
-      )
-    FIND_LIBRARY ( Ilmbase_ILMTHREAD_LIBRARY ${ILMTHREAD_LIBRARY_NAME}
-      PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-      PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-      NO_DEFAULT_PATH
-      )
-    FIND_LIBRARY ( Ilmbase_IMATH_LIBRARY ${IMATH_LIBRARY_NAME}
-      PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-      PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-      NO_DEFAULT_PATH
-      )
-  ELSEIF ( WIN32 )
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-
-    IF ( Ilmbase_USE_STATIC_LIBS )
-      FIND_LIBRARY ( Ilmbase_HALF_LIBRARY Half_static
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-      FIND_LIBRARY ( Ilmbase_IEX_LIBRARY Iex_static
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-      FIND_LIBRARY ( Ilmbase_ILMTHREAD_LIBRARY IlmThread_static
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-      FIND_LIBRARY ( Ilmbase_IMATH_LIBRARY Imath_static
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-    ELSE ()
-      FIND_LIBRARY ( Ilmbase_HALF_LIBRARY Half
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-      FIND_LIBRARY ( Ilmbase_IEX_LIBRARY ${IEX_LIBRARY_NAME}
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-      FIND_LIBRARY ( Ilmbase_IEXMATH_LIBRARY ${IEXMATH_LIBRARY_NAME}
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-      FIND_LIBRARY ( Ilmbase_ILMTHREAD_LIBRARY ${ILMTHREAD_LIBRARY_NAME}
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-      FIND_LIBRARY ( Ilmbase_IMATH_LIBRARY ${IMATH_LIBRARY_NAME}
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        )
-      # Load library
-      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
-      FIND_LIBRARY ( Ilmbase_HALF_DLL Half
-        PATHS ${ILMBASE_LOCATION}/bin
-        NO_DEFAULT_PATH
-        )
-      FIND_LIBRARY ( Ilmbase_IEX_DLL ${IEX_LIBRARY_NAME}
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        NO_DEFAULT_PATH
-        )
-      FIND_LIBRARY ( Ilmbase_IEXMATH_DLL ${IEXMATH_LIBRARY_NAME}
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        NO_DEFAULT_PATH
-        )
-      FIND_LIBRARY ( Ilmbase_ILMTHREAD_DLL ${ILMTHREAD_LIBRARY_NAME}
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        NO_DEFAULT_PATH
-        )
-      FIND_LIBRARY ( Ilmbase_IMATH_DLL ${IMATH_LIBRARY_NAME}
-        PATHS ${ILMBASE_BASE_LIB_DIRECTORIES}
-        PATH_SUFFIXES ${ILMBASE_PATH_SUFFIXES}
-        NO_DEFAULT_PATH
-        )
-    ENDIF ()
-  ENDIF ()
-
-  GET_FILENAME_COMPONENT ( ILMBASE_LIBRARY_DIR ${Ilmbase_HALF_LIBRARY} DIRECTORY CACHE )
   SET ( ILMBASE_INCLUDE_DIRS
-    ${ILMBASE_LOCATION}/include
-    ${ILMBASE_LOCATION}/include/OpenEXR
-    CACHE STRING "ILMBase include directories"
-    )
-
-  # MUST reset
-  SET(CMAKE_FIND_LIBRARY_SUFFIXES ${ORIGINAL_CMAKE_FIND_LIBRARY_SUFFIXES})
-
-ELSE ( ILMBASE_FOUND )
-  MESSAGE ( FATAL_ERROR "Unable to find ILMBase, ILMBASE_ROOT = $ENV{ILMBASE_ROOT}")
-ENDIF ( ILMBASE_FOUND )
+    ${ILMBASE_INCLUDE_DIRS}
+    ${ILMBASE_INCLUDE_DIRS}/OpenEXR
+    CACHE STRING "IlmBase include directory"
+  )
+  SET ( ILMBASE_LIBRARY_DIRS ${ILMBASE_LIBRARY_DIRS}
+    CACHE STRING "IlmBase library directory"
+  )
+  SET ( OPENEXR_ILMIMF_LIBRARY ${OPENEXR_ILMIMF_LIBRARY}
+    CACHE STRING "IlmBase library"
+  )
+ELSE ()
+  MESSAGE ( FATAL_ERROR "Unable to find IlmBase")
+ENDIF ()
