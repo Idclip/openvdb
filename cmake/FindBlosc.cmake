@@ -34,7 +34,7 @@ Find Blosc include dirs and libraries::
   BLOSC_FOUND            - True if headers and requested libraries were found
   BLOSC_INCLUDE_DIRS     - Blosc include directories
   BLOSC_LIBRARY_DIRS     - Link directories for Blosc libraries
-  BLOSC_LIBRARIES        - Blosc libraries to be linked
+  Blosc_BLOSC_LIBRARY    - Blosc libraries to be linked
 
 This module reads hints about search locations from variables::
 
@@ -111,7 +111,7 @@ SET ( BLOSC_PATH_SUFFIXES
   lib
 )
 
-FIND_LIBRARY ( BLOSC_LIBRARIES blosc
+FIND_LIBRARY ( Blosc_BLOSC_LIBRARY blosc
   NO_DEFAULT_PATH
   PATHS ${_BLOSC_LIBRARYDIR_SEARCH_DIRS}
   PATH_SUFFIXES ${BLOSC_PATH_SUFFIXES}
@@ -121,14 +121,14 @@ IF ( BLOSC_USE_STATIC_LIBS )
   SET ( CMAKE_FIND_LIBRARY_SUFFIXES ${_BLOSC_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES} )
 ENDIF ()
 
-GET_FILENAME_COMPONENT ( BLOSC_LIBRARY_DIRS ${BLOSC_LIBRARIES} DIRECTORY )
+GET_FILENAME_COMPONENT ( BLOSC_LIBRARY_DIRS ${Blosc_BLOSC_LIBRARY} DIRECTORY )
 
 # ------------------------------------------------------------------------
 #  Cache and set BLOSC_FOUND
 # ------------------------------------------------------------------------
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS ( BLOSC
-  REQUIRED_VARS BLOSC_INCLUDE_DIR BLOSC_LIBRARY_DIRS BLOSC_LIBRARIES
+  REQUIRED_VARS BLOSC_INCLUDE_DIR BLOSC_LIBRARY_DIRS Blosc_BLOSC_LIBRARY
   )
 
 IF ( BLOSC_FOUND )
@@ -139,8 +139,11 @@ IF ( BLOSC_FOUND )
   SET ( BLOSC_LIBRARY_DIRS ${BLOSC_LIBRARY_DIRS}
     CACHE STRING "Blosc library directory"
   )
-  SET ( BLOSC_LIBRARIES ${BLOSC_LIBRARIES}
+  SET ( Blosc_BLOSC_LIBRARY ${Blosc_BLOSC_LIBRARY}
     CACHE STRING "Blosc library"
+  )
+  SET ( BLOSC_blosc_LIBRARY ${Blosc_BLOSC_LIBRARY}
+    CACHE STRING "Blosc library (deprecated)"
   )
 ELSE ()
   MESSAGE ( FATAL_ERROR "Unable to find Blosc")
