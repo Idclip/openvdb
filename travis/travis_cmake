@@ -168,6 +168,8 @@ if [ ! "${PARMS[--houdini_dir]}" = "" ]; then
     CMAKE_DICT["OPENEXR_LIBRARYDIR"]="/test/hou/dsolib"
     CMAKE_DICT["ILMBASE_INCLUDEDIR"]="/test/hou/toolkit/include"
     CMAKE_DICT["ILMBASE_LIBRARYDIR"]="/test/hou/dsolib"
+    CMAKE_DICT["TBB_INCLUDEDIR"]="/test/hou/toolkit/include"
+    CMAKE_DICT["TBB_LIBRARYDIR"]="/test/hou/dsolib"
 fi
 
 # other core lib options which can always be set
