@@ -63,18 +63,18 @@ jobs:
     - script: bash travis/travis_cmake --prefix=$HOME/builds/$TRAVIS_BUILD_ID/install --houdini_dir=/test/hou --mode core
       env: ABI=5 BLOSC=yes BUILD_TYPE=Release HOUDINI_MAJOR=17.0 COMPILER=g++
     # build OpenVDB unit tests
-    - stage: build_unittests_and_houdini
-      script: bash travis/travis_cmake \
-        --openvdb_dir=$HOME/builds/$TRAVIS_BUILD_ID/install \
-        --prefix=$HOME/builds/$TRAVIS_BUILD_ID/install \
-        --mode test
-      env: ABI=6 BLOSC=yes BUILD_TYPE=Release HOUDINI_MAJOR=none COMPILER=g++
-    - script: bash travis/travis_cmake \
-        --openvdb_dir=$HOME/builds/$TRAVIS_BUILD_ID/install \
-        --houdini_dir=/test/hou \
-        --mode hou \
-        --prefix=$HOME/builds/$TRAVIS_BUILD_ID/houdini_install
-      env: ABI=5 BLOSC=yes BUILD_TYPE=Release HOUDINI_MAJOR=17.0 COMPILER=g++
+    # - stage: build_unittests_and_houdini
+    #   script: bash travis/travis_cmake \
+    #     --openvdb_dir=$HOME/builds/$TRAVIS_BUILD_ID/install \
+    #     --prefix=$HOME/builds/$TRAVIS_BUILD_ID/install \
+    #     --mode test
+    #   env: ABI=6 BLOSC=yes BUILD_TYPE=Release HOUDINI_MAJOR=none COMPILER=g++
+    # - script: bash travis/travis_cmake \
+    #     --openvdb_dir=$HOME/builds/$TRAVIS_BUILD_ID/install \
+    #     --houdini_dir=/test/hou \
+    #     --mode hou \
+    #     --prefix=$HOME/builds/$TRAVIS_BUILD_ID/houdini_install
+    #   env: ABI=5 BLOSC=yes BUILD_TYPE=Release HOUDINI_MAJOR=17.0 COMPILER=g++
 
 after_failure:
     # cleanup
