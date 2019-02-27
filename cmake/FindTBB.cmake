@@ -35,7 +35,7 @@ Find TBB include dirs and ilmimf library::
   TBB_INCLUDE_DIRS         - TBB include directories
   TBB_LIBRARY_DIRS         - Link directories for TBB libraries
   Tbb_TBB_LIBRARY          - TBB libraries
-  Tbb_TBBMALLOC_LIBRARY    - TBB malloc libraries (Mulitple Rendering Context)
+  Tbb_TBBMALLOC_LIBRARY    - TBB malloc libraries
 
 This module reads hints about search locations from variables::
 
