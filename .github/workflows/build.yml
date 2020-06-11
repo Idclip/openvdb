@@ -28,10 +28,12 @@ jobs:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-openvdb:2020
+    env:
+      CXX: clang++
     steps:
     - uses: actions/checkout@v1
     - name: build
-      run: ./ci/build.sh clang++ Release 7 ON None -DOPENVDB_CXX_STRICT=ON
+      run: ./ci/build.sh Release 7 ON None -DOPENVDB_CXX_STRICT=ON
     - name: test
       run: ./ci/test.sh
     - name: test_install
@@ -41,34 +43,44 @@ jobs:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-openvdb:2019
+    env:
+      CXX: clang++
     steps:
     - uses: actions/checkout@v1
     - name: build
-      run: ./ci/build.sh clang++ Release 6 ON None -DOPENVDB_CXX_STRICT=ON
+      run: ./ci/build.sh Release 6 ON None -DOPENVDB_CXX_STRICT=ON
     - name: test
       run: ./ci/test.sh
+    - name: test_install
+      run: ./ci/test_install.sh
 
   testabi5:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-openvdb:2018
+    env:
+      CXX: clang++
     steps:
     - uses: actions/checkout@v1
     - name: build
-      run: ./ci/build.sh clang++ Release 5 ON None -DOPENVDB_CXX_STRICT=ON
+      run: ./ci/build.sh Release 5 ON None -DOPENVDB_CXX_STRICT=ON
     - name: test
       run: ./ci/test.sh
+    - name: test_install
+      run: ./ci/test_install.sh
 
   testhou180:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-base:2019
+    env:
+      CXX: clang++
     steps:
     - uses: actions/checkout@v1
     - name: houdini
       run: ./ci/install_houdini.sh 18.0 ${{ secrets.HOUPASS }}
     - name: build
-      run: ./ci/build_houdini.sh clang++ Release ON
+      run: ./ci/build_houdini.sh Release ON
     - name: test
       run: ./ci/test.sh
 
@@ -89,10 +101,12 @@ jobs:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-openvdb:2020
+    env:
+      CXX: clang++
     steps:
     - uses: actions/checkout@v1
     - name: build
-      run: ./ci/build.sh clang++ Release 7 OFF None -DOPENVDB_CXX_STRICT=ON
+      run: ./ci/build.sh Release 7 OFF None -DOPENVDB_CXX_STRICT=ON
     - name: test
       run: ./ci/test.sh
 
@@ -100,12 +114,14 @@ jobs:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-base:2019
+    env:
+      CXX: g++
     steps:
     - uses: actions/checkout@v1
     - name: houdini
       run: ./ci/install_houdini.sh 18.0 ${{ secrets.HOUPASS }}
     - name: build
-      run: ./ci/build_houdini.sh g++ Release OFF
+      run: ./ci/build_houdini.sh Release OFF
     - name: test
       run: ./ci/test.sh
 
@@ -124,30 +140,40 @@ jobs:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-openvdb:2020
+    env:
+      CXX: g++
     steps:
     - uses: actions/checkout@v1
     - name: build
-      run: ./ci/build.sh g++ Release 7 ON None -DOPENVDB_CXX_STRICT=ON
+      run: ./ci/build.sh Release 7 ON None -DOPENVDB_CXX_STRICT=ON
 
   testabi7debug:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-openvdb:2020
+    env:
+      CXX: clang++
     steps:
     - uses: actions/checkout@v1
     - name: build
-      run: ./ci/build.sh clang++ DebugNoInfo 7 ON None -DOPENVDB_CXX_STRICT=ON
+      run: ./ci/build.sh DebugNoInfo 7 ON None -DOPENVDB_CXX_STRICT=ON
 
   testabi7sse:
     runs-on: ubuntu-16.04
     container:
       image: aswf/ci-openvdb:2020
+    env:
+      CXX: clang++
     steps:
     - uses: actions/checkout@v1
     - name: build
-      run: ./ci/build.sh clang++ Release 7 ON SSE42 -DOPENVDB_CXX_STRICT=ON
+      run: ./ci/build.sh Release 7 ON SSE42 -DOPENVDB_CXX_STRICT=ON
     - name: test
       run: ./ci/test.sh
+
+  # See the following regarding boost installations on Windows:
+  #  https://github.com/actions/virtual-environments/issues/687
+  #  https://github.com/actions/virtual-environments/blob/master/images/win/Windows2019-Readme.md
 
   testwindows2019md:
     runs-on: windows-2019
@@ -165,10 +191,20 @@ jobs:
       run: ./ci/install_windows.sh
     - name: build
       shell: bash
-      run: ./ci/build_windows.sh "${VCPKG_INSTALLATION_ROOT}"
+      run: |
+        ./ci/build.sh Release 7 ON None \
+          -G '"Visual Studio 16 2019"' \
+          -A x64 \
+          -DVCPKG_TARGET_TRIPLET="${VCPKG_DEFAULT_TRIPLET}" \
+          -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake" \
+          -DBOOST_ROOT="${BOOST_ROOT_1_72_0}" \
+          -DBOOST_INCLUDEDIR="${BOOST_ROOT_1_72_0}\boost\include" \
+          -DBOOST_LIBRARYDIR="${BOOST_ROOT_1_72_0}\lib"
     - name: test
       shell: bash
       run: ./ci/test.sh
+    - name: test_install
+      run: ./ci/test_install.sh
 
   testwindows2019mt:
     runs-on: windows-2019
@@ -190,16 +226,27 @@ jobs:
         # static build of blosc from vcpkg does not build internal sources.
         # USE_STATIC_DEPENDENCIES is required for IlmBase/OpenEXR defines and
         # Boost as both shared and static libs are installed.
-        ./ci/build_windows.sh "${VCPKG_INSTALLATION_ROOT}" \
+        ./ci/build.sh Release 7 ON None \
+          -G '"Visual Studio 16 2019"' \
+          -A x64 \
+          -DVCPKG_TARGET_TRIPLET="${VCPKG_DEFAULT_TRIPLET}" \
+          -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}\scripts\buildsystems\vcpkg.cmake" \
+          -DBOOST_ROOT="${BOOST_ROOT_1_72_0}" \
+          -DBOOST_INCLUDEDIR="${BOOST_ROOT_1_72_0}\boost\include" \
+          -DBOOST_LIBRARYDIR="${BOOST_ROOT_1_72_0}\lib" \
           -DUSE_STATIC_DEPENDENCIES=ON \
           -DBLOSC_USE_EXTERNAL_SOURCES=ON \
           -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
     - name: test
       shell: bash
       run: ./ci/test.sh
+    - name: test_install
+      run: ./ci/test_install.sh
 
   testmacos1015:
     runs-on: macos-10.15
+    env:
+      CXX: clang++
     steps:
     - uses: actions/checkout@v2
     - name: install
@@ -216,7 +263,9 @@ jobs:
       # See https://formulae.brew.sh/formula/python@3.8
       # Also need to disable compiler warnings for ABI 6 and above due to
       # the version of clang installed
-      run: ./ci/build.sh clang++ Release 7 ON SSE42 -DPython_ROOT_DIR=/usr/local/opt/python@3.8 -DOPENVDB_CXX_STRICT=OFF
+      run: ./ci/build.sh Release 7 ON SSE42 -DPython_ROOT_DIR=/usr/local/opt/python@3.8 -DOPENVDB_CXX_STRICT=OFF
     - name: test
       shell: bash
       run: ./ci/test.sh
+    - name: test_install
+      run: ./ci/test_install.sh

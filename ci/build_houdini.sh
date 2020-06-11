@@ -2,7 +2,6 @@
 
 set -ex
 
-COMPILER="$1"
 RELEASE="$2"
 EXTRAS="$3"
 
@@ -15,6 +14,11 @@ if [ -d "hou" ]; then
 
     mkdir build
     cd build
+
+    # print version
+    $CXX -v
+    cmake --version
+
     cmake \
         -DCMAKE_CXX_FLAGS_DebugNoInfo="" \
         -DCMAKE_CXX_COMPILER=${COMPILER} \

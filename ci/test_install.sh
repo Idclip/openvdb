@@ -17,5 +17,5 @@ target_link_libraries(test_vdb_print OpenVDB::openvdb)
 mkdir tmp
 cd tmp
 echo -e "$cmakelists" > CMakeLists.txt
-cmake -DCMAKE_MODULE_PATH=$HOME/install/lib64/cmake/OpenVDB/ .
+cmake -DCMAKE_MODULE_PATH="$HOME/install/lib64/cmake/OpenVDB/;$HOME/install/lib/cmake/OpenVDB/" .
 make -j2
