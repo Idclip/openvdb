@@ -202,80 +202,98 @@ void printFunctions(const bool namesOnly,
 {
     static const size_t maxHelpTextWidth = 100;
 
+    auto printRegistry =
+        [&](const openvdb::ax::codegen::FunctionRegistry& reg) {
+
+        // convert to ordered map for alphabetical sorting
+        // only include non internal functions and apply any search
+        // criteria
+        std::map<std::string, const openvdb::ax::codegen::FunctionGroup*> functionMap;
+        for (const auto& iter : reg.map()) {
+            if (iter.second.isInternal()) continue;
+            if (!search.empty() && iter.first.find(search) == std::string::npos) {
+                continue;
+            }
+            functionMap[iter.first] = iter.second.function();
+        }
+
+        if (functionMap.empty()) return;
+
+        if (namesOnly) {
+
+            const size_t size = functionMap.size();
+            size_t pos = 0, count = 0;
+
+            auto iter = functionMap.cbegin();
+            for (; iter != functionMap.cend(); ++iter) {
+                if (count == size - 1) break;
+                const std::string& name = iter->first;
+                if (count != 0 && pos > maxHelpTextWidth) {
+                    os << '\n';
+                    pos = 0;
+                }
+                pos += name.size() + 2; // 2=", "
+                os << name << ',' << ' ';
+                ++count;
+            }
+
+            os << iter->first << '\n';
+        }
+        else {
+
+            llvm::LLVMContext C;
+
+            for (const auto& iter : functionMap) {
+                const openvdb::ax::codegen::FunctionGroup* function = iter.second;
+                const char* cdocs = function->doc();
+                if (!cdocs || cdocs[0] == '\0') {
+                    cdocs = "<No documentation exists for this function>";
+                }
+
+                // do some basic formatting on the help text
+
+                std::string docs(cdocs);
+                size_t pos = maxHelpTextWidth;
+                while (pos < docs.size()) {
+                    while (docs[pos] != ' ' && pos != 0) --pos;
+                    if (pos == 0) break;
+                    docs.insert(pos, "\n|  ");
+                    pos += maxHelpTextWidth;
+                }
+
+                os << iter.first << '\n' << '|' << '\n';
+                os << "| - " << docs << '\n' << '|' << '\n';
+
+                const auto& list = function->list();
+                for (const openvdb::ax::codegen::Function::Ptr& decl : list) {
+                    os << "|  - ";
+                    decl->print(C, os);
+                    os << '\n';
+                }
+                os << '\n';
+            }
+        }
+    };
+
     openvdb::ax::FunctionOptions opts;
     opts.mLazyFunctions = false;
-    const openvdb::ax::codegen::FunctionRegistry::UniquePtr registry =
+
+    openvdb::ax::codegen::FunctionRegistry::UniquePtr registry =
         openvdb::ax::codegen::createDefaultRegistry(&opts);
 
-    // convert to ordered map for alphabetical sorting
-    // only include non internal functions and apply any search
-    // criteria
+    os << "Standard Functions: \n|\n";
+    printRegistry(*registry);
 
-    std::map<std::string, const openvdb::ax::codegen::FunctionGroup*> functionMap;
-    for (const auto& iter : registry->map()) {
-        if (iter.second.isInternal()) continue;
-        if (!search.empty() && iter.first.find(search) == std::string::npos) {
-            continue;
-        }
-        functionMap[iter.first] = iter.second.function();
-    }
+    registry->clear();
+    os << "Point Functions: \n|\n";
+    openvdb::ax::codegen::insertVDBPointFunctions(*registry, &opts);
+    printRegistry(*registry);
 
-    if (functionMap.empty()) return;
-
-    if (namesOnly) {
-
-        const size_t size = functionMap.size();
-        size_t pos = 0, count = 0;
-
-        auto iter = functionMap.cbegin();
-        for (; iter != functionMap.cend(); ++iter) {
-            if (count == size - 1) break;
-            const std::string& name = iter->first;
-            if (count != 0 && pos > maxHelpTextWidth) {
-                os << '\n';
-                pos = 0;
-            }
-            pos += name.size() + 2; // 2=", "
-            os << name << ',' << ' ';
-            ++count;
-        }
-
-        os << iter->first << '\n';
-    }
-    else {
-
-        llvm::LLVMContext C;
-
-        for (const auto& iter : functionMap) {
-            const openvdb::ax::codegen::FunctionGroup* const function = iter.second;
-            const char* cdocs = function->doc();
-            if (!cdocs || cdocs[0] == '\0') {
-                cdocs = "<No documentation exists for this function>";
-            }
-
-            // do some basic formatting on the help text
-
-            std::string docs(cdocs);
-            size_t pos = maxHelpTextWidth;
-            while (pos < docs.size()) {
-                while (docs[pos] != ' ' && pos != 0) --pos;
-                if (pos == 0) break;
-                docs.insert(pos, "\n|  ");
-                pos += maxHelpTextWidth;
-            }
-
-            os << iter.first << '\n' << '|' << '\n';
-            os << "| - " << docs << '\n' << '|' << '\n';
-
-            const auto& list = function->list();
-            for (const openvdb::ax::codegen::Function::Ptr& decl : list) {
-                os << "|  - ";
-                decl->print(C, os);
-                os << '\n';
-            }
-            os << '\n';
-        }
-    }
+    registry->clear();
+    os << "Volume Functions: \n|\n";
+    openvdb::ax::codegen::insertVDBVolumeFunctions(*registry, &opts);
+    openvdb::ax::codegen::insertVDBVolumeAttrFunctions(*registry, &opts);
+    printRegistry(*registry);
 }
 
 int

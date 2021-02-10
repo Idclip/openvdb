@@ -158,7 +158,21 @@ struct VolumeComputeGenerator : public ComputeGenerator
     using ComputeGenerator::visit;
 
     AttributeRegistry::Ptr generate(const ast::Tree& node);
+
+    /// @brief  Custom traversal of AttributeFunctionCall
+    /// @note   Don't visit the attribute
+    // bool traverse(const ast::AttributeFunctionCall* afunc)
+    // {
+    //     std::cerr << "hi" << std::endl;
+    //     if (!afunc) return true;
+    //     // visit self first to verify context
+    //     if (!this->visit(afunc)) return false;
+    //     if (!this->traverse(&afunc->func())) return false;
+    //     return true;
+    // }
+
     bool visit(const ast::Attribute*) override;
+    bool visit(const ast::AttributeFunctionCall*) override;
 
 private:
     llvm::Value* accessorHandleFromToken(const std::string&);
@@ -166,6 +180,9 @@ private:
 
     void computek2(llvm::Function*, const AttributeRegistry&);
     void computek3(llvm::Function*, const AttributeRegistry&);
+
+private:
+    FunctionRegistry mAttrFunctionRegistry;
 };
 
 } // namespace codegen_internal

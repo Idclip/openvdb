@@ -90,7 +90,7 @@ printSignature(std::ostream& os,
 ///////////////////////////////////////////////////////////////////////////
 
 llvm::Function*
-Function::create(llvm::LLVMContext& C, llvm::Module* M) const
+Function::create(llvm::LLVMContext& C, llvm::Module* M, const ast::FunctionCall*) const
 {
     if (M)  {
         if (llvm::Function* function = M->getFunction(this->symbol())) {
@@ -124,7 +124,8 @@ llvm::Function* Function::get(const llvm::Module& M) const
 llvm::Value*
 Function::call(const std::vector<llvm::Value*>& args,
      llvm::IRBuilder<>& B,
-     const bool cast) const
+     const bool cast,
+     const ast::FunctionCall* ast) const
 {
     llvm::BasicBlock* block = B.GetInsertBlock();
     assert(block);
@@ -132,7 +133,7 @@ Function::call(const std::vector<llvm::Value*>& args,
     assert(currentFunction);
     llvm::Module* M = currentFunction->getParent();
     assert(M);
-    llvm::Function* function = this->create(B.getContext(), M);
+    llvm::Function* function = this->create(B.getContext(), M, ast);
     std::vector<llvm::Value*> inputs(args);
     if (cast) {
         std::vector<llvm::Type*> types;
@@ -180,6 +181,7 @@ Function::match(const std::vector<llvm::Type*>& inputs, llvm::LLVMContext& C) co
         // allow for string->char*. Note that this is only allowed from inputs->signature
         if (from == strType && to == LLVMType<char>::get(C)) continue;
         if (!isValidCast(from, to)) return Size;
+        // implicit
     }
 
     return Implicit;
@@ -274,11 +276,11 @@ Function::flattenAttrs(llvm::LLVMContext& C) const
 
 
 llvm::Function*
-IRFunctionBase::create(llvm::LLVMContext& C, llvm::Module* M) const
+IRFunctionBase::create(llvm::LLVMContext& C, llvm::Module* M, const ast::FunctionCall* ast) const
 {
     if (this->hasEmbedIR()) return nullptr;
 
-    llvm::Function* F = this->Function::create(C, M);
+    llvm::Function* F = this->Function::create(C, M, ast);
     assert(F);
     // return if the function has already been generated or if no
     // module has been provided (just the function prototype requested)
@@ -299,7 +301,7 @@ IRFunctionBase::create(llvm::LLVMContext& C, llvm::Module* M) const
     // create a new builder per function (its lightweight)
     // @todo could pass in the builder similar to Function::call
     llvm::IRBuilder<> B(BB);
-    llvm::Value* lastInstruction = mGen(fnargs, B);
+    llvm::Value* lastInstruction = mGen(fnargs, B, ast);
 
     // Allow the user to return a nullptr, an actual value or a return
     // instruction from the generator callback. This facilitates the same
@@ -338,26 +340,26 @@ IRFunctionBase::create(llvm::LLVMContext& C, llvm::Module* M) const
 
 llvm::Value* IRFunctionBase::call(const std::vector<llvm::Value*>& args,
      llvm::IRBuilder<>& B,
-     const bool cast) const
+     const bool cast,
+     const ast::FunctionCall* ast) const
 {
     if (!this->hasEmbedIR()) {
-        return this->Function::call(args, B, cast);
+        return this->Function::call(args, B, cast, ast);
     }
+
+    std::vector<llvm::Type*> types;
+    llvm::Type* ret = this->types(types, B.getContext());
 
     std::vector<llvm::Value*> inputs(args);
     if (cast) {
-        std::vector<llvm::Type*> types;
-        this->types(types, B.getContext());
         this->cast(inputs, types, B);
     }
 
-    llvm::Value* result = mGen(inputs, B);
-    if (result) {
-        // only verify if result is not nullptr to
-        // allow for embedded instructions
-        std::vector<llvm::Type*> unused;
-        this->verifyResultType(result->getType(),
-            this->types(unused, B.getContext()));
+    llvm::Value* result = mGen(inputs, B, ast);
+    // only verify if result is not nullptr or void to
+    // allow for embedded instructions
+    if (result && !ret->isVoidTy()) {
+        this->verifyResultType(result->getType(), ret);
     }
     return result;
 }

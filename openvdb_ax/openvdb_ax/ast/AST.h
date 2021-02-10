@@ -130,6 +130,7 @@ struct Node
         CastNode,
         AttributeNode,
         FunctionCallNode,
+        AttributeFunctionCallNode,
         ExternalVariableNode,
         DeclareLocalNode,
         ArrayPackNode,
@@ -1583,7 +1584,7 @@ struct FunctionCall : public Expression
     ~FunctionCall() override = default;
 
     /// @copybrief Node::copy()
-    FunctionCall* copy() const override final { return new FunctionCall(*this); }
+    FunctionCall* copy() const override { return new FunctionCall(*this); }
     /// @copybrief Node::nodetype()
     NodeType nodetype() const override { return Node::FunctionCallNode; }
     /// @copybrief Node::nodename()
@@ -1986,6 +1987,103 @@ struct Attribute : public Variable
 private:
     const tokens::CoreType mType;
     const bool mTypeInferred;
+};
+
+struct AttributeFunctionCall : public Expression
+{
+    using UniquePtr = std::unique_ptr<AttributeFunctionCall>;
+
+    /// @brief  Construct a new FunctionCall with a given function identifier
+    ///         and an optional argument, transferring ownership of any
+    ///         provided argument to the FunctionCall and updating parent data
+    ///         on the arguments.
+    /// @param  function   The name/identifier of the function
+    /// @param  argument  Function argument
+    AttributeFunctionCall(Attribute* attr,
+            const std::string& function,
+            Expression* argument = nullptr)
+        : mAttr(attr)
+        , mFunction(new ast::FunctionCall(function, argument)) {
+            mAttr->setParent(this);
+            mFunction->setParent(this);
+        }
+    /// @brief  Construct a new AttributeFunctionCall with a given function identifier
+    ///         and optional argument list, transferring ownership of any
+    ///         provided arguments to the AttributeFunctionCall and updating parent data
+    ///         on the arguments.
+    /// @param  function   The name/identifier of the function
+    /// @param  arguments  Function arguments
+    AttributeFunctionCall(Attribute* attr,
+                  const std::string& function,
+                  const std::vector<Expression*>& arguments)
+        : mAttr(attr)
+        , mFunction(new ast::FunctionCall(function, arguments)) {
+            mAttr->setParent(this);
+            mFunction->setParent(this);
+        }
+
+    /// @brief  Deep copy constructor for a AttributeFunctionCall, performing a deep copy
+    ///         on all held function arguments, ensuring parent information is
+    ///         updated.
+    /// @param  other  A const reference to another AttributeFunctionCall to deep copy
+    AttributeFunctionCall(const AttributeFunctionCall& other)
+        : mAttr(other.mAttr->copy())
+        , mFunction(other.mFunction->copy()) {
+            mAttr->setParent(this);
+            mFunction->setParent(this);
+        }
+    ~AttributeFunctionCall() override = default;
+
+    /// @copybrief Node::copy()
+    AttributeFunctionCall* copy() const override { return new AttributeFunctionCall(*this); }
+    /// @copybrief Node::nodetype()
+    NodeType nodetype() const override { return Node::AttributeFunctionCallNode; }
+    /// @copybrief Node::nodename()
+    const char* nodename() const override { return "attribute function"; }
+    /// @copybrief Node::subname()
+    const char* subname() const override { return "afun"; }
+    /// @copybrief Node::basetype()
+    const Expression* basetype() const override { return this; }
+    /// @copybrief Node::children()
+    size_t children() const override final { return 2; }
+    /// @copybrief Node::child()
+    const Expression* child(const size_t i) const override final {
+        if (i == 0) return mAttr.get();
+        if (i == 1) return mFunction.get();
+        return nullptr;
+    }
+    /// @copybrief Node::replacechild()
+    // @todo support attr trplace
+    inline bool replacechild(const size_t i, Node* node) override final {
+        if (i > 1) return false;
+        if (i == 0) {
+            Attribute* attr = dynamic_cast<Attribute*>(node);
+            if (!attr) return false;
+            mAttr.reset(attr);
+            mAttr->setParent(this);
+        }
+        else {
+            FunctionCall* func = dynamic_cast<FunctionCall*>(node);
+            if (!func) return false;
+            mFunction.reset(func);
+            mFunction->setParent(this);
+        }
+        return true;
+    }
+
+    /// @brief  Appends an argument to this function call, transferring
+    ///         ownership to the AttributeFunctionCall and updating parent data on the
+    ///         expression. If the expression is a nullptr, it is ignored.
+    inline void append(Expression* expr) {
+        this->mFunction->append(expr);
+    }
+
+    const ast::Attribute& attr() const { return *mAttr; }
+    const ast::FunctionCall& func() const { return *mFunction; }
+
+private:
+    ast::Attribute::UniquePtr mAttr;
+    ast::FunctionCall::UniquePtr mFunction;
 };
 
 /// @brief  ExternalVariable represent any access to external (custom) data,

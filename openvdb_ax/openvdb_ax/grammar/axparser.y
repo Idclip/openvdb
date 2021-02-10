@@ -68,6 +68,7 @@
     openvdb::ax::ast::Block* block;
     openvdb::ax::ast::Expression* expression;
     openvdb::ax::ast::FunctionCall* function;
+    openvdb::ax::ast::AttributeFunctionCall* attr_function;
     openvdb::ax::ast::ArrayPack* arraypack;
     openvdb::ax::ast::CommaOperator* comma;
     openvdb::ax::ast::Variable* variable;
@@ -105,7 +106,7 @@
 %token F_AT I_AT V_AT S_AT I16_AT
 %token MAT3F MAT3D MAT4F MAT4D M3F_AT M4F_AT
 %token F_DOLLAR I_DOLLAR V_DOLLAR S_DOLLAR
-%token DOT_X DOT_Y DOT_Z
+%token DOT_X DOT_Y DOT_Z PTR
 %token <index> L_INT32 L_INT64
 %token <flt> L_FLOAT
 %token <flt> L_DOUBLE
@@ -126,9 +127,11 @@
 %type <statementlist> declaration_list
 
 %type <function> function_start_expression
+%type <attr_function> attr_function_start_expression
 
 %type <expression> assign_expression
 %type <expression> function_call_expression
+%type <expression> attr_function_expression
 %type <expression> binary_expression
 %type <expression> unary_expression
 %type <expression> ternary_expression
@@ -264,6 +267,7 @@ expression:
     | ternary_expression           { $$ = $1; }
     | assign_expression            { $$ = $1; }
     | function_call_expression     { $$ = $1; }
+    | attr_function_expression     { $$ = $1; }
     | literal                      { $$ = $1; }
     | external                     { $$ = $1; }
     | post_crement                 { $$ = $1; }
@@ -357,6 +361,16 @@ loop:
                                                                     { $$ = newNode<Loop>(&@$, tokens::FOR, ($5 ? $5 : newNode<Value<bool>>(&@$, true)), $9, $3, $7); }
     | DO block_or_statement WHILE LPARENS loop_condition RPARENS    { $$ = newNode<Loop>(&@$, tokens::DO, $5, $2); }
     | WHILE LPARENS loop_condition RPARENS block_or_statement       { $$ = newNode<Loop>(&@$, tokens::WHILE, $3, $5); }
+;
+
+attr_function_start_expression:
+      attribute PTR IDENTIFIER LPARENS expression      { $$ = newNode<AttributeFunctionCall>(&@1, $1, $3); $$->append($5); free(const_cast<char*>($3)); }
+    | attr_function_start_expression COMMA expression  { $1->append($3); $$ = $1; }
+;
+
+attr_function_expression:
+      attribute PTR IDENTIFIER LPARENS RPARENS  { $$ = newNode<AttributeFunctionCall>(&@1, $1, $3); free(const_cast<char*>($3)); }
+    | attr_function_start_expression RPARENS    { $$ = $1; }
 ;
 
 /// @brief  Beginning/builder syntax for function calls with arguments

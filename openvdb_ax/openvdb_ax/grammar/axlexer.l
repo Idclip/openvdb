@@ -148,6 +148,8 @@ COMMENT     "//".*
 "i$"                        { return I_DOLLAR; }
 "s$"                        { return S_DOLLAR; }
 
+"->"                        { return PTR; }
+
 "if"                        { return IF; }
 "else"                      { return ELSE; }
 "true"                      { return TRUE; }

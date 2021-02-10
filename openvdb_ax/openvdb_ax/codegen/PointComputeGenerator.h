@@ -101,10 +101,14 @@ struct PointComputeGenerator : public ComputeGenerator
 
     AttributeRegistry::Ptr generate(const ast::Tree& node);
     bool visit(const ast::Attribute*) override;
+    bool visit(const ast::AttributeFunctionCall*) override;
 
 private:
     llvm::Value* attributeHandleFromToken(const std::string&);
     void getAttributeValue(const std::string& globalName, llvm::Value* location);
+
+private:
+    FunctionRegistry mAttrFunctionRegistry;
 };
 
 } // namespace namespace codegen_internal

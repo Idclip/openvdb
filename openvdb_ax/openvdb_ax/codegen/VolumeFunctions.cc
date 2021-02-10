@@ -16,10 +16,12 @@
 #include "Types.h"
 #include "Utils.h"
 
+#include "openvdb_ax/ast/AST.h"
 #include "openvdb_ax/compiler/CompilerOptions.h"
 #include "openvdb_ax/Exceptions.h"
 
 #include <openvdb/version.h>
+#include <openvdb/tools/Interpolation.h>
 
 #include <unordered_map>
 #include <cstdlib>
@@ -33,7 +35,7 @@ namespace ax {
 namespace codegen {
 
 
-namespace {
+namespace volume {
 
 #define OPENVDB_AX_CHECK_MODULE_CONTEXT(B) \
     { \
@@ -46,6 +48,69 @@ namespace {
         } \
     }
 
+}
+
+void appendAccessorArgument(std::vector<llvm::Value*>& args,
+    llvm::IRBuilder<>& B,
+    const ast::Attribute& attr)
+{
+    llvm::Function* compute = B.GetInsertBlock()->getParent();
+    llvm::Module* M = compute->getParent();
+
+    const std::string& globalName = attr.tokenname();
+    llvm::Value* index = M->getNamedValue(globalName);
+    assert(index);
+
+    index = B.CreateLoad(index);
+    llvm::Value* aptr = extractArgument(compute, "accessors");
+    assert(aptr);
+    aptr = B.CreateGEP(aptr, index);
+    aptr = B.CreateLoad(aptr);
+    args.emplace_back(aptr);
+}
+
+llvm::Value* getClassArgument(llvm::IRBuilder<>& B, const ast::Attribute& attr)
+{
+    llvm::Function* compute = B.GetInsertBlock()->getParent();
+    llvm::Module* M = compute->getParent();
+
+    const std::string& globalName = attr.tokenname();
+    llvm::Value* index = M->getNamedValue(globalName);
+    assert(index);
+
+    index = B.CreateLoad(index);
+    llvm::Value* cptr = extractArgument(compute, "class");
+    assert(cptr);
+    return B.CreateGEP(cptr, index);
+}
+
+void appendGridArgument(std::vector<llvm::Value*>& args,
+    llvm::IRBuilder<>& B,
+    const ast::Attribute& attr)
+{
+    llvm::Function* compute = B.GetInsertBlock()->getParent();
+    llvm::Module* M = compute->getParent();
+
+    const std::string& globalName = attr.tokenname();
+    llvm::Value* index = M->getNamedValue(globalName);
+    assert(index);
+
+    index = B.CreateLoad(index);
+    llvm::Value* tptr = extractArgument(compute, "grids");
+    assert(tptr);
+    tptr = B.CreateGEP(tptr, index);
+    tptr = B.CreateLoad(tptr);
+    args.emplace_back(tptr);
+}
+
+void appendAttributeISEL(std::vector<llvm::Value*>& args,
+    llvm::IRBuilder<>& B,
+    const ast::Attribute& attr)
+{
+    llvm::Type* type = llvmTypeFromToken(attr.type(), B.getContext());
+    type = type->getPointerTo(0);
+    llvm::Value* isel = llvm::ConstantPointerNull::get(llvm::cast<llvm::PointerType>(type));
+    args.emplace_back(isel);
 }
 
 inline FunctionGroup::UniquePtr axcoordtooffset(const FunctionOptions& op)
@@ -477,7 +542,7 @@ inline FunctionGroup::UniquePtr axsetvoxel(const FunctionOptions& op)
     using SetVoxelM4F = void(void*, const openvdb::math::Vec3<int32_t>*, const int32_t, const bool, const openvdb::math::Mat4<float>*);
     using SetVoxelStr = void(void*, const openvdb::math::Vec3<int32_t>*, const int32_t, const bool, codegen::String*);
 
-    return FunctionBuilder("setvoxel")
+    return FunctionBuilder("__setvoxel")
         .addSignature<SetVoxelD>((SetVoxelD*)(setvoxel))
         .addSignature<SetVoxelF>((SetVoxelF*)(setvoxel))
         .addSignature<SetVoxelI64>((SetVoxelI64*)(setvoxel))
@@ -522,7 +587,7 @@ inline FunctionGroup::UniquePtr axsetvoxel(const FunctionOptions& op)
         .get();
 }
 
-inline FunctionGroup::UniquePtr axgetvoxel(const FunctionOptions& op)
+inline FunctionGroup::UniquePtr ax__getvoxel(const FunctionOptions& op)
 {
     static auto getvoxel =
         [](void* accessor,
@@ -662,7 +727,7 @@ inline FunctionGroup::UniquePtr axgetvoxel(const FunctionOptions& op)
     using GetVoxelM4F = void(void*, const openvdb::math::Vec3<int32_t>*, openvdb::math::Mat4<float>*);
     using GetVoxelStr = void(void*, const openvdb::math::Vec3<int32_t>*, codegen::String*);
 
-    return FunctionBuilder("getvoxel")
+    return FunctionBuilder("__getvoxel")
         .addSignature<GetVoxelD>((GetVoxelD*)(getvoxel))
         .addSignature<GetVoxelF>((GetVoxelF*)(getvoxel))
         .addSignature<GetVoxelI64>((GetVoxelI64*)(getvoxel))
@@ -736,7 +801,6 @@ inline FunctionGroup::UniquePtr axprobevalue(const FunctionOptions& op)
         using ValueType = typename std::remove_pointer<decltype(value)>::type;
         using GridType = typename openvdb::BoolGrid::ValueConverter<ValueType>::Type;
         using AccessorType = typename GridType::Accessor;
-
         assert(accessor);
         assert(coord);
         assert(value);
@@ -817,18 +881,755 @@ inline FunctionGroup::UniquePtr axprobevalue(const FunctionOptions& op)
             .addParameterAttribute(2, llvm::Attribute::NoAlias)
             .addParameterAttribute(3, llvm::Attribute::WriteOnly)
             .addParameterAttribute(3, llvm::Attribute::NoAlias)
-            .addFunctionAttribute(llvm::Attribute::NoUnwind)
-            .addFunctionAttribute(llvm::Attribute::NoRecurse)
-            .setConstantFold(false)
-        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
         .setDocumentation("Internal function for getting the value of a voxel and its active state.")
         .get();
 }
 
+inline FunctionGroup::UniquePtr ax__voxel(const FunctionOptions& op)
+{
+    static auto voxel =
+        [](auto* value,
+           const openvdb::math::Vec3<int32_t>* coord,
+           void* accessor,
+           auto) //only used for prototype selection
+    {
+        assert(value);
+        assert(coord);
+        assert(accessor);
+        const AccessorType* const aptr =
+            static_cast<const AccessorType* const>(accessor);
+        const openvdb::Coord* ijk =
+            reinterpret_cast<const openvdb::Coord*>(coord);
+        *value = aptr->getValue(*ijk);
+    };
+
+    using VoxelD = void(double*, const openvdb::math::Vec3<int32_t>*, void*, const double*);
+    using VoxelF = void(float*, const openvdb::math::Vec3<int32_t>*, void*, const float*);
+    using VoxelI64 = void(int64_t*, const openvdb::math::Vec3<int32_t>*, void*, const int64_t*);
+    using VoxelI32 = void(int32_t*, const openvdb::math::Vec3<int32_t>*, void*, const int32_t*);
+    using VoxelI16 = void(int16_t*, const openvdb::math::Vec3<int32_t>*, void*, const int16_t*);
+    using VoxelB = void(bool*, const openvdb::math::Vec3<int32_t>*, void*, const bool);
+    using VoxelV2D = void(openvdb::math::Vec2<double>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<double>*);
+    using VoxelV2F = void(openvdb::math::Vec2<float>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<float>*);
+    using VoxelV2I = void(openvdb::math::Vec2<int32_t>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<int32_t>*);
+    using VoxelV3D = void(openvdb::math::Vec3<double>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<double>*);
+    using VoxelV3F = void(openvdb::math::Vec3<float>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<float>*);
+    using VoxelV3I = void(openvdb::math::Vec3<int32_t>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<int32_t>*);
+    using VoxelV4D = void(openvdb::math::Vec4<double>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<double>*);
+    using VoxelV4F = void(openvdb::math::Vec4<float>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<float>*);
+    using VoxelV4I = void(openvdb::math::Vec4<int32_t>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<int32_t>*);
+    using VoxelM3D = void(openvdb::math::Mat3<double>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat3<double>*);
+    using VoxelM3F = void(openvdb::math::Mat3<float>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat3<float>*);
+    using VoxelM4D = void(openvdb::math::Mat4<double>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat4<double>*);
+    using VoxelM4F = void(openvdb::math::Mat4<float>*, const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat4<float>*);
+
+    return FunctionBuilder("__voxel")
+        .addSignature<VoxelD, true>((VoxelD*)(voxel))
+        .addSignature<VoxelF, true>((VoxelF*)(voxel))
+        .addSignature<VoxelI64, true>((VoxelI64*)(voxel))
+        .addSignature<VoxelI32, true>((VoxelI32*)(voxel))
+        .addSignature<VoxelI16, true>((VoxelI16*)(voxel))
+        .addSignature<VoxelB, true>((VoxelB*)(voxel))
+        .addSignature<VoxelV2D, true>((VoxelV2D*)(voxel))
+        .addSignature<VoxelV2F, true>((VoxelV2F*)(voxel))
+        .addSignature<VoxelV2I, true>((VoxelV2I*)(voxel))
+        .addSignature<VoxelV3D, true>((VoxelV3D*)(voxel))
+        .addSignature<VoxelV3F, true>((VoxelV3F*)(voxel))
+        .addSignature<VoxelV3I, true>((VoxelV3I*)(voxel))
+        .addSignature<VoxelV4D, true>((VoxelV4D*)(voxel))
+        .addSignature<VoxelV4F, true>((VoxelV4F*)(voxel))
+        .addSignature<VoxelV4I, true>((VoxelV4I*)(voxel))
+        .addSignature<VoxelM3F, true>((VoxelM3F*)(voxel))
+        .addSignature<VoxelM3D, true>((VoxelM3D*)(voxel))
+        .addSignature<VoxelM4F, true>((VoxelM4F*)(voxel))
+        .addSignature<VoxelM4D, true>((VoxelM4D*)(voxel))
+            .addParameterAttribute(0, llvm::Attribute::NoAlias)
+            .addParameterAttribute(0, llvm::Attribute::WriteOnly)
+            .addParameterAttribute(1, llvm::Attribute::ReadOnly)
+            .addParameterAttribute(3, llvm::Attribute::WriteOnly)
+            .addParameterAttribute(3, llvm::Attribute::NoAlias)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setConstantFold(false)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Returns the value of a voxel.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axvoxel(const FunctionOptions& op)
+{
+    auto generate = [op](const std::vector<llvm::Value*>& args,
+         llvm::IRBuilder<>& B,
+         const ast::FunctionCall* f) -> llvm::Value*
+    {
+        llvm::Function* compute = B.GetInsertBlock()->getParent();
+        verifyContext(compute, "voxel");
+
+        assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
+        auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
+
+        std::vector<llvm::Value*> input(args);
+        appendAccessorArgument(input, B, afc->attr());
+        appendAttributeISEL(input, B, afc->attr());
+        return ax__voxel(op)->execute(input, B);
+    };
+
+    return FunctionBuilder("voxel")
+        .addSignature<void(const openvdb::math::Vec3<int32_t>*)>(generate)
+            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setEmbedIR(true)
+        .addDependency("__voxel")
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Returns the value of a voxel.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr ax__isactive(const FunctionOptions& op)
+{
+    static auto isactive =
+        [](const openvdb::math::Vec3<int32_t>* coord,
+           void* accessor,
+           auto* value) //only used for prototype selection
+            -> bool {
+        using ValueType = typename std::remove_pointer<decltype(value)>::type;
+        using GridType = typename openvdb::BoolGrid::ValueConverter<ValueType>::Type;
+        using AccessorType = typename GridType::Accessor;
+        assert(coord);
+        assert(accessor);
+        const AccessorType* const aptr =
+            static_cast<const AccessorType* const>(accessor);
+        const openvdb::Coord* ijk =
+            reinterpret_cast<const openvdb::Coord*>(coord);
+        return aptr->isValueOn(*ijk);
+    };
+
+    using IsActiveD = bool(const openvdb::math::Vec3<int32_t>*, void*, const double*);
+    using IsActiveF = bool(const openvdb::math::Vec3<int32_t>*, void*, const float*);
+    using IsActiveI64 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int64_t*);
+    using IsActiveI32 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int32_t*);
+    using IsActiveI16 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int16_t*);
+    using IsActiveB = bool(const openvdb::math::Vec3<int32_t>*, void*, const bool*);
+    using IsActiveV2D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<double>*);
+    using IsActiveV2F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<float>*);
+    using IsActiveV2I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<int32_t>*);
+    using IsActiveV3D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<double>*);
+    using IsActiveV3F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<float>*);
+    using IsActiveV3I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<int32_t>*);
+    using IsActiveV4D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<double>*);
+    using IsActiveV4F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<float>*);
+    using IsActiveV4I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<int32_t>*);
+    using IsActiveM3D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat3<double>*);
+    using IsActiveM3F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat3<float>*);
+    using IsActiveM4D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat4<double>*);
+    using IsActiveM4F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat4<float>*);
+
+    return FunctionBuilder("__isactive")
+        .addSignature<IsActiveD>((IsActiveD*)(isactive))
+        .addSignature<IsActiveF>((IsActiveF*)(isactive))
+        .addSignature<IsActiveI64>((IsActiveI64*)(isactive))
+        .addSignature<IsActiveI32>((IsActiveI32*)(isactive))
+        .addSignature<IsActiveI16>((IsActiveI16*)(isactive))
+        .addSignature<IsActiveB>((IsActiveB*)(isactive))
+        .addSignature<IsActiveV2D>((IsActiveV2D*)(isactive))
+        .addSignature<IsActiveV2F>((IsActiveV2F*)(isactive))
+        .addSignature<IsActiveV2I>((IsActiveV2I*)(isactive))
+        .addSignature<IsActiveV3D>((IsActiveV3D*)(isactive))
+        .addSignature<IsActiveV3F>((IsActiveV3F*)(isactive))
+        .addSignature<IsActiveV3I>((IsActiveV3I*)(isactive))
+        .addSignature<IsActiveV4D>((IsActiveV4D*)(isactive))
+        .addSignature<IsActiveV4F>((IsActiveV4F*)(isactive))
+        .addSignature<IsActiveV4I>((IsActiveV4I*)(isactive))
+        .addSignature<IsActiveM3D>((IsActiveM3D*)(isactive))
+        .addSignature<IsActiveM3F>((IsActiveM3F*)(isactive))
+        .addSignature<IsActiveM4D>((IsActiveM4D*)(isactive))
+        .addSignature<IsActiveM4F>((IsActiveM4F*)(isactive))
+            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setConstantFold(false)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Returns the value of a voxel.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axisactive(const FunctionOptions& op)
+{
+    auto generate = [op](const std::vector<llvm::Value*>& args,
+         llvm::IRBuilder<>& B,
+         const ast::FunctionCall* f) -> llvm::Value*
+    {
+        llvm::Function* compute = B.GetInsertBlock()->getParent();
+        verifyContext(compute, "isactive");
+
+        assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
+        auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
+
+        std::vector<llvm::Value*> input(args);
+        appendAccessorArgument(input, B, afc->attr());
+        appendAttributeISEL(input, B, afc->attr());
+        return ax__isactive(op)->execute(input, B);
+    };
+
+    return FunctionBuilder("isactive")
+        .addSignature<bool(const openvdb::math::Vec3<int32_t>*)>(generate)
+            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setEmbedIR(true)
+        .addDependency("__isactive")
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Returns the value of a voxel.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr ax__isvoxel(const FunctionOptions& op)
+{
+    static auto isactive =
+        [](const openvdb::math::Vec3<int32_t>* coord,
+           void* accessor,
+           auto* value) //only used for prototype selection
+            -> bool {
+        using ValueType = typename std::remove_pointer<decltype(value)>::type;
+        using GridType = typename openvdb::BoolGrid::ValueConverter<ValueType>::Type;
+        using AccessorType = typename GridType::Accessor;
+        assert(coord);
+        assert(accessor);
+        const AccessorType* const aptr =
+            static_cast<const AccessorType* const>(accessor);
+        const openvdb::Coord* ijk =
+            reinterpret_cast<const openvdb::Coord*>(coord);
+        return aptr->isVoxel(*ijk);
+    };
+
+    using IsActiveD = bool(const openvdb::math::Vec3<int32_t>*, void*, const double*);
+    using IsActiveF = bool(const openvdb::math::Vec3<int32_t>*, void*, const float*);
+    using IsActiveI64 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int64_t*);
+    using IsActiveI32 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int32_t*);
+    using IsActiveI16 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int16_t*);
+    using IsActiveB = bool(const openvdb::math::Vec3<int32_t>*, void*, const bool*);
+    using IsActiveV2D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<double>*);
+    using IsActiveV2F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<float>*);
+    using IsActiveV2I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<int32_t>*);
+    using IsActiveV3D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<double>*);
+    using IsActiveV3F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<float>*);
+    using IsActiveV3I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<int32_t>*);
+    using IsActiveV4D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<double>*);
+    using IsActiveV4F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<float>*);
+    using IsActiveV4I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<int32_t>*);
+    using IsActiveM3D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat3<double>*);
+    using IsActiveM3F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat3<float>*);
+    using IsActiveM4D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat4<double>*);
+    using IsActiveM4F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat4<float>*);
+
+    return FunctionBuilder("__isvoxel")
+        .addSignature<IsActiveD>((IsActiveD*)(isactive))
+        .addSignature<IsActiveF>((IsActiveF*)(isactive))
+        .addSignature<IsActiveI64>((IsActiveI64*)(isactive))
+        .addSignature<IsActiveI32>((IsActiveI32*)(isactive))
+        .addSignature<IsActiveI16>((IsActiveI16*)(isactive))
+        .addSignature<IsActiveB>((IsActiveB*)(isactive))
+        .addSignature<IsActiveV2D>((IsActiveV2D*)(isactive))
+        .addSignature<IsActiveV2F>((IsActiveV2F*)(isactive))
+        .addSignature<IsActiveV2I>((IsActiveV2I*)(isactive))
+        .addSignature<IsActiveV3D>((IsActiveV3D*)(isactive))
+        .addSignature<IsActiveV3F>((IsActiveV3F*)(isactive))
+        .addSignature<IsActiveV3I>((IsActiveV3I*)(isactive))
+        .addSignature<IsActiveV4D>((IsActiveV4D*)(isactive))
+        .addSignature<IsActiveV4F>((IsActiveV4F*)(isactive))
+        .addSignature<IsActiveV4I>((IsActiveV4I*)(isactive))
+        .addSignature<IsActiveM3D>((IsActiveM3D*)(isactive))
+        .addSignature<IsActiveM3F>((IsActiveM3F*)(isactive))
+        .addSignature<IsActiveM4D>((IsActiveM4D*)(isactive))
+        .addSignature<IsActiveM4F>((IsActiveM4F*)(isactive))
+            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setConstantFold(false)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Internal function for querying if a coordinate is a voxel.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axisvoxel(const FunctionOptions& op)
+{
+    auto generate = [op](const std::vector<llvm::Value*>& args,
+         llvm::IRBuilder<>& B,
+         const ast::FunctionCall* f) -> llvm::Value*
+    {
+        llvm::Function* compute = B.GetInsertBlock()->getParent();
+        verifyContext(compute, "isvoxel");
+
+        assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
+        auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
+
+        std::vector<llvm::Value*> input(args);
+        appendAccessorArgument(input, B, afc->attr());
+        appendAttributeISEL(input, B, afc->attr());
+        return ax__isvoxel(op)->execute(input, B);
+    };
+
+    return FunctionBuilder("isvoxel")
+        .addSignature<bool(const openvdb::math::Vec3<int32_t>*)>(generate)
+            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setEmbedIR(true)
+        .addDependency("__isvoxel")
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Returns if the value at the specified index coordinate is "
+            "at the voxel level of the VDB tree.")
+        .get();
+}
+
+template <size_t Order>
+inline FunctionGroup::UniquePtr ax__sample(const FunctionOptions& op)
+{
+    static_assert(Order <= 2, "Invalid Order for axsample");
+
+    static auto sample =
+        [](auto* value,
+           const openvdb::math::Vec3<double>* pos,
+           void* accessor,
+           auto) //only used for prototype selection
+    {
+        using ValueType = typename std::remove_pointer<decltype(value)>::type;
+        using GridType = typename openvdb::BoolGrid::ValueConverter<ValueType>::Type;
+        using AccessorType = typename GridType::Accessor;
+        assert(value);
+        assert(pos);
+        assert(accessor);
+        const AccessorType* const aptr =
+            static_cast<const AccessorType* const>(accessor);
+        openvdb::tools::Sampler<Order, false>::sample(*aptr, *pos, *value);
+    };
+
+    static auto sample_v3 =
+        [](auto* value,
+           const openvdb::math::Vec3<double>* pos,
+           const bool staggered,
+           void* accessor,
+           auto) //only used for prototype selection
+    {
+        using ValueType = typename std::remove_pointer<decltype(value)>::type;
+        using GridType = typename openvdb::BoolGrid::ValueConverter<ValueType>::Type;
+        using AccessorType = typename GridType::Accessor;
+        assert(value);
+        assert(pos);
+        assert(accessor);
+        const AccessorType* const aptr =
+            static_cast<const AccessorType* const>(accessor);
+        if (staggered) openvdb::tools::Sampler<Order, true>::sample(*aptr, *pos, *value);
+        else           openvdb::tools::Sampler<Order, false>::sample(*aptr, *pos, *value);
+    };
+
+    using SampleD = void(double*, const openvdb::math::Vec3<double>*, void*, const double*);
+    using SampleF = void(float*, const openvdb::math::Vec3<double>*, void*, const float*);
+    using SampleI64 = void(int64_t*, const openvdb::math::Vec3<double>*, void*, const int64_t*);
+    using SampleI32 = void(int32_t*, const openvdb::math::Vec3<double>*, void*, const int32_t*);
+    using SampleI16 = void(int16_t*, const openvdb::math::Vec3<double>*, void*, const int16_t*);
+    using SampleB = void(bool*, const openvdb::math::Vec3<double>*, void*, const bool);
+    using SampleV2D = void(openvdb::math::Vec2<double>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec2<double>*);
+    using SampleV2F = void(openvdb::math::Vec2<float>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec2<float>*);
+    using SampleV2I = void(openvdb::math::Vec2<int32_t>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec2<int32_t>*);
+    using SampleV3D = void(openvdb::math::Vec3<double>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec3<double>*);
+    using SampleV3F = void(openvdb::math::Vec3<float>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec3<float>*);
+    using SampleV3I = void(openvdb::math::Vec3<int32_t>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec3<int32_t>*);
+    using SampleV4D = void(openvdb::math::Vec4<double>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec4<double>*);
+    using SampleV4F = void(openvdb::math::Vec4<float>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec4<float>*);
+    using SampleV4I = void(openvdb::math::Vec4<int32_t>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec4<int32_t>*);
+
+    using SampleV3D_S = void(openvdb::math::Vec3<double>*, const openvdb::math::Vec3<double>*, const bool, void*, const openvdb::math::Vec3<double>*);
+    using SampleV3F_S = void(openvdb::math::Vec3<float>*, const openvdb::math::Vec3<double>*, const bool, void*, const openvdb::math::Vec3<float>*);
+    using SampleV3I_S = void(openvdb::math::Vec3<int32_t>*, const openvdb::math::Vec3<double>*, const bool, void*, const openvdb::math::Vec3<int32_t>*);
+
+    return FunctionBuilder(
+        Order == 0 ? "__pointsample" :
+        Order == 1 ? "__boxsample" :
+        Order == 2 ? "__quadraticsample" : "")
+        .addSignature<SampleD, true>((SampleD*)(sample))
+        .addSignature<SampleF, true>((SampleF*)(sample))
+        .addSignature<SampleI64, true>((SampleI64*)(sample))
+        .addSignature<SampleI32, true>((SampleI32*)(sample))
+        .addSignature<SampleI16, true>((SampleI16*)(sample))
+        .addSignature<SampleB, true>((SampleB*)(sample))
+        .addSignature<SampleV2D, true>((SampleV2D*)(sample))
+        .addSignature<SampleV2F, true>((SampleV2F*)(sample))
+        .addSignature<SampleV2I, true>((SampleV2I*)(sample))
+        .addSignature<SampleV3D, true>((SampleV3D*)(sample))
+        .addSignature<SampleV3F, true>((SampleV3F*)(sample))
+        .addSignature<SampleV3I, true>((SampleV3I*)(sample))
+        .addSignature<SampleV4D, true>((SampleV4D*)(sample))
+        .addSignature<SampleV4F, true>((SampleV4F*)(sample))
+        .addSignature<SampleV4I, true>((SampleV4I*)(sample))
+        .addSignature<SampleV3D_S, true>((SampleV3D_S*)(sample_v3))
+        .addSignature<SampleV3F_S, true>((SampleV3F_S*)(sample_v3))
+        .addSignature<SampleV3I_S, true>((SampleV3I_S*)(sample_v3))
+            .addParameterAttribute(0, llvm::Attribute::NoAlias)
+            .addParameterAttribute(0, llvm::Attribute::WriteOnly)
+            .addParameterAttribute(1, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setConstantFold(false)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Internal sampling.")
+        .get();
+}
+
+template <size_t Order>
+inline FunctionGroup::UniquePtr axsample(const FunctionOptions& op)
+{
+    auto generate = [op](const std::vector<llvm::Value*>& args,
+         llvm::IRBuilder<>& B,
+         const ast::FunctionCall* f) -> llvm::Value*
+    {
+        llvm::Function* compute = B.GetInsertBlock()->getParent();
+        verifyContext(compute, "sample");
+
+        assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
+        auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
+
+        const bool isVec3 = afc->attr().type() == ast::tokens::CoreType::VEC3F
+            || afc->attr().type() == ast::tokens::CoreType::VEC3D
+            || afc->attr().type() == ast::tokens::CoreType::VEC3I;
+
+        std::vector<llvm::Value*> input(args);
+
+        if (isVec3 && input.size() == 1) {
+            llvm::Value* gclass = B.CreateLoad(getClassArgument(B, afc->attr()));
+            llvm::Value* V = LLVMType<int8_t>::get(B.getContext(), static_cast<int8_t>(openvdb::GRID_STAGGERED));
+            llvm::Value* staggered = B.CreateICmpEQ(gclass, V);
+            input.emplace_back(staggered);
+        }
+        else if (!isVec3 && input.size() == 2) {
+            // @todo warn/error?
+            input.pop_back();
+        }
+
+        appendAccessorArgument(input, B, afc->attr());
+        appendAttributeISEL(input, B, afc->attr());
+        return ax__sample<Order>(op)->execute(input, B);
+    };
+
+    return FunctionBuilder(
+        Order == 0 ? "pointsample" :
+        Order == 1 ? "boxsample" :
+        Order == 2 ? "quadraticsample" : "")
+        .template addSignature<void(const openvdb::math::Vec3<double>*)>(generate)
+        .template addSignature<void(const openvdb::math::Vec3<double>*, bool)>(generate)
+            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setEmbedIR(true)
+        .addDependency("__pointsample")
+        .addDependency("__boxsample")
+        .addDependency("__quadraticsample")
+        .setArgumentNames({"position", "staggered"})
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation(Order == 0 ? "Point sample the given volume at an index space "
+            "position. Point sampling is the same as single value voxel retrieval, where "
+            "the position is rounded to the nearest voxel coordinate." :
+            Order == 1 ? "Box sample the given volume at an index space position. "
+            "Box-sampling performs trilinear interpolation on the nearest 8 values." :
+            Order == 2 ? "Quadratic sample the given volume at an index space "
+            "position.  Quadratic-sampling performs triquadratic interpolation across "
+            "the nearest 27 values." : "")
+        .get();
+}
+
+/*
+inline FunctionGroup::UniquePtr ax__mean(const FunctionOptions& op)
+{
+    static auto mean =
+        [](auto* value,
+           const openvdb::math::Vec3<int32_t>* coord,
+           const int32_t width,
+           void* accessor,
+           auto) //only used for prototype selection
+    {
+        using ValueType = typename std::remove_pointer<decltype(value)>::type;
+        // use long double for int64_t to ensure precision
+        using WeightT = typename std::conditional<std::is_same<ValueType, int64_t>::value, long double, double>::type;
+        using GridType = typename openvdb::BoolGrid::ValueConverter<ValueType>::Type;
+        using AccessorType = typename GridType::Accessor;
+        assert(value);
+        assert(coord);
+        assert(accessor);
+
+        const openvdb::Coord* ijk =
+            reinterpret_cast<const openvdb::Coord*>(coord);
+        const AccessorType* const aptr =
+            static_cast<const AccessorType* const>(accessor);
+
+        ValueType sum = openvdb::zeroVal<ValueType>();
+        openvdb::Coord xyz(*ijk);
+
+        // @todo GCC prints some weird warnings for int16_t conversion which
+        // might be a GCC bug. Need to investigate
+        OPENVDB_NO_TYPE_CONVERSION_WARNING_BEGIN
+        openvdb::Int32& i = xyz[0], j = i + width;
+        for (i -= width; i <= j; ++i) sum += aptr->getValue(xyz);
+        xyz[0] = (*ijk)[0];
+
+        i = xyz[1], j = i + width;
+        for (i -= width; i <= j; ++i) sum += aptr->getValue(xyz);
+        xyz[1] = (*ijk)[1];
+
+        i = xyz[2], j = i + width;
+        for (i -= width; i <= j; ++i) sum += aptr->getValue(xyz);
+        OPENVDB_NO_TYPE_CONVERSION_WARNING_END
+
+        const WeightT weight = 1.0 / static_cast<WeightT>(3*(2*width+1));
+        *value = ValueType(sum * weight);
+    };
+
+    using MeanD = void(double*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const double*);
+    using MeanF = void(float*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const float*);
+    using MeanI64 = void(int64_t*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const int64_t*);
+    using MeanI32 = void(int32_t*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const int32_t*);
+    using MeanI16 = void(int16_t*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const int16_t*);
+    using MeanB = void(bool*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const bool);
+    using MeanV2D = void(openvdb::math::Vec2<double>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec2<double>*);
+    using MeanV2F = void(openvdb::math::Vec2<float>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec2<float>*);
+    using MeanV2I = void(openvdb::math::Vec2<int32_t>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec2<int32_t>*);
+    using MeanV3D = void(openvdb::math::Vec3<double>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec3<double>*);
+    using MeanV3F = void(openvdb::math::Vec3<float>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec3<float>*);
+    using MeanV3I = void(openvdb::math::Vec3<int32_t>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec3<int32_t>*);
+    using MeanV4D = void(openvdb::math::Vec4<double>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec4<double>*);
+    using MeanV4F = void(openvdb::math::Vec4<float>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec4<float>*);
+    using MeanV4I = void(openvdb::math::Vec4<int32_t>*, const openvdb::math::Vec3<int32_t>*, const int32_t, void*, const openvdb::math::Vec4<int32_t>*);
+
+    return FunctionBuilder("__mean")
+        .addSignature<MeanD, true>((MeanD*)(mean))
+        .addSignature<MeanF, true>((MeanF*)(mean))
+        .addSignature<MeanI64, true>((MeanI64*)(mean))
+        .addSignature<MeanI32, true>((MeanI32*)(mean))
+        .addSignature<MeanI16, true>((MeanI16*)(mean))
+        .addSignature<MeanB, true>((MeanB*)(mean))
+        .addSignature<MeanV2D, true>((MeanV2D*)(mean))
+        .addSignature<MeanV2F, true>((MeanV2F*)(mean))
+        .addSignature<MeanV2I, true>((MeanV2I*)(mean))
+        .addSignature<MeanV3D, true>((MeanV3D*)(mean))
+        .addSignature<MeanV3F, true>((MeanV3F*)(mean))
+        .addSignature<MeanV3I, true>((MeanV3I*)(mean))
+        .addSignature<MeanV4D, true>((MeanV4D*)(mean))
+        .addSignature<MeanV4F, true>((MeanV4F*)(mean))
+        .addSignature<MeanV4I, true>((MeanV4I*)(mean))
+            .addParameterAttribute(0, llvm::Attribute::NoAlias)
+            .addParameterAttribute(0, llvm::Attribute::WriteOnly)
+            .addParameterAttribute(1, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setConstantFold(false)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Internal function for computing a voxel mean value.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axmean(const FunctionOptions& op)
+{
+    auto generate = [op](const std::vector<llvm::Value*>& args,
+         llvm::IRBuilder<>& B,
+         void* metadata) -> llvm::Value*
+    {
+        const ast::Attribute& attr = *(static_cast<ast::Attribute*>(metadata));
+        llvm::Function* compute = B.GetInsertBlock()->getParent();
+        verifyContext(compute, "mean");
+
+        std::vector<llvm::Value*> input(args);
+        appendAccessorArgument(input, B, attr);
+        return ax__mean(op)->execute(input, B);
+    };
+
+    return FunctionBuilder("mean")
+        .addSignature<void(const openvdb::math::Vec3<int32_t>*, int32_t)>(generate)
+            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setEmbedIR(true)
+        .addDependency("__mean")
+        .setArgumentNames({"ijk", "width"})
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Returns a single iteration of a fast separable mean-value "
+            "(i.e. box) filter for a particular index coordinate. The width argument "
+            "defines the neighbour radius in voxels.")
+        .get();
+}
+*/
+
+inline FunctionGroup::UniquePtr ax__transform(const FunctionOptions& op)
+{
+    using GetTransformMatT = void(openvdb::math::Mat4<double>*, void*);
+
+    static auto getTransform = [](openvdb::math::Mat4<double>* mat, void* gridbase)
+    {
+        assert(gridbase);
+        const openvdb::GridBase* const gptr =
+            static_cast<const openvdb::GridBase* const>(gridbase);
+        // @warning, virtual function, it's slow
+        // @todo improve
+        *mat = gptr->transform().baseMap()->getAffineMap()->getMat4();
+    };
+
+    return FunctionBuilder("__transform")
+        .addSignature<GetTransformMatT>((GetTransformMatT*)(getTransform))
+            .addParameterAttribute(0, llvm::Attribute::NoAlias)
+            .addParameterAttribute(0, llvm::Attribute::WriteOnly)
+            .addParameterAttribute(1, llvm::Attribute::ReadOnly)
+            .addParameterAttribute(1, llvm::Attribute::NoAlias)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setConstantFold(false)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Internal function for getting the 4x4 transformation matrix.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axtransform(const FunctionOptions& op)
+{
+    auto generate = [op](const std::vector<llvm::Value*>& args,
+         llvm::IRBuilder<>& B,
+         const ast::FunctionCall* f) -> llvm::Value*
+    {
+        llvm::Function* compute = B.GetInsertBlock()->getParent();
+        verifyContext(compute, "transform");
+
+        assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
+        auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
+
+        std::vector<llvm::Value*> input(args);
+        appendGridArgument(input, B, afc->attr());
+        ax__transform(op)->execute(input, B);
+        return nullptr;
+    };
+
+    return FunctionBuilder("transform")
+        .addSignature<void(openvdb::math::Mat4<double>*), true>(generate)
+            .addParameterAttribute(0, llvm::Attribute::NoAlias)
+            .addParameterAttribute(0, llvm::Attribute::WriteOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setEmbedIR(true)
+        .addDependency("__transform")
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Returns the 4x4 transformation matrix of this VDB.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr ax__voxelsize(const FunctionOptions& op)
+{
+    static auto voxelsize = [](openvdb::math::Vec3<double>* mat, void* gridbase)
+    {
+        assert(gridbase);
+        const openvdb::GridBase* const gptr =
+            static_cast<const openvdb::GridBase* const>(gridbase);
+        // @warning, virtual function, it's slow
+        // @todo improve
+        *mat = gptr->voxelSize();
+    };
+
+    return FunctionBuilder("__voxelsize")
+        .addSignature<void(openvdb::math::Vec3<double>*, void*)>(voxelsize)
+            .addParameterAttribute(0, llvm::Attribute::NoAlias)
+            .addParameterAttribute(0, llvm::Attribute::WriteOnly)
+            .addParameterAttribute(1, llvm::Attribute::NoAlias)
+            .addParameterAttribute(1, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setConstantFold(false)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Internal function for getting the voxel size from a transform.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axvoxelsize(const FunctionOptions& op)
+{
+    auto generate = [op](const std::vector<llvm::Value*>& args,
+         llvm::IRBuilder<>& B,
+         const ast::FunctionCall* f) -> llvm::Value*
+    {
+        llvm::Function* compute = B.GetInsertBlock()->getParent();
+        verifyContext(compute, "voxelsize");
+
+        assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
+        auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
+
+        std::vector<llvm::Value*> input(args);
+        appendGridArgument(input, B, afc->attr());
+        return ax__voxelsize(op)->execute(input, B);
+    };
+
+    return FunctionBuilder("voxelsize")
+        .addSignature<void(openvdb::math::Vec3<double>*), true>(generate)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setEmbedIR(true)
+        .addDependency("__voxelsize")
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Returns the voxel size of this VDB. This assumes the VDB transformation is linear.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr ax__voxelvolume(const FunctionOptions& op)
+{
+    static auto voxelvolume = [](void* gridbase) -> double
+    {
+        assert(gridbase);
+        const openvdb::GridBase* const gptr =
+            static_cast<const openvdb::GridBase* const>(gridbase);
+        // @warning, virtual function, it's slow
+        // @todo improve
+        return gptr->transform().voxelVolume();
+    };
+
+    return FunctionBuilder("__voxelvolume")
+        .addSignature<double(void*)>(voxelvolume)
+            .addParameterAttribute(0, llvm::Attribute::NoAlias)
+            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setConstantFold(false)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Internal function for getting the voxel volume from a transform.")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axvoxelvolume(const FunctionOptions& op)
+{
+    auto generate = [op](const std::vector<llvm::Value*>& args,
+         llvm::IRBuilder<>& B,
+         const ast::FunctionCall* f) -> llvm::Value*
+    {
+        llvm::Function* compute = B.GetInsertBlock()->getParent();
+        verifyContext(compute, "voxelvolume");
+
+        assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
+        auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
+
+        std::vector<llvm::Value*> input(args);
+        appendGridArgument(input, B, afc->attr());
+        return ax__voxelvolume(op)->execute(input, B);
+    };
+
+    return FunctionBuilder("voxelvolume")
+        .addSignature<double()>(generate)
+            .addFunctionAttribute(llvm::Attribute::NoUnwind)
+            .addFunctionAttribute(llvm::Attribute::NoRecurse)
+            .setEmbedIR(true)
+        .addDependency("__voxelvolume")
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("Return the volume of a single voxel. This assumes the VDB transformation is linear.")
+        .get();
+}
+
+} // namespace volume
+
+
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-void insertVDBVolumeFunctions(FunctionRegistry& registry,
+void insertVDBVolumeFunctions(FunctionRegistry& reg,
     const FunctionOptions* options)
 {
     const bool create = options && !options->mLazyFunctions;
@@ -836,11 +1637,60 @@ void insertVDBVolumeFunctions(FunctionRegistry& registry,
         const FunctionRegistry::ConstructorT creator,
         const bool internal = false)
     {
-        if (create) registry.insertAndCreate(name, creator, *options, internal);
-        else        registry.insert(name, creator, internal);
+        if (create) reg.insertAndCreate(name, creator, *options, internal);
+        else        reg.insert(name, creator, internal);
     };
 
-    // volume functions
+    add("getcoord", volume::axgetcoord);
+    add("getcoordx", volume::axgetcoord<0>);
+    add("getcoordy", volume::axgetcoord<1>);
+    add("getcoordz", volume::axgetcoord<2>);
+    add("getvoxelpws", volume::axgetvoxelpws);
+    add("__getvoxel", volume::ax__getvoxel, true);
+    add("__setvoxel", volume::ax__setvoxel, true);
+}
+
+void insertVDBVolumeAttrFunctions(FunctionRegistry& reg,
+    const FunctionOptions* options)
+{
+    const bool create = options && !options->mLazyFunctions;
+    auto add = [&](const std::string& name,
+        const FunctionRegistry::ConstructorT creator,
+        const bool internal = false)
+    {
+        if (create) reg.insertAndCreate(name, creator, *options, internal);
+        else        reg.insert(name, creator, internal);
+    };
+
+    // transform accessors
+
+    // @todo fix function registries so this can be added
+    //add("transform", volume::axtransform);
+    //add("__transform", volume::ax__transform, true);
+    add("voxelsize", volume::axvoxelsize);
+    add("__voxelsize", volume::ax__voxelsize, true);
+    add("voxelvolume", volume::axvoxelvolume);
+    add("__voxelvolume", volume::ax__voxelvolume, true);
+
+    // value accessors
+
+    add("voxel", volume::axvoxel);
+    add("__voxel", volume::ax__voxel, true);
+
+    add("isvoxel", volume::axisvoxel);
+    add("__isvoxel", volume::ax__isvoxel, true);
+    add("isactive", volume::axisactive);
+    add("__isactive", volume::ax__isactive, true);
+
+    // @todo add simplier method for function aliases
+    //add("sample", volume::axsample<1>);
+
+    add("pointsample", volume::axsample<0>);
+    add("__pointsample", volume::ax__sample<0>, true);
+    add("boxsample", volume::axsample<1>);
+    add("__boxsample", volume::ax__sample<1>, true);
+    add("quadraticsample", volume::axsample<2>);
+    add("__quadraticsample", volume::ax__sample<2>, true);
 
     add("coordtooffset", axcoordtooffset, true);
     add("offsettocoord", axoffsettocoord, true);
@@ -857,6 +1707,9 @@ void insertVDBVolumeFunctions(FunctionRegistry& registry,
     add("getvoxel", axgetvoxel, true);
     add("setvoxel", axsetvoxel, true);
     add("probevalue", axprobevalue, true);
+
+    // add("mean", volume::axmean);
+    // add("__mean", volume::ax__mean, true);
 }
 
 } // namespace codegen

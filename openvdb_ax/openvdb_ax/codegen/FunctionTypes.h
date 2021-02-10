@@ -69,6 +69,7 @@
 #include "Types.h"
 #include "Utils.h" // isValidCast
 #include "ConstantFolding.h"
+#include "openvdb_ax/ast/AST.h"
 
 #include <openvdb/version.h>
 
@@ -304,7 +305,7 @@ struct Function
     /// @param C  The LLVM Context
     /// @param M  The Module to write the function to
     virtual llvm::Function*
-    create(llvm::LLVMContext& C, llvm::Module* M = nullptr) const;
+    create(llvm::LLVMContext& C, llvm::Module* M = nullptr, const ast::FunctionCall* ast = nullptr) const;
 
     /// @brief  Convenience method which always uses the provided module to find
     ///         the function or insert it if necessary.
@@ -345,7 +346,8 @@ struct Function
     virtual llvm::Value*
     call(const std::vector<llvm::Value*>& args,
          llvm::IRBuilder<>& B,
-         const bool cast = false) const;
+         const bool cast = false,
+         const ast::FunctionCall* node = nullptr) const;
 
     /// @brief  The result type from calls to Function::match
     enum SignatureMatch { None = 0, Size, Implicit, Explicit };
@@ -371,7 +373,8 @@ struct Function
     ///        with a SRET.
     /// @param inputs  The input types
     /// @param C       The LLVM Context
-    virtual SignatureMatch match(const std::vector<llvm::Type*>& inputs, llvm::LLVMContext& C) const;
+    virtual SignatureMatch match(const std::vector<llvm::Type*>& inputs,
+            llvm::LLVMContext& C) const;
 
     /// @brief  The number of arguments that this function has
     inline size_t size() const { return mSize; }
@@ -531,14 +534,15 @@ public:
     llvm::Value*
     call(const std::vector<llvm::Value*>& args,
          llvm::IRBuilder<>& B,
-         const bool cast) const override
+         const bool cast,
+         const ast::FunctionCall* node = nullptr) const override
     {
         // append return value and right rotate
         std::vector<llvm::Value*> inputs(args);
         llvm::Type* sret = LLVMType<SRetType>::get(B.getContext());
         inputs.emplace_back(insertStaticAlloca(B, sret));
         std::rotate(inputs.rbegin(), inputs.rbegin() + 1, inputs.rend());
-        DerivedFunction::call(inputs, B, cast);
+        DerivedFunction::call(inputs, B, cast, node);
         return inputs.front();
     }
 
@@ -636,11 +640,12 @@ struct CFunction : public CFunctionBase
     llvm::Value*
     call(const std::vector<llvm::Value*>& args,
          llvm::IRBuilder<>& B,
-         const bool cast) const override
+         const bool cast,
+         const ast::FunctionCall* node) const override
     {
         llvm::Value* result = this->fold(args, B.getContext());
         if (result) return result;
-        return Function::call(args, B, cast);
+        return Function::call(args, B, cast, node);
     }
 
     llvm::Value* fold(const std::vector<llvm::Value*>& args, llvm::LLVMContext& C) const override final
@@ -685,6 +690,8 @@ struct IRFunctionBase : public Function
     ///           a ret void, a ret void instruction, or an actual value
     using GeneratorCb = std::function<llvm::Value*
         (const std::vector<llvm::Value*>&, llvm::IRBuilder<>&)>;
+    using GeneratorMetaCb = std::function<llvm::Value*
+        (const std::vector<llvm::Value*>&, llvm::IRBuilder<>&, const ast::FunctionCall*)>;
 
     llvm::Type* types(std::vector<llvm::Type*>& types,
             llvm::LLVMContext& C) const override = 0;
@@ -707,7 +714,7 @@ struct IRFunctionBase : public Function
     ///         and the function body will be created and inserted, but the IR
     ///         will be invalid.
     llvm::Function*
-    create(llvm::LLVMContext& C, llvm::Module* M) const override;
+    create(llvm::LLVMContext& C, llvm::Module* M, const ast::FunctionCall* ast = nullptr) const override;
 
     /// @brief  Override for call, which is only necessary if mEmbedIR is true,
     ///         as the IR generation for embedded functions is delayed until
@@ -716,7 +723,8 @@ struct IRFunctionBase : public Function
     llvm::Value*
     call(const std::vector<llvm::Value*>& args,
          llvm::IRBuilder<>& B,
-         const bool cast) const override;
+         const bool cast,
+         const ast::FunctionCall* node) const override;
 
 protected:
 
@@ -738,11 +746,19 @@ protected:
         const GeneratorCb& gen,
         const size_t size)
         : Function(size, symbol)
+        , mGen([gen](const std::vector<llvm::Value*>& args, llvm::IRBuilder<>& B, const ast::FunctionCall*) -> llvm::Value* {
+            return gen(args, B);
+        })
+        , mEmbedIR(false) {}
+    IRFunctionBase(const std::string& symbol,
+        const GeneratorMetaCb& gen,
+        const size_t size)
+        : Function(size, symbol)
         , mGen(gen)
         , mEmbedIR(false) {}
     ~IRFunctionBase() override = default;
 
-    const GeneratorCb mGen;
+    const GeneratorMetaCb mGen;
     bool mEmbedIR;
 };
 
@@ -754,6 +770,8 @@ struct IRFunction : public IRFunctionBase
     using Ptr = std::shared_ptr<IRFunction>;
 
     IRFunction(const std::string& symbol, const GeneratorCb& gen)
+        : IRFunctionBase(symbol, gen, Traits::N_ARGS) {}
+    IRFunction(const std::string& symbol, const GeneratorMetaCb& gen)
         : IRFunctionBase(symbol, gen, Traits::N_ARGS) {}
 
     inline llvm::Type*
@@ -782,6 +800,9 @@ struct IRFunctionSRet : public SRetFunction<SignatureT, IRFunction<SignatureT>>
     using BaseT = SRetFunction<SignatureT, IRFunction<SignatureT>>;
     IRFunctionSRet(const std::string& symbol,
         const IRFunctionBase::GeneratorCb& gen)
+        : BaseT(symbol, gen) {}
+    IRFunctionSRet(const std::string& symbol,
+        const IRFunctionBase::GeneratorMetaCb& gen)
         : BaseT(symbol, gen) {}
     ~IRFunctionSRet() override = default;
 };
@@ -908,6 +929,31 @@ struct FunctionBuilder
     template <typename Signature, bool SRet = false>
     inline FunctionBuilder&
     addSignature(const IRFunctionBase::GeneratorCb& cb,
+            const char* symbol = nullptr)
+    {
+        using IRFType = typename std::conditional
+            <!SRet, IRFunction<Signature>, IRFunctionSRet<Signature>>::type;
+        using IRPtr = typename IRFType::Ptr;
+
+        Settings::Ptr settings = mCurrentSettings;
+        if (!mCurrentSettings->isDefault()) {
+            settings.reset(new Settings());
+        }
+
+        std::string s;
+        if (symbol) s = std::string(symbol);
+        else s = this->genSymbol<Signature>();
+
+        auto ir = IRPtr(new IRFType(s, cb));
+        mIRFunctions.emplace_back(ir);
+        mSettings[ir.get()] = settings;
+        mCurrentSettings = settings;
+        return *this;
+    }
+
+    template <typename Signature, bool SRet = false>
+    inline FunctionBuilder&
+    addSignature(const IRFunctionBase::GeneratorMetaCb& cb,
             const char* symbol = nullptr)
     {
         using IRFType = typename std::conditional

@@ -214,6 +214,10 @@ struct Visitor
         return this->defaultTraversal<ast::FunctionCall>(call);
     }
 
+    bool traverse(NodeType<ast::AttributeFunctionCall>* call) {
+        return this->defaultTraversal<ast::AttributeFunctionCall>(call);
+    }
+
     bool traverse(NodeType<ast::Attribute>* attr) {
         return this->defaultTraversal<ast::Attribute>(attr);
     }
@@ -288,6 +292,7 @@ struct Visitor
             case Node::CastNode : return this->derived().traverse(static_cast<NodeType<ast::Cast>*>(node));
             case Node::AttributeNode : return this->derived().traverse(static_cast<NodeType<ast::Attribute>*>(node));
             case Node::FunctionCallNode : return this->derived().traverse(static_cast<NodeType<ast::FunctionCall>*>(node));
+            case Node::AttributeFunctionCallNode : return this->derived().traverse(static_cast<NodeType<ast::AttributeFunctionCall>*>(node));
             case Node::ExternalVariableNode : return this->derived().traverse(static_cast<NodeType<ast::ExternalVariable>*>(node));
             case Node::DeclareLocalNode : return this->derived().traverse(static_cast<NodeType<ast::DeclareLocal>*>(node));
             case Node::ArrayPackNode : return this->derived().traverse(static_cast<NodeType<ast::ArrayPack>*>(node));
@@ -335,6 +340,7 @@ struct Visitor
     inline bool visit(NodeType<ast::TernaryOperator>*) { return true; }
     inline bool visit(NodeType<ast::Cast>*) { return true; }
     inline bool visit(NodeType<ast::FunctionCall>*) { return true; }
+    inline bool visit(NodeType<ast::AttributeFunctionCall>*) { return true; }
     inline bool visit(NodeType<ast::Attribute>*) { return true; }
     inline bool visit(NodeType<ast::ExternalVariable>*) { return true; }
     inline bool visit(NodeType<ast::DeclareLocal>*) { return true; }

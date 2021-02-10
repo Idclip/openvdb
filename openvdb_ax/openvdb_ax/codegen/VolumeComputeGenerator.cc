@@ -4,6 +4,7 @@
 /// @file codegen/VolumeComputeGenerator.cc
 
 #include "VolumeComputeGenerator.h"
+#include "Functions.h"
 #include "FunctionRegistry.h"
 #include "FunctionTypes.h"
 #include "Types.h"
@@ -69,7 +70,8 @@ VolumeKernelNode::argumentKeys()
         "custom_data",
         "coord_is",
         "accessors",
-        "transforms",
+        "grids",
+        "class",
         "write_index",
         "write_acccessor"
     }};
@@ -82,6 +84,7 @@ const char* VolumeKernelNode::getDefaultName() { return "ax.compute.voxel.k3"; }
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
+
 
 namespace codegen_internal {
 
@@ -294,7 +297,11 @@ VolumeComputeGenerator::VolumeComputeGenerator(llvm::Module& module,
                                                const FunctionOptions& options,
                                                FunctionRegistry& functionRegistry,
                                                Logger& logger)
-    : ComputeGenerator(module, options, functionRegistry, logger) {}
+    : ComputeGenerator(module, options, functionRegistry, logger)
+    , mAttrFunctionRegistry()
+{
+    insertVDBVolumeAttrFunctions(mAttrFunctionRegistry);
+}
 
 AttributeRegistry::Ptr VolumeComputeGenerator::generate(const ast::Tree& tree)
 {
@@ -374,6 +381,17 @@ AttributeRegistry::Ptr VolumeComputeGenerator::generate(const ast::Tree& tree)
     return registry;
 }
 
+bool VolumeComputeGenerator::visit(const ast::AttributeFunctionCall* node)
+{
+    auto f = mAttrFunctionRegistry.map().find(node->func().name());
+    if (f == mAttrFunctionRegistry.map().end()) {
+        mLog.error("function is not a valid attribute function", &node->func());
+        return false;
+    }
+
+    return true;
+}
+
 bool VolumeComputeGenerator::visit(const ast::Attribute* node)
 {
     SymbolTable* localTable = this->mSymbolTables.getOrInsert(1);
@@ -393,9 +411,6 @@ bool VolumeComputeGenerator::visit(const ast::Attribute* node)
 
 void VolumeComputeGenerator::getAccessorValue(const std::string& globalName, llvm::Value* location)
 {
-    std::string name, type;
-    ast::Attribute::nametypeFromToken(globalName, &name, &type);
-
     llvm::Value* registeredIndex = llvm::cast<llvm::GlobalVariable>
         (mModule.getOrInsertGlobal(globalName, LLVMType<int64_t>::get(mContext)));
     this->globals().insert(globalName, registeredIndex);
@@ -465,7 +480,6 @@ llvm::Value* VolumeComputeGenerator::accessorHandleFromToken(const std::string& 
     llvm::Value* registeredIndex = llvm::cast<llvm::GlobalVariable>
         (mModule.getOrInsertGlobal(globalName, LLVMType<int64_t>::get(mContext)));
     this->globals().insert(globalName, registeredIndex);
-
     registeredIndex = mBuilder.CreateLoad(registeredIndex);
 
     // index into the void* array of handles and load the value.

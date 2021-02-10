@@ -186,6 +186,7 @@ struct ComputeGenerator : public ast::Visitor<ComputeGenerator>
     virtual bool visit(const ast::Crement*);
     virtual bool visit(const ast::FunctionCall*);
     virtual bool visit(const ast::Attribute*);
+    virtual bool visit(const ast::AttributeFunctionCall*);
     virtual bool visit(const ast::Tree*);
     virtual bool visit(const ast::Block*);
     virtual bool visit(const ast::ConditionalStatement*);

@@ -255,6 +255,29 @@ void variableDependencies(const ast::Variable& var,
                     variableDependencies(*dep, dependencies);
                 }
             }
+            else if (type == ast::Node::AttributeFunctionCallNode) {
+                // @todo  We currently can't detect if attributes are being passed by
+                //   pointer and being modified automatically. We have to link this
+                //   attribute to any other attribute passes into the function
+                const ast::AttributeFunctionCall* call =
+                    static_cast<const ast::AttributeFunctionCall*>(parent);
+                // traverse down and collect variables
+                std::vector<const ast::Variable*> vars;
+                for (size_t i = 0; i < call->children()-1; ++i) {
+                    collectNodeTypes<ListT>(*call->child(i), vars);
+                }
+                // only append dependencies here if they havent already been visited
+                // due to recursion issues
+                for (const ast::Variable* dep : vars) {
+                    // make sure the dep doesn't already exist in the container, otherwise
+                    // we can get into issues where functions with multiple arguments
+                    // constantly try to check themselves
+                    // @note  should be removed with function refactoring
+                    if (hasDep(dep)) continue;
+                    dependencies.emplace_back(dep);
+                    variableDependencies(*dep, dependencies);
+                }
+            }
             child = parent;
         }
     }

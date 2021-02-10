@@ -822,85 +822,85 @@ bool ComputeGenerator::visit(const ast::FunctionCall* node)
         mLog.error("unable to locate function \"" + node->name() + "\"", node);
         return false;
     }
-    else {
-        const size_t args = node->children();
-        assert(mValues.size() >= args);
 
-        // initialize arguments. scalars are always passed by value, arrays
-        // and strings always by pointer
+    const size_t args = node->children();
+    assert(mValues.size() >= args);
 
-        std::vector<llvm::Value*> arguments;
-        arguments.resize(args);
+    // initialize arguments. scalars are always passed by value, arrays
+    // and strings always by pointer
 
-        for (auto r = arguments.rbegin(); r != arguments.rend(); ++r) {
-            llvm::Value* arg = mValues.top(); mValues.pop();
-            llvm::Type* type = arg->getType();
-            if (type->isPointerTy()) {
-                type = type->getPointerElementType();
-                if (type->isIntegerTy() || type->isFloatingPointTy()) {
-                    // pass by value
-                    arg = mBuilder.CreateLoad(arg);
-                }
+    std::vector<llvm::Value*> arguments;
+    arguments.resize(args);
+
+    for (auto r = arguments.rbegin(); r != arguments.rend(); ++r) {
+        llvm::Value* arg = mValues.top(); mValues.pop();
+        llvm::Type* type = arg->getType();
+        if (type->isPointerTy()) {
+            type = type->getPointerElementType();
+            if (type->isIntegerTy() || type->isFloatingPointTy()) {
+                // pass by value
+                arg = mBuilder.CreateLoad(arg);
             }
-            else {
-                // arrays should never be loaded
-                assert(!type->isArrayTy() && type != LLVMType<codegen::String>::get(mContext));
-                if (type->isIntegerTy() || type->isFloatingPointTy()) {
-                    /*pass by value*/
-                }
-            }
-            *r = arg;
-        }
-
-        std::vector<llvm::Type*> inputTypes;
-        valuesToTypes(arguments, inputTypes);
-
-        Function::SignatureMatch match;
-        const Function* target = function->match(inputTypes, mContext, &match);
-
-        if (!target) {
-            assert(!function->list().empty()
-                   && "FunctionGroup has no function declarations");
-
-            std::ostringstream os;
-            if (match == Function::SignatureMatch::None) {
-                os << "wrong number of arguments. \"" << node->name() << "\""
-                   << " was called with: (";
-                llvm::raw_os_ostream stream(os);
-                printTypes(stream, inputTypes);
-                stream << ")";
-            }
-            else {
-                // match == Function::SignatureMatch::Size
-                os << "no matching function for ";
-                printSignature(os, inputTypes,
-                    LLVMType<void>::get(mContext),
-                    node->name().c_str(), {}, true);
-            }
-
-            os << " \ncandidates are: ";
-            for (const auto& sig : function->list()) {
-                os << std::endl;
-                sig->print(mContext, os, node->name().c_str());
-            }
-            mLog.error(os.str(), node);
-            return false;
         }
         else {
-            llvm::Value* result = nullptr;
-            if (match == Function::SignatureMatch::Implicit) {
-                if (!mLog.warning("implicit conversion in function call", node)) return false;
-                result = target->call(arguments, mBuilder, /*cast=*/true);
+            // arrays should never be loaded
+            assert(!type->isArrayTy() && type != LLVMType<codegen::String>::get(mContext));
+            if (type->isIntegerTy() || type->isFloatingPointTy()) {
+                /*pass by value*/
             }
-            else {
-                // match == Function::SignatureMatch::Explicit
-                result = target->call(arguments, mBuilder, /*cast=*/false);
-            }
-
-            assert(result && "Function has been invoked with no valid llvm Value return");
-            mValues.push(result);
         }
+        *r = arg;
     }
+
+    std::vector<llvm::Type*> inputTypes;
+    valuesToTypes(arguments, inputTypes);
+
+    Function::SignatureMatch match;
+    const Function::Ptr target = function->match(inputTypes, mContext, &match);
+
+    if (!target) {
+        assert(!function->list().empty()
+               && "FunctionGroup has no function declarations");
+
+        std::ostringstream os;
+        if (match == Function::SignatureMatch::None) {
+            os << "wrong number of arguments. \"" << node->name() << "\""
+               << " was called with: (";
+            llvm::raw_os_ostream stream(os);
+            printTypes(stream, inputTypes);
+            stream << ")";
+        }
+        else {
+            // match == Function::SignatureMatch::Size
+            os << "no matching function for ";
+            printSignature(os, inputTypes,
+                LLVMType<void>::get(mContext),
+                node->name().c_str(), {}, true);
+        }
+
+        os << " \ncandidates are: ";
+        for (const auto& sig : function->list()) {
+            os << std::endl;
+            sig->print(mContext, os, node->name().c_str());
+        }
+        mLog.error(os.str(), node);
+        return false;
+    }
+    else {
+        llvm::Value* result = nullptr;
+        if (match == Function::SignatureMatch::Implicit) {
+            if (!mLog.warning("implicit conversion in function call", node)) return false;
+            result = target->call(arguments, mBuilder, /*cast=*/true, node);
+        }
+        else {
+            // match == Function::SignatureMatch::Explicit
+            result = target->call(arguments, mBuilder, /*cast=*/false, node);
+        }
+
+        assert(result && "Function has been invoked with no valid llvm Value return");
+        mValues.push(result);
+    }
+
     return true;
 }
 
@@ -1267,6 +1267,14 @@ bool ComputeGenerator::visit(const ast::Tree*)
 }
 
 bool ComputeGenerator::visit(const ast::Attribute*)
+{
+    assert(false && "Base ComputeGenerator attempted to generate code for an Attribute. "
+        "PointComputeGenerator or VolumeComputeGenerator should be used for "
+        "attribute accesses.");
+    return false;
+}
+
+bool ComputeGenerator::visit(const ast::AttributeFunctionCall*)
 {
     assert(false && "Base ComputeGenerator attempted to generate code for an Attribute. "
         "PointComputeGenerator or VolumeComputeGenerator should be used for "

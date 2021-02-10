@@ -906,7 +906,7 @@ registerVolumes(GridPtrVec& grids,
         // @todo implement better execution order detection which could minimize
         // the number of deep copies required
 
-        if (iter.writes() && iter.affectsothers()) {
+        if (iter.writes() && iter.reads()) {
             // if affectsothers(), it's also read from at some point
             assert(iter.reads());
             cache->addReadGrid(*matchedGrid, /*copy=*/true);

@@ -53,6 +53,7 @@ void insertVDBPointFunctions(FunctionRegistry& reg, const FunctionOptions* optio
 /// @param options The current function options
 ///
 void insertVDBVolumeFunctions(FunctionRegistry& reg, const FunctionOptions* options = nullptr);
+void insertVDBVolumeAttrFunctions(FunctionRegistry& reg, const FunctionOptions* options = nullptr);
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -65,6 +66,7 @@ inline FunctionRegistry::UniquePtr createDefaultRegistry(const FunctionOptions* 
     insertStandardFunctions(*registry, op);
     insertVDBPointFunctions(*registry, op);
     insertVDBVolumeFunctions(*registry, op);
+    insertVDBVolumeAttrFunctions(*registry, op);
     return registry;
 }
 

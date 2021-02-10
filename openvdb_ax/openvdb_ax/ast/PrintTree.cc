@@ -267,6 +267,17 @@ struct PrintVisitor : public ast::Visitor<PrintVisitor>
         return true;
     }
 
+    bool traverse(NodeType<ast::AttributeFunctionCall>* call) {
+        this->visit(call);
+        ++mLevel;
+        indent();
+        this->traverse(call->child(0));
+        indent();
+        this->traverse(call->child(1));
+        --mLevel;
+        return true;
+    }
+
     bool traverse(NodeType<ast::FunctionCall>* call) {
         this->visit(call);
         const size_t children = call->children();
@@ -330,6 +341,7 @@ struct PrintVisitor : public ast::Visitor<PrintVisitor>
     bool visit(const ast::TernaryOperator* node);
     bool visit(const ast::Cast* node);
     bool visit(const ast::FunctionCall* node);
+    bool visit(const ast::AttributeFunctionCall* node);
     bool visit(const ast::Attribute* node);
     bool visit(const ast::ExternalVariable* node);
     bool visit(const ast::DeclareLocal* node);
@@ -453,6 +465,12 @@ bool PrintVisitor::visit(const ast::Cast* node)
 bool PrintVisitor::visit(const ast::FunctionCall* node)
 {
     mOs << node->nodename() << ": " << node->name() << '\n';
+    return true;
+}
+
+bool PrintVisitor::visit(const ast::AttributeFunctionCall* node)
+{
+    mOs << node->nodename() << '\n';
     return true;
 }
 
@@ -731,6 +749,13 @@ struct ReprintVisitor : public ast::Visitor<ReprintVisitor>
             if (i != children-1) mOs << ',' << ' ';
         }
         mOs << ')';
+        return true;
+    }
+
+    bool traverse(NodeType<ast::AttributeFunctionCall>* call) {
+        this->derived().traverse(call->child(0));
+        mOs << "->";
+        this->derived().traverse(call->child(1));
         return true;
     }
 

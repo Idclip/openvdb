@@ -5,6 +5,7 @@
 
 #include "PointComputeGenerator.h"
 
+#include "Functions.h"
 #include "FunctionRegistry.h"
 #include "FunctionTypes.h"
 #include "Types.h"
@@ -35,7 +36,6 @@ namespace OPENVDB_VERSION_NAME {
 namespace ax {
 namespace codegen {
 
-
 const std::array<std::string, PointKernel::N_ARGS>&
 PointKernel::argumentKeys()
 {
@@ -55,7 +55,6 @@ std::string PointKernel::getDefaultName() { return "ax.compute.point"; }
 
 std::string PointRangeKernel::getDefaultName() { return "ax.compute.pointrange"; }
 
-
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
@@ -65,7 +64,11 @@ PointComputeGenerator::PointComputeGenerator(llvm::Module& module,
                                              const FunctionOptions& options,
                                              FunctionRegistry& functionRegistry,
                                              Logger& logger)
-    : ComputeGenerator(module, options, functionRegistry, logger) {}
+    : ComputeGenerator(module, options, functionRegistry, logger)
+    , mAttrFunctionRegistry()
+{
+    // insertVDBPointAttrFunctions(mAttrFunctionRegistry);
+}
 
 AttributeRegistry::Ptr PointComputeGenerator::generate(const ast::Tree& tree)
 {
@@ -229,7 +232,7 @@ AttributeRegistry::Ptr PointComputeGenerator::generate(const ast::Tree& tree)
             const bool usingString = type == strType;
 
             llvm::Value* handlePtr = this->attributeHandleFromToken(token);
-            const FunctionGroup* const function = this->getFunction("setattribute", true);
+            const FunctionGroup* function = this->getFunction("setattribute", true);
 
             // load the result (if its a scalar)
             if (type->isIntegerTy() || type->isFloatingPointTy()) {
@@ -259,6 +262,17 @@ AttributeRegistry::Ptr PointComputeGenerator::generate(const ast::Tree& tree)
     this->createFreeSymbolStrings(mBuilder);
 
     return registry;
+}
+
+bool PointComputeGenerator::visit(const ast::AttributeFunctionCall* node)
+{
+    auto f = mAttrFunctionRegistry.map().find(node->func().name());
+    if (f == mAttrFunctionRegistry.map().end()) {
+        mLog.error("function is not a valid attribute function", &node->func());
+        return false;
+    }
+
+    return true;
 }
 
 bool PointComputeGenerator::visit(const ast::Attribute* node)
@@ -302,7 +316,7 @@ void PointComputeGenerator::getAttributeValue(const std::string& globalName, llv
 
     if (usingString) args.emplace_back(leafdata);
 
-    const FunctionGroup* const function = this->getFunction("getattribute", true);
+    const FunctionGroup* function = this->getFunction("getattribute", true);
     function->execute(args, mBuilder);
 }
 
