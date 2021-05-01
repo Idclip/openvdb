@@ -709,13 +709,28 @@ main(int argc, char *argv[])
         axlog("[INFO] VDB Volumes Found\n" << std::flush);
 
         openvdb::ax::VolumeExecutable::Ptr volumeExe;
+
+        axtimer();
         try {
-            axlog("[INFO] Compiling for VDB Points\n" << std::flush);
+            axlog("[INFO] Compiling for VDB Volumes\n" << std::flush);
             volumeExe = compiler->compile<openvdb::ax::VolumeExecutable>(*syntaxTree, logs, customData);
         } catch (std::exception& e) {
             OPENVDB_LOG_FATAL("Fatal error!\nErrors:\n" << e.what());
             return EXIT_FAILURE;
         }
+        axlog("[INFO] | " << axtime() << '\n' << std::flush);
+
+
+
+        axtimer();
+        try {
+            axlog("[INFO] Compiling for VDB Volumes\n" << std::flush);
+            volumeExe = compiler->compile<openvdb::ax::VolumeExecutable>(*syntaxTree, logs, customData);
+        } catch (std::exception& e) {
+            OPENVDB_LOG_FATAL("Fatal error!\nErrors:\n" << e.what());
+            return EXIT_FAILURE;
+        }
+        axlog("[INFO] | " << axtime() << '\n' << std::flush);
 
         if (volumeExe) {
             axlog("[INFO] | Compilation successful");
@@ -728,7 +743,12 @@ main(int argc, char *argv[])
             }
             return EXIT_FAILURE;
         }
-        axlog("[INFO] | " << axtime() << '\n' << std::flush);
+
+
+
+
+
+
 
         if (opts.mVerbose) {
             std::vector<const std::string*> names;

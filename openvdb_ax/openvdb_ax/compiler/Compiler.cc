@@ -725,6 +725,7 @@ Compiler::compile(const ast::Tree& tree,
     // finalize mapping
 
     EE->finalizeObject();
+    return nullptr;
 
     // get the built function pointers
 
