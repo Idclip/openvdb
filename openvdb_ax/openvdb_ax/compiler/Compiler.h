@@ -27,10 +27,6 @@
 #include <memory>
 #include <sstream>
 
-// forward
-namespace llvm {
-class LLVMContext;
-}
 
 namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE
@@ -186,7 +182,6 @@ private:
             Logger& logger);
 
 private:
-    std::shared_ptr<llvm::LLVMContext> mContext;
     const CompilerOptions mCompilerOptions;
     std::shared_ptr<codegen::FunctionRegistry> mFunctionRegistry;
 };

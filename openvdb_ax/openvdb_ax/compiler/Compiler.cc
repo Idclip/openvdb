@@ -53,6 +53,11 @@
 #include <llvm/Transforms/IPO/AlwaysInliner.h>
 #include <llvm/Transforms/IPO/PassManagerBuilder.h>
 
+
+#include <llvm/ExecutionEngine/Orc/LLJIT.h>
+#include <llvm/ExecutionEngine/Orc/ThreadSafeModule.h>
+
+
 #include <unordered_map>
 
 namespace openvdb {
@@ -648,11 +653,9 @@ struct PointDefaultModifier :
 /////////////////////////////////////////////////////////////////////////////
 
 Compiler::Compiler(const CompilerOptions& options)
-    : mContext()
-    , mCompilerOptions(options)
+    : mCompilerOptions(options)
     , mFunctionRegistry()
 {
-    mContext.reset(new llvm::LLVMContext);
     mFunctionRegistry = codegen::createDefaultRegistry(&options.mFunctionOptions);
 }
 
@@ -678,10 +681,9 @@ Compiler::compile(const ast::Tree& tree,
     // initialize the module and execution engine - the latter isn't needed
     // for IR generation but we leave the creation of the TM to the EE.
 
-    std::unique_ptr<llvm::Module> M(new llvm::Module(moduleName, *mContext));
+    std::unique_ptr<llvm::LLVMContext> ctx(new llvm::LLVMContext);
+    std::unique_ptr<llvm::Module> M(new llvm::Module(moduleName, *ctx));
     llvm::Module* module = M.get();
-    std::unique_ptr<llvm::ExecutionEngine> EE = initializeExecutionEngine(std::move(M), logger);
-    if (!EE) return nullptr;
 
     GenT codeGenerator(*module, mCompilerOptions.mFunctionOptions, *mFunctionRegistry, logger);
     AttributeRegistry::Ptr attributes = codeGenerator.generate(tree);
@@ -696,14 +698,32 @@ Compiler::compile(const ast::Tree& tree,
 
     registerAccesses(codeGenerator.globals(), *attributes);
 
-    if (!registerExternalGlobals(codeGenerator.globals(), data, *mContext, logger)) {
+    if (!registerExternalGlobals(codeGenerator.globals(), data, *ctx, logger)) {
         return nullptr;
     }
 
     // optimise and verify
 
     if (mCompilerOptions.mVerify && !verify(*module, logger)) return nullptr;
-    optimise(*module, mCompilerOptions.mOptLevel, EE->getTargetMachine());
+
+
+    auto HostBuilder = llvm::orc::JITTargetMachineBuilder::detectHost();
+    if (!HostBuilder) {
+        return nullptr;
+    }
+
+    auto JIT = llvm::orc::LLJITBuilder()
+        .setJITTargetMachineBuilder(*HostBuilder)
+        .create();
+
+    if (!JIT) {
+        //std::cerr << JIT.takeError() << std::endl;
+        return nullptr;
+    }
+
+    auto TM = HostBuilder->createTargetMachine();
+
+    optimise(*module, mCompilerOptions.mOptLevel, (*TM).get());
     if (mCompilerOptions.mOptLevel != CompilerOptions::OptLevel::NONE) {
         if (mCompilerOptions.mVerify && !verify(*module, logger)) return nullptr;
     }
@@ -718,21 +738,87 @@ Compiler::compile(const ast::Tree& tree,
 
     // map functions
 
-    if (!initializeGlobalFunctions(*mFunctionRegistry, *EE, *module, logger)) {
+
+
+
+    if (auto Err = (*JIT)->addIRModule(llvm::orc::ThreadSafeModule(std::move(M), std::move(ctx)))) {
+        //std::cerr << Err << std::endl;
         return nullptr;
     }
 
-    // finalize mapping
+    // if (!initializeGlobalFunctions(*mFunctionRegistry, *EE, *module, logger)) {
+    //     return nullptr;
+    // }
 
-    EE->finalizeObject();
-    return nullptr;
+    llvm::orc::SymbolMap map;
+
+    for (const auto& iter : mFunctionRegistry->map()) {
+        const codegen::FunctionGroup* const function = iter.second.function();
+        if (!function) continue;
+
+        const codegen::FunctionGroup::FunctionList& list = function->list();
+        for (const codegen::Function::Ptr& decl : list) {
+
+            // llvmFunction may not exists if compiled without mLazyFunctions
+            const llvm::Function* llvmFunction = module->getFunction(decl->symbol());
+
+            // if the function has an entry block, it's not a C binding - this is a
+            // quick check to improve performance (so we don't call virtual methods
+            // for every function)
+            if (!llvmFunction) continue;
+            if (llvmFunction->size() > 0) continue;
+
+            const codegen::CFunctionBase* binding =
+                dynamic_cast<const codegen::CFunctionBase*>(decl.get());
+            if (!binding) {
+#ifndef NDEBUG
+                // some internally supported LLVm symbols (malloc, free, etc) are
+                // not prefixed with ax. and we don't generated a function body
+                if (llvmFunction->getName().startswith("ax.")) {
+                    OPENVDB_LOG_WARN("Function with symbol \"" << decl->symbol() << "\" has "
+                        "no function body and is not a C binding.");
+                }
+#endif
+                continue;
+            }
+
+            const uint64_t address = binding->address();
+            if (address == 0) {
+                logger.error("Fatal AX Compiler error; No available mapping for C Binding "
+                    "with symbol \"" + std::string(decl->symbol()) + "\"");
+                continue;
+            }
+
+            //auto OldSym = (*JIT)->lookup(llvmFunction->getName());
+
+            map.insert({
+                (*JIT)->mangleAndIntern(llvmFunction->getName()),
+                llvm::JITEvaluatedSymbol(
+                    llvm::JITTargetAddress(address),
+                    llvm::JITSymbolFlags::Exported)
+            });
+        }
+    }
+
+    {
+        auto& JD = (*JIT)->getMainJITDylib();
+        JD.define(llvm::orc::absoluteSymbols(map));
+    }
 
     // get the built function pointers
 
     std::unordered_map<std::string, uint64_t> functionMap;
 
     for (const std::string& name : functions) {
-        const uint64_t address = EE->getFunctionAddress(name);
+        auto Sym = (*JIT)->lookup(name.c_str());
+        if (!Sym) {
+            //std::cerr << Sym.takeError() << std::endl;
+            logger.error("Fatal AX Compiler error; Unable to compile compute "
+                "function \"" + name + "\"");
+            return nullptr;
+        }
+
+        const uint64_t address = Sym->getAddress();
         if (!address) {
             logger.error("Fatal AX Compiler error; Unable to compile compute "
                 "function \"" + name + "\"");
@@ -742,8 +828,8 @@ Compiler::compile(const ast::Tree& tree,
     }
 
     // create final executable object
-    return typename ExeT::Ptr(new ExeT(mContext,
-        std::move(EE),
+    return typename ExeT::Ptr(new ExeT(nullptr,
+        nullptr,
         attributes,
         data,
         functionMap,

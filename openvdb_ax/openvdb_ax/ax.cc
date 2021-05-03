@@ -304,7 +304,6 @@ void initialize()
     llvm::initializeWriteBitcodePassPass(registry);
 
 
-
     sIsInitialized = true;
 }
 
