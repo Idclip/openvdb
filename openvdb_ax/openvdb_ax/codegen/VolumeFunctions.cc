@@ -542,7 +542,7 @@ inline FunctionGroup::UniquePtr axsetvoxel(const FunctionOptions& op)
     using SetVoxelM4F = void(void*, const openvdb::math::Vec3<int32_t>*, const int32_t, const bool, const openvdb::math::Mat4<float>*);
     using SetVoxelStr = void(void*, const openvdb::math::Vec3<int32_t>*, const int32_t, const bool, codegen::String*);
 
-    return FunctionBuilder("__setvoxel")
+    return FunctionBuilder("setvoxel")
         .addSignature<SetVoxelD>((SetVoxelD*)(setvoxel))
         .addSignature<SetVoxelF>((SetVoxelF*)(setvoxel))
         .addSignature<SetVoxelI64>((SetVoxelI64*)(setvoxel))
@@ -587,7 +587,7 @@ inline FunctionGroup::UniquePtr axsetvoxel(const FunctionOptions& op)
         .get();
 }
 
-inline FunctionGroup::UniquePtr ax__getvoxel(const FunctionOptions& op)
+inline FunctionGroup::UniquePtr axgetvoxel(const FunctionOptions& op)
 {
     static auto getvoxel =
         [](void* accessor,
@@ -727,7 +727,7 @@ inline FunctionGroup::UniquePtr ax__getvoxel(const FunctionOptions& op)
     using GetVoxelM4F = void(void*, const openvdb::math::Vec3<int32_t>*, openvdb::math::Mat4<float>*);
     using GetVoxelStr = void(void*, const openvdb::math::Vec3<int32_t>*, codegen::String*);
 
-    return FunctionBuilder("__getvoxel")
+    return FunctionBuilder("getvoxel")
         .addSignature<GetVoxelD>((GetVoxelD*)(getvoxel))
         .addSignature<GetVoxelF>((GetVoxelF*)(getvoxel))
         .addSignature<GetVoxelI64>((GetVoxelI64*)(getvoxel))
@@ -981,104 +981,6 @@ inline FunctionGroup::UniquePtr axvoxel(const FunctionOptions& op)
             .addFunctionAttribute(llvm::Attribute::NoRecurse)
             .setEmbedIR(true)
         .addDependency("__voxel")
-        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
-        .setDocumentation("Returns the value of a voxel.")
-        .get();
-}
-
-inline FunctionGroup::UniquePtr ax__isactive(const FunctionOptions& op)
-{
-    static auto isactive =
-        [](const openvdb::math::Vec3<int32_t>* coord,
-           void* accessor,
-           auto* value) //only used for prototype selection
-            -> bool {
-        using ValueType = typename std::remove_pointer<decltype(value)>::type;
-        using GridType = typename openvdb::BoolGrid::ValueConverter<ValueType>::Type;
-        using AccessorType = typename GridType::Accessor;
-        assert(coord);
-        assert(accessor);
-        const AccessorType* const aptr =
-            static_cast<const AccessorType* const>(accessor);
-        const openvdb::Coord* ijk =
-            reinterpret_cast<const openvdb::Coord*>(coord);
-        return aptr->isValueOn(*ijk);
-    };
-
-    using IsActiveD = bool(const openvdb::math::Vec3<int32_t>*, void*, const double*);
-    using IsActiveF = bool(const openvdb::math::Vec3<int32_t>*, void*, const float*);
-    using IsActiveI64 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int64_t*);
-    using IsActiveI32 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int32_t*);
-    using IsActiveI16 = bool(const openvdb::math::Vec3<int32_t>*, void*, const int16_t*);
-    using IsActiveB = bool(const openvdb::math::Vec3<int32_t>*, void*, const bool*);
-    using IsActiveV2D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<double>*);
-    using IsActiveV2F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<float>*);
-    using IsActiveV2I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec2<int32_t>*);
-    using IsActiveV3D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<double>*);
-    using IsActiveV3F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<float>*);
-    using IsActiveV3I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec3<int32_t>*);
-    using IsActiveV4D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<double>*);
-    using IsActiveV4F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<float>*);
-    using IsActiveV4I = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Vec4<int32_t>*);
-    using IsActiveM3D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat3<double>*);
-    using IsActiveM3F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat3<float>*);
-    using IsActiveM4D = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat4<double>*);
-    using IsActiveM4F = bool(const openvdb::math::Vec3<int32_t>*, void*, const openvdb::math::Mat4<float>*);
-
-    return FunctionBuilder("__isactive")
-        .addSignature<IsActiveD>((IsActiveD*)(isactive))
-        .addSignature<IsActiveF>((IsActiveF*)(isactive))
-        .addSignature<IsActiveI64>((IsActiveI64*)(isactive))
-        .addSignature<IsActiveI32>((IsActiveI32*)(isactive))
-        .addSignature<IsActiveI16>((IsActiveI16*)(isactive))
-        .addSignature<IsActiveB>((IsActiveB*)(isactive))
-        .addSignature<IsActiveV2D>((IsActiveV2D*)(isactive))
-        .addSignature<IsActiveV2F>((IsActiveV2F*)(isactive))
-        .addSignature<IsActiveV2I>((IsActiveV2I*)(isactive))
-        .addSignature<IsActiveV3D>((IsActiveV3D*)(isactive))
-        .addSignature<IsActiveV3F>((IsActiveV3F*)(isactive))
-        .addSignature<IsActiveV3I>((IsActiveV3I*)(isactive))
-        .addSignature<IsActiveV4D>((IsActiveV4D*)(isactive))
-        .addSignature<IsActiveV4F>((IsActiveV4F*)(isactive))
-        .addSignature<IsActiveV4I>((IsActiveV4I*)(isactive))
-        .addSignature<IsActiveM3D>((IsActiveM3D*)(isactive))
-        .addSignature<IsActiveM3F>((IsActiveM3F*)(isactive))
-        .addSignature<IsActiveM4D>((IsActiveM4D*)(isactive))
-        .addSignature<IsActiveM4F>((IsActiveM4F*)(isactive))
-            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
-            .addFunctionAttribute(llvm::Attribute::NoUnwind)
-            .addFunctionAttribute(llvm::Attribute::NoRecurse)
-            .setConstantFold(false)
-        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
-        .setDocumentation("Returns the value of a voxel.")
-        .get();
-}
-
-inline FunctionGroup::UniquePtr axisactive(const FunctionOptions& op)
-{
-    auto generate = [op](const std::vector<llvm::Value*>& args,
-         llvm::IRBuilder<>& B,
-         const ast::FunctionCall* f) -> llvm::Value*
-    {
-        llvm::Function* compute = B.GetInsertBlock()->getParent();
-        verifyContext(compute, "isactive");
-
-        assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
-        auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
-
-        std::vector<llvm::Value*> input(args);
-        appendAccessorArgument(input, B, afc->attr());
-        appendAttributeISEL(input, B, afc->attr());
-        return ax__isactive(op)->execute(input, B);
-    };
-
-    return FunctionBuilder("isactive")
-        .addSignature<bool(const openvdb::math::Vec3<int32_t>*)>(generate)
-            .addParameterAttribute(0, llvm::Attribute::ReadOnly)
-            .addFunctionAttribute(llvm::Attribute::NoUnwind)
-            .addFunctionAttribute(llvm::Attribute::NoRecurse)
-            .setEmbedIR(true)
-        .addDependency("__isactive")
         .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
         .setDocumentation("Returns the value of a voxel.")
         .get();
@@ -1646,8 +1548,8 @@ void insertVDBVolumeFunctions(FunctionRegistry& reg,
     add("getcoordy", volume::axgetcoord<1>);
     add("getcoordz", volume::axgetcoord<2>);
     add("getvoxelpws", volume::axgetvoxelpws);
-    add("__getvoxel", volume::ax__getvoxel, true);
-    add("__setvoxel", volume::ax__setvoxel, true);
+    add("getvoxel", volume::axgetvoxel, true);
+    add("setvoxel", volume::axsetvoxel, true);
 }
 
 void insertVDBVolumeAttrFunctions(FunctionRegistry& reg,
@@ -1679,8 +1581,6 @@ void insertVDBVolumeAttrFunctions(FunctionRegistry& reg,
 
     add("isvoxel", volume::axisvoxel);
     add("__isvoxel", volume::ax__isvoxel, true);
-    add("isactive", volume::axisactive);
-    add("__isactive", volume::ax__isactive, true);
 
     // @todo add simplier method for function aliases
     //add("sample", volume::axsample<1>);
