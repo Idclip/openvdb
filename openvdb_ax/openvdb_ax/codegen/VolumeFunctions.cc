@@ -69,21 +69,6 @@ void appendAccessorArgument(std::vector<llvm::Value*>& args,
     args.emplace_back(aptr);
 }
 
-llvm::Value* getClassArgument(llvm::IRBuilder<>& B, const ast::Attribute& attr)
-{
-    llvm::Function* compute = B.GetInsertBlock()->getParent();
-    llvm::Module* M = compute->getParent();
-
-    const std::string& globalName = attr.tokenname();
-    llvm::Value* index = M->getNamedValue(globalName);
-    assert(index);
-
-    index = B.CreateLoad(index);
-    llvm::Value* cptr = extractArgument(compute, "class");
-    assert(cptr);
-    return B.CreateGEP(cptr, index);
-}
-
 void appendGridArgument(std::vector<llvm::Value*>& args,
     llvm::IRBuilder<>& B,
     const ast::Attribute& attr)
@@ -96,7 +81,7 @@ void appendGridArgument(std::vector<llvm::Value*>& args,
     assert(index);
 
     index = B.CreateLoad(index);
-    llvm::Value* tptr = extractArgument(compute, "grids");
+    llvm::Value* tptr = extractArgument(compute, "read_grids");
     assert(tptr);
     tptr = B.CreateGEP(tptr, index);
     tptr = B.CreateLoad(tptr);
@@ -315,19 +300,18 @@ inline FunctionGroup::UniquePtr axindextoworld(const FunctionOptions& op)
     static auto indexToWorld =
         [](openvdb::math::Vec3<double>* out,
            const openvdb::math::Vec3<int32_t>* coord,
-           const void* transform)
+           const void* grid)
     {
-        const openvdb::math::Transform* const transformPtr =
-                static_cast<const openvdb::math::Transform*>(transform);
+        const openvdb::GridBase* const gridptr =
+                static_cast<const openvdb::GridBase*>(grid);
         const openvdb::Coord* ijk = reinterpret_cast<const openvdb::Coord*>(coord);
-        *out = transformPtr->indexToWorld(*ijk);
+        *out = gridptr->transform()->indexToWorld(*ijk);
     };
 
     using IndexToWorldT = void(openvdb::math::Vec3<double>*, const openvdb::math::Vec3<int32_t>*, const void*);
 
     return FunctionBuilder("indextoworld")
         .addSignature<IndexToWorldT, true>((IndexToWorldT*)(indexToWorld))
-        .setArgumentNames({"coord", "transform"})
         .addParameterAttribute(0, llvm::Attribute::NoAlias)
         .addParameterAttribute(0, llvm::Attribute::WriteOnly)
         .addParameterAttribute(1, llvm::Attribute::NoAlias)
@@ -395,12 +379,12 @@ inline FunctionGroup::UniquePtr axgetvoxelpws(const FunctionOptions& op)
     {
         OPENVDB_AX_CHECK_MODULE_CONTEXT(B);
         llvm::Function* compute = B.GetInsertBlock()->getParent();
-        llvm::Value* transform = extractArgument(compute, "transforms");
+        llvm::Value* grid = extractArgument(compute, "read_grids");
         llvm::Value* wi = extractArgument(compute, "write_index");
-        transform = B.CreateGEP(transform, wi);
-        transform = B.CreateLoad(transform);
+        grid = B.CreateGEP(grid, wi);
+        grid = B.CreateLoad(grid);
         llvm::Value* coord = axgetcoord(op)->execute({}, B);
-        return axindextoworld(op)->execute({coord, transform}, B);
+        return axindextoworld(op)->execute({coord, grid}, B);
     };
 
     return FunctionBuilder("getvoxelpws")
@@ -626,8 +610,8 @@ inline FunctionGroup::UniquePtr axgetvoxel(const FunctionOptions& op)
 
     static auto getvoxel_s2t =
         [](void* accessor,
-           void* sourceTransform,
-           void* targetTransform,
+           void* sourcegrid,
+           void* targetgrid,
            const openvdb::math::Vec3<int32_t>* origin,
            const int32_t offset,
            auto value)
@@ -639,25 +623,23 @@ inline FunctionGroup::UniquePtr axgetvoxel(const FunctionOptions& op)
 
         assert(accessor);
         assert(origin);
-        assert(sourceTransform);
-        assert(targetTransform);
+        assert(sourcegrid);
+        assert(targetgrid);
 
         const AccessorType* const accessorPtr = static_cast<const AccessorType*>(accessor);
-        const openvdb::math::Transform* const sourceTransformPtr =
-                static_cast<const openvdb::math::Transform*>(sourceTransform);
-        const openvdb::math::Transform* const targetTransformPtr =
-                static_cast<const openvdb::math::Transform*>(targetTransform);
+        const openvdb::GridBase* const sourcegridPtr = static_cast<const openvdb::GridBase*>(sourcegrid);
+        const openvdb::GridBase* const targetgridPtr = static_cast<const openvdb::GridBase*>(targetgrid);
 
         const openvdb::Coord* ijk = reinterpret_cast<const openvdb::Coord*>(origin);
         auto coord = *ijk + LeafNodeT::offsetToLocalCoord(offset);
-        coord = targetTransformPtr->worldToIndexCellCentered(sourceTransformPtr->indexToWorld(coord));
+        coord = targetgridPtr->transform().worldToIndexCellCentered(sourcegridPtr->transform().indexToWorld(coord));
         (*value) = accessorPtr->getValue(coord);
     };
 
     static auto getvoxelstr_s2t =
         [](void* accessor,
-           void* sourceTransform,
-           void* targetTransform,
+           void* sourcegrid,
+           void* targetgrid,
            const openvdb::math::Vec3<int32_t>* origin,
            const int32_t offset,
            codegen::String* value)
@@ -668,18 +650,16 @@ inline FunctionGroup::UniquePtr axgetvoxel(const FunctionOptions& op)
 
         assert(accessor);
         assert(origin);
-        assert(sourceTransform);
-        assert(targetTransform);
+        assert(sourcegrid);
+        assert(targetgrid);
 
         const AccessorType* const accessorPtr = static_cast<const AccessorType*>(accessor);
-        const openvdb::math::Transform* const sourceTransformPtr =
-                static_cast<const openvdb::math::Transform*>(sourceTransform);
-        const openvdb::math::Transform* const targetTransformPtr =
-                static_cast<const openvdb::math::Transform*>(targetTransform);
+        const openvdb::GridBase* const sourcegridPtr = static_cast<const openvdb::GridBase*>(sourcegrid);
+        const openvdb::GridBase* const targetgridPtr = static_cast<const openvdb::GridBase*>(targetgrid);
 
         const openvdb::Coord* ijk = reinterpret_cast<const openvdb::Coord*>(origin);
         auto coord = *ijk + LeafNodeT::offsetToLocalCoord(offset);
-        coord = targetTransformPtr->worldToIndexCellCentered(sourceTransformPtr->indexToWorld(coord));
+        coord = targetgridPtr->transform().worldToIndexCellCentered(sourcegridPtr->transform().indexToWorld(coord));
         const std::string& str = accessorPtr->getValue(coord);
         // Copy the string to AX's required representation
         *value = str;
@@ -962,8 +942,8 @@ inline FunctionGroup::UniquePtr axvoxel(const FunctionOptions& op)
          llvm::IRBuilder<>& B,
          const ast::FunctionCall* f) -> llvm::Value*
     {
-        llvm::Function* compute = B.GetInsertBlock()->getParent();
-        verifyContext(compute, "voxel");
+        assert(args.size() == 1);
+        OPENVDB_AX_CHECK_MODULE_CONTEXT(B);
 
         assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
         auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
@@ -1060,8 +1040,8 @@ inline FunctionGroup::UniquePtr axisvoxel(const FunctionOptions& op)
          llvm::IRBuilder<>& B,
          const ast::FunctionCall* f) -> llvm::Value*
     {
-        llvm::Function* compute = B.GetInsertBlock()->getParent();
-        verifyContext(compute, "isvoxel");
+        assert(args.size() == 1);
+        OPENVDB_AX_CHECK_MODULE_CONTEXT(B);
 
         assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
         auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
@@ -1110,7 +1090,7 @@ inline FunctionGroup::UniquePtr ax__sample(const FunctionOptions& op)
     static auto sample_v3 =
         [](auto* value,
            const openvdb::math::Vec3<double>* pos,
-           const bool staggered,
+           void* grid,
            void* accessor,
            auto) //only used for prototype selection
     {
@@ -1119,11 +1099,16 @@ inline FunctionGroup::UniquePtr ax__sample(const FunctionOptions& op)
         using AccessorType = typename GridType::Accessor;
         assert(value);
         assert(pos);
+        assert(grid);
         assert(accessor);
-        const AccessorType* const aptr =
-            static_cast<const AccessorType* const>(accessor);
-        if (staggered) openvdb::tools::Sampler<Order, true>::sample(*aptr, *pos, *value);
-        else           openvdb::tools::Sampler<Order, false>::sample(*aptr, *pos, *value);
+        const AccessorType* const aptr = static_cast<const AccessorType* const>(accessor);
+        const openvdb::GridBase* const gptr = static_cast<const openvdb::GridBase* const>(grid);
+        if (gptr->getGridClass() == openvdb::GRID_STAGGERED) {
+            openvdb::tools::Sampler<Order, true>::sample(*aptr, *pos, *value);
+        }
+        else {
+            openvdb::tools::Sampler<Order, false>::sample(*aptr, *pos, *value);
+        }
     };
 
     using SampleD = void(double*, const openvdb::math::Vec3<double>*, void*, const double*);
@@ -1142,9 +1127,9 @@ inline FunctionGroup::UniquePtr ax__sample(const FunctionOptions& op)
     using SampleV4F = void(openvdb::math::Vec4<float>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec4<float>*);
     using SampleV4I = void(openvdb::math::Vec4<int32_t>*, const openvdb::math::Vec3<double>*, void*, const openvdb::math::Vec4<int32_t>*);
 
-    using SampleV3D_S = void(openvdb::math::Vec3<double>*, const openvdb::math::Vec3<double>*, const bool, void*, const openvdb::math::Vec3<double>*);
-    using SampleV3F_S = void(openvdb::math::Vec3<float>*, const openvdb::math::Vec3<double>*, const bool, void*, const openvdb::math::Vec3<float>*);
-    using SampleV3I_S = void(openvdb::math::Vec3<int32_t>*, const openvdb::math::Vec3<double>*, const bool, void*, const openvdb::math::Vec3<int32_t>*);
+    using SampleV3D_S = void(openvdb::math::Vec3<double>*, const openvdb::math::Vec3<double>*, void*, void*, const openvdb::math::Vec3<double>*);
+    using SampleV3F_S = void(openvdb::math::Vec3<float>*, const openvdb::math::Vec3<double>*, void*, void*, const openvdb::math::Vec3<float>*);
+    using SampleV3I_S = void(openvdb::math::Vec3<int32_t>*, const openvdb::math::Vec3<double>*, void*, void*, const openvdb::math::Vec3<int32_t>*);
 
     return FunctionBuilder(
         Order == 0 ? "__pointsample" :
@@ -1186,8 +1171,8 @@ inline FunctionGroup::UniquePtr axsample(const FunctionOptions& op)
          llvm::IRBuilder<>& B,
          const ast::FunctionCall* f) -> llvm::Value*
     {
-        llvm::Function* compute = B.GetInsertBlock()->getParent();
-        verifyContext(compute, "sample");
+        assert(args.size() == 1 || args.size() == 2);
+        OPENVDB_AX_CHECK_MODULE_CONTEXT(B);
 
         assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
         auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
@@ -1199,10 +1184,7 @@ inline FunctionGroup::UniquePtr axsample(const FunctionOptions& op)
         std::vector<llvm::Value*> input(args);
 
         if (isVec3 && input.size() == 1) {
-            llvm::Value* gclass = B.CreateLoad(getClassArgument(B, afc->attr()));
-            llvm::Value* V = LLVMType<int8_t>::get(B.getContext(), static_cast<int8_t>(openvdb::GRID_STAGGERED));
-            llvm::Value* staggered = B.CreateICmpEQ(gclass, V);
-            input.emplace_back(staggered);
+            appendGridArgument(input, B, afc->attr());
         }
         else if (!isVec3 && input.size() == 2) {
             // @todo warn/error?
@@ -1394,8 +1376,8 @@ inline FunctionGroup::UniquePtr axtransform(const FunctionOptions& op)
          llvm::IRBuilder<>& B,
          const ast::FunctionCall* f) -> llvm::Value*
     {
-        llvm::Function* compute = B.GetInsertBlock()->getParent();
-        verifyContext(compute, "transform");
+        assert(args.size() == 1);
+        OPENVDB_AX_CHECK_MODULE_CONTEXT(B);
 
         assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
         auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
@@ -1451,8 +1433,8 @@ inline FunctionGroup::UniquePtr axvoxelsize(const FunctionOptions& op)
          llvm::IRBuilder<>& B,
          const ast::FunctionCall* f) -> llvm::Value*
     {
-        llvm::Function* compute = B.GetInsertBlock()->getParent();
-        verifyContext(compute, "voxelsize");
+        assert(args.size() == 1);
+        OPENVDB_AX_CHECK_MODULE_CONTEXT(B);
 
         assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
         auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
@@ -1503,8 +1485,8 @@ inline FunctionGroup::UniquePtr axvoxelvolume(const FunctionOptions& op)
          llvm::IRBuilder<>& B,
          const ast::FunctionCall* f) -> llvm::Value*
     {
-        llvm::Function* compute = B.GetInsertBlock()->getParent();
-        verifyContext(compute, "voxelvolume");
+        assert(args.empty());
+        OPENVDB_AX_CHECK_MODULE_CONTEXT(B);
 
         assert(f->parent() && f->parent()->isType<ast::AttributeFunctionCall>());
         auto* afc = static_cast<const ast::AttributeFunctionCall*>(f->parent());
@@ -1576,8 +1558,8 @@ void insertVDBVolumeAttrFunctions(FunctionRegistry& reg,
 
     // value accessors
 
-    add("voxel", volume::axvoxel);
-    add("__voxel", volume::ax__voxel, true);
+    // add("voxel", volume::axvoxel);
+    // add("__voxel", volume::ax__voxel, true);
 
     add("isvoxel", volume::axisvoxel);
     add("__isvoxel", volume::ax__isvoxel, true);

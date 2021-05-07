@@ -30,7 +30,7 @@ VolumeKernelValue::argumentKeys()
         "active",
         "offset",
         "accessors",
-        "transforms",
+        "read_grids",
         "write_index"
     }};
 
@@ -52,7 +52,7 @@ VolumeKernelBuffer::argumentKeys()
         "buffer_size",
         "mode",
         "accessors",
-        "transforms",
+        "read_grids",
         "write_index"
     }};
 
@@ -70,8 +70,7 @@ VolumeKernelNode::argumentKeys()
         "custom_data",
         "coord_is",
         "accessors",
-        "grids",
-        "class",
+        "read_grids",
         "write_index",
         "write_acccessor"
     }};
@@ -157,7 +156,7 @@ inline void VolumeComputeGenerator::computek2(llvm::Function* compute, const Att
                 ison,               // active/inactive
                 B.CreateLoad(incr), // offset in the value buffer
                 args[6],            // read accessors
-                args[7],            // transforms
+                args[7],            // read_grids
                 args[8]             // write index
             };
             B.CreateCall(compute, input);
@@ -248,7 +247,7 @@ inline void VolumeComputeGenerator::computek3(llvm::Function* compute, const Att
                 ison,           // active/inactive
                 B.getInt64(0),  // offset in the value buffer, always zero
                 args[2],        // read accessors
-                args[3],        // transforms
+                args[3],        // read_grids
                 wi              // write index
             };
             B.CreateCall(compute, input);
@@ -447,24 +446,24 @@ void VolumeComputeGenerator::getAccessorValue(const std::string& globalName, llv
         // through an accessor
 
         llvm::Value* accessorPtr = extractArgument(mFunction, "accessors");
-        llvm::Value* transformPtr = extractArgument(mFunction, "transforms");
+        llvm::Value* gridptrs = extractArgument(mFunction, "read_grids");
         llvm::Value* origin = extractArgument(mFunction, "origin");
         llvm::Value* offset = extractArgument(mFunction, "offset");
         assert(accessorPtr);
-        assert(transformPtr);
+        assert(gridptrs);
         assert(origin);
         assert(offset);
 
         accessorPtr = mBuilder.CreateGEP(accessorPtr, registeredIndex);
-        llvm::Value* targetTransform = mBuilder.CreateGEP(transformPtr, registeredIndex);
-        llvm::Value* sourceTransform = mBuilder.CreateGEP(transformPtr, accessIndex);
+        llvm::Value* targetgrid = mBuilder.CreateGEP(gridptrs, registeredIndex);
+        llvm::Value* sourcegrid = mBuilder.CreateGEP(gridptrs, accessIndex);
 
         llvm::Value* accessor = mBuilder.CreateLoad(accessorPtr);
-        targetTransform = mBuilder.CreateLoad(targetTransform);
-        sourceTransform = mBuilder.CreateLoad(sourceTransform);
+        targetgrid = mBuilder.CreateLoad(targetgrid);
+        sourcegrid = mBuilder.CreateLoad(sourcegrid);
 
         const FunctionGroup* const F = this->getFunction("getvoxel", true);
-        F->execute({accessor, sourceTransform, targetTransform, origin, offset, location}, mBuilder);
+        F->execute({accessor, sourcegrid, targetgrid, origin, offset, location}, mBuilder);
         mBuilder.CreateStore(location, this->mSymbolTables.get(1)->get(globalName + "_vptr"));
         mBuilder.CreateBr(post);
     }
