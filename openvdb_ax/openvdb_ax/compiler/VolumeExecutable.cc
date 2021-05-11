@@ -167,7 +167,6 @@ struct OpData
     KernelNodeFunctionPtr mKernelNode;
     const CustomData* mCustomData;
     const AttributeRegistry* mAttributeRegistry;
-    std::vector<void*> mVoidTransforms;
     openvdb::GridBase** mGrids;
     size_t mActiveIndex;
     Index mTreeLevelMin; // only used with NodeManagers
@@ -198,13 +197,15 @@ struct VolumeFunctionArguments
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 
-    VolumeFunctionArguments(const OpData& data, openvdb::GridBase** read, const AttributeRegistry& reg)
+    VolumeFunctionArguments(const OpData& data)
         : mData(data)
         , mAccessors()
         , mVoidAccessors()
         {
-            mAccessors.reserve(data.mVoidTransforms.size());
-            mVoidAccessors.reserve(data.mVoidTransforms.size());
+            const AttributeRegistry& reg = *(data.mAttributeRegistry);
+            openvdb::GridBase** read = data.mGrids;
+            mAccessors.reserve(reg.data().size());
+            mVoidAccessors.reserve(reg.data().size());
             for (const auto& regdata : reg.data()) {
                 this->addAccessor(*read, regdata.type());
                 ++read;
@@ -227,7 +228,7 @@ struct VolumeFunctionArguments
                 static_cast<FunctionTraitsT::Arg<4>::Type>(size),
                 static_cast<FunctionTraitsT::Arg<5>::Type>(mData.mIterMode),
                 static_cast<FunctionTraitsT::Arg<6>::Type>(mVoidAccessors.data()),
-                static_cast<FunctionTraitsT::Arg<7>::Type>(mData.mVoidTransforms.data()),
+                static_cast<FunctionTraitsT::Arg<7>::Type>(mData.mGrids),
                 static_cast<FunctionTraitsT::Arg<8>::Type>(mData.mActiveIndex));
         };
     }
@@ -241,7 +242,7 @@ struct VolumeFunctionArguments
             return mData.mKernelNode(static_cast<FunctionTraitsT::Arg<0>::Type>(mData.mCustomData),
                 reinterpret_cast<FunctionTraitsT::Arg<1>::Type>(ijk.data()),
                 static_cast<FunctionTraitsT::Arg<2>::Type>(mVoidAccessors.data()),
-                static_cast<FunctionTraitsT::Arg<3>::Type>(mData.mVoidTransforms.data()),
+                static_cast<FunctionTraitsT::Arg<3>::Type>(mData.mGrids),
                 static_cast<FunctionTraitsT::Arg<4>::Type>(mData.mActiveIndex),
                 static_cast<FunctionTraitsT::Arg<5>::Type>(activeAccessor));
         };
@@ -371,7 +372,7 @@ struct VolumeExecuterOp
                 using IterType = ValueOffIter::IterTraitsT<NodeType>;
                 auto it = IterType::begin(node);
                 if (!it) return; // only possible if this node only has active tiles
-                VolumeFunctionArguments args(mData, mData.mGrids, *mData.mAttributeRegistry);
+                VolumeFunctionArguments args(mData);
                 tree::ValueAccessor<TreeT> acc(mTree);
                 /// @note  the node kernel works for any VDB configuration and value type
                 auto kernel = args.bindNodeKernel(static_cast<void*>(&acc));
@@ -389,7 +390,7 @@ struct VolumeExecuterOp
             using IterType = typename IterT::template IterTraitsT<NodeType>;
             auto it = IterType::begin(node);
             if (!it) return;
-            VolumeFunctionArguments args(mData, mData.mGrids, *mData.mAttributeRegistry);
+            VolumeFunctionArguments args(mData);
             tree::ValueAccessor<TreeT> acc(mTree);
             /// @note  the node kernel works for any VDB configuration and value type
             auto kernel = args.bindNodeKernel(static_cast<void*>(&acc));
@@ -446,7 +447,7 @@ private:
         >::type* = nullptr>
     void processLeafNodes(const LeafRangeT& range) const
     {
-        VolumeFunctionArguments args(mData, mData.mGrids, *mData.mAttributeRegistry);
+        VolumeFunctionArguments args(mData);
         auto kernel = args.bindBufferKernel();
         for (auto leaf = range.begin(); leaf; ++leaf) {
             void* buffer = static_cast<void*>(leaf->buffer().data());
@@ -466,7 +467,7 @@ private:
             std::is_same<std::string, ValueType>::value,
             ax::codegen::String, bool>::type;
 
-        VolumeFunctionArguments args(mData, mData.mGrids, *mData.mAttributeRegistry);
+        VolumeFunctionArguments args(mData);
         auto kernel = args.bindBufferKernel();
         TempBufferT values[LeafNodeT::NUM_VOXELS];
 
@@ -711,7 +712,7 @@ private:
         auto* const table = const_cast<typename NodeT::UnionType*>(parent.getTable());
         const auto& mask = parent.getValueMask();
 
-        VolumeFunctionArguments args(mData, mData.mGrids, *mData.mAttributeRegistry);
+        VolumeFunctionArguments args(mData);
         auto kernel = args.bindBufferKernel();
 
         Index64* word;
@@ -781,7 +782,7 @@ private:
         auto* const table = const_cast<typename NodeT::UnionType*>(parent.getTable());
         const auto& mask = parent.getValueMask();
 
-        VolumeFunctionArguments args(mData, mData.mGrids, *mData.mAttributeRegistry);
+        VolumeFunctionArguments args(mData);
         auto kernel = args.bindBufferKernel();
 
         TempBufferT values[LeafNodeT::NUM_VOXELS];
@@ -1037,13 +1038,6 @@ inline void run(GridCache& cache,
     // changed by the next invocation of run().
     data.mActiveTileStreaming = ((data.mIterMode == 1 || data.mIterMode == 2) &&
         (S.mActiveTileStreaming != VolumeExecutable::Streaming::OFF));
-
-    openvdb::GridBase** read = cache.mRead.data();
-    data.mVoidTransforms.reserve(cache.mRead.size());
-    for (size_t i = 0; i < registry.data().size(); ++i, ++read) {
-        assert(read);
-        data.mVoidTransforms.emplace_back(static_cast<void*>(&(*read)->transform()));
-    }
 
     for (const auto& grid : cache.mWrite) {
         const bool success = grid->apply<SupportedTypeList>([&](auto& typed) {

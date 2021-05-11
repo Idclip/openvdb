@@ -66,7 +66,6 @@ inline FunctionRegistry::UniquePtr createDefaultRegistry(const FunctionOptions* 
     insertStandardFunctions(*registry, op);
     insertVDBPointFunctions(*registry, op);
     insertVDBVolumeFunctions(*registry, op);
-    insertVDBVolumeAttrFunctions(*registry, op);
     return registry;
 }
 
