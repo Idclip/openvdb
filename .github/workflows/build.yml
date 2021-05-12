@@ -96,7 +96,9 @@ jobs:
       # Always run tests on weekly builds
       # https://github.community/t/distinct-job-for-each-schedule/17811/2
       if: contains(github.event.schedule, '0 0 * * 1') || matrix.config.test == 'ON'
-      run: ./ci/test.sh
+      run: |
+        ./ci/test.sh
+        ./ci/test_install.sh
 
   testabi8lite:
     runs-on: ubuntu-16.04

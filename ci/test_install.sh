@@ -4,6 +4,15 @@ set -e
 # Various tests to test the FindOpenVDB CMake modules and
 # general VDB installation
 
+# slow-ish but reliable
+cmake --system-information &> sysinfo
+os=$(cat sysinfo | grep CMAKE_HOST_SYSTEM_NAME | cut -f2 -d' ' | tr -d '"')
+if [ "$os" == "Windows" ]; then
+    module_path="C:/Program Files/OpenVDB/lib/cmake/OpenVDB"
+else
+    module_path="/usr/local/lib64/cmake/OpenVDB/"
+fi
+
 # 1) Test basic CMakeLists is able to build vdb_print with
 # the expected VDB installation
 
@@ -17,5 +26,5 @@ target_link_libraries(test_vdb_print OpenVDB::openvdb)
 mkdir tmp
 cd tmp
 echo -e "$cmakelists" > CMakeLists.txt
-cmake -DCMAKE_MODULE_PATH=/usr/local/lib64/cmake/OpenVDB/ .
-cmake --build . --config Release --target test_vdb_print
+cmake -DCMAKE_MODULE_PATH=$module_path .
+cmake --build . --target test_vdb_print
