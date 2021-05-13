@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 # Various tests to test the FindOpenVDB CMake modules and
 # general VDB installation
@@ -26,5 +26,5 @@ target_link_libraries(test_vdb_print OpenVDB::openvdb)
 mkdir tmp
 cd tmp
 echo -e "$cmakelists" > CMakeLists.txt
-cmake -DCMAKE_MODULE_PATH=$module_path .
+cmake -DCMAKE_MODULE_PATH="$module_path" .
 cmake --build . --target test_vdb_print
