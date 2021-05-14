@@ -7,11 +7,6 @@ set -ex
 # slow-ish but reliable
 cmake --system-information &> sysinfo
 os=$(cat sysinfo | grep CMAKE_HOST_SYSTEM_NAME | cut -f2 -d' ' | tr -d '"')
-if [ "$os" == "Windows" ]; then
-    module_path="C:/Program Files/OpenVDB/lib/cmake/OpenVDB"
-else
-    module_path="/usr/local/lib64/cmake/OpenVDB/"
-fi
 
 # 1) Test basic CMakeLists is able to build vdb_print with
 # the expected VDB installation
@@ -27,5 +22,14 @@ target_link_libraries(test_vdb_print OpenVDB::openvdb)
 mkdir tmp
 cd tmp
 echo -e "$cmakelists" > CMakeLists.txt
-cmake -DCMAKE_MODULE_PATH="$module_path" .
+
+if [ "$os" == "Windows" ]; then
+    cmake -G "Visual Studio 16 2019" -A x64 \
+      -DVCPKG_TARGET_TRIPLET="${VCPKG_DEFAULT_TRIPLET}" \
+      -DCMAKE_TOOLCHAIN_FILE="${VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake" \
+      -DCMAKE_MODULE_PATH="C:/Program Files/OpenVDB/lib/cmake/OpenVDB" .
+else
+    cmake -DCMAKE_MODULE_PATH="/usr/local/lib64/cmake/OpenVDB/" .
+fi
+
 cmake --build . --target test_vdb_print
