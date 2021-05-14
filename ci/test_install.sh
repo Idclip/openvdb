@@ -19,6 +19,7 @@ fi
 cmakelists="
 cmake_minimum_required(VERSION 3.12)
 project(TestInstall LANGUAGES CXX)
+add_compile_options(\"$<$<CXX_COMPILER_ID:MSVC>:/bigobj>\")
 find_package(OpenVDB REQUIRED COMPONENTS openvdb)
 add_executable(test_vdb_print \"../openvdb/openvdb/cmd/openvdb_print.cc\")
 target_link_libraries(test_vdb_print OpenVDB::openvdb)
