@@ -235,55 +235,7 @@ endif()
 
 set(OPENVDB_DSO_NAMES
   GR_PrimVDBPoints
-  SHOP_OpenVDB_Points
-  SOP_OpenVDB_Activate
-  SOP_OpenVDB_Advect
-  SOP_OpenVDB_Advect_Points
-  SOP_OpenVDB_Analysis
-  SOP_OpenVDB_Clip
-  SOP_OpenVDB_Combine
-  SOP_OpenVDB_Convert
-  SOP_OpenVDB_Create
-  SOP_OpenVDB_Densify
-  SOP_OpenVDB_Diagnostics
-  SOP_OpenVDB_Extrapolate
-  SOP_OpenVDB_Fill
-  SOP_OpenVDB_Filter
-  SOP_OpenVDB_Filter_Level_Set
-  SOP_OpenVDB_Fracture
-  SOP_OpenVDB_From_Particles
-  SOP_OpenVDB_From_Polygons
-  SOP_OpenVDB_LOD
-  SOP_OpenVDB_Merge
-  SOP_OpenVDB_Metadata
-  SOP_OpenVDB_Morph_Level_Set
-  SOP_OpenVDB_Noise
-  SOP_OpenVDB_Occlusion_Mask
   SOP_OpenVDB_Platonic
-  SOP_OpenVDB_Points_Convert
-  SOP_OpenVDB_Points_Delete
-  SOP_OpenVDB_Points_Group
-  SOP_OpenVDB_Potential_Flow
-  SOP_OpenVDB_Prune
-  SOP_OpenVDB_Rasterize_Points
-  SOP_OpenVDB_Ray
-  SOP_OpenVDB_Read
-  SOP_OpenVDB_Rebuild_Level_Set
-  SOP_OpenVDB_Remap
-  SOP_OpenVDB_Remove_Divergence
-  SOP_OpenVDB_Resample
-  SOP_OpenVDB_Sample_Points
-  SOP_OpenVDB_Scatter
-  SOP_OpenVDB_Segment
-  SOP_OpenVDB_Sort_Points
-  SOP_OpenVDB_To_Polygons
-  SOP_OpenVDB_To_Spheres
-  SOP_OpenVDB_Topology_To_Level_Set
-  SOP_OpenVDB_Transform
-  SOP_OpenVDB_Vector_Merge
-  SOP_OpenVDB_Vector_Split
-  SOP_OpenVDB_Visualize
-  SOP_OpenVDB_Write
   VRAY_OpenVDB_Points
 )
 

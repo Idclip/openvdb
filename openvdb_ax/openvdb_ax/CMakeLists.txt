@@ -24,6 +24,7 @@ if(NOT OPENVDB_AX_SHARED AND NOT OPENVDB_AX_STATIC)
 endif()
 
 mark_as_advanced(USE_NEW_PASS_MANAGER)
+message(STATUS "sizeof(void) = ${CMAKE_SIZEOF_VOID_P}")
 
 #########################################################################
 
@@ -103,6 +104,19 @@ endif()
 
 message(STATUS "Found LLVM: ${LLVM_DIR} (found suitable version \"${LLVM_PACKAGE_VERSION}\", "
   "minimum required is \"${MINIMUM_LLVM_VERSION}\")")
+
+# Generate an unexported symbols list
+
+set(LLVM_UNEXPORTED_SYMBOLS_FILE ${CMAKE_CURRENT_BINARY_DIR}/openvdb_ax/usf_llvm.txt)
+set(LLVM_UNEXPORTED_SYMBOLS
+  "__ZN4llvm*\n"
+  "__ZNK4llvm*\n"
+  "__ZTIN4llvm*\n"
+  "__ZTSN4llvm*\n"
+  "__ZTVN4llvm*\n"
+  "__ZNR4llvm*\n"
+  )
+file(WRITE ${LLVM_UNEXPORTED_SYMBOLS_FILE} ${LLVM_UNEXPORTED_SYMBOLS})
 
 #########################################################################
 
@@ -315,6 +329,12 @@ if(OPENVDB_AX_SHARED)
   endif()
 
   target_link_libraries(openvdb_ax_shared PUBLIC ${OPENVDB_AX_CORE_DEPENDENT_LIBS})
+  target_link_libraries(openvdb_ax_shared PRIVATE
+    -Wl,-unexported_symbols_list ${LLVM_UNEXPORTED_SYMBOLS_FILE})
+
+  if(USE_NEW_PASS_MANAGER)
+    target_compile_definitions(openvdb_ax_shared PRIVATE -DUSE_NEW_PASS_MANAGER)
+  endif()
 endif()
 
 install(FILES ax.h Exceptions.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/openvdb_ax/)
