@@ -275,12 +275,12 @@
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">193</td>
-            <td class="headerTableEntry">294</td>
-            <td class="headerTableEntry" style="background-color:LightPink">65.6 %</td>
+            <td class="headerTableEntry">206</td>
+            <td class="headerTableEntry">306</td>
+            <td class="headerTableEntry" style="background-color:LightPink">67.3 %</td>
           </tr>
         </table>
       </td>
@@ -553,7 +553,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>37</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 12 times">&check;</span><span class="takenBranch" title="Branch 1 taken 5 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5 times">&check;</span><span class="takenBranch" title="Branch 1 taken 12 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>17</pre></td>
     <td align="left" class="src coveredLine"><pre>printTypes(llvm::raw_os_ostream&amp; stream,</pre></td>
     </tr>
@@ -595,7 +595,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>43</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 12 times">&check;</span><span class="takenBranch" title="Branch 1 taken 5 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5 times">&check;</span><span class="takenBranch" title="Branch 1 taken 12 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>17</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (types.empty()) return;</pre></td>
     </tr>
@@ -603,15 +603,15 @@
     <tr>
     <td align="right" class="lineno"><pre>44</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    auto typeIter = types.cbegin();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
+    <td align="left" class="src coveredLine"><pre>    auto typeIter = types.cbegin();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>45</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    std::vector&lt;const char*>::const_iterator nameIter;</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 10 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
+    <td align="left" class="src coveredLine"><pre>    std::vector&lt;const char*>::const_iterator nameIter;</pre></td>
     </tr>
 
     <tr>
@@ -714,7 +714,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>60</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 10 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span><span class="takenBranch" title="Branch 2 taken 8 times">&check;</span><span class="takenBranch" title="Branch 3 taken 2 times">&check;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 10 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span><span class="takenBranch" title="Branch 2 taken 2 times">&check;</span><span class="takenBranch" title="Branch 3 taken 8 times">&check;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>12</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (!names.empty() &amp;&amp; nameIter != names.cend()) {</pre></td>
     </tr>
@@ -1099,7 +1099,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>115</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 13062 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 13062 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 13034 times">&check;</span><span class="takenBranch" title="Branch 4 taken 28 times">&check;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>13062</pre></td>
     <td align="left" class="src coveredLine"><pre>    function->setAttributes(this->flattenAttrs(C));</pre></td>
     </tr>
@@ -1169,7 +1169,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>125</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 31999 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>31999</pre></td>
     <td align="left" class="src coveredLine"><pre>Function::call(const std::vector&lt;llvm::Value*>&amp; args,</pre></td>
     </tr>
@@ -1198,8 +1198,8 @@
     <tr>
     <td align="right" class="lineno"><pre>129</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>31999</pre></td>
-    <td align="left" class="src coveredLine"><pre>    llvm::BasicBlock* block = B.GetInsertBlock();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    llvm::BasicBlock* block = B.GetInsertBlock();</pre></td>
     </tr>
 
     <tr>
@@ -1212,8 +1212,8 @@
     <tr>
     <td align="right" class="lineno"><pre>131</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>31999</pre></td>
-    <td align="left" class="src coveredLine"><pre>    llvm::Function* currentFunction = block->getParent();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    llvm::Function* currentFunction = block->getParent();</pre></td>
     </tr>
 
     <tr>
@@ -1226,8 +1226,8 @@
     <tr>
     <td align="right" class="lineno"><pre>133</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>31999</pre></td>
-    <td align="left" class="src coveredLine"><pre>    llvm::Module* M = currentFunction->getParent();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    llvm::Module* M = currentFunction->getParent();</pre></td>
     </tr>
 
     <tr>
@@ -1316,7 +1316,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>146</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 253102 times">&check;</span><span class="takenBranch" title="Branch 1 taken 100956 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>354058</pre></td>
     <td align="left" class="src coveredLine"><pre>Function::match(const std::vector&lt;llvm::Type*>&amp; inputs, llvm::LLVMContext&amp; C) const</pre></td>
     </tr>
@@ -1407,7 +1407,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>159</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 226332 times">&check;</span><span class="takenBranch" title="Branch 1 taken 26701 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 226332 times">&check;</span><span class="takenBranch" title="Branch 2 taken 26701 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>253033</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (inputs == signature) return Explicit;</pre></td>
     </tr>
@@ -1526,16 +1526,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>176</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 29322 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>29322</pre></td>
-    <td align="left" class="src coveredLine"><pre>            from = from->getContainedType(0);</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>            from = from->getContainedType(0);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>177</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 29322 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>29322</pre></td>
-    <td align="left" class="src coveredLine"><pre>            to = to->getContainedType(0);</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>            to = to->getContainedType(0);</pre></td>
     </tr>
 
     <tr>
@@ -1765,8 +1765,8 @@
     <tr>
     <td align="right" class="lineno"><pre>210</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5605</pre></td>
-    <td align="left" class="src coveredLine"><pre>    llvm::LLVMContext&amp; C = B.getContext();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    llvm::LLVMContext&amp; C = B.getContext();</pre></td>
     </tr>
 
     <tr>
@@ -1862,7 +1862,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>224</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 25504 times">&check;</span><span class="takenBranch" title="Branch 2 taken 7266 times">&check;</span><span class="takenBranch" title="Branch 3 taken 18238 times">&check;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 7266 times">&check;</span><span class="takenBranch" title="Branch 1 taken 18238 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>25504</pre></td>
     <td align="left" class="src coveredLine"><pre>        else if (type->getContainedType(0)->isArrayTy()) {</pre></td>
     </tr>
@@ -1911,7 +1911,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>231</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 15098 times">&check;</span><span class="takenBranch" title="Branch 2 taken 313 times">&check;</span><span class="takenBranch" title="Branch 3 taken 14785 times">&check;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 313 times">&check;</span><span class="takenBranch" title="Branch 1 taken 14785 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>15098</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (type->getContainedType(0) == strType) {</pre></td>
     </tr>
@@ -2135,7 +2135,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>263</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="takenBranch" title="Branch 1 taken 32142 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>32143</pre></td>
     <td align="left" class="src coveredLine"><pre>        const size_t idx = idxAttr.first;</pre></td>
     </tr>
@@ -2233,7 +2233,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>277</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5811 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>5813</pre></td>
     <td align="left" class="src coveredLine"><pre>IRFunctionBase::create(llvm::LLVMContext&amp; C, llvm::Module* M) const</pre></td>
     </tr>
@@ -2366,8 +2366,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>296</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 13354 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>13355</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 13354 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>13354</pre></td>
     <td align="left" class="src coveredLine"><pre>        fnargs.emplace_back(llvm::cast&lt;llvm::Value>(arg));</pre></td>
     </tr>
 
@@ -2401,16 +2401,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>301</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    llvm::IRBuilder&lt;> B(BB);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3014 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>3015</pre></td>
+    <td align="left" class="src coveredLine"><pre>    llvm::IRBuilder&lt;> B(BB);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>302</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    llvm::Value* lastInstruction = mGen(fnargs, B);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3014 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>3014</pre></td>
+    <td align="left" class="src coveredLine"><pre>    llvm::Value* lastInstruction = mGen(fnargs, B);</pre></td>
     </tr>
 
     <tr>
@@ -2667,7 +2667,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>339</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4358 times">&check;</span><span class="takenBranch" title="Branch 1 taken 110 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>4468</pre></td>
     <td align="left" class="src coveredLine"><pre>llvm::Value* IRFunctionBase::call(const std::vector&lt;llvm::Value*>&amp; args,</pre></td>
     </tr>
@@ -2772,9 +2772,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>354</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    llvm::Value* result = mGen(inputs, B);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 97 times">&check;</span><span class="takenBranch" title="Branch 2 taken 13 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>110</pre></td>
+    <td align="left" class="src coveredLine"><pre>    llvm::Value* result = mGen(inputs, B);</pre></td>
     </tr>
 
     <tr>
@@ -3046,8 +3046,8 @@
     <tr>
     <td align="right" class="lineno"><pre>393</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    return targetFunction;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5609</pre></td>
+    <td align="left" class="src coveredLine"><pre>    return targetFunction;</pre></td>
     </tr>
 
     <tr>

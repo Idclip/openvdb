@@ -270,17 +270,17 @@
             <td></td>
             <td class="headerName">Lines:</td>
             <td class="headerTableEntry">90</td>
-            <td class="headerTableEntry">95</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">94.7 %</td>
+            <td class="headerTableEntry">96</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">93.8 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">16</td>
-            <td class="headerTableEntry">30</td>
-            <td class="headerTableEntry" style="background-color:LightPink">53.3 %</td>
+            <td class="headerTableEntry">20</td>
+            <td class="headerTableEntry">36</td>
+            <td class="headerTableEntry" style="background-color:LightPink">55.6 %</td>
           </tr>
         </table>
       </td>
@@ -525,9 +525,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>33</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    Vec3d corners[8];</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>36</pre></td>
+    <td align="left" class="src coveredLine"><pre>    Vec3d corners[8];</pre></td>
     </tr>
 
     <tr>
@@ -1428,7 +1428,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>162</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>calculateBounds&lt;math::NonlinearFrustumMap>(const math::NonlinearFrustumMap&amp; frustum,</pre></td>
     </tr>
@@ -1541,8 +1541,8 @@
     <tr>
     <td align="right" class="lineno"><pre>178</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        BBoxd bounding_box(center - radius*Vec3d(1,1,1), center + radius*Vec3d(1,1,1));</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        BBoxd bounding_box(center - radius*Vec3d(1,1,1), center + radius*Vec3d(1,1,1));</pre></td>
     </tr>
 
     <tr>
@@ -1646,8 +1646,8 @@
     <tr>
     <td align="right" class="lineno"><pre>193</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>    double gamma = frustum.getGamma();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    double gamma = frustum.getGamma();</pre></td>
     </tr>
 
     <tr>
@@ -2240,7 +2240,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>278</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    double near_dist = std::max(centerLS.z() - radiusLS, 0.);</pre></td>
     </tr>

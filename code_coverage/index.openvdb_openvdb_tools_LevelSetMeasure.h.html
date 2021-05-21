@@ -275,12 +275,12 @@
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">77</td>
-            <td class="headerTableEntry">134</td>
-            <td class="headerTableEntry" style="background-color:LightPink">57.5 %</td>
+            <td class="headerTableEntry">73</td>
+            <td class="headerTableEntry">126</td>
+            <td class="headerTableEntry" style="background-color:LightPink">57.9 %</td>
           </tr>
         </table>
       </td>
@@ -1149,7 +1149,7 @@
     <tr>
     <td align="right" class="lineno"><pre>122</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 17 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>34</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>68</pre></td>
     <td align="left" class="src coveredLine"><pre>    virtual ~LevelSetMeasure() {}</pre></td>
     </tr>
 
@@ -1758,7 +1758,7 @@
     <tr>
     <td align="right" class="lineno"><pre>209</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>107</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>120</pre></td>
     <td align="left" class="src coveredLine"><pre>        MeasureArea(const MeasureArea&amp; other) : mParent(other.mParent), mStencil(*mParent->mGrid) {}</pre></td>
     </tr>
 
@@ -1905,7 +1905,7 @@
     <tr>
     <td align="right" class="lineno"><pre>230</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>447</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>446</pre></td>
     <td align="left" class="src coveredLine"><pre>        MeasureCurvatures(const MeasureCurvatures&amp; other) : mParent(other.mParent), mStencil(*mParent->mGrid) {}</pre></td>
     </tr>
 
@@ -2059,7 +2059,7 @@
     <tr>
     <td align="right" class="lineno"><pre>252</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 17 times">&check;</span><span class="takenBranch" title="Branch 2 taken 3 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>20</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>23</pre></td>
     <td align="left" class="src coveredLine"><pre>    , mGrainSize(1)</pre></td>
     </tr>
 
@@ -2227,7 +2227,7 @@
     <tr>
     <td align="right" class="lineno"><pre>276</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>36</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>18</pre></td>
     <td align="left" class="src coveredLine"><pre>    mLeafs  = std::make_unique&lt;ManagerType>(mGrid->tree());</pre></td>
     </tr>
 
@@ -2675,7 +2675,7 @@
     <tr>
     <td align="right" class="lineno"><pre>340</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>531</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>554</pre></td>
     <td align="left" class="src coveredLine"><pre>LevelSetMeasure&lt;GridT, InterruptT>::</pre></td>
     </tr>
 
@@ -2710,14 +2710,14 @@
     <tr>
     <td align="right" class="lineno"><pre>345</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>531</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>554</pre></td>
     <td align="left" class="src coveredLine"><pre>    mParent->checkInterrupter();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>346</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 531 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>531</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>554</pre></td>
     <td align="left" class="src coveredLine"><pre>    const Real invDx = 1.0/mParent->mDx;</pre></td>
     </tr>
 
@@ -2730,15 +2730,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>348</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 531 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>531</pre></td>
-    <td align="left" class="src coveredLine"><pre>    const size_t leafCount = mParent->mLeafs->leafCount();</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    const size_t leafCount = mParent->mLeafs->leafCount();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>349</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 26406 times">&check;</span><span class="takenBranch" title="Branch 1 taken 531 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>26937</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 26406 times">&check;</span><span class="takenBranch" title="Branch 2 taken 554 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>26960</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (LeafIterT leafIter=range.begin(); leafIter; ++leafIter) {</pre></td>
     </tr>
 
@@ -2787,8 +2787,8 @@
     <tr>
     <td align="right" class="lineno"><pre>356</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                const Vec3T g  = mStencil.gradient();// in world units</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2441734</pre></td>
+    <td align="left" class="src coveredLine"><pre>                const Vec3T g  = mStencil.gradient();// in world units</pre></td>
     </tr>
 
     <tr>
@@ -2857,7 +2857,7 @@
     <tr>
     <td align="right" class="lineno"><pre>366</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>531</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>554</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -2885,7 +2885,7 @@
     <tr>
     <td align="right" class="lineno"><pre>370</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2161</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2155</pre></td>
     <td align="left" class="src coveredLine"><pre>LevelSetMeasure&lt;GridT, InterruptT>::</pre></td>
     </tr>
 
@@ -2920,14 +2920,14 @@
     <tr>
     <td align="right" class="lineno"><pre>375</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2161</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2155</pre></td>
     <td align="left" class="src coveredLine"><pre>    mParent->checkInterrupter();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>376</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 2161 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2161</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>2155</pre></td>
     <td align="left" class="src coveredLine"><pre>    const Real dx = mParent->mDx, dx2=dx*dx, invDx = 1.0/dx;</pre></td>
     </tr>
 
@@ -2947,15 +2947,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>379</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 2161 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2161</pre></td>
-    <td align="left" class="src coveredLine"><pre>    const size_t leafCount = mParent->mLeafs->leafCount();</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    const size_t leafCount = mParent->mLeafs->leafCount();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>380</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 101603 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2161 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>103764</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 101603 times">&check;</span><span class="takenBranch" title="Branch 2 taken 2155 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>103758</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (LeafIterT leafIter=range.begin(); leafIter; ++leafIter) {</pre></td>
     </tr>
 
@@ -2997,8 +2997,8 @@
     <tr>
     <td align="right" class="lineno"><pre>386</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                const Vec3T g  = mStencil.gradient();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>9640106</pre></td>
+    <td align="left" class="src coveredLine"><pre>                const Vec3T g  = mStencil.gradient();</pre></td>
     </tr>
 
     <tr>
@@ -3081,7 +3081,7 @@
     <tr>
     <td align="right" class="lineno"><pre>398</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2161</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2155</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 

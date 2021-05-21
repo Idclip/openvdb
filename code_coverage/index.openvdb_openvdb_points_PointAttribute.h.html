@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/points/PointAttribute.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">95</td>
-            <td class="headerTableEntry">96</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">99.0 %</td>
+            <td class="headerTableEntry">104</td>
+            <td class="headerTableEntry">106</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">98.1 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">129</td>
-            <td class="headerTableEntry">245</td>
-            <td class="headerTableEntry" style="background-color:LightPink">52.7 %</td>
+            <td class="headerTableEntry">134</td>
+            <td class="headerTableEntry">253</td>
+            <td class="headerTableEntry" style="background-color:LightPink">53.0 %</td>
           </tr>
         </table>
       </td>
@@ -512,7 +512,7 @@
     <tr>
     <td align="right" class="lineno"><pre>31</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>896</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1398</pre></td>
     <td align="left" class="src coveredLine"><pre>    static inline ValueType value() { return zeroVal&lt;ValueType>(); }</pre></td>
     </tr>
 
@@ -1443,8 +1443,8 @@
     <tr>
     <td align="right" class="lineno"><pre>164</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>inline void collapseAttribute(AttributeArray&amp; array,</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>13361</pre></td>
+    <td align="left" class="src coveredLine"><pre>inline void collapseAttribute(AttributeArray&amp; array,</pre></td>
     </tr>
 
     <tr>
@@ -1464,22 +1464,22 @@
     <tr>
     <td align="right" class="lineno"><pre>167</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    AttributeWriteHandle&lt;ValueType> handle(array);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>13361</pre></td>
+    <td align="left" class="src coveredLine"><pre>    AttributeWriteHandle&lt;ValueType> handle(array);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>168</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    handle.collapse(uniformValue);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 7053 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>13361</pre></td>
+    <td align="left" class="src coveredLine"><pre>    handle.collapse(uniformValue);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>169</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>13361</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
     <tr>
@@ -2591,14 +2591,14 @@
     <tr>
     <td align="right" class="lineno"><pre>328</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5101</pre></td>
-    <td align="left" class="src coveredLine"><pre>    const bool uniformIsDefault = math::isExactlyEqual(uniformValue,</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    const bool uniformIsDefault = math::isExactlyEqual(uniformValue,</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>329</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2 times">&check;</span><span class="takenBranch" title="Branch 1 taken 6801 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>13601</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>17947</pre></td>
     <td align="left" class="src coveredLine"><pre>            bool(defaultValue) ? defaultValue->value() : Default&lt;ValueType>::value());</pre></td>
     </tr>
 
@@ -2836,13 +2836,13 @@
     <tr>
     <td align="right" class="lineno"><pre>363</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>7377</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>21483</pre></td>
     <td align="left" class="src coveredLine"><pre>        [&amp;](typename PointDataTreeT::LeafNodeType&amp; leaf, size_t /*idx*/) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>364</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 977 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 248 times">&check;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 240 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 248 times">&check;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 276 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><span class="takenBranch" title="Branch 16 taken 272 times">&check;</span><br/><span class="notTakenBranch" title="Branch 18 not taken">&cross;</span><span class="takenBranch" title="Branch 19 taken 276 times">&check;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span><span class="takenBranch" title="Branch 22 taken 300 times">&check;</span><br/><span class="notTakenBranch" title="Branch 24 not taken">&cross;</span><span class="takenBranch" title="Branch 25 taken 400 times">&check;</span><span class="notTakenBranch" title="Branch 27 not taken">&cross;</span><span class="takenBranch" title="Branch 28 taken 320 times">&check;</span><br/><span class="notTakenBranch" title="Branch 30 not taken">&cross;</span><span class="takenBranch" title="Branch 31 taken 240 times">&check;</span><span class="notTakenBranch" title="Branch 33 not taken">&cross;</span><span class="takenBranch" title="Branch 34 taken 244 times">&check;</span><br/><span class="notTakenBranch" title="Branch 36 not taken">&cross;</span><span class="takenBranch" title="Branch 37 taken 244 times">&check;</span><span class="notTakenBranch" title="Branch 39 not taken">&cross;</span><span class="takenBranch" title="Branch 40 taken 700 times">&check;</span><br/><span class="notTakenBranch" title="Branch 42 not taken">&cross;</span><span class="takenBranch" title="Branch 43 taken 180 times">&check;</span><span class="notTakenBranch" title="Branch 45 not taken">&cross;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 48 not taken">&cross;</span><span class="takenBranch" title="Branch 49 taken 420 times">&check;</span><span class="notTakenBranch" title="Branch 51 not taken">&cross;</span><span class="takenBranch" title="Branch 52 taken 692 times">&check;</span><br/><span class="notTakenBranch" title="Branch 54 not taken">&cross;</span><span class="takenBranch" title="Branch 55 taken 780 times">&check;</span><span class="notTakenBranch" title="Branch 57 not taken">&cross;</span><span class="takenBranch" title="Branch 58 taken 104 times">&check;</span><br/></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 849 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 236 times">&check;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 248 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 240 times">&check;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 244 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><span class="takenBranch" title="Branch 16 taken 276 times">&check;</span><br/><span class="notTakenBranch" title="Branch 18 not taken">&cross;</span><span class="takenBranch" title="Branch 19 taken 272 times">&check;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span><span class="takenBranch" title="Branch 22 taken 276 times">&check;</span><br/><span class="notTakenBranch" title="Branch 24 not taken">&cross;</span><span class="takenBranch" title="Branch 25 taken 300 times">&check;</span><span class="notTakenBranch" title="Branch 27 not taken">&cross;</span><span class="takenBranch" title="Branch 28 taken 400 times">&check;</span><br/><span class="notTakenBranch" title="Branch 30 not taken">&cross;</span><span class="takenBranch" title="Branch 31 taken 320 times">&check;</span><span class="notTakenBranch" title="Branch 33 not taken">&cross;</span><span class="takenBranch" title="Branch 34 taken 240 times">&check;</span><br/><span class="notTakenBranch" title="Branch 36 not taken">&cross;</span><span class="takenBranch" title="Branch 37 taken 244 times">&check;</span><span class="notTakenBranch" title="Branch 39 not taken">&cross;</span><span class="takenBranch" title="Branch 40 taken 244 times">&check;</span><br/><span class="notTakenBranch" title="Branch 42 not taken">&cross;</span><span class="takenBranch" title="Branch 43 taken 700 times">&check;</span><span class="notTakenBranch" title="Branch 45 not taken">&cross;</span><span class="takenBranch" title="Branch 46 taken 180 times">&check;</span><br/><span class="notTakenBranch" title="Branch 48 not taken">&cross;</span><span class="notTakenBranch" title="Branch 49 not taken">&cross;</span><span class="notTakenBranch" title="Branch 51 not taken">&cross;</span><span class="takenBranch" title="Branch 52 taken 420 times">&check;</span><br/><span class="notTakenBranch" title="Branch 54 not taken">&cross;</span><span class="takenBranch" title="Branch 55 taken 692 times">&check;</span><span class="notTakenBranch" title="Branch 57 not taken">&cross;</span><span class="takenBranch" title="Branch 58 taken 780 times">&check;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>7161</pre></td>
     <td align="left" class="src coveredLine"><pre>            assert(leaf.hasAttribute(index));</pre></td>
     </tr>
@@ -3081,15 +3081,15 @@
     <tr>
     <td align="right" class="lineno"><pre>398</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 23 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>46</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>23</pre></td>
     <td align="left" class="src coveredLine"><pre>    tree::LeafManager&lt;PointDataTreeT> leafManager(tree);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>399</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    leafManager.foreach(</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 23 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>23</pre></td>
+    <td align="left" class="src coveredLine"><pre>    leafManager.foreach(</pre></td>
     </tr>
 
     <tr>
@@ -3403,8 +3403,8 @@
     <tr>
     <td align="right" class="lineno"><pre>444</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>inline void dropAttribute(  PointDataTreeT&amp; tree,</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>inline void dropAttribute(  PointDataTreeT&amp; tree,</pre></td>
     </tr>
 
     <tr>
@@ -3424,22 +3424,22 @@
     <tr>
     <td align="right" class="lineno"><pre>447</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    std::vector&lt;size_t> indices{index};</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    std::vector&lt;size_t> indices{index};</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>448</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    dropAttributes(tree, indices);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    dropAttributes(tree, indices);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>449</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
     <tr>
@@ -3549,7 +3549,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>465</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="takenBranch" title="Branch 1 taken 9 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>10</pre></td>
     <td align="left" class="src coveredLine"><pre>inline void renameAttributes(   PointDataTreeT&amp; tree,</pre></td>
     </tr>
@@ -3661,9 +3661,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>481</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    auto newDescriptor = std::make_shared&lt;Descriptor>(*descriptor);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 9 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>9</pre></td>
+    <td align="left" class="src coveredLine"><pre>    auto newDescriptor = std::make_shared&lt;Descriptor>(*descriptor);</pre></td>
     </tr>
 
     <tr>
@@ -3717,9 +3717,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>489</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 9 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>9</pre></td>
-    <td align="left" class="src coveredLine"><pre>        const Name&amp; newName = newNames[i];</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        const Name&amp; newName = newNames[i];</pre></td>
     </tr>
 
     <tr>
@@ -4019,8 +4019,8 @@
     <tr>
     <td align="right" class="lineno"><pre>532</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            leaf.compactAttributes();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="left" class="src coveredLine"><pre>            leaf.compactAttributes();</pre></td>
     </tr>
 
     <tr>

@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tools/PotentialFlow.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">79</td>
-            <td class="headerTableEntry">80</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">98.8 %</td>
+            <td class="headerTableEntry">84</td>
+            <td class="headerTableEntry">86</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">97.7 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
             <td class="headerTableEntry">95</td>
-            <td class="headerTableEntry">190</td>
-            <td class="headerTableEntry" style="background-color:LightPink">50.0 %</td>
+            <td class="headerTableEntry">192</td>
+            <td class="headerTableEntry" style="background-color:LightPink">49.5 %</td>
           </tr>
         </table>
       </td>
@@ -1289,15 +1289,15 @@
     <tr>
     <td align="right" class="lineno"><pre>142</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        std::unique_ptr&lt;VelocityAccessor> velocityAccessor;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>280</pre></td>
+    <td align="left" class="src coveredLine"><pre>        std::unique_ptr&lt;VelocityAccessor> velocityAccessor;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>143</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        std::unique_ptr&lt;VelocitySamplerT> velocitySampler;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>280</pre></td>
+    <td align="left" class="src coveredLine"><pre>        std::unique_ptr&lt;VelocitySamplerT> velocitySampler;</pre></td>
     </tr>
 
     <tr>
@@ -1372,16 +1372,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>154</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6222 times">&check;</span><span class="takenBranch" title="Branch 1 taken 8296 times">&check;</span><span class="takenBranch" title="Branch 3 taken 6222 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>29036</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 6222 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>12444</pre></td>
     <td align="left" class="src coveredLine"><pre>                const ValueT sampledVelocity = velocitySampler ?</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>155</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                    velocitySampler->wsSample(xyz) : zeroVal&lt;ValueT>();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4148</pre></td>
+    <td align="left" class="src coveredLine"><pre>                    velocitySampler->wsSample(xyz) : zeroVal&lt;ValueT>();</pre></td>
     </tr>
 
     <tr>
@@ -2114,14 +2114,14 @@
 
     <tr>
     <td align="right" class="lineno"><pre>260</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (backgroundVelocity == zeroVal&lt;Vec3T>() &amp;&amp;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>261</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="takenBranch" title="Branch 4 taken 2 times">&check;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="takenBranch" title="Branch 2 taken 2 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>        (!boundaryVelocity || boundaryVelocity->empty())) {</pre></td>
     </tr>
@@ -2129,13 +2129,13 @@
     <tr>
     <td align="right" class="lineno"><pre>262</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        auto neumann = Vec3GridT::create();</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        auto neumann = Vec3GridT::create();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>263</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>        neumann->setTransform(collider.transform().copy());</pre></td>
     </tr>
@@ -2359,7 +2359,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>295</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>28</pre></td>
     <td align="left" class="src coveredLine"><pre>    neumann->setTransform(collider.transform().copy());</pre></td>
     </tr>
@@ -2766,7 +2766,7 @@
     <tr>
     <td align="right" class="lineno"><pre>353</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>20272</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>20276</pre></td>
     <td align="left" class="src coveredLine"><pre>    auto applyNeumann = [&amp;gradient, &amp;neumann] (</pre></td>
     </tr>
 
@@ -2878,8 +2878,8 @@
     <tr>
     <td align="right" class="lineno"><pre>369</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    leafManager.foreach(applyNeumann);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="left" class="src coveredLine"><pre>    leafManager.foreach(applyNeumann);</pre></td>
     </tr>
 
     <tr>
@@ -2913,7 +2913,7 @@
     <tr>
     <td align="right" class="lineno"><pre>374</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2464</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2465</pre></td>
     <td align="left" class="src coveredLine"><pre>        auto applyBackgroundVelocity = [&amp;backgroundVelocity] (</pre></td>
     </tr>
 
@@ -2976,8 +2976,8 @@
     <tr>
     <td align="right" class="lineno"><pre>383</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        leafManager2.foreach(applyBackgroundVelocity);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        leafManager2.foreach(applyBackgroundVelocity);</pre></td>
     </tr>
 
     <tr>

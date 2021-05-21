@@ -269,13 +269,13 @@
             <td class="headerValue">openvdb/openvdb/io/Compression.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">68</td>
-            <td class="headerTableEntry">88</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">77.3 %</td>
+            <td class="headerTableEntry">72</td>
+            <td class="headerTableEntry">92</td>
+            <td class="headerTableEntry" style="background-color:#FFFF55">78.3 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
             <td class="headerTableEntry">48</td>
@@ -1506,8 +1506,8 @@
     <tr>
     <td align="right" class="lineno"><pre>173</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>int bloscCompress(size_t inBytes, const char* data, char* compressedData, int outBytes)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>36800</pre></td>
+    <td align="left" class="src coveredLine"><pre>int bloscCompress(size_t inBytes, const char* data, char* compressedData, int outBytes)</pre></td>
     </tr>
 
     <tr>
@@ -1519,7 +1519,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>175</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 18620 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 18180 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>36800</pre></td>
     <td align="left" class="src coveredLine"><pre>    return blosc_compress_ctx(</pre></td>
     </tr>
@@ -1590,8 +1590,8 @@
     <tr>
     <td align="right" class="lineno"><pre>185</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        /*numthreads=*/1);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>36800</pre></td>
+    <td align="left" class="src coveredLine"><pre>        /*numthreads=*/1);</pre></td>
     </tr>
 
     <tr>
@@ -1743,9 +1743,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>207</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    outBytes = bloscCompress(inBytes, data, compressedData.get(), outBytes);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 18180 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>18180</pre></td>
+    <td align="left" class="src coveredLine"><pre>    outBytes = bloscCompress(inBytes, data, compressedData.get(), outBytes);</pre></td>
     </tr>
 
     <tr>
@@ -1939,9 +1939,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>235</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    outBytes = bloscCompress(inBytes, data, compressedData.get(), outBytes);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 18620 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>18620</pre></td>
+    <td align="left" class="src coveredLine"><pre>    outBytes = bloscCompress(inBytes, data, compressedData.get(), outBytes);</pre></td>
     </tr>
 
     <tr>

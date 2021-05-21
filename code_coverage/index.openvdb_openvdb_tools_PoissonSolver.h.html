@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tools/PoissonSolver.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">138</td>
-            <td class="headerTableEntry">142</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">97.2 %</td>
+            <td class="headerTableEntry">143</td>
+            <td class="headerTableEntry">147</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">97.3 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">98</td>
-            <td class="headerTableEntry">168</td>
-            <td class="headerTableEntry" style="background-color:LightPink">58.3 %</td>
+            <td class="headerTableEntry">103</td>
+            <td class="headerTableEntry">181</td>
+            <td class="headerTableEntry" style="background-color:LightPink">56.9 %</td>
           </tr>
         </table>
       </td>
@@ -2325,8 +2325,8 @@
     <tr>
     <td align="right" class="lineno"><pre>290</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    LeafCountOp(VIndex* count_): count(count_) {}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>10</pre></td>
+    <td align="left" class="src coveredLine"><pre>    LeafCountOp(VIndex* count_): count(count_) {}</pre></td>
     </tr>
 
     <tr>
@@ -2416,8 +2416,8 @@
     <tr>
     <td align="right" class="lineno"><pre>303</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    LeafIndexOp(const VIndex* count_): count(count_) {}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>10</pre></td>
+    <td align="left" class="src coveredLine"><pre>    LeafIndexOp(const VIndex* count_): count(count_) {}</pre></td>
     </tr>
 
     <tr>
@@ -2563,8 +2563,8 @@
     <tr>
     <td align="right" class="lineno"><pre>324</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>10</pre></td>
-    <td align="left" class="src coveredLine"><pre>    const size_t leafCount = leafManager.leafCount();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    const size_t leafCount = leafManager.leafCount();</pre></td>
     </tr>
 
     <tr>
@@ -2611,9 +2611,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>331</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    leafManager.foreach(internal::LeafCountOp&lt;LeafT>(perLeafCountPtr));</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 10 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>10</pre></td>
+    <td align="left" class="src coveredLine"><pre>    leafManager.foreach(internal::LeafCountOp&lt;LeafT>(perLeafCountPtr));</pre></td>
     </tr>
 
     <tr>
@@ -2702,9 +2702,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>344</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    leafManager.foreach(internal::LeafIndexOp&lt;LeafT>(perLeafCountPtr));</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 10 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 10 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>10</pre></td>
+    <td align="left" class="src coveredLine"><pre>    leafManager.foreach(internal::LeafIndexOp&lt;LeafT>(perLeafCountPtr));</pre></td>
     </tr>
 
     <tr>
@@ -3004,8 +3004,8 @@
     <tr>
     <td align="right" class="lineno"><pre>387</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    CopyToVecOp(const SourceTreeType&amp; t, VectorT&amp; v): tree(&amp;t), vector(&amp;v) {}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>10</pre></td>
+    <td align="left" class="src coveredLine"><pre>    CopyToVecOp(const SourceTreeType&amp; t, VectorT&amp; v): tree(&amp;t), vector(&amp;v) {}</pre></td>
     </tr>
 
     <tr>
@@ -3284,15 +3284,15 @@
     <tr>
     <td align="right" class="lineno"><pre>427</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 10 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>40</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>20</pre></td>
     <td align="left" class="src coveredLine"><pre>    VIdxLeafMgrT leafManager(idxTree);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>428</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    leafManager.foreach(internal::CopyToVecOp&lt;VectorValueType, SourceTreeType>(tree, *result));</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 10 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>20</pre></td>
+    <td align="left" class="src coveredLine"><pre>    leafManager.foreach(internal::CopyToVecOp&lt;VectorValueType, SourceTreeType>(tree, *result));</pre></td>
     </tr>
 
     <tr>
@@ -3459,8 +3459,8 @@
     <tr>
     <td align="right" class="lineno"><pre>452</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    CopyFromVecOp(const VectorT&amp; v, OutTreeT&amp; t): vector(&amp;v), tree(&amp;t) {}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="left" class="src coveredLine"><pre>    CopyFromVecOp(const VectorT&amp; v, OutTreeT&amp; t): vector(&amp;v), tree(&amp;t) {}</pre></td>
     </tr>
 
     <tr>
@@ -3683,15 +3683,15 @@
     <tr>
     <td align="right" class="lineno"><pre>484</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>32</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>16</pre></td>
     <td align="left" class="src coveredLine"><pre>    VIdxLeafMgrT leafManager(idxTree);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>485</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    leafManager.foreach(</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>16</pre></td>
+    <td align="left" class="src coveredLine"><pre>    leafManager.foreach(</pre></td>
     </tr>
 
     <tr>
@@ -3787,7 +3787,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>499</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>struct ISStaggeredLaplacianOp</pre></td>
     </tr>
@@ -3907,7 +3907,7 @@
     <tr>
     <td align="right" class="lineno"><pre>516</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>15372</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>15792</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator()(const VIdxLeafT&amp; idxLeaf, size_t /*leafIdx*/) const</pre></td>
     </tr>
 
@@ -3928,14 +3928,14 @@
     <tr>
     <td align="right" class="lineno"><pre>519</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>15372</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>15792</pre></td>
     <td align="left" class="src coveredLine"><pre>        typename tree::ValueAccessor&lt;const BoolTreeType> interior(*interiorMask);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>520</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 7700 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>15372</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 7896 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>15792</pre></td>
     <td align="left" class="src coveredLine"><pre>        typename tree::ValueAccessor&lt;const VIdxTreeT> vectorIdx(*idxTree);</pre></td>
     </tr>
 
@@ -3963,7 +3963,7 @@
     <tr>
     <td align="right" class="lineno"><pre>524</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>15372</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>15792</pre></td>
     <td align="left" class="src coveredLine"><pre>        const ValueT diagonal = -6.f, offDiagonal = 1.f;</pre></td>
     </tr>
 
@@ -3983,22 +3983,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>527</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3269802 times">&check;</span><span class="takenBranch" title="Branch 1 taken 7700 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6547774</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3316969 times">&check;</span><span class="takenBranch" title="Branch 1 taken 7896 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6649730</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (typename VIdxLeafT::ValueOnCIter it = idxLeaf.cbeginValueOn(); it; ++it) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>528</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3269802 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 3269802 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>6532402</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3316969 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 3316969 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>6633938</pre></td>
     <td align="left" class="src coveredLine"><pre>            assert(it.getValue() > -1);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>529</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3269802 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6532402</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3316969 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6633938</pre></td>
     <td align="left" class="src coveredLine"><pre>            const math::pcg::SizeType rowNum = static_cast&lt;math::pcg::SizeType>(it.getValue());</pre></td>
     </tr>
 
@@ -4012,7 +4012,7 @@
     <tr>
     <td align="right" class="lineno"><pre>531</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>6532402</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6633938</pre></td>
     <td align="left" class="src coveredLine"><pre>            LaplacianMatrix::RowEditor row = laplacian->getRowEditor(rowNum);</pre></td>
     </tr>
 
@@ -4025,15 +4025,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>533</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3269802 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6532402</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3316969 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6633938</pre></td>
     <td align="left" class="src coveredLine"><pre>            ijk = it.getCoord();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>534</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3111342 times">&check;</span><span class="takenBranch" title="Branch 2 taken 158460 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6532402</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3148529 times">&check;</span><span class="takenBranch" title="Branch 2 taken 168440 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6633938</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (interior.isValueOn(ijk)) {</pre></td>
     </tr>
 
@@ -4067,8 +4067,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>539</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>6217646</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>6297058</pre></td>
     <td align="left" class="src coveredLine"><pre>                row.setValue(vectorIdx.getValue(ijk.offsetBy(-1, 0, 0)), offDiagonal);</pre></td>
     </tr>
 
@@ -4081,8 +4081,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>541</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>6217646</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>6297058</pre></td>
     <td align="left" class="src coveredLine"><pre>                row.setValue(vectorIdx.getValue(ijk.offsetBy(0, -1, 0)), offDiagonal);</pre></td>
     </tr>
 
@@ -4095,8 +4095,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>543</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6217646</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6297058</pre></td>
     <td align="left" class="src coveredLine"><pre>                row.setValue(vectorIdx.getValue(ijk.offsetBy(0, 0, -1)), offDiagonal);</pre></td>
     </tr>
 
@@ -4110,7 +4110,7 @@
     <tr>
     <td align="right" class="lineno"><pre>545</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>6217646</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6297058</pre></td>
     <td align="left" class="src coveredLine"><pre>                row.setValue(rowNum, diagonal);</pre></td>
     </tr>
 
@@ -4123,8 +4123,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>547</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>6217646</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>6297058</pre></td>
     <td align="left" class="src coveredLine"><pre>                row.setValue(vectorIdx.getValue(ijk.offsetBy(0, 0, 1)), offDiagonal);</pre></td>
     </tr>
 
@@ -4137,8 +4137,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>549</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>6217646</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>6297058</pre></td>
     <td align="left" class="src coveredLine"><pre>                row.setValue(vectorIdx.getValue(ijk.offsetBy(0, 1, 0)), offDiagonal);</pre></td>
     </tr>
 
@@ -4151,8 +4151,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>551</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3111342 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6217646</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3148529 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6297058</pre></td>
     <td align="left" class="src coveredLine"><pre>                row.setValue(vectorIdx.getValue(ijk.offsetBy(1, 0, 0)), offDiagonal);</pre></td>
     </tr>
 
@@ -4193,8 +4193,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>557</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 158460 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>314756</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 168440 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>336880</pre></td>
     <td align="left" class="src coveredLine"><pre>                ValueT modifiedDiagonal = 0.f;</pre></td>
     </tr>
 
@@ -4214,22 +4214,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>560</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 158460 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 123214 times">&check;</span><span class="takenBranch" title="Branch 4 taken 35246 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>314756</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 168440 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 131537 times">&check;</span><span class="takenBranch" title="Branch 4 taken 36903 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>336880</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (vectorIdx.probeValue(ijk.offsetBy(-1, 0, 0), column)) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>561</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>263074</pre></td>
     <td align="left" class="src coveredLine"><pre>                    row.setValue(column, offDiagonal);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>562</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>263074</pre></td>
     <td align="left" class="src coveredLine"><pre>                    modifiedDiagonal -= 1;</pre></td>
     </tr>
 
@@ -4242,8 +4242,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>564</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 34836 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>69672</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 36293 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>72586</pre></td>
     <td align="left" class="src coveredLine"><pre>                    boundaryOp(ijk, ijk.offsetBy(-1, 0, 0), source->at(rowNum), modifiedDiagonal);</pre></td>
     </tr>
 
@@ -4263,22 +4263,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>567</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 158460 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 123214 times">&check;</span><span class="takenBranch" title="Branch 4 taken 35246 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>314756</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 168440 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 131537 times">&check;</span><span class="takenBranch" title="Branch 4 taken 36903 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>336880</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (vectorIdx.probeValue(ijk.offsetBy(0, -1, 0), column)) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>568</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>263074</pre></td>
     <td align="left" class="src coveredLine"><pre>                    row.setValue(column, offDiagonal);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>569</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>263074</pre></td>
     <td align="left" class="src coveredLine"><pre>                    modifiedDiagonal -= 1;</pre></td>
     </tr>
 
@@ -4291,8 +4291,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>571</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 34836 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>69672</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 36293 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>72986</pre></td>
     <td align="left" class="src coveredLine"><pre>                    boundaryOp(ijk, ijk.offsetBy(0, -1, 0), source->at(rowNum), modifiedDiagonal);</pre></td>
     </tr>
 
@@ -4312,22 +4312,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>574</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 158460 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 123214 times">&check;</span><span class="takenBranch" title="Branch 4 taken 35246 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>314756</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 168440 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 131072 times">&check;</span><span class="takenBranch" title="Branch 4 taken 37368 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>336880</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (vectorIdx.probeValue(ijk.offsetBy(0, 0, -1), column)) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>575</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>262144</pre></td>
     <td align="left" class="src coveredLine"><pre>                    row.setValue(column, offDiagonal);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>576</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>262144</pre></td>
     <td align="left" class="src coveredLine"><pre>                    modifiedDiagonal -= 1;</pre></td>
     </tr>
 
@@ -4340,8 +4340,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>578</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 34836 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>69672</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 36758 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>73516</pre></td>
     <td align="left" class="src coveredLine"><pre>                    boundaryOp(ijk, ijk.offsetBy(0, 0, -1), source->at(rowNum), modifiedDiagonal);</pre></td>
     </tr>
 
@@ -4361,22 +4361,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>581</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 158460 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 123214 times">&check;</span><span class="takenBranch" title="Branch 4 taken 35246 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>314756</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 168440 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 131072 times">&check;</span><span class="takenBranch" title="Branch 4 taken 37368 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>336880</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (vectorIdx.probeValue(ijk.offsetBy(0, 0, 1), column)) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>582</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>262144</pre></td>
     <td align="left" class="src coveredLine"><pre>                    row.setValue(column, offDiagonal);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>583</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>262144</pre></td>
     <td align="left" class="src coveredLine"><pre>                    modifiedDiagonal -= 1;</pre></td>
     </tr>
 
@@ -4389,8 +4389,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>585</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 34836 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>69672</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 36758 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>73516</pre></td>
     <td align="left" class="src coveredLine"><pre>                    boundaryOp(ijk, ijk.offsetBy(0, 0, 1), source->at(rowNum), modifiedDiagonal);</pre></td>
     </tr>
 
@@ -4410,22 +4410,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>588</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 158460 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 123214 times">&check;</span><span class="takenBranch" title="Branch 4 taken 35246 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>314756</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 168440 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 131537 times">&check;</span><span class="takenBranch" title="Branch 4 taken 36903 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>336880</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (vectorIdx.probeValue(ijk.offsetBy(0, 1, 0), column)) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>589</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>263074</pre></td>
     <td align="left" class="src coveredLine"><pre>                    row.setValue(column, offDiagonal);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>590</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>263074</pre></td>
     <td align="left" class="src coveredLine"><pre>                    modifiedDiagonal -= 1;</pre></td>
     </tr>
 
@@ -4438,8 +4438,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>592</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 34836 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>69672</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 36293 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>72586</pre></td>
     <td align="left" class="src coveredLine"><pre>                    boundaryOp(ijk, ijk.offsetBy(0, 1, 0), source->at(rowNum), modifiedDiagonal);</pre></td>
     </tr>
 
@@ -4459,22 +4459,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>595</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 158460 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 123214 times">&check;</span><span class="takenBranch" title="Branch 4 taken 35246 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>314756</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 168440 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 131537 times">&check;</span><span class="takenBranch" title="Branch 4 taken 36903 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>336880</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (vectorIdx.probeValue(ijk.offsetBy(1, 0, 0), column)) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>596</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>263074</pre></td>
     <td align="left" class="src coveredLine"><pre>                    row.setValue(column, offDiagonal);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>597</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>244674</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>263074</pre></td>
     <td align="left" class="src coveredLine"><pre>                    modifiedDiagonal -= 1;</pre></td>
     </tr>
 
@@ -4487,8 +4487,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>599</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 34836 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>69672</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 36293 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>72586</pre></td>
     <td align="left" class="src coveredLine"><pre>                    boundaryOp(ijk, ijk.offsetBy(1, 0, 0), source->at(rowNum), modifiedDiagonal);</pre></td>
     </tr>
 
@@ -4509,7 +4509,7 @@
     <tr>
     <td align="right" class="lineno"><pre>602</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>314756</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>336880</pre></td>
     <td align="left" class="src coveredLine"><pre>                row.setValue(rowNum, modifiedDiagonal);</pre></td>
     </tr>
 
@@ -4530,7 +4530,7 @@
     <tr>
     <td align="right" class="lineno"><pre>605</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>15372</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>15792</pre></td>
     <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
@@ -4705,7 +4705,7 @@
     <tr>
     <td align="right" class="lineno"><pre>630</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>705</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1410</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator()(const VIdxLeafT&amp; idxLeaf, size_t /*leafIdx*/) const</pre></td>
     </tr>
 
@@ -4719,7 +4719,7 @@
     <tr>
     <td align="right" class="lineno"><pre>632</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>705</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1410</pre></td>
     <td align="left" class="src coveredLine"><pre>        typename tree::ValueAccessor&lt;const VIdxTreeT> vectorIdx(*idxTree);</pre></td>
     </tr>
 
@@ -4803,14 +4803,14 @@
     <tr>
     <td align="right" class="lineno"><pre>644</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 267731 times">&check;</span><span class="takenBranch" title="Branch 1 taken 705 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>268436</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>536872</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (typename VIdxLeafT::ValueOnCIter it = idxLeaf.cbeginValueOn(); it; ++it) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>645</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 267731 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 267731 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>267731</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535462</pre></td>
     <td align="left" class="src coveredLine"><pre>            assert(it.getValue() > -1);</pre></td>
     </tr>
 
@@ -4824,14 +4824,14 @@
     <tr>
     <td align="right" class="lineno"><pre>647</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 267731 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>267731</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535462</pre></td>
     <td align="left" class="src coveredLine"><pre>            const Coord ijk = it.getCoord();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>648</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 267731 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>267731</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535462</pre></td>
     <td align="left" class="src coveredLine"><pre>            const math::pcg::SizeType rowNum = static_cast&lt;math::pcg::SizeType>(it.getValue());</pre></td>
     </tr>
 
@@ -4845,7 +4845,7 @@
     <tr>
     <td align="right" class="lineno"><pre>650</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>267731</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535462</pre></td>
     <td align="left" class="src coveredLine"><pre>            LaplacianMatrix::RowEditor row = laplacian->getRowEditor(rowNum);</pre></td>
     </tr>
 
@@ -4859,7 +4859,7 @@
     <tr>
     <td align="right" class="lineno"><pre>652</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>267731</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535462</pre></td>
     <td align="left" class="src coveredLine"><pre>            ValueT modifiedDiagonal = 0.f;</pre></td>
     </tr>
 
@@ -4880,14 +4880,14 @@
     <tr>
     <td align="right" class="lineno"><pre>655</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1606386 times">&check;</span><span class="takenBranch" title="Branch 1 taken 267731 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1874117</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3748234</pre></td>
     <td align="left" class="src coveredLine"><pre>            for (int dir = 0; dir &lt; kNumOffsets; ++dir) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>656</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1606386 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1606386</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3212772</pre></td>
     <td align="left" class="src coveredLine"><pre>                const Coord neighbor = ijk + ijkOffset[dir];</pre></td>
     </tr>
 
@@ -4950,7 +4950,7 @@
     <tr>
     <td align="right" class="lineno"><pre>665</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1606386 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1606386</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3212772</pre></td>
     <td align="left" class="src coveredLine"><pre>                const bool ijkIsInterior = vectorIdx.probeValue(neighbor, column);</pre></td>
     </tr>
 
@@ -4964,7 +4964,7 @@
     <tr>
     <td align="right" class="lineno"><pre>667</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1546230 times">&check;</span><span class="takenBranch" title="Branch 1 taken 60156 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1606386</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3212772</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (ijkIsInterior) {</pre></td>
     </tr>
 
@@ -4985,14 +4985,14 @@
     <tr>
     <td align="right" class="lineno"><pre>670</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1546230</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3092460</pre></td>
     <td align="left" class="src coveredLine"><pre>                    row.setValue(column, 1.f);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>671</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1546230</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3092460</pre></td>
     <td align="left" class="src coveredLine"><pre>                    modifiedDiagonal -= 1.f;</pre></td>
     </tr>
 
@@ -5048,7 +5048,7 @@
     <tr>
     <td align="right" class="lineno"><pre>679</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>267731</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535462</pre></td>
     <td align="left" class="src coveredLine"><pre>            row.setValue(rowNum, modifiedDiagonal);</pre></td>
     </tr>
 
@@ -5062,8 +5062,8 @@
     <tr>
     <td align="right" class="lineno"><pre>681</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>705</pre></td>
-    <td align="left" class="src coveredLine"><pre>    }</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    }</pre></td>
     </tr>
 
     <tr>
@@ -6049,8 +6049,8 @@
     <tr>
     <td align="right" class="lineno"><pre>822</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
-    <td align="left" class="src coveredLine"><pre>    b->scale(-1.0);</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    b->scale(-1.0);</pre></td>
     </tr>
 
     <tr>

@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/math/Maps.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">65</td>
-            <td class="headerTableEntry">77</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">84.4 %</td>
+            <td class="headerTableEntry">67</td>
+            <td class="headerTableEntry">79</td>
+            <td class="headerTableEntry" style="background-color:#FFFF55">84.8 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">56</td>
-            <td class="headerTableEntry">126</td>
-            <td class="headerTableEntry" style="background-color:LightPink">44.4 %</td>
+            <td class="headerTableEntry">60</td>
+            <td class="headerTableEntry">132</td>
+            <td class="headerTableEntry" style="background-color:LightPink">45.5 %</td>
           </tr>
         </table>
       </td>
@@ -616,8 +616,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>46</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 127 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>127</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 127 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 127 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>254</pre></td>
     <td align="left" class="src coveredLine"><pre>    MapDictionary::const_iterator iter = staticInstance()->mMap.find(name);</pre></td>
     </tr>
 
@@ -714,8 +714,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>60</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 139 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 139 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>278</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 139 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 139 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 139 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>417</pre></td>
     <td align="left" class="src coveredLine"><pre>    return (staticInstance()->mMap.find(name) != staticInstance()->mMap.end());</pre></td>
     </tr>
 
@@ -1359,8 +1359,8 @@
     <tr>
     <td align="right" class="lineno"><pre>152</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    TranslationMap translate(m.getTranslation());</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    TranslationMap translate(m.getTranslation());</pre></td>
     </tr>
 
     <tr>
@@ -1456,7 +1456,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>166</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 12 times">&check;</span><span class="takenBranch" title="Branch 1 taken 9 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>21</pre></td>
     <td align="left" class="src coveredLine"><pre>        Vec3d scale = affine->applyMap(Vec3d(1,1,1));</pre></td>
     </tr>
@@ -1505,7 +1505,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>173</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2 times">&check;</span><span class="takenBranch" title="Branch 1 taken 96 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span><span class="takenBranch" title="Branch 2 taken 96 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>98</pre></td>
     <td align="left" class="src coveredLine"><pre>    } else if (affine->isScaleTranslate()) { // can be simplified into a ScaleTranslateMap</pre></td>
     </tr>
@@ -1645,7 +1645,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>193</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="takenBranch" title="Branch 2 taken 3 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (std::abs(mat4d.det()) >= 3 * math::Tolerance&lt;double>::value()) {</pre></td>
     </tr>
@@ -1863,8 +1863,8 @@
     <tr>
     <td align="right" class="lineno"><pre>224</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        result[3][3] = 1.f;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        result[3][3] = 1.f;</pre></td>
     </tr>
 
     <tr>

@@ -269,17 +269,17 @@
             <td class="headerValue">openvdb/openvdb/points/PointDelete.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">56</td>
             <td class="headerTableEntry">58</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">96.6 %</td>
+            <td class="headerTableEntry">60</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">96.7 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">58</td>
-            <td class="headerTableEntry">110</td>
+            <td class="headerTableEntry">59</td>
+            <td class="headerTableEntry">112</td>
             <td class="headerTableEntry" style="background-color:LightPink">52.7 %</td>
           </tr>
         </table>
@@ -875,7 +875,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>83</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 15 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>15</pre></td>
     <td align="left" class="src coveredLine"><pre>    VectorWrapper(const T&amp; _data) : data(_data) { }</pre></td>
     </tr>
@@ -1050,7 +1050,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>108</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 15 times">&check;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>15</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator()(const LeafRangeT&amp; range) const</pre></td>
     </tr>
@@ -1065,8 +1065,8 @@
     <tr>
     <td align="right" class="lineno"><pre>110</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        for (auto leaf = range.begin(); leaf != range.end(); ++leaf) {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>45</pre></td>
+    <td align="left" class="src coveredLine"><pre>        for (auto leaf = range.begin(); leaf != range.end(); ++leaf) {</pre></td>
     </tr>
 
     <tr>
@@ -1442,8 +1442,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>164</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3584 times">&check;</span><span class="takenBranch" title="Branch 1 taken 7 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>3591</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3584 times">&check;</span><span class="takenBranch" title="Branch 2 taken 7 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>3598</pre></td>
     <td align="left" class="src coveredLine"><pre>            for (auto voxel = leaf->cbeginValueAll(); voxel; ++voxel) {</pre></td>
     </tr>
 
@@ -1828,8 +1828,8 @@
     <tr>
     <td align="right" class="lineno"><pre>219</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    std::unique_ptr&lt;MultiGroupFilter> filter;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="left" class="src coveredLine"><pre>    std::unique_ptr&lt;MultiGroupFilter> filter;</pre></td>
     </tr>
 
     <tr>
@@ -1932,7 +1932,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>234</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>8</pre></td>
     <td align="left" class="src coveredLine"><pre>        tbb::parallel_for(leafManager.leafRange(), deleteOp);</pre></td>
     </tr>

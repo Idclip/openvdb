@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/unittest/TestMaps.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">310</td>
-            <td class="headerTableEntry">310</td>
+            <td class="headerTableEntry">323</td>
+            <td class="headerTableEntry">323</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">314</td>
-            <td class="headerTableEntry">1708</td>
-            <td class="headerTableEntry" style="background-color:LightPink">18.4 %</td>
+            <td class="headerTableEntry">319</td>
+            <td class="headerTableEntry">1720</td>
+            <td class="headerTableEntry" style="background-color:LightPink">18.5 %</td>
           </tr>
         </table>
       </td>
@@ -687,8 +687,8 @@
     <tr>
     <td align="right" class="lineno"><pre>56</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        Mat4d prod = m * minv;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        Mat4d prod = m * minv;</pre></td>
     </tr>
 
     <tr>
@@ -987,8 +987,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>99</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>TEST_F(TestMaps, testTranslation)</pre></td>
     </tr>
 
@@ -1030,7 +1030,7 @@
     <tr>
     <td align="right" class="lineno"><pre>105</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    TranslationMap::Ptr translation(new TranslationMap(Vec3d(1,1,1)));</pre></td>
     </tr>
 
@@ -1050,9 +1050,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>108</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    TranslationMap another_translation(Vec3d(1,1,1));</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    TranslationMap another_translation(Vec3d(1,1,1));</pre></td>
     </tr>
 
     <tr>
@@ -1071,8 +1071,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>111</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    TranslationMap::Ptr translate_by_two(new TranslationMap(Vec3d(2,2,2)));</pre></td>
     </tr>
 
@@ -1268,8 +1268,8 @@
     <tr>
     <td align="right" class="lineno"><pre>139</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    result = translate_by_two->applyJT(translate_by_two->applyIJT(unit));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    result = translate_by_two->applyJT(translate_by_two->applyIJT(unit));</pre></td>
     </tr>
 
     <tr>
@@ -1506,8 +1506,8 @@
     <tr>
     <td align="right" class="lineno"><pre>173</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    result = scale->applyInverseMap(unit);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    result = scale->applyInverseMap(unit);</pre></td>
     </tr>
 
     <tr>
@@ -2100,8 +2100,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>258</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    TranslationMap::Ptr  translation(new TranslationMap(Vec3d(1,1,1)));</pre></td>
     </tr>
 
@@ -2143,8 +2143,8 @@
     <tr>
     <td align="right" class="lineno"><pre>264</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    TranslationMap translate_by_two(Vec3d(2,2,2));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    TranslationMap translate_by_two(Vec3d(2,2,2));</pre></td>
     </tr>
 
     <tr>
@@ -2310,7 +2310,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>288</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    EXPECT_NEAR(0, result(0), TOL);</pre></td>
     </tr>
@@ -2353,8 +2353,8 @@
     <tr>
     <td align="right" class="lineno"><pre>294</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    result = scaleAndTranslate->applyJT(scaleAndTranslate->applyIJT(unit));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    result = scaleAndTranslate->applyJT(scaleAndTranslate->applyIJT(unit));</pre></td>
     </tr>
 
     <tr>
@@ -2583,9 +2583,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>327</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    TranslationMap translate_by_two(Vec3d(2,2,2));</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    TranslationMap translate_by_two(Vec3d(2,2,2));</pre></td>
     </tr>
 
     <tr>
@@ -2787,8 +2787,8 @@
     <tr>
     <td align="right" class="lineno"><pre>356</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    result = scaleAndTranslate->applyJT(scaleAndTranslate->applyIJT(unit));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    result = scaleAndTranslate->applyJT(scaleAndTranslate->applyIJT(unit));</pre></td>
     </tr>
 
     <tr>
@@ -3249,8 +3249,8 @@
     <tr>
     <td align="right" class="lineno"><pre>422</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    openvdb::BBoxd bbox(Vec3d(0), Vec3d(100));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    openvdb::BBoxd bbox(Vec3d(0), Vec3d(100));</pre></td>
     </tr>
 
     <tr>
@@ -4075,8 +4075,8 @@
     <tr>
     <td align="right" class="lineno"><pre>540</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    openvdb::BBoxd world_bbox(Vec3d(0,0,0), Vec3d(1,1,1));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    openvdb::BBoxd world_bbox(Vec3d(0,0,0), Vec3d(1,1,1));</pre></td>
     </tr>
 
     <tr>
@@ -4586,8 +4586,8 @@
     <tr>
     <td align="right" class="lineno"><pre>613</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>         openvdb::BBoxd bbox(Vec3d(0), Vec3d(100));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>         openvdb::BBoxd bbox(Vec3d(0), Vec3d(100));</pre></td>
     </tr>
 
     <tr>
@@ -5173,9 +5173,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>697</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        TranslationMap map(Vec3d(1,2,3));</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        TranslationMap map(Vec3d(1,2,3));</pre></td>
     </tr>
 
     <tr>
@@ -5440,8 +5440,8 @@
     <tr>
     <td align="right" class="lineno"><pre>735</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        openvdb::BBoxd bbox(Vec3d(0), Vec3d(100));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        openvdb::BBoxd bbox(Vec3d(0), Vec3d(100));</pre></td>
     </tr>
 
     <tr>

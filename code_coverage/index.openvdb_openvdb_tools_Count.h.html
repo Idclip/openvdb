@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tools/Count.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">42</td>
-            <td class="headerTableEntry">48</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">87.5 %</td>
+            <td class="headerTableEntry">49</td>
+            <td class="headerTableEntry">53</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">92.5 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">18</td>
-            <td class="headerTableEntry">30</td>
-            <td class="headerTableEntry" style="background-color:LightPink">60.0 %</td>
+            <td class="headerTableEntry">19</td>
+            <td class="headerTableEntry">32</td>
+            <td class="headerTableEntry" style="background-color:LightPink">59.4 %</td>
           </tr>
         </table>
       </td>
@@ -652,7 +652,7 @@
     <tr>
     <td align="right" class="lineno"><pre>51</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2102</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7670</pre></td>
     <td align="left" class="src coveredLine"><pre>    ActiveVoxelCountOp(const ActiveVoxelCountOp&amp;, tbb::split) { }</pre></td>
     </tr>
 
@@ -680,8 +680,8 @@
     <tr>
     <td align="right" class="lineno"><pre>55</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool operator()(const NodeT&amp; node, size_t)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>142850</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool operator()(const NodeT&amp; node, size_t)</pre></td>
     </tr>
 
     <tr>
@@ -693,16 +693,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>57</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        for (auto iter = node.cbeginValueOn(); iter; ++iter) {</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4573101 times">&check;</span><span class="takenBranch" title="Branch 1 taken 64891 times">&check;</span><span class="takenBranch" title="Branch 2 taken 10905 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>9319604</pre></td>
+    <td align="left" class="src coveredLine"><pre>        for (auto iter = node.cbeginValueOn(); iter; ++iter) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>58</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            count += NodeT::ChildNodeType::NUM_VOXELS;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>9154944</pre></td>
+    <td align="left" class="src coveredLine"><pre>            count += NodeT::ChildNodeType::NUM_VOXELS;</pre></td>
     </tr>
 
     <tr>
@@ -715,8 +715,8 @@
     <tr>
     <td align="right" class="lineno"><pre>60</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        return true;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>142850</pre></td>
+    <td align="left" class="src coveredLine"><pre>        return true;</pre></td>
     </tr>
 
     <tr>
@@ -799,7 +799,7 @@
     <tr>
     <td align="right" class="lineno"><pre>72</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>7250</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7670</pre></td>
     <td align="left" class="src coveredLine"><pre>        count += other.count;</pre></td>
     </tr>
 
@@ -938,7 +938,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>92</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 48 times">&check;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>102</pre></td>
     <td align="left" class="src coveredLine"><pre>    bool operator()(const NodeT&amp; node, size_t)</pre></td>
     </tr>
@@ -953,8 +953,8 @@
     <tr>
     <td align="right" class="lineno"><pre>94</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>        if (!mBBox.hasOverlap(node.getNodeBoundingBox()))   return false;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>192</pre></td>
+    <td align="left" class="src coveredLine"><pre>        if (!mBBox.hasOverlap(node.getNodeBoundingBox()))   return false;</pre></td>
     </tr>
 
     <tr>
@@ -973,14 +973,14 @@
 
     <tr>
     <td align="right" class="lineno"><pre>97</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 18915 times">&check;</span><span class="takenBranch" title="Branch 1 taken 51 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 18915 times">&check;</span><span class="takenBranch" title="Branch 1 taken 48 times">&check;</span><span class="takenBranch" title="Branch 2 taken 3 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>37938</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (auto iter = node.cbeginValueOn(); iter; ++iter) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>98</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 16137 times">&check;</span><span class="takenBranch" title="Branch 2 taken 2778 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 16137 times">&check;</span><span class="takenBranch" title="Branch 2 taken 2778 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>37830</pre></td>
     <td align="left" class="src coveredLine"><pre>            CoordBBox bbox(CoordBBox::createCube(iter.getCoord(), NodeT::ChildNodeType::DIM));</pre></td>
     </tr>
@@ -1113,7 +1113,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>117</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3615 times">&check;</span><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3612 times">&check;</span><span class="takenBranch" title="Branch 1 taken 11 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>7252</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (auto iter = node.cbeginChildOn(); iter; ++iter) {</pre></td>
     </tr>
@@ -1121,7 +1121,7 @@
     <tr>
     <td align="right" class="lineno"><pre>118</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>86</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>14460</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (mBBox.hasOverlap(iter->getNodeBoundingBox()))    return true;</pre></td>
     </tr>
 
@@ -1176,7 +1176,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>126</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6235 times">&check;</span><span class="takenBranch" title="Branch 1 taken 291 times">&check;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>6526</pre></td>
     <td align="left" class="src coveredLine"><pre>    inline bool operator()(const LeafT&amp; leaf, size_t)</pre></td>
     </tr>
@@ -1205,8 +1205,8 @@
     <tr>
     <td align="right" class="lineno"><pre>130</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        CoordBBox bbox = leaf.getNodeBoundingBox();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6526</pre></td>
+    <td align="left" class="src coveredLine"><pre>        CoordBBox bbox = leaf.getNodeBoundingBox();</pre></td>
     </tr>
 
     <tr>
@@ -1366,7 +1366,7 @@
     <tr>
     <td align="right" class="lineno"><pre>153</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>10</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
     <td align="left" class="src coveredLine"><pre>        count += other.count;</pre></td>
     </tr>
 
@@ -1478,7 +1478,7 @@
     <tr>
     <td align="right" class="lineno"><pre>169</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>114</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>139</pre></td>
     <td align="left" class="src coveredLine"><pre>    MemUsageOp(const MemUsageOp&amp;, tbb::split) { }</pre></td>
     </tr>
 
@@ -1569,7 +1569,7 @@
     <tr>
     <td align="right" class="lineno"><pre>182</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>484</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>488</pre></td>
     <td align="left" class="src coveredLine"><pre>        count += NodeT::NUM_VALUES * sizeof(typename NodeT::UnionType) +</pre></td>
     </tr>
 
@@ -1632,7 +1632,7 @@
     <tr>
     <td align="right" class="lineno"><pre>191</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2911</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>43045</pre></td>
     <td align="left" class="src coveredLine"><pre>        count += leaf.memUsage();</pre></td>
     </tr>
 
@@ -1674,7 +1674,7 @@
     <tr>
     <td align="right" class="lineno"><pre>197</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>129</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>139</pre></td>
     <td align="left" class="src coveredLine"><pre>        count += other.count;</pre></td>
     </tr>
 
@@ -1856,8 +1856,8 @@
     <tr>
     <td align="right" class="lineno"><pre>223</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>    else if (bbox == CoordBBox::inf())  return countActiveVoxels(tree, threaded);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="left" class="src coveredLine"><pre>    else if (bbox == CoordBBox::inf())  return countActiveVoxels(tree, threaded);</pre></td>
     </tr>
 
     <tr>

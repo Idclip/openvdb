@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/unittest/TestPointConversion.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">439</td>
-            <td class="headerTableEntry">444</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">98.9 %</td>
+            <td class="headerTableEntry">475</td>
+            <td class="headerTableEntry">480</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">99.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">716</td>
-            <td class="headerTableEntry">2374</td>
-            <td class="headerTableEntry" style="background-color:LightPink">30.2 %</td>
+            <td class="headerTableEntry">689</td>
+            <td class="headerTableEntry">2320</td>
+            <td class="headerTableEntry" style="background-color:LightPink">29.7 %</td>
           </tr>
         </table>
       </td>
@@ -540,21 +540,21 @@
     <tr>
     <td align="right" class="lineno"><pre>35</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1488</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1511</pre></td>
     <td align="left" class="src coveredLine"><pre>        Handle(AttributeWrapper&lt;T>&amp; attribute)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>36</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1484</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1507</pre></td>
     <td align="left" class="src coveredLine"><pre>            : mBuffer(attribute.mAttribute)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>37</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 267 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 263 times">&check;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 263 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 256 times">&check;</span><br/><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 9 taken 144 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 277 times">&check;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 15 taken 7 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>1487</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>1520</pre></td>
     <td align="left" class="src coveredLine"><pre>            , mStride(attribute.mStride) { }</pre></td>
     </tr>
 
@@ -575,22 +575,22 @@
     <tr>
     <td align="right" class="lineno"><pre>40</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        void set(size_t n, openvdb::Index m, const ValueType&amp; value) {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5160092</pre></td>
+    <td align="left" class="src coveredLine"><pre>        void set(size_t n, openvdb::Index m, const ValueType&amp; value) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>41</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>3200042</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>8360134</pre></td>
     <td align="left" class="src coveredLine"><pre>            mBuffer[n * mStride + m] = static_cast&lt;T>(value);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>42</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5160092</pre></td>
+    <td align="left" class="src coveredLine"><pre>        }</pre></td>
     </tr>
 
     <tr>
@@ -617,7 +617,7 @@
     <tr>
     <td align="right" class="lineno"><pre>46</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1545036</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1545031</pre></td>
     <td align="left" class="src coveredLine"><pre>            mBuffer[n * mStride + m] = static_cast&lt;T>(value);</pre></td>
     </tr>
 
@@ -714,9 +714,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>60</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="takenBranch" title="Branch 2 taken 9 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 4 taken 9 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 10 taken 102 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><span class="takenBranch" title="Branch 12 taken 1000025 times">&check;</span><span class="takenBranch" title="Branch 13 taken 2 times">&check;</span><br/><span class="takenBranch" title="Branch 14 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><span class="takenBranch" title="Branch 16 taken 29 times">&check;</span><span class="takenBranch" title="Branch 17 taken 2 times">&check;</span><br/><span class="takenBranch" title="Branch 18 taken 9 times">&check;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><span class="takenBranch" title="Branch 21 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 24 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 25 not taken">&cross;</span><span class="takenBranch" title="Branch 27 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 28 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 30 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><span class="takenBranch" title="Branch 33 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 34 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 36 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 37 not taken">&cross;</span><span class="takenBranch" title="Branch 39 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 40 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 42 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 43 not taken">&cross;</span><span class="takenBranch" title="Branch 45 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 48 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 49 not taken">&cross;</span><span class="takenBranch" title="Branch 51 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 52 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 54 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 55 not taken">&cross;</span><span class="takenBranch" title="Branch 57 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 58 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 60 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 61 not taken">&cross;</span><span class="takenBranch" title="Branch 63 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 64 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 66 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 67 not taken">&cross;</span><span class="takenBranch" title="Branch 69 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 70 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 72 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 73 not taken">&cross;</span><span class="takenBranch" title="Branch 75 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 76 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 78 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 79 not taken">&cross;</span><span class="takenBranch" title="Branch 81 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 82 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 84 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 85 not taken">&cross;</span><span class="takenBranch" title="Branch 87 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 88 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 90 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 91 not taken">&cross;</span><span class="takenBranch" title="Branch 93 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 94 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>1000248</pre></td>
-    <td align="left" class="src coveredLine"><pre>    size_t size() const { return mAttribute.size(); }</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    size_t size() const { return mAttribute.size(); }</pre></td>
     </tr>
 
     <tr>
@@ -855,7 +855,7 @@
     <tr>
     <td align="right" class="lineno"><pre>80</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1540022</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>540074</pre></td>
     <td align="left" class="src coveredLine"><pre>        mGroup[index] = short(1);</pre></td>
     </tr>
 
@@ -896,9 +896,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>86</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
-    <td align="left" class="src coveredLine"><pre>    size_t size() const { return mGroup.size(); }</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    size_t size() const { return mGroup.size(); }</pre></td>
     </tr>
 
     <tr>
@@ -959,8 +959,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>95</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>14092341</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>15092341</pre></td>
     <td align="left" class="src coveredLine"><pre>struct PointData</pre></td>
     </tr>
 
@@ -1022,9 +1022,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>104</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool operator&lt;(const PointData&amp; other) const { return id &lt; other.id; }</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 4 taken 4125561 times">&check;</span><span class="takenBranch" title="Branch 5 taken 1540007 times">&check;</span><span class="takenBranch" title="Branch 6 taken 10884270 times">&check;</span><span class="takenBranch" title="Branch 7 taken 5846694 times">&check;</span><br/><span class="takenBranch" title="Branch 8 taken 8995244 times">&check;</span><span class="takenBranch" title="Branch 9 taken 5846694 times">&check;</span><span class="takenBranch" title="Branch 10 taken 78663 times">&check;</span><span class="takenBranch" title="Branch 11 taken 80925 times">&check;</span><br/><span class="takenBranch" title="Branch 12 taken 38111 times">&check;</span><span class="takenBranch" title="Branch 13 taken 40552 times">&check;</span><span class="takenBranch" title="Branch 14 taken 20713 times">&check;</span><span class="takenBranch" title="Branch 15 taken 19839 times">&check;</span><br/><span class="takenBranch" title="Branch 16 taken 36072 times">&check;</span><span class="takenBranch" title="Branch 17 taken 44853 times">&check;</span><span class="takenBranch" title="Branch 18 taken 22420 times">&check;</span><span class="takenBranch" title="Branch 19 taken 22433 times">&check;</span><br/><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span><span class="takenBranch" title="Branch 22 taken 10 times">&check;</span><span class="takenBranch" title="Branch 23 taken 50 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>37398118</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool operator&lt;(const PointData&amp; other) const { return id &lt; other.id; }</pre></td>
     </tr>
 
     <tr>
@@ -1974,9 +1974,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>240</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    auto newDescriptor = std::make_shared&lt;AttributeSet::Descriptor>(descriptor);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    auto newDescriptor = std::make_shared&lt;AttributeSet::Descriptor>(descriptor);</pre></td>
     </tr>
 
     <tr>
@@ -2310,7 +2310,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>288</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 18 not taken">&cross;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    EXPECT_TRUE(leafCIter->attributeSet().find("uniform") != AttributeSet::INVALID_POS);</pre></td>
     </tr>
@@ -3024,21 +3024,21 @@
 
     <tr>
     <td align="right" class="lineno"><pre>390</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 500000 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>500000</pre></td>
     <td align="left" class="src coveredLine"><pre>        data.uniform = outputUniform.buffer()[startOffset + i];</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>391</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 500000 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>500000</pre></td>
-    <td align="left" class="src coveredLine"><pre>        data.string = outputString.buffer()[startOffset + i];</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        data.string = outputString.buffer()[startOffset + i];</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>392</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 500000 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>500000</pre></td>
     <td align="left" class="src coveredLine"><pre>        data.group = outputGroup.buffer()[startOffset + i];</pre></td>
     </tr>
@@ -3353,7 +3353,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>437</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    const std::vector&lt;int> nanIndices = { 0, 10, 20, 24 };</pre></td>
     </tr>
@@ -3381,9 +3381,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>441</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    EXPECT_TRUE(nanPos.isNan());</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    EXPECT_TRUE(nanPos.isNan());</pre></td>
     </tr>
 
     <tr>
@@ -3542,7 +3542,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>464</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    const size_t expected = count - nanIndices.size();</pre></td>
     </tr>
@@ -4025,7 +4025,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>533</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 21 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>21</pre></td>
     <td align="left" class="src coveredLine"><pre>        pointData[i].id = outputId.buffer()[i];</pre></td>
     </tr>
@@ -5237,8 +5237,8 @@
     <tr>
     <td align="right" class="lineno"><pre>706</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(0.0f));</pre></td>
     </tr>
 
     <tr>
@@ -5314,15 +5314,15 @@
     <tr>
     <td align="right" class="lineno"><pre>717</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(-8.6f, 0.0f,-23.8f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(-8.6f, 0.0f,-23.8f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>718</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f( 8.6f, 7.8f, 23.8f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f( 8.6f, 7.8f, 23.8f));</pre></td>
     </tr>
 
     <tr>
@@ -5342,8 +5342,8 @@
     <tr>
     <td align="right" class="lineno"><pre>721</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            positionHandle.set(i, 0, Vec3f(0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>            positionHandle.set(i, 0, Vec3f(0.0f));</pre></td>
     </tr>
 
     <tr>
@@ -5517,36 +5517,36 @@
     <tr>
     <td align="right" class="lineno"><pre>746</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(0.0f, 0.0f, 10.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(0.0f, 0.0f, 10.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>747</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f(0.0f, 0.0f, -10.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f(0.0f, 0.0f, -10.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>748</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(2, 0, Vec3f(20.0f, 0.0f, -10.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(2, 0, Vec3f(20.0f, 0.0f, -10.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>749</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(3, 0, Vec3f(20.0f, 0.0f, 10.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(3, 0, Vec3f(20.0f, 0.0f, 10.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>750</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(4, 0, Vec3f(10.0f, 0.0f, 0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(4, 0, Vec3f(10.0f, 0.0f, 0.0f));</pre></td>
     </tr>
 
     <tr>
@@ -5643,36 +5643,36 @@
     <tr>
     <td align="right" class="lineno"><pre>764</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(0.0f, 0.0f, 10.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(0.0f, 0.0f, 10.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>765</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f(0.0f, 0.0f, -10.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f(0.0f, 0.0f, -10.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>766</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(2, 0, Vec3f(0.0f, 0.0f, -10.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(2, 0, Vec3f(0.0f, 0.0f, -10.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>767</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(3, 0, Vec3f(0.0f, 0.0f, 10.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(3, 0, Vec3f(0.0f, 0.0f, 10.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>768</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(4, 0, Vec3f(0.0f, 0.0f, 0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(4, 0, Vec3f(0.0f, 0.0f, 0.0f));</pre></td>
     </tr>
 
     <tr>
@@ -5769,15 +5769,15 @@
     <tr>
     <td align="right" class="lineno"><pre>782</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(0.0f, 0.0f, -std::numeric_limits&lt;float>::min()));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(0.0f, 0.0f, -std::numeric_limits&lt;float>::min()));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>783</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f(0.0f, 0.0f, std::numeric_limits&lt;float>::min()));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f(0.0f, 0.0f, std::numeric_limits&lt;float>::min()));</pre></td>
     </tr>
 
     <tr>
@@ -5874,15 +5874,15 @@
     <tr>
     <td align="right" class="lineno"><pre>797</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(-std::numeric_limits&lt;float>::max(), 0.0f, 0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(-std::numeric_limits&lt;float>::max(), 0.0f, 0.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>798</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f(std::numeric_limits&lt;float>::max(), 0.0f, 0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f(std::numeric_limits&lt;float>::max(), 0.0f, 0.0f));</pre></td>
     </tr>
 
     <tr>
@@ -5979,15 +5979,15 @@
     <tr>
     <td align="right" class="lineno"><pre>812</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(0));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(0));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>813</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f(1));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f(1));</pre></td>
     </tr>
 
     <tr>
@@ -6063,15 +6063,15 @@
     <tr>
     <td align="right" class="lineno"><pre>824</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandleD.set(0, 0, Vec3d(0));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandleD.set(0, 0, Vec3d(0));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>825</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandleD.set(1, 0, Vec3d(std::numeric_limits&lt;double>::max()));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandleD.set(1, 0, Vec3d(std::numeric_limits&lt;double>::max()));</pre></td>
     </tr>
 
     <tr>
@@ -6147,29 +6147,29 @@
     <tr>
     <td align="right" class="lineno"><pre>836</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(0.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>837</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f(smallest));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f(smallest));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>838</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(2, 0, Vec3f(smallest, 0.0f, 0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(2, 0, Vec3f(smallest, 0.0f, 0.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>839</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(3, 0, Vec3f(smallest, 0.0f, smallest));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(3, 0, Vec3f(smallest, 0.0f, smallest));</pre></td>
     </tr>
 
     <tr>
@@ -6301,15 +6301,15 @@
     <tr>
     <td align="right" class="lineno"><pre>858</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(0.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>859</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f(math::Tolerance&lt;Real>::value() + std::numeric_limits&lt;Real>::min()));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f(math::Tolerance&lt;Real>::value() + std::numeric_limits&lt;Real>::min()));</pre></td>
     </tr>
 
     <tr>
@@ -6385,15 +6385,15 @@
     <tr>
     <td align="right" class="lineno"><pre>870</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(0, 0, Vec3f(0.0f));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(0, 0, Vec3f(0.0f));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>871</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        positionHandle.set(1, 0, Vec3f(math::Tolerance&lt;Real>::value()*1e8 + std::numeric_limits&lt;Real>::min()));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        positionHandle.set(1, 0, Vec3f(math::Tolerance&lt;Real>::value()*1e8 + std::numeric_limits&lt;Real>::min()));</pre></td>
     </tr>
 
     <tr>
@@ -7973,9 +7973,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1097</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            auto indexIter = leafIter->beginIndexOn();</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>            auto indexIter = leafIter->beginIndexOn();</pre></td>
     </tr>
 
     <tr>
@@ -8176,9 +8176,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1126</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            auto indexIter = leafIter->beginIndexOn();</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>            auto indexIter = leafIter->beginIndexOn();</pre></td>
     </tr>
 
     <tr>
@@ -8568,9 +8568,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1182</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            auto indexIter = leafIter->beginIndexOn();</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>            auto indexIter = leafIter->beginIndexOn();</pre></td>
     </tr>
 
     <tr>
@@ -8771,9 +8771,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1211</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            auto indexIter = leafIter->beginIndexOn();</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>            auto indexIter = leafIter->beginIndexOn();</pre></td>
     </tr>
 
     <tr>

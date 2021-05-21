@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb_ax/openvdb_ax/test/compiler/TestVolumeExecutable.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">492</td>
-            <td class="headerTableEntry">494</td>
+            <td class="headerTableEntry">497</td>
+            <td class="headerTableEntry">499</td>
             <td class="headerTableEntry" style="background-color:LightGreen">99.6 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">1716</td>
-            <td class="headerTableEntry">3591</td>
-            <td class="headerTableEntry" style="background-color:LightPink">47.8 %</td>
+            <td class="headerTableEntry">1731</td>
+            <td class="headerTableEntry">3605</td>
+            <td class="headerTableEntry" style="background-color:LightPink">48.0 %</td>
           </tr>
         </table>
       </td>
@@ -378,7 +378,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>12</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>5</pre></td>
     <td align="left" class="src coveredLine"><pre>class TestVolumeExecutable : public CppUnit::TestCase</pre></td>
     </tr>
@@ -616,14 +616,14 @@
 
     <tr>
     <td align="right" class="lineno"><pre>46</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::unique_ptr&lt;llvm::Module> M(new llvm::Module("test_module", *C));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>47</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::shared_ptr&lt;const llvm::ExecutionEngine> E(llvm::EngineBuilder(std::move(M))</pre></td>
     </tr>
@@ -890,7 +890,7 @@
     <tr>
     <td align="right" class="lineno"><pre>85</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    openvdb::ax::Compiler::UniquePtr compiler = openvdb::ax::Compiler::create();</pre></td>
     </tr>
 
@@ -903,7 +903,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>87</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>        compiler->compile&lt;openvdb::ax::VolumeExecutable>("@a=v@b.x;");</pre></td>
     </tr>
@@ -1155,8 +1155,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>123</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    openvdb::ax::Compiler::UniquePtr compiler = openvdb::ax::Compiler::create();</pre></td>
     </tr>
 
@@ -1176,7 +1176,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>126</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>        compiler->compile&lt;openvdb::ax::VolumeExecutable>("f@test = $value;", data);</pre></td>
     </tr>
@@ -2485,7 +2485,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>313</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>TestVolumeExecutable::testActiveTileStreaming()</pre></td>
     </tr>
@@ -2548,9 +2548,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>322</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    openvdb::ax::VolumeExecutable::Ptr executable;</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    openvdb::ax::VolumeExecutable::Ptr executable;</pre></td>
     </tr>
 
     <tr>
@@ -3144,8 +3144,8 @@
     <tr>
     <td align="right" class="lineno"><pre>407</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            const openvdb::Coord&amp; coord = it.getCoord();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2097664</pre></td>
+    <td align="left" class="src coveredLine"><pre>            const openvdb::Coord&amp; coord = it.getCoord();</pre></td>
     </tr>
 
     <tr>
@@ -3157,7 +3157,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>409</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 2097664 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>2097664</pre></td>
     <td align="left" class="src coveredLine"><pre>            CPPUNIT_ASSERT_EQUAL(*it, float(pos));</pre></td>
     </tr>
@@ -3549,21 +3549,21 @@
 
     <tr>
     <td align="right" class="lineno"><pre>465</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            const openvdb::Coord&amp; coord = it.getCoord();</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16777216 times">&check;</span><span class="takenBranch" title="Branch 1 taken 121404418 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>138181634</pre></td>
+    <td align="left" class="src coveredLine"><pre>            const openvdb::Coord&amp; coord = it.getCoord();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>466</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16777216 times">&check;</span><span class="takenBranch" title="Branch 1 taken 121404418 times">&check;</span><span class="takenBranch" title="Branch 4 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16777216 times">&check;</span><span class="takenBranch" title="Branch 1 taken 121404418 times">&check;</span><span class="takenBranch" title="Branch 3 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 9 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="takenBranch" title="Branch 15 taken 16777216 times">&check;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>138181634</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (coord.x() == 0) CPPUNIT_ASSERT_EQUAL(*it,  2.0f);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>467</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 121404418 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>121404418</pre></td>
     <td align="left" class="src coveredLine"><pre>            else                CPPUNIT_ASSERT_EQUAL(*it, -1.0f);</pre></td>
     </tr>
@@ -4284,21 +4284,21 @@
 
     <tr>
     <td align="right" class="lineno"><pre>570</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            const openvdb::Coord&amp; coord = it.getCoord();</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16384 times">&check;</span><span class="takenBranch" title="Branch 1 taken 118532 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>134916</pre></td>
+    <td align="left" class="src coveredLine"><pre>            const openvdb::Coord&amp; coord = it.getCoord();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>571</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16384 times">&check;</span><span class="takenBranch" title="Branch 1 taken 118532 times">&check;</span><span class="takenBranch" title="Branch 4 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16384 times">&check;</span><span class="takenBranch" title="Branch 1 taken 118532 times">&check;</span><span class="takenBranch" title="Branch 3 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 9 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="takenBranch" title="Branch 15 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>134916</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (coord.x() == 0) CPPUNIT_ASSERT_EQUAL(*it, false);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>572</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>118532</pre></td>
     <td align="left" class="src coveredLine"><pre>            else                CPPUNIT_ASSERT_EQUAL(*it, true);</pre></td>
     </tr>
@@ -4662,21 +4662,21 @@
 
     <tr>
     <td align="right" class="lineno"><pre>624</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            const openvdb::Coord&amp; coord = it.getCoord();</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16384 times">&check;</span><span class="takenBranch" title="Branch 1 taken 118532 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>134916</pre></td>
+    <td align="left" class="src coveredLine"><pre>            const openvdb::Coord&amp; coord = it.getCoord();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>625</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16384 times">&check;</span><span class="takenBranch" title="Branch 1 taken 118532 times">&check;</span><span class="takenBranch" title="Branch 4 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16384 times">&check;</span><span class="takenBranch" title="Branch 1 taken 118532 times">&check;</span><span class="takenBranch" title="Branch 3 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 9 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="takenBranch" title="Branch 15 taken 16384 times">&check;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>167684</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (coord.x() == 0) CPPUNIT_ASSERT_EQUAL(*it, std::string("bar"));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>626</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 118532 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>355596</pre></td>
     <td align="left" class="src coveredLine"><pre>            else                CPPUNIT_ASSERT_EQUAL(*it, std::string("foo"));</pre></td>
     </tr>
@@ -4984,7 +4984,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>670</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 36860 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>73720</pre></td>
     <td align="left" class="src coveredLine"><pre>            CPPUNIT_ASSERT_EQUAL(*it, float(it.getCoord().x()));</pre></td>
     </tr>
@@ -5012,7 +5012,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>674</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 514 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>514</pre></td>
     <td align="left" class="src coveredLine"><pre>            CPPUNIT_ASSERT_EQUAL(*it, -1.0f);</pre></td>
     </tr>
@@ -5278,7 +5278,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>712</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 2135036 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>4270072</pre></td>
     <td align="left" class="src coveredLine"><pre>            CPPUNIT_ASSERT_EQUAL(*it, float(it.getCoord().y()));</pre></td>
     </tr>
@@ -5558,14 +5558,14 @@
 
     <tr>
     <td align="right" class="lineno"><pre>752</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    executable = compiler->compile&lt;openvdb::ax::VolumeExecutable>("f@test = getcoordz();");</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>753</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 18 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    CPPUNIT_ASSERT_EQUAL(openvdb::ax::VolumeExecutable::Streaming::ON,</pre></td>
     </tr>
@@ -5622,7 +5622,7 @@
     <tr>
     <td align="right" class="lineno"><pre>761</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    openvdb::ax::Compiler::UniquePtr compiler = openvdb::ax::Compiler::create();</pre></td>
     </tr>
 
@@ -5705,7 +5705,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>773</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>    openvdb::ax::Logger logger([](const std::string&amp;) {});</pre></td>
     </tr>

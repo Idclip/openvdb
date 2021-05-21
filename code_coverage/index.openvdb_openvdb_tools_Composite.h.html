@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tools/Composite.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">228</td>
-            <td class="headerTableEntry">269</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">84.8 %</td>
+            <td class="headerTableEntry">238</td>
+            <td class="headerTableEntry">286</td>
+            <td class="headerTableEntry" style="background-color:#FFFF55">83.2 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">239</td>
-            <td class="headerTableEntry">491</td>
-            <td class="headerTableEntry" style="background-color:LightPink">48.7 %</td>
+            <td class="headerTableEntry">251</td>
+            <td class="headerTableEntry">518</td>
+            <td class="headerTableEntry" style="background-color:LightPink">48.5 %</td>
           </tr>
         </table>
       </td>
@@ -1253,9 +1253,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>137</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>    if (b != zero) return a / b;</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 37375 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 37375 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>74750</pre></td>
+    <td align="left" class="src coveredLine"><pre>    if (b != zero) return a / b;</pre></td>
     </tr>
 
     <tr>
@@ -1352,8 +1352,8 @@
     <tr>
     <td align="right" class="lineno"><pre>151</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>struct BuildPrimarySegment</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
+    <td align="left" class="src coveredLine"><pre>struct BuildPrimarySegment</pre></td>
     </tr>
 
     <tr>
@@ -1561,8 +1561,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>181</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>        tbb::parallel_reduce(tbb::blocked_range&lt;size_t>(0, leafNodes.size()), op);</pre></td>
     </tr>
 
@@ -1709,21 +1709,21 @@
     <tr>
     <td align="right" class="lineno"><pre>202</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>        ProcessInternalNodes(ProcessInternalNodes&amp; other, tbb::split)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>203</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>            : mLhsNodes(other.mLhsNodes)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>204</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>            , mRhsTree(other.mRhsTree)</pre></td>
     </tr>
 
@@ -1751,7 +1751,7 @@
     <tr>
     <td align="right" class="lineno"><pre>208</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>            , mOutputLeafNodes(&amp;mLocalLeafNodes)</pre></td>
     </tr>
 
@@ -1779,8 +1779,8 @@
     <tr>
     <td align="right" class="lineno"><pre>212</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        void join(ProcessInternalNodes&amp; other)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="left" class="src coveredLine"><pre>        void join(ProcessInternalNodes&amp; other)</pre></td>
     </tr>
 
     <tr>
@@ -1793,22 +1793,22 @@
     <tr>
     <td align="right" class="lineno"><pre>214</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            mOutputTree->merge(*other.mOutputTree);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="left" class="src coveredLine"><pre>            mOutputTree->merge(*other.mOutputTree);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>215</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            mOutputLeafNodes->insert(mOutputLeafNodes->end(),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
+    <td align="left" class="src coveredLine"><pre>            mOutputLeafNodes->insert(mOutputLeafNodes->end(),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>216</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                other.mOutputLeafNodes->begin(), other.mOutputLeafNodes->end());</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="left" class="src coveredLine"><pre>                other.mOutputLeafNodes->begin(), other.mOutputLeafNodes->end());</pre></td>
     </tr>
 
     <tr>
@@ -2157,7 +2157,7 @@
     <tr>
     <td align="right" class="lineno"><pre>266</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 15 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>11</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>15</pre></td>
     <td align="left" class="src coveredLine"><pre>    struct ProcessLeafNodes {</pre></td>
     </tr>
 
@@ -2234,21 +2234,21 @@
     <tr>
     <td align="right" class="lineno"><pre>277</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
     <td align="left" class="src coveredLine"><pre>        ProcessLeafNodes(ProcessLeafNodes&amp; other, tbb::split)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>278</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
     <td align="left" class="src coveredLine"><pre>            : mLhsNodes(other.mLhsNodes)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>279</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
     <td align="left" class="src coveredLine"><pre>            , mRhsTree(other.mRhsTree)</pre></td>
     </tr>
 
@@ -2262,7 +2262,7 @@
     <tr>
     <td align="right" class="lineno"><pre>281</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
     <td align="left" class="src coveredLine"><pre>            , mOutputTree(&amp;mLocalTree)</pre></td>
     </tr>
 
@@ -2290,7 +2290,7 @@
     <tr>
     <td align="right" class="lineno"><pre>285</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
     <td align="left" class="src coveredLine"><pre>        void join(ProcessLeafNodes&amp; rhs) { mOutputTree->merge(*rhs.mOutputTree); }</pre></td>
     </tr>
 
@@ -2807,8 +2807,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>359</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>struct BuildSecondarySegment</pre></td>
     </tr>
 
@@ -3017,8 +3017,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>389</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>        tbb::parallel_reduce(tbb::blocked_range&lt;size_t>(0, leafNodes.size()), op);</pre></td>
     </tr>
 
@@ -3235,8 +3235,8 @@
     <tr>
     <td align="right" class="lineno"><pre>420</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        void join(ProcessInternalNodes&amp; other)</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        void join(ProcessInternalNodes&amp; other)</pre></td>
     </tr>
 
     <tr>
@@ -3249,22 +3249,22 @@
     <tr>
     <td align="right" class="lineno"><pre>422</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            mOutputTree->merge(*other.mOutputTree);</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>            mOutputTree->merge(*other.mOutputTree);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>423</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            mOutputLeafNodes->insert(mOutputLeafNodes->end(),</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>            mOutputLeafNodes->insert(mOutputLeafNodes->end(),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>424</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                other.mOutputLeafNodes->begin(), other.mOutputLeafNodes->end());</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>                other.mOutputLeafNodes->begin(), other.mOutputLeafNodes->end());</pre></td>
     </tr>
 
     <tr>
@@ -4781,8 +4781,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>641</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>doCompActiveLeafVoxels(TreeT &amp;srcTree, TreeT &amp;dstTree, OpT op)</pre></td>
     </tr>
 
@@ -4809,8 +4809,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>645</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>    transferLeafNodes(srcTree, dstTree, overlapping);</pre></td>
     </tr>
 
@@ -4830,16 +4830,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>648</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="takenBranch" title="Branch 3 taken 2 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>19</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
     <td align="left" class="src coveredLine"><pre>    tbb::parallel_for(RangeT(0, overlapping.size()), [op, &amp;overlapping](const RangeT&amp; r) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>649</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        for (auto i = r.begin(); i != r.end(); ++i) {</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="left" class="src coveredLine"><pre>        for (auto i = r.begin(); i != r.end(); ++i) {</pre></td>
     </tr>
 
     <tr>
@@ -4894,7 +4894,7 @@
     <tr>
     <td align="right" class="lineno"><pre>657</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -5012,8 +5012,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>674</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>    tbb::parallel_for(RangeT(0, overlapping.size()), [&amp;overlapping](const RangeT&amp; r) {</pre></td>
     </tr>
 
@@ -5117,9 +5117,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>689</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>doCompActiveLeafVoxels(TreeT &amp;srcTree, TreeT &amp;dstTree, OpT op)</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>doCompActiveLeafVoxels(TreeT &amp;srcTree, TreeT &amp;dstTree, OpT op)</pre></td>
     </tr>
 
     <tr>
@@ -5145,9 +5145,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>693</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    transferLeafNodes(srcTree, dstTree, overlapping);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    transferLeafNodes(srcTree, dstTree, overlapping);</pre></td>
     </tr>
 
     <tr>
@@ -5173,8 +5173,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>697</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>    tbb::parallel_for(RangeT(0, overlapping.size()), [op, &amp;overlapping](const RangeT&amp; r) {</pre></td>
     </tr>
 
@@ -5279,8 +5279,8 @@
     <tr>
     <td align="right" class="lineno"><pre>712</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
     <tr>
@@ -5383,7 +5383,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>727</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 10 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>65</pre></td>
     <td align="left" class="src coveredLine"><pre>inline void validateLevelSet(const TreeT&amp; tree, const std::string&amp; gridName = std::string(""))</pre></td>
     </tr>
@@ -5600,15 +5600,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>758</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 71481 times">&check;</span><span class="takenBranch" title="Branch 1 taken 253803 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>549535</pre></td>
     <td align="left" class="src coveredLine"><pre>        static inline void op(CombineArgs&lt;ValueT>&amp; args) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>759</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 71481 times">&check;</span><span class="takenBranch" title="Branch 1 taken 253803 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>549535</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>149500</pre></td>
     <td align="left" class="src coveredLine"><pre>            args.setResult(composite::max(args.a(), args.b()));</pre></td>
     </tr>
 
@@ -5712,15 +5712,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>774</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 37375 times">&check;</span><span class="takenBranch" title="Branch 1 taken 37375 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>299000</pre></td>
     <td align="left" class="src coveredLine"><pre>        static inline void op(CombineArgs&lt;ValueT>&amp; args) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>775</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 37375 times">&check;</span><span class="takenBranch" title="Branch 1 taken 37375 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>299000</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>149500</pre></td>
     <td align="left" class="src coveredLine"><pre>            args.setResult(composite::min(args.a(), args.b()));</pre></td>
     </tr>
 
@@ -6027,15 +6027,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>819</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 74750 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>523250</pre></td>
     <td align="left" class="src coveredLine"><pre>        static inline void op(CombineArgs&lt;typename TreeT::ValueType>&amp; args) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>820</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 74750 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>523250</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>149500</pre></td>
     <td align="left" class="src coveredLine"><pre>            args.setResult(composite::divide(args.a(), args.b()));</pre></td>
     </tr>
 
@@ -6161,8 +6161,8 @@
     <tr>
     <td align="right" class="lineno"><pre>838</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    void operator()(const typename TreeT::ValueOnCIter&amp; iter) const</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    void operator()(const typename TreeT::ValueOnCIter&amp; iter) const</pre></td>
     </tr>
 
     <tr>
@@ -6175,22 +6175,22 @@
     <tr>
     <td align="right" class="lineno"><pre>840</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        CoordBBox bbox;</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        CoordBBox bbox;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>841</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        iter.getBoundingBox(bbox);</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        iter.getBoundingBox(bbox);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>842</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        aTree->fill(bbox, *iter);</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        aTree->fill(bbox, *iter);</pre></td>
     </tr>
 
     <tr>
@@ -6490,7 +6490,7 @@
     <tr>
     <td align="right" class="lineno"><pre>885</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 21 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>27</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>31</pre></td>
     <td align="left" class="src coveredLine"><pre>csgUnion(GridOrTreeT&amp; a, GridOrTreeT&amp; b, bool prune)</pre></td>
     </tr>
 
@@ -6525,49 +6525,49 @@
     <tr>
     <td align="right" class="lineno"><pre>890</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 22 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 21 times">&check;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>28</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>32</pre></td>
     <td align="left" class="src coveredLine"><pre>    composite::validateLevelSet(aTree, "A");</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>891</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 21 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 21 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>26</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30</pre></td>
     <td align="left" class="src coveredLine"><pre>    composite::validateLevelSet(bTree, "B");</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>892</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>26</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30</pre></td>
     <td align="left" class="src coveredLine"><pre>    CsgUnionOp&lt;TreeT> op(bTree, Steal());</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>893</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>26</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30</pre></td>
     <td align="left" class="src coveredLine"><pre>    tree::DynamicNodeManager&lt;TreeT> nodeManager(aTree);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>894</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 21 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>26</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30</pre></td>
     <td align="left" class="src coveredLine"><pre>    nodeManager.foreachTopDown(op);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>895</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 21 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 21 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>26</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (prune) tools::pruneLevelSet(aTree);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>896</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>26</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 

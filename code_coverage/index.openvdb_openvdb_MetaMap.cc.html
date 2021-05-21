@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/MetaMap.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">64</td>
-            <td class="headerTableEntry">74</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">86.5 %</td>
+            <td class="headerTableEntry">70</td>
+            <td class="headerTableEntry">80</td>
+            <td class="headerTableEntry" style="background-color:#FFFF55">87.5 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">52</td>
-            <td class="headerTableEntry">100</td>
-            <td class="headerTableEntry" style="background-color:LightPink">52.0 %</td>
+            <td class="headerTableEntry">56</td>
+            <td class="headerTableEntry">104</td>
+            <td class="headerTableEntry" style="background-color:LightPink">53.8 %</td>
           </tr>
         </table>
       </td>
@@ -392,8 +392,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>14</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2710 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2710</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2711 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>2711</pre></td>
     <td align="left" class="src coveredLine"><pre>MetaMap::MetaMap(const MetaMap&amp; other)</pre></td>
     </tr>
 
@@ -406,15 +406,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>16</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2710 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2710</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2711 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>2711</pre></td>
     <td align="left" class="src coveredLine"><pre>    this->insertMeta(other);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>17</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2710</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2711</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -589,8 +589,8 @@
     <tr>
     <td align="right" class="lineno"><pre>42</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        ConstMetaIterator iter = other.beginMeta();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7301</pre></td>
+    <td align="left" class="src coveredLine"><pre>        ConstMetaIterator iter = other.beginMeta();</pre></td>
     </tr>
 
     <tr>
@@ -1120,9 +1120,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>118</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    MetaIterator iter = mMeta.find(name);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 22765 times">&check;</span><span class="takenBranch" title="Branch 1 taken 106 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>22871</pre></td>
+    <td align="left" class="src coveredLine"><pre>    MetaIterator iter = mMeta.find(name);</pre></td>
     </tr>
 
     <tr>
@@ -1275,7 +1275,7 @@
     <tr>
     <td align="right" class="lineno"><pre>140</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2726</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2727</pre></td>
     <td align="left" class="src coveredLine"><pre>MetaMap::insertMeta(const MetaMap&amp; other)</pre></td>
     </tr>
 
@@ -1288,8 +1288,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>142</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1319 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2726 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>4045</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1319 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2727 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>4046</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (ConstMetaIterator it = other.beginMeta(), end = other.endMeta(); it != end; ++it) {</pre></td>
     </tr>
 
@@ -1310,7 +1310,7 @@
     <tr>
     <td align="right" class="lineno"><pre>145</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2726</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2727</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -1351,9 +1351,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>151</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    MetaIterator iter = mMeta.find(name);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 729 times">&check;</span><span class="takenBranch" title="Branch 1 taken 13152 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>13881</pre></td>
+    <td align="left" class="src coveredLine"><pre>    MetaIterator iter = mMeta.find(name);</pre></td>
     </tr>
 
     <tr>
@@ -1366,8 +1366,8 @@
     <tr>
     <td align="right" class="lineno"><pre>153</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mMeta.erase(iter);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>729</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mMeta.erase(iter);</pre></td>
     </tr>
 
     <tr>
@@ -1443,8 +1443,8 @@
     <tr>
     <td align="right" class="lineno"><pre>164</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    for (ConstMetaIterator it = beginMeta(), otherIt = other.beginMeta(), end = endMeta();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6119</pre></td>
+    <td align="left" class="src coveredLine"><pre>    for (ConstMetaIterator it = beginMeta(), otherIt = other.beginMeta(), end = endMeta();</pre></td>
     </tr>
 
     <tr>
@@ -1471,7 +1471,7 @@
     <tr>
     <td align="right" class="lineno"><pre>168</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 159 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>161</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>167</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (it->first != otherIt->first) return false;</pre></td>
     </tr>
 
@@ -1513,8 +1513,8 @@
     <tr>
     <td align="right" class="lineno"><pre>174</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    return true;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6111</pre></td>
+    <td align="left" class="src coveredLine"><pre>    return true;</pre></td>
     </tr>
 
     <tr>

@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tools/ValueTransformer.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">86</td>
-            <td class="headerTableEntry">90</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">95.6 %</td>
+            <td class="headerTableEntry">110</td>
+            <td class="headerTableEntry">114</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">96.5 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">65</td>
-            <td class="headerTableEntry">137</td>
-            <td class="headerTableEntry" style="background-color:LightPink">47.4 %</td>
+            <td class="headerTableEntry">75</td>
+            <td class="headerTableEntry">157</td>
+            <td class="headerTableEntry" style="background-color:LightPink">47.8 %</td>
           </tr>
         </table>
       </td>
@@ -2058,15 +2058,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>252</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 80002 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>82361</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>82394</pre></td>
     <td align="left" class="src coveredLine"><pre>    SumOp(const ValueType&amp; v): val(v) {}</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>253</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>82363</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>82396</pre></td>
     <td align="left" class="src coveredLine"><pre>    inline void operator()(ValueType&amp; v) const { v += val; }</pre></td>
     </tr>
 
@@ -2128,7 +2128,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>262</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="takenBranch" title="Branch 1 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 7 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 3 times">&check;</span><span class="takenBranch" title="Branch 5 taken 15 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 15 times">&check;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 7 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 7 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 15 times">&check;</span><span class="takenBranch" title="Branch 5 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 15 times">&check;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>28</pre></td>
     <td align="left" class="src coveredLine"><pre>    inline void operator()(ValueType&amp; v) const { v = v || val; }</pre></td>
     </tr>
@@ -2486,7 +2486,7 @@
     <tr>
     <td align="right" class="lineno"><pre>313</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1997</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>45761</pre></td>
     <td align="left" class="src coveredLine"><pre>class SharedOpApplier</pre></td>
     </tr>
 
@@ -2563,8 +2563,8 @@
     <tr>
     <td align="right" class="lineno"><pre>324</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            tbb::parallel_for(range, *this);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3086</pre></td>
+    <td align="left" class="src coveredLine"><pre>            tbb::parallel_for(range, *this);</pre></td>
     </tr>
 
     <tr>
@@ -2605,8 +2605,8 @@
     <tr>
     <td align="right" class="lineno"><pre>330</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    void operator()(IterRange&amp; r) const { for ( ; r; ++r) mOp(r.iterator()); }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>588275512</pre></td>
+    <td align="left" class="src coveredLine"><pre>    void operator()(IterRange&amp; r) const { for ( ; r; ++r) mOp(r.iterator()); }</pre></td>
     </tr>
 
     <tr>
@@ -2731,14 +2731,14 @@
     <tr>
     <td align="right" class="lineno"><pre>348</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>240</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>188</pre></td>
     <td align="left" class="src coveredLine"><pre>    CopyableOpApplier(const CopyableOpApplier&amp; other):</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>349</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>240</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>188</pre></td>
     <td align="left" class="src coveredLine"><pre>        mIter(other.mIter), mOp(*other.mOrigOp), mOrigOp(other.mOrigOp) {}</pre></td>
     </tr>
 
@@ -2780,8 +2780,8 @@
     <tr>
     <td align="right" class="lineno"><pre>355</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            tbb::parallel_for(range, *this);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>24</pre></td>
+    <td align="left" class="src coveredLine"><pre>            tbb::parallel_for(range, *this);</pre></td>
     </tr>
 
     <tr>
@@ -2822,7 +2822,7 @@
     <tr>
     <td align="right" class="lineno"><pre>361</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2782796</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2782710</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator()(IterRange&amp; r) const { for ( ; r; ++r) mOp(r.iterator()); }</pre></td>
     </tr>
 
@@ -3263,8 +3263,8 @@
     <tr>
     <td align="right" class="lineno"><pre>424</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    SharedOpTransformer(SharedOpTransformer&amp; other, tbb::split):</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>    SharedOpTransformer(SharedOpTransformer&amp; other, tbb::split):</pre></td>
     </tr>
 
     <tr>
@@ -3277,43 +3277,43 @@
     <tr>
     <td align="right" class="lineno"><pre>426</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mInputIter(other.mInputIter),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mInputIter(other.mInputIter),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>427</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mInputTree(other.mInputTree),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mInputTree(other.mInputTree),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>428</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mOutputTree(new OutTreeT(zeroVal&lt;OutValueT>())),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mOutputTree(new OutTreeT(zeroVal&lt;OutValueT>())),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>429</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mOp(other.mOp),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mOp(other.mOp),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>430</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mMergePolicy(other.mMergePolicy)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mMergePolicy(other.mMergePolicy)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>431</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        {}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>        {}</pre></td>
     </tr>
 
     <tr>
@@ -3353,15 +3353,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>437</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (!mIsRoot) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>438</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
     <td align="left" class="src coveredLine"><pre>            delete mOutputTree;</pre></td>
     </tr>
 
@@ -3382,7 +3382,7 @@
     <tr>
     <td align="right" class="lineno"><pre>441</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
     <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
@@ -3459,8 +3459,8 @@
     <tr>
     <td align="right" class="lineno"><pre>452</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            tbb::parallel_reduce(range, *this);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>            tbb::parallel_reduce(range, *this);</pre></td>
     </tr>
 
     <tr>
@@ -3508,8 +3508,8 @@
     <tr>
     <td align="right" class="lineno"><pre>459</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    void operator()(IterRange&amp; range) const</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>150</pre></td>
+    <td align="left" class="src coveredLine"><pre>    void operator()(IterRange&amp; range) const</pre></td>
     </tr>
 
     <tr>
@@ -3521,9 +3521,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>461</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        if (!mOutputTree) return;</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 150 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>150</pre></td>
+    <td align="left" class="src coveredLine"><pre>        if (!mOutputTree) return;</pre></td>
     </tr>
 
     <tr>
@@ -3542,9 +3542,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>464</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            mOp(range.iterator(), outAccessor);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 15628 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>15628</pre></td>
+    <td align="left" class="src coveredLine"><pre>            mOp(range.iterator(), outAccessor);</pre></td>
     </tr>
 
     <tr>
@@ -3584,15 +3584,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>470</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (mOutputTree &amp;&amp; other.mOutputTree) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>471</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
     <td align="left" class="src coveredLine"><pre>            mOutputTree->merge(*other.mOutputTree, mMergePolicy);</pre></td>
     </tr>
 
@@ -3872,8 +3872,8 @@
     <tr>
     <td align="right" class="lineno"><pre>511</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    CopyableOpTransformer(CopyableOpTransformer&amp; other, tbb::split):</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>    CopyableOpTransformer(CopyableOpTransformer&amp; other, tbb::split):</pre></td>
     </tr>
 
     <tr>
@@ -3886,50 +3886,50 @@
     <tr>
     <td align="right" class="lineno"><pre>513</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mInputIter(other.mInputIter),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mInputIter(other.mInputIter),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>514</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mInputTree(other.mInputTree),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mInputTree(other.mInputTree),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>515</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mOutputTree(new OutTreeT(zeroVal&lt;OutValueT>())),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mOutputTree(new OutTreeT(zeroVal&lt;OutValueT>())),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>516</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mOp(*other.mOrigOp),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mOp(*other.mOrigOp),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>517</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mOrigOp(other.mOrigOp),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mOrigOp(other.mOrigOp),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>518</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mMergePolicy(other.mMergePolicy)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mMergePolicy(other.mMergePolicy)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>519</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        {}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>        {}</pre></td>
     </tr>
 
     <tr>
@@ -3969,15 +3969,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>525</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>9</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (!mIsRoot) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>526</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
     <td align="left" class="src coveredLine"><pre>            delete mOutputTree;</pre></td>
     </tr>
 
@@ -3998,7 +3998,7 @@
     <tr>
     <td align="right" class="lineno"><pre>529</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
     <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
@@ -4075,8 +4075,8 @@
     <tr>
     <td align="right" class="lineno"><pre>540</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            tbb::parallel_reduce(range, *this);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>            tbb::parallel_reduce(range, *this);</pre></td>
     </tr>
 
     <tr>
@@ -4124,7 +4124,7 @@
     <tr>
     <td align="right" class="lineno"><pre>547</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>160</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>176</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator()(IterRange&amp; range)</pre></td>
     </tr>
 
@@ -4137,8 +4137,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>549</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 160 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>160</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 176 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>176</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (!mOutputTree) return;</pre></td>
     </tr>
 
@@ -4200,15 +4200,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>558</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (mOutputTree &amp;&amp; other.mOutputTree) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>559</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
     <td align="left" class="src coveredLine"><pre>            mOutputTree->merge(*other.mOutputTree, mMergePolicy);</pre></td>
     </tr>
 
@@ -4754,7 +4754,7 @@
     <tr>
     <td align="right" class="lineno"><pre>637</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>104</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>151</pre></td>
     <td align="left" class="src coveredLine"><pre>    OpAccumulator(OpAccumulator&amp; other, tbb::split):</pre></td>
     </tr>
 
@@ -4768,28 +4768,28 @@
     <tr>
     <td align="right" class="lineno"><pre>639</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>100</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>148</pre></td>
     <td align="left" class="src coveredLine"><pre>        mIter(other.mIter),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>640</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 17 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>100</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 42 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>154</pre></td>
     <td align="left" class="src coveredLine"><pre>        mOp(new OpT(*other.mOrigOp)),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>641</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>104</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>151</pre></td>
     <td align="left" class="src coveredLine"><pre>        mOrigOp(other.mOrigOp)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>642</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>100</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>148</pre></td>
     <td align="left" class="src coveredLine"><pre>    {}</pre></td>
     </tr>
 
@@ -4802,8 +4802,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>644</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 51 times">&check;</span><span class="takenBranch" title="Branch 1 taken 60 times">&check;</span><span class="takenBranch" title="Branch 2 taken 51 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 5 taken 60 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>314</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 51 times">&check;</span><span class="takenBranch" title="Branch 1 taken 77 times">&check;</span><span class="takenBranch" title="Branch 2 taken 51 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 5 taken 77 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>390</pre></td>
     <td align="left" class="src coveredLine"><pre>    ~OpAccumulator() { if (mIsRoot) delete mOrigOp; else delete mOp; }</pre></td>
     </tr>
 
@@ -4845,8 +4845,8 @@
     <tr>
     <td align="right" class="lineno"><pre>650</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            tbb::parallel_reduce(range, *this);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>64</pre></td>
+    <td align="left" class="src coveredLine"><pre>            tbb::parallel_reduce(range, *this);</pre></td>
     </tr>
 
     <tr>
@@ -4887,7 +4887,7 @@
     <tr>
     <td align="right" class="lineno"><pre>656</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2758316</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>28735178</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator()(IterRange&amp; r) { for ( ; r; ++r) (*mOp)(r.iterator()); }</pre></td>
     </tr>
 
@@ -4900,8 +4900,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>658</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>35</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="takenBranch" title="Branch 19 taken 9 times">&check;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 21 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><span class="takenBranch" title="Branch 23 taken 3 times">&check;</span><span class="takenBranch" title="Branch 24 taken 1 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>77</pre></td>
     <td align="left" class="src coveredLine"><pre>    void join(OpAccumulator&amp; other) { mOp->join(*other.mOp); }</pre></td>
     </tr>
 

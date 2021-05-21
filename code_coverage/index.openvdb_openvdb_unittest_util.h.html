@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/unittest/util.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">48</td>
-            <td class="headerTableEntry">48</td>
+            <td class="headerTableEntry">49</td>
+            <td class="headerTableEntry">49</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">41</td>
-            <td class="headerTableEntry">62</td>
-            <td class="headerTableEntry" style="background-color:LightPink">66.1 %</td>
+            <td class="headerTableEntry">40</td>
+            <td class="headerTableEntry">54</td>
+            <td class="headerTableEntry" style="background-color:LightPink">74.1 %</td>
           </tr>
         </table>
       </td>
@@ -491,7 +491,7 @@
     <tr>
     <td align="right" class="lineno"><pre>28</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>91</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>81</pre></td>
     <td align="left" class="src coveredLine"><pre>makeSphere(const openvdb::Coord&amp; dim, const openvdb::Vec3f&amp; center, float radius,</pre></td>
     </tr>
 
@@ -526,21 +526,21 @@
     <tr>
     <td align="right" class="lineno"><pre>33</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        zero = openvdb::zeroVal&lt;ValueT>(),</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="left" class="src coveredLine"><pre>        zero = openvdb::zeroVal&lt;ValueT>(),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>34</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>91</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>81</pre></td>
     <td align="left" class="src coveredLine"><pre>        outside = grid.background(),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>35</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>89</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>79</pre></td>
     <td align="left" class="src coveredLine"><pre>        inside = -outside;</pre></td>
     </tr>
 
@@ -568,21 +568,21 @@
     <tr>
     <td align="right" class="lineno"><pre>39</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4296 times">&check;</span><span class="takenBranch" title="Branch 1 taken 74 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>5379</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4825</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (xyz[0]=0; xyz[0]&lt;dim[0]; ++xyz[0]) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>40</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 306944 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4296 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>384936</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>340360</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (xyz[1]=0; xyz[1]&lt;dim[1]; ++xyz[1]) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>41</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 26343168 times">&check;</span><span class="takenBranch" title="Branch 1 taken 306944 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>33243648</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>28513792</pre></td>
     <td align="left" class="src coveredLine"><pre>            for (xyz[2]=0; xyz[2]&lt;dim[2]; ++xyz[2]) {</pre></td>
     </tr>
 
@@ -595,8 +595,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>43</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 524288 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 524288 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>32864000</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1048576 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>28178176</pre></td>
     <td align="left" class="src coveredLine"><pre>                const float dist = float((p-center).length() - radius);</pre></td>
     </tr>
 
@@ -610,7 +610,7 @@
     <tr>
     <td align="right" class="lineno"><pre>45</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>32339712</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>27653888</pre></td>
     <td align="left" class="src coveredLine"><pre>                ValueT val = ValueT(zero + dist);</pre></td>
     </tr>
 
@@ -623,22 +623,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>47</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 12905984 times">&check;</span><span class="takenBranch" title="Branch 1 taken 262144 times">&check;</span><span class="takenBranch" title="Branch 2 taken 13175040 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>32864000</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 13430272 times">&check;</span><span class="takenBranch" title="Branch 1 taken 262144 times">&check;</span><span class="takenBranch" title="Branch 2 taken 12650752 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>28178176</pre></td>
     <td align="left" class="src coveredLine"><pre>                switch (mode) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>48</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>15527424</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>15265280</pre></td>
     <td align="left" class="src coveredLine"><pre>                case SPHERE_DENSE:</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>49</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 13430272 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>15527424</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>15265280</pre></td>
     <td align="left" class="src coveredLine"><pre>                    acc.setValue(xyz, val);</pre></td>
     </tr>
 
@@ -658,7 +658,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>52</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 237841 times">&check;</span><span class="takenBranch" title="Branch 1 taken 24303 times">&check;</span><span class="takenBranch" title="Branch 2 taken 20170 times">&check;</span><span class="takenBranch" title="Branch 3 taken 217671 times">&check;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 262144 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 237841 times">&check;</span><span class="takenBranch" title="Branch 1 taken 24303 times">&check;</span><span class="takenBranch" title="Branch 2 taken 20170 times">&check;</span><span class="takenBranch" title="Branch 3 taken 217671 times">&check;</span><br/><span class="takenBranch" title="Branch 5 taken 262144 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>282314</pre></td>
     <td align="left" class="src coveredLine"><pre>                    acc.setValue(xyz, val &lt; inside ? inside : outside &lt; val ? outside : val);</pre></td>
     </tr>
@@ -673,35 +673,35 @@
     <tr>
     <td align="right" class="lineno"><pre>54</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>17074432</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12650752</pre></td>
     <td align="left" class="src coveredLine"><pre>                case SPHERE_SPARSE_NARROW_BAND:</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>55</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 191585 times">&check;</span><span class="takenBranch" title="Branch 1 taken 12459167 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>17074432</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 191585 times">&check;</span><span class="takenBranch" title="Branch 1 taken 12459167 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>12650752</pre></td>
     <td align="left" class="src coveredLine"><pre>                    if (val &lt; inside)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>56</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 191585 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>215563</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>191585</pre></td>
     <td align="left" class="src coveredLine"><pre>                        acc.setValueOff(xyz, inside);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>57</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 12089251 times">&check;</span><span class="takenBranch" title="Branch 1 taken 369916 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>16858869</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 12089251 times">&check;</span><span class="takenBranch" title="Branch 1 taken 369916 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>12459167</pre></td>
     <td align="left" class="src coveredLine"><pre>                    else if (outside &lt; val)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>58</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 12089251 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>16374356</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>12089251</pre></td>
     <td align="left" class="src coveredLine"><pre>                        acc.setValueOff(xyz, outside);</pre></td>
     </tr>
 
@@ -715,7 +715,7 @@
     <tr>
     <td align="right" class="lineno"><pre>60</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 369916 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>484513</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>369916</pre></td>
     <td align="left" class="src coveredLine"><pre>                        acc.setValue(xyz, val);</pre></td>
     </tr>
 
@@ -757,14 +757,14 @@
     <tr>
     <td align="right" class="lineno"><pre>66</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 16 times">&check;</span><span class="takenBranch" title="Branch 1 taken 58 times">&check;</span><span class="takenBranch" title="Branch 3 taken 16 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>91</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>81</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (mode == SPHERE_SPARSE_NARROW_BAND) openvdb::tools::pruneLevelSet(grid.tree());</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>67</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>91</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>81</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 

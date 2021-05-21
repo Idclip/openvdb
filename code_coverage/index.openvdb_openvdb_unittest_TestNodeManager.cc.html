@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/unittest/TestNodeManager.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">97</td>
-            <td class="headerTableEntry">99</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">98.0 %</td>
+            <td class="headerTableEntry">119</td>
+            <td class="headerTableEntry">119</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">129</td>
-            <td class="headerTableEntry">460</td>
-            <td class="headerTableEntry" style="background-color:LightPink">28.0 %</td>
+            <td class="headerTableEntry">149</td>
+            <td class="headerTableEntry">484</td>
+            <td class="headerTableEntry" style="background-color:LightPink">30.8 %</td>
           </tr>
         </table>
       </td>
@@ -455,8 +455,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>23</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>9</pre></td>
     <td align="left" class="src coveredLine"><pre>struct NodeCountOp {</pre></td>
     </tr>
 
@@ -484,15 +484,15 @@
     <tr>
     <td align="right" class="lineno"><pre>27</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    NodeCountOp(const NodeCountOp&amp;, tbb::split)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>    NodeCountOp(const NodeCountOp&amp;, tbb::split)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>28</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        : nodeCount(TreeT::DEPTH, 0), totalCount(0)</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>        : nodeCount(TreeT::DEPTH, 0), totalCount(0)</pre></td>
     </tr>
 
     <tr>
@@ -525,15 +525,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>33</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 40 times">&check;</span><span class="takenBranch" title="Branch 13 taken 10 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>50</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="takenBranch" title="Branch 14 taken 28 times">&check;</span><span class="takenBranch" title="Branch 15 taken 7 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>35</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (size_t i = 0; i &lt; nodeCount.size(); ++i) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>34</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>40</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>28</pre></td>
     <td align="left" class="src coveredLine"><pre>            nodeCount[i] += other.nodeCount[i];</pre></td>
     </tr>
 
@@ -547,7 +547,7 @@
     <tr>
     <td align="right" class="lineno"><pre>36</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>10</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
     <td align="left" class="src coveredLine"><pre>        totalCount += other.totalCount;</pre></td>
     </tr>
 
@@ -624,15 +624,15 @@
     <tr>
     <td align="right" class="lineno"><pre>47</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>        ++(nodeCount[NodeT::LEVEL]);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>828</pre></td>
+    <td align="left" class="src coveredLine"><pre>        ++(nodeCount[NodeT::LEVEL]);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>48</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>        ++totalCount;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>828</pre></td>
+    <td align="left" class="src coveredLine"><pre>        ++totalCount;</pre></td>
     </tr>
 
     <tr>
@@ -1688,8 +1688,8 @@
     <tr>
     <td align="right" class="lineno"><pre>199</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool operator()(NodeT&amp; node, size_t idx = 1) const</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>38</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool operator()(NodeT&amp; node, size_t idx = 1) const</pre></td>
     </tr>
 
     <tr>
@@ -1701,30 +1701,30 @@
 
     <tr>
     <td align="right" class="lineno"><pre>201</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        for (auto iter = node.cbeginValueAll(); iter; ++iter) {</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 163840 times">&check;</span><span class="takenBranch" title="Branch 1 taken 19 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>327718</pre></td>
+    <td align="left" class="src coveredLine"><pre>        for (auto iter = node.cbeginValueAll(); iter; ++iter) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>202</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            const openvdb::Coord ijk = iter.getCoord();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>327680</pre></td>
+    <td align="left" class="src coveredLine"><pre>            const openvdb::Coord ijk = iter.getCoord();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>203</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            if (ijk.x() &lt; 256 &amp;&amp; ijk.y() &lt; 256 &amp;&amp; ijk.z() &lt; 256) {</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 71680 times">&check;</span><span class="takenBranch" title="Branch 1 taken 92160 times">&check;</span><span class="takenBranch" title="Branch 2 taken 65920 times">&check;</span><span class="takenBranch" title="Branch 3 taken 5760 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 65560 times">&check;</span><span class="takenBranch" title="Branch 5 taken 360 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>327680</pre></td>
+    <td align="left" class="src coveredLine"><pre>            if (ijk.x() &lt; 256 &amp;&amp; ijk.y() &lt; 256 &amp;&amp; ijk.z() &lt; 256) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>204</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                node.addChild(new typename NodeT::ChildNodeType(iter.getCoord(), NodeT::LEVEL, true));</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 65536 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 65536 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>131120</pre></td>
+    <td align="left" class="src coveredLine"><pre>                node.addChild(new typename NodeT::ChildNodeType(iter.getCoord(), NodeT::LEVEL, true));</pre></td>
     </tr>
 
     <tr>
@@ -1750,9 +1750,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>208</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        if (mZeroOnly)  return idx == 0;</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 9 times">&check;</span><span class="takenBranch" title="Branch 1 taken 10 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>38</pre></td>
+    <td align="left" class="src coveredLine"><pre>        if (mZeroOnly)  return idx == 0;</pre></td>
     </tr>
 
     <tr>
@@ -1779,8 +1779,8 @@
     <tr>
     <td align="right" class="lineno"><pre>212</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool operator()(LeafT&amp; leaf, size_t /*idx*/ = 1) const</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>36864</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool operator()(LeafT&amp; leaf, size_t /*idx*/ = 1) const</pre></td>
     </tr>
 
     <tr>
@@ -1792,16 +1792,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>214</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        for (auto iter = leaf.beginValueAll(); iter; ++iter) {</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 18874368 times">&check;</span><span class="takenBranch" title="Branch 2 taken 36864 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>18948096</pre></td>
+    <td align="left" class="src coveredLine"><pre>        for (auto iter = leaf.beginValueAll(); iter; ++iter) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>215</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            iter.setValue(iter.pos());</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>18874368</pre></td>
+    <td align="left" class="src coveredLine"><pre>            iter.setValue(iter.pos());</pre></td>
     </tr>
 
     <tr>
@@ -1821,8 +1821,8 @@
     <tr>
     <td align="right" class="lineno"><pre>218</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        return true;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>36864</pre></td>
+    <td align="left" class="src coveredLine"><pre>        return true;</pre></td>
     </tr>
 
     <tr>
@@ -2045,7 +2045,7 @@
     <tr>
     <td align="right" class="lineno"><pre>250</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>11</pre></td>
     <td align="left" class="src coveredLine"><pre>    SumOp(const SumOp&amp; other, tbb::split): totalCount(0), mZeroOnly(other.mZeroOnly) { }</pre></td>
     </tr>
 
@@ -2066,7 +2066,7 @@
     <tr>
     <td align="right" class="lineno"><pre>253</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>12</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>11</pre></td>
     <td align="left" class="src coveredLine"><pre>        totalCount += other.totalCount;</pre></td>
     </tr>
 
@@ -2108,8 +2108,8 @@
     <tr>
     <td align="right" class="lineno"><pre>259</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool operator()(const NodeT&amp; node, size_t idx = 0)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>56</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool operator()(const NodeT&amp; node, size_t idx = 0)</pre></td>
     </tr>
 
     <tr>
@@ -2121,16 +2121,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>261</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        for (auto iter = node.cbeginValueAll(); iter; ++iter) {</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 131040 times">&check;</span><span class="takenBranch" title="Branch 1 taken 28 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>262136</pre></td>
+    <td align="left" class="src coveredLine"><pre>        for (auto iter = node.cbeginValueAll(); iter; ++iter) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>262</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            totalCount += *iter;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>262080</pre></td>
+    <td align="left" class="src coveredLine"><pre>            totalCount += *iter;</pre></td>
     </tr>
 
     <tr>
@@ -2142,9 +2142,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>264</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        if (mZeroOnly)  return idx == 0;</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 9 times">&check;</span><span class="takenBranch" title="Branch 1 taken 19 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>56</pre></td>
+    <td align="left" class="src coveredLine"><pre>        if (mZeroOnly)  return idx == 0;</pre></td>
     </tr>
 
     <tr>
@@ -2171,8 +2171,8 @@
     <tr>
     <td align="right" class="lineno"><pre>268</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool operator()(const LeafT&amp; leaf, size_t /*idx*/ = 0)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>69632</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool operator()(const LeafT&amp; leaf, size_t /*idx*/ = 0)</pre></td>
     </tr>
 
     <tr>
@@ -2184,16 +2184,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>270</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        for (auto iter = leaf.cbeginValueAll(); iter; ++iter) {</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 35651584 times">&check;</span><span class="takenBranch" title="Branch 2 taken 69632 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>35790848</pre></td>
+    <td align="left" class="src coveredLine"><pre>        for (auto iter = leaf.cbeginValueAll(); iter; ++iter) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>271</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            totalCount += *iter;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>35651584</pre></td>
+    <td align="left" class="src coveredLine"><pre>            totalCount += *iter;</pre></td>
     </tr>
 
     <tr>
@@ -2206,8 +2206,8 @@
     <tr>
     <td align="right" class="lineno"><pre>273</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        return true;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>69632</pre></td>
+    <td align="left" class="src coveredLine"><pre>        return true;</pre></td>
     </tr>
 
     <tr>
@@ -2331,7 +2331,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>291</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>    Int32Tree sourceTree(0);</pre></td>
     </tr>
@@ -2353,7 +2353,7 @@
     <tr>
     <td align="right" class="lineno"><pre>294</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>        std::make_unique&lt;Internal1NodeType>(Coord(0, 0, 0), /*value=*/1.0f);</pre></td>
     </tr>
 
@@ -2380,7 +2380,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>298</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    EXPECT_EQ(Index32(2), sourceTree.nonLeafCount());</pre></td>
     </tr>

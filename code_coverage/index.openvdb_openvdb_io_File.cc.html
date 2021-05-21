@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/io/File.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">244</td>
-            <td class="headerTableEntry">274</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">89.1 %</td>
+            <td class="headerTableEntry">253</td>
+            <td class="headerTableEntry">283</td>
+            <td class="headerTableEntry" style="background-color:#FFFF55">89.4 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">280</td>
-            <td class="headerTableEntry">606</td>
-            <td class="headerTableEntry" style="background-color:LightPink">46.2 %</td>
+            <td class="headerTableEntry">292</td>
+            <td class="headerTableEntry">622</td>
+            <td class="headerTableEntry" style="background-color:LightPink">46.9 %</td>
           </tr>
         </table>
       </td>
@@ -588,7 +588,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>42</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 96 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>192</pre></td>
     <td align="left" class="src coveredLine"><pre>    static GridBase::Ptr readGrid(const File&amp; file, const GridDescriptor&amp; gd, const BoxType&amp; bbox)</pre></td>
     </tr>
@@ -666,8 +666,8 @@
     <tr>
     <td align="right" class="lineno"><pre>53</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    static void unarchive(const File&amp; file, GridBase::Ptr&amp; grid,</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>92</pre></td>
+    <td align="left" class="src coveredLine"><pre>    static void unarchive(const File&amp; file, GridBase::Ptr&amp; grid,</pre></td>
     </tr>
 
     <tr>
@@ -686,16 +686,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>56</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        file.Archive::readGrid(grid, gd, file.inputStream());</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 92 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>184</pre></td>
+    <td align="left" class="src coveredLine"><pre>        file.Archive::readGrid(grid, gd, file.inputStream());</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>57</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>92</pre></td>
+    <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
     <tr>
@@ -1120,8 +1120,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>118</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 123 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>534</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>288</pre></td>
     <td align="left" class="src coveredLine"><pre>File::~File()</pre></td>
     </tr>
 
@@ -2234,15 +2234,15 @@
     <tr>
     <td align="right" class="lineno"><pre>277</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    std::unique_ptr&lt;std::istream> newStream;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>48</pre></td>
+    <td align="left" class="src coveredLine"><pre>    std::unique_ptr&lt;std::istream> newStream;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>278</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    SharedPtr&lt;std::streambuf> newStreamBuf;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>48</pre></td>
+    <td align="left" class="src coveredLine"><pre>    SharedPtr&lt;std::streambuf> newStreamBuf;</pre></td>
     </tr>
 
     <tr>
@@ -2478,8 +2478,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>312</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 47 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>47</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 47 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 47 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>94</pre></td>
     <td align="left" class="src coveredLine"><pre>            newStreamBuf = newFileMapping->createBuffer();</pre></td>
     </tr>
 
@@ -3374,7 +3374,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>440</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="takenBranch" title="Branch 1 taken 24 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>27</pre></td>
     <td align="left" class="src coveredLine"><pre>    GridPtrVecPtr ret;</pre></td>
     </tr>
@@ -3570,7 +3570,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>468</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 32 times">&check;</span><span class="takenBranch" title="Branch 1 taken 6 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>38</pre></td>
     <td align="left" class="src coveredLine"><pre>File::retrieveCachedGrid(const Name&amp; name) const</pre></td>
     </tr>
@@ -3647,7 +3647,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>479</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="takenBranch" title="Branch 3 taken 5 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>12</pre></td>
     <td align="left" class="src coveredLine"><pre>        mImpl->mNamedGrids.find(GridDescriptor::stringAsUniqueName(name));</pre></td>
     </tr>
@@ -3662,7 +3662,7 @@
     <tr>
     <td align="right" class="lineno"><pre>481</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="takenBranch" title="Branch 1 taken 5 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (it == mImpl->mNamedGrids.end()) it = mImpl->mNamedGrids.find(name);</pre></td>
     </tr>
 
@@ -4011,9 +4011,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>531</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    GridBase::ConstPtr ret;</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
+    <td align="left" class="src coveredLine"><pre>    GridBase::ConstPtr ret;</pre></td>
     </tr>
 
     <tr>
@@ -4494,7 +4494,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>600</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>9</pre></td>
     <td align="left" class="src coveredLine"><pre>            findDescriptor(GridDescriptor::nameAsString(gd.instanceParentName()));</pre></td>
     </tr>
@@ -4551,8 +4551,8 @@
     <tr>
     <td align="right" class="lineno"><pre>608</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        GridBase::Ptr parent;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="left" class="src coveredLine"><pre>        GridBase::Ptr parent;</pre></td>
     </tr>
 
     <tr>
@@ -4858,7 +4858,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>652</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 43 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>43</pre></td>
     <td align="left" class="src coveredLine"><pre>File::readGridDescriptors(std::istream&amp; is)</pre></td>
     </tr>
@@ -5068,8 +5068,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>682</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 67 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>67</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 67 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 30 times">&check;</span><span class="takenBranch" title="Branch 4 taken 37 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>134</pre></td>
     <td align="left" class="src coveredLine"><pre>    std::pair&lt;NameMapCIter, NameMapCIter> range = gridDescriptors().equal_range(name);</pre></td>
     </tr>
 
@@ -5180,7 +5180,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>698</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 30 times">&check;</span><span class="takenBranch" title="Branch 1 taken 34 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 34 times">&check;</span><span class="takenBranch" title="Branch 1 taken 30 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>64</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (name == uniqueName) {</pre></td>
     </tr>
@@ -5202,8 +5202,8 @@
     <tr>
     <td align="right" class="lineno"><pre>701</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            ret = range.first;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>34</pre></td>
+    <td align="left" class="src coveredLine"><pre>            ret = range.first;</pre></td>
     </tr>
 
     <tr>
@@ -5251,8 +5251,8 @@
     <tr>
     <td align="right" class="lineno"><pre>708</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                    ret = it;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>29</pre></td>
+    <td align="left" class="src coveredLine"><pre>                    ret = it;</pre></td>
     </tr>
 
     <tr>
@@ -5474,7 +5474,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>740</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>File::readGridPartial(const GridDescriptor&amp; gd, bool readTopology) const</pre></td>
     </tr>
@@ -5768,7 +5768,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>782</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>File::readGridPartial(GridBase::Ptr grid, std::istream&amp; is,</pre></td>
     </tr>
@@ -5852,7 +5852,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>794</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 3 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>8</pre></td>
     <td align="left" class="src coveredLine"><pre>    if ((*grid)[GridBase::META_FILE_DELAYED_LOAD]) {</pre></td>
     </tr>

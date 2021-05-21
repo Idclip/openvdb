@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb_ax/openvdb_ax/ast/Scanners.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">169</td>
-            <td class="headerTableEntry">194</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">87.1 %</td>
+            <td class="headerTableEntry">174</td>
+            <td class="headerTableEntry">201</td>
+            <td class="headerTableEntry" style="background-color:#FFFF55">86.6 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">222</td>
-            <td class="headerTableEntry">342</td>
-            <td class="headerTableEntry" style="background-color:LightPink">64.9 %</td>
+            <td class="headerTableEntry">227</td>
+            <td class="headerTableEntry">348</td>
+            <td class="headerTableEntry" style="background-color:LightPink">65.2 %</td>
           </tr>
         </table>
       </td>
@@ -1044,29 +1044,29 @@
     <tr>
     <td align="right" class="lineno"><pre>107</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    auto hasDep = [&amp;](const ast::Variable* dep) -> bool {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30709</pre></td>
+    <td align="left" class="src coveredLine"><pre>    auto hasDep = [&amp;](const ast::Variable* dep) -> bool {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>108</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>61418</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30709</pre></td>
     <td align="left" class="src coveredLine"><pre>        return (std::find(dependencies.cbegin(), dependencies.cend(), dep) !=</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>109</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>6851</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>30709</pre></td>
     <td align="left" class="src coveredLine"><pre>            dependencies.cend());</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>110</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    };</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>18781</pre></td>
+    <td align="left" class="src coveredLine"><pre>    };</pre></td>
     </tr>
 
     <tr>
@@ -1267,8 +1267,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>139</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 51 times">&check;</span><span class="takenBranch" title="Branch 1 taken 52 times">&check;</span><span class="takenBranch" title="Branch 2 taken 4 times">&check;</span><span class="takenBranch" title="Branch 3 taken 47 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>154</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 51 times">&check;</span><span class="takenBranch" title="Branch 1 taken 52 times">&check;</span><span class="takenBranch" title="Branch 3 taken 4 times">&check;</span><span class="takenBranch" title="Branch 4 taken 47 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>103</pre></td>
     <td align="left" class="src coveredLine"><pre>                        if (!written || hasDep(dep)) continue;</pre></td>
     </tr>
 
@@ -1407,8 +1407,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>159</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 7 times">&check;</span><span class="takenBranch" title="Branch 1 taken 69 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5 times">&check;</span><span class="takenBranch" title="Branch 3 taken 2 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>83</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 7 times">&check;</span><span class="takenBranch" title="Branch 1 taken 69 times">&check;</span><span class="takenBranch" title="Branch 3 taken 5 times">&check;</span><span class="takenBranch" title="Branch 4 taken 2 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>76</pre></td>
     <td align="left" class="src coveredLine"><pre>                        if (!written || hasDep(dep)) continue;</pre></td>
     </tr>
 
@@ -1533,9 +1533,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>177</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                            const ast::Expression* lastExpression = comma->child(comma->size()-1);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 116 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>116</pre></td>
+    <td align="left" class="src coveredLine"><pre>                            const ast::Expression* lastExpression = comma->child(comma->size()-1);</pre></td>
     </tr>
 
     <tr>
@@ -1624,8 +1624,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>190</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6793 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3351 times">&check;</span><span class="takenBranch" title="Branch 2 taken 489 times">&check;</span><span class="takenBranch" title="Branch 3 taken 6304 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>16937</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6793 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3351 times">&check;</span><span class="takenBranch" title="Branch 3 taken 489 times">&check;</span><span class="takenBranch" title="Branch 4 taken 6304 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>10144</pre></td>
     <td align="left" class="src coveredLine"><pre>                        if (!written || hasDep(dep)) continue;</pre></td>
     </tr>
 
@@ -1785,7 +1785,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>213</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5351 times">&check;</span><span class="takenBranch" title="Branch 1 taken 7016 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5351 times">&check;</span><span class="takenBranch" title="Branch 2 taken 7016 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>12367</pre></td>
     <td align="left" class="src coveredLine"><pre>                        if (hasDep(dep)) continue;</pre></td>
     </tr>
@@ -1890,7 +1890,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>228</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="takenBranch" title="Branch 1 taken 31 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span><span class="takenBranch" title="Branch 2 taken 31 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>34</pre></td>
     <td align="left" class="src coveredLine"><pre>                        if (hasDep(dep)) continue;</pre></td>
     </tr>
@@ -2065,7 +2065,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>253</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4628 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1343 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 4628 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1343 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>5971</pre></td>
     <td align="left" class="src coveredLine"><pre>                    if (hasDep(dep)) continue;</pre></td>
     </tr>
@@ -2395,8 +2395,8 @@
     <tr>
     <td align="right" class="lineno"><pre>300</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        return true;</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        return true;</pre></td>
     </tr>
 
     <tr>
@@ -2416,8 +2416,8 @@
     <tr>
     <td align="right" class="lineno"><pre>303</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    return false;</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    return false;</pre></td>
     </tr>
 
     <tr>
@@ -2570,8 +2570,8 @@
     <tr>
     <td align="right" class="lineno"><pre>325</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>11745</pre></td>
-    <td align="left" class="src coveredLine"><pre>        const ast::Node* parent = child->parent();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        const ast::Node* parent = child->parent();</pre></td>
     </tr>
 
     <tr>
@@ -2885,8 +2885,8 @@
     <tr>
     <td align="right" class="lineno"><pre>370</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>24018</pre></td>
-    <td align="left" class="src coveredLine"><pre>            parent = child->parent();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>            parent = child->parent();</pre></td>
     </tr>
 
     <tr>
@@ -3494,8 +3494,8 @@
     <tr>
     <td align="right" class="lineno"><pre>457</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1076</pre></td>
-    <td align="left" class="src coveredLine"><pre>        const ast::tokens::LoopToken type = loop->loopType();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        const ast::tokens::LoopToken type = loop->loopType();</pre></td>
     </tr>
 
     <tr>
@@ -3809,8 +3809,8 @@
     <tr>
     <td align="right" class="lineno"><pre>502</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    const ast::Variable* var() const { return mVar; }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>10017</pre></td>
+    <td align="left" class="src coveredLine"><pre>    const ast::Variable* var() const { return mVar; }</pre></td>
     </tr>
 
     <tr>
@@ -3997,9 +3997,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>529</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    dependencies.erase(iter, dependencies.end());</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5547 times">&check;</span><span class="takenBranch" title="Branch 2 taken 4380 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>9927</pre></td>
+    <td align="left" class="src coveredLine"><pre>    dependencies.erase(iter, dependencies.end());</pre></td>
     </tr>
 
     <tr>
@@ -4151,23 +4151,23 @@
 
     <tr>
     <td align="right" class="lineno"><pre>551</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            if (call.name() != name) return true;</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 23 times">&check;</span><span class="takenBranch" title="Branch 1 taken 16594 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>16617</pre></td>
+    <td align="left" class="src coveredLine"><pre>            if (call.name() != name) return true;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>552</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            found = true;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>23</pre></td>
+    <td align="left" class="src coveredLine"><pre>            found = true;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>553</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            return false;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>23</pre></td>
+    <td align="left" class="src coveredLine"><pre>            return false;</pre></td>
     </tr>
 
     <tr>

@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tools/PointScatter.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">68</td>
-            <td class="headerTableEntry">77</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">88.3 %</td>
+            <td class="headerTableEntry">76</td>
+            <td class="headerTableEntry">85</td>
+            <td class="headerTableEntry" style="background-color:#FFFF55">89.4 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">50</td>
-            <td class="headerTableEntry">92</td>
-            <td class="headerTableEntry" style="background-color:LightPink">54.3 %</td>
+            <td class="headerTableEntry">54</td>
+            <td class="headerTableEntry">104</td>
+            <td class="headerTableEntry" style="background-color:LightPink">51.9 %</td>
           </tr>
         </table>
       </td>
@@ -1261,8 +1261,8 @@
     <tr>
     <td align="right" class="lineno"><pre>138</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        CoordBBox bbox;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>11</pre></td>
+    <td align="left" class="src coveredLine"><pre>        CoordBBox bbox;</pre></td>
     </tr>
 
     <tr>
@@ -1288,16 +1288,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>142</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 11 times">&check;</span><span class="takenBranch" title="Branch 2 taken 328144 times">&check;</span><span class="takenBranch" title="Branch 3 taken 11 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>328166</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 328144 times">&check;</span><span class="takenBranch" title="Branch 1 taken 11 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>328155</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (Index64 i=0, n=valueIter.getVoxelCount() ; i != mTargetPointCount; ++i) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>143</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            if (BaseT::interrupt()) return false;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>328144</pre></td>
+    <td align="left" class="src coveredLine"><pre>            if (BaseT::interrupt()) return false;</pre></td>
     </tr>
 
     <tr>
@@ -1323,8 +1323,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>147</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 44 times">&check;</span><span class="takenBranch" title="Branch 1 taken 650094 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>650182</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>650138</pre></td>
     <td align="left" class="src coveredLine"><pre>                n += valueIter.getVoxelCount();</pre></td>
     </tr>
 
@@ -1344,7 +1344,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>150</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 321052 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 321052 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 321052 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>321052</pre></td>
     <td align="left" class="src coveredLine"><pre>                BaseT::addPoint(grid, valueIter.getCoord() - offset);</pre></td>
     </tr>
@@ -1365,7 +1365,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>153</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 7092 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 7092 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>7092</pre></td>
     <td align="left" class="src coveredLine"><pre>                BaseT::addPoint(grid, bbox.min() - offset, bbox.extents());</pre></td>
     </tr>
@@ -1785,7 +1785,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>213</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>        BaseT::start("Dense uniform scattering with fixed point count");</pre></td>
     </tr>
@@ -1793,8 +1793,8 @@
     <tr>
     <td align="right" class="lineno"><pre>214</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        CoordBBox bbox;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        CoordBBox bbox;</pre></td>
     </tr>
 
     <tr>
@@ -1863,8 +1863,8 @@
     <tr>
     <td align="right" class="lineno"><pre>224</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                const Vec3R dmin = iter.getCoord() - offset;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>262144</pre></td>
+    <td align="left" class="src coveredLine"><pre>                const Vec3R dmin = iter.getCoord() - offset;</pre></td>
     </tr>
 
     <tr>
@@ -2388,8 +2388,8 @@
     <tr>
     <td align="right" class="lineno"><pre>299</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        CoordBBox bbox;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        CoordBBox bbox;</pre></td>
     </tr>
 
     <tr>
@@ -2437,8 +2437,8 @@
     <tr>
     <td align="right" class="lineno"><pre>306</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                const Vec3R dmin =iter.getCoord() - offset;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>262144</pre></td>
+    <td align="left" class="src coveredLine"><pre>                const Vec3R dmin =iter.getCoord() - offset;</pre></td>
     </tr>
 
     <tr>
@@ -2716,16 +2716,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>346</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    Index64 getPointCount() const { return mPointCount; }</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
+    <td align="left" class="src coveredLine"><pre>    Index64 getPointCount() const { return mPointCount; }</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>347</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    Index64 getVoxelCount() const { return mVoxelCount; }</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="left" class="src coveredLine"><pre>    Index64 getVoxelCount() const { return mVoxelCount; }</pre></td>
     </tr>
 
     <tr>

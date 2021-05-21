@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/points/PointMask.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">61</td>
-            <td class="headerTableEntry">61</td>
+            <td class="headerTableEntry">66</td>
+            <td class="headerTableEntry">66</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">81</td>
-            <td class="headerTableEntry">161</td>
-            <td class="headerTableEntry" style="background-color:LightPink">50.3 %</td>
+            <td class="headerTableEntry">92</td>
+            <td class="headerTableEntry">211</td>
+            <td class="headerTableEntry" style="background-color:LightPink">43.6 %</td>
           </tr>
         </table>
       </td>
@@ -911,8 +911,8 @@
     <tr>
     <td align="right" class="lineno"><pre>88</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>void voxelSum(LeafT&amp; leaf, const Index offset, const typename LeafT::ValueType&amp; value)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>82448</pre></td>
+    <td align="left" class="src coveredLine"><pre>void voxelSum(LeafT&amp; leaf, const Index offset, const typename LeafT::ValueType&amp; value)</pre></td>
     </tr>
 
     <tr>
@@ -924,16 +924,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>90</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 80000 times">&check;</span><span class="takenBranch" title="Branch 2 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>82387</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>82448</pre></td>
     <td align="left" class="src coveredLine"><pre>    leaf.modifyValue(offset, tools::valxform::SumOp&lt;typename LeafT::ValueType>(value));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>91</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>82448</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
     <tr>
@@ -974,7 +974,7 @@
     <tr>
     <td align="right" class="lineno"><pre>97</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5495488</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5495786</pre></td>
     <td align="left" class="src coveredLine"><pre>void voxelSum(PointDataLeafNode&lt;T, Log2Dim>&amp; leaf, const Index offset,</pre></td>
     </tr>
 
@@ -995,14 +995,14 @@
     <tr>
     <td align="right" class="lineno"><pre>100</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5495488</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5495786</pre></td>
     <td align="left" class="src coveredLine"><pre>    leaf.setOffsetOn(offset, leaf.getValue(offset) + value);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>101</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5495488</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5495786</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -1107,15 +1107,15 @@
     <tr>
     <td align="right" class="lineno"><pre>116</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    GridCombinerOp(GridT&amp; grid)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>46</pre></td>
+    <td align="left" class="src coveredLine"><pre>    GridCombinerOp(GridT&amp; grid)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>117</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        : mTree(grid.tree()) {}</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 16 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 19 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="takenBranch" title="Branch 22 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 23 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 25 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 26 not taken">&cross;</span><span class="takenBranch" title="Branch 28 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 29 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><span class="notTakenBranch" title="Branch 32 not taken">&cross;</span><span class="notTakenBranch" title="Branch 34 not taken">&cross;</span><span class="notTakenBranch" title="Branch 35 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 37 not taken">&cross;</span><span class="notTakenBranch" title="Branch 38 not taken">&cross;</span><span class="notTakenBranch" title="Branch 40 not taken">&cross;</span><span class="notTakenBranch" title="Branch 41 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 43 not taken">&cross;</span><span class="notTakenBranch" title="Branch 44 not taken">&cross;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><span class="notTakenBranch" title="Branch 47 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 49 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 50 not taken">&cross;</span><span class="notTakenBranch" title="Branch 52 not taken">&cross;</span><span class="notTakenBranch" title="Branch 53 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 55 not taken">&cross;</span><span class="notTakenBranch" title="Branch 56 not taken">&cross;</span><span class="notTakenBranch" title="Branch 58 not taken">&cross;</span><span class="notTakenBranch" title="Branch 59 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 61 not taken">&cross;</span><span class="notTakenBranch" title="Branch 62 not taken">&cross;</span><span class="notTakenBranch" title="Branch 64 not taken">&cross;</span><span class="notTakenBranch" title="Branch 65 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 67 not taken">&cross;</span><span class="notTakenBranch" title="Branch 68 not taken">&cross;</span><span class="notTakenBranch" title="Branch 70 not taken">&cross;</span><span class="notTakenBranch" title="Branch 71 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 73 not taken">&cross;</span><span class="notTakenBranch" title="Branch 74 not taken">&cross;</span><span class="takenBranch" title="Branch 76 taken 9 times">&check;</span><span class="notTakenBranch" title="Branch 77 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>46</pre></td>
+    <td align="left" class="src coveredLine"><pre>        : mTree(grid.tree()) {}</pre></td>
     </tr>
 
     <tr>
@@ -1141,22 +1141,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>121</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5626 times">&check;</span><span class="takenBranch" title="Branch 1 taken 85 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>5747</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5627 times">&check;</span><span class="takenBranch" title="Branch 1 taken 85 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>5748</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (auto leaf = grid.tree().beginLeaf(); leaf; ++leaf) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>122</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5646</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5647</pre></td>
     <td align="left" class="src coveredLine"><pre>            auto* newLeaf = mTree.probeLeaf(leaf->origin());</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>123</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5326 times">&check;</span><span class="takenBranch" title="Branch 1 taken 300 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>5646</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5326 times">&check;</span><span class="takenBranch" title="Branch 1 taken 301 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>5647</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (!newLeaf) {</pre></td>
     </tr>
 
@@ -1177,7 +1177,7 @@
     <tr>
     <td align="right" class="lineno"><pre>126</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5343</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7830</pre></td>
     <td align="left" class="src coveredLine"><pre>                mTree.addLeaf(tree.template stealNode&lt;LeafT>(leaf->origin(),</pre></td>
     </tr>
 
@@ -1211,15 +1211,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>131</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6578 times">&check;</span><span class="takenBranch" title="Branch 1 taken 300 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6884</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6909 times">&check;</span><span class="takenBranch" title="Branch 1 taken 301 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>7216</pre></td>
     <td align="left" class="src coveredLine"><pre>                for (auto iter = leaf->cbeginValueOn(); iter; ++iter) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>132</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>6581</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6912</pre></td>
     <td align="left" class="src coveredLine"><pre>                    voxelSum(*newLeaf, iter.offset(), ValueType(*iter));</pre></td>
     </tr>
 
@@ -1309,8 +1309,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>145</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 14 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><span class="takenBranch" title="Branch 18 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 22 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 23 not taken">&cross;</span><span class="takenBranch" title="Branch 26 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 27 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 30 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><span class="takenBranch" title="Branch 34 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 35 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 38 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 39 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>94</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 2 times">&check;</span><br/><span class="takenBranch" title="Branch 14 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 18 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><span class="takenBranch" title="Branch 22 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 23 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 25 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 26 not taken">&cross;</span><span class="takenBranch" title="Branch 28 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 29 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 31 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 32 not taken">&cross;</span><span class="takenBranch" title="Branch 34 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 35 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>99</pre></td>
     <td align="left" class="src coveredLine"><pre>struct PointsToScalarOp</pre></td>
     </tr>
 
@@ -1443,7 +1443,7 @@
     <tr>
     <td align="right" class="lineno"><pre>164</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 3 taken 16 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>82682</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>165332</pre></td>
     <td align="left" class="src coveredLine"><pre>            const Index64 count = points::iterCount(</pre></td>
     </tr>
 
@@ -1709,7 +1709,7 @@
     <tr>
     <td align="right" class="lineno"><pre>202</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8906</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>9002</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator()(const PointDataLeafT&amp; leaf, size_t idx) const</pre></td>
     </tr>
 
@@ -1722,8 +1722,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>204</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>4770</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 6 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>4866</pre></td>
     <td align="left" class="src coveredLine"><pre>        DeformerT deformer(mDeformer);</pre></td>
     </tr>
 
@@ -1736,8 +1736,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>206</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 6 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>8906</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 30 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>9002</pre></td>
     <td align="left" class="src coveredLine"><pre>        auto&amp; grid = mCombinable.local();</pre></td>
     </tr>
 
@@ -1764,8 +1764,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>210</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2356 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>4712</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2362 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>4724</pre></td>
     <td align="left" class="src coveredLine"><pre>        deformer.reset(leaf, idx);</pre></td>
     </tr>
 
@@ -1778,8 +1778,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>212</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5864 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 5864 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 5843 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>26676</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5912 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 5912 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>26930</pre></td>
     <td align="left" class="src coveredLine"><pre>        auto handle = HandleT::create(leaf.constAttributeArray("P"));</pre></td>
     </tr>
 
@@ -1792,8 +1792,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>214</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5571228 times">&check;</span><span class="takenBranch" title="Branch 1 taken 5864 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 12 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 21 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>22133908</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 5571275 times">&check;</span><span class="takenBranch" title="Branch 1 taken 5912 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 22 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 38 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>22134266</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (auto iter = leaf.beginIndexOn(mFilter); iter; iter++) {</pre></td>
     </tr>
 
@@ -1820,8 +1820,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>218</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571240 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 5571240 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>11062480</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571297 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 5571297 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>11062594</pre></td>
     <td align="left" class="src coveredLine"><pre>            Vec3d position = handle->get(*iter) + iter.getCoord().asVec3d();</pre></td>
     </tr>
 
@@ -1890,15 +1890,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>228</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571227 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>11062454</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571284 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 40 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>11062568</pre></td>
     <td align="left" class="src coveredLine"><pre>                position = mSourceTransform.indexToWorld(position);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>229</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>7674214</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 20 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>7674256</pre></td>
     <td align="left" class="src coveredLine"><pre>                deformer.template apply&lt;decltype(iter)>(position, iter);</pre></td>
     </tr>
 
@@ -1932,8 +1932,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>234</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571240 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>11062480</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571297 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>11062594</pre></td>
     <td align="left" class="src coveredLine"><pre>            const Coord ijk = mTargetTransform.worldToIndexCellCentered(position);</pre></td>
     </tr>
 
@@ -1960,22 +1960,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>238</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571240 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>11062480</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571297 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>11062594</pre></td>
     <td align="left" class="src coveredLine"><pre>            auto* newLeaf = accessor.touchLeaf(ijk);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>239</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 5571240 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>11062480</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 5571297 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>11062594</pre></td>
     <td align="left" class="src coveredLine"><pre>            assert(newLeaf);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>240</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5491215 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>10982430</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 5571272 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 17 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>11062594</pre></td>
     <td align="left" class="src coveredLine"><pre>            voxelSum(*newLeaf, newLeaf->coordToOffset(ijk), ValueT(1));</pre></td>
     </tr>
 
@@ -1989,7 +1989,7 @@
     <tr>
     <td align="right" class="lineno"><pre>242</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8906</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>9002</pre></td>
     <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
@@ -2542,8 +2542,8 @@
     <tr>
     <td align="right" class="lineno"><pre>321</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    typename GridT::Ptr grid = GridT::create();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>36</pre></td>
+    <td align="left" class="src coveredLine"><pre>    typename GridT::Ptr grid = GridT::create();</pre></td>
     </tr>
 
     <tr>

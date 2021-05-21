@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/unittest/TestVolumeToSpheres.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">60</td>
-            <td class="headerTableEntry">60</td>
+            <td class="headerTableEntry">63</td>
+            <td class="headerTableEntry">63</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">78</td>
-            <td class="headerTableEntry">352</td>
-            <td class="headerTableEntry" style="background-color:LightPink">22.2 %</td>
+            <td class="headerTableEntry">79</td>
+            <td class="headerTableEntry">354</td>
+            <td class="headerTableEntry" style="background-color:LightPink">22.3 %</td>
           </tr>
         </table>
       </td>
@@ -525,7 +525,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>33</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    openvdb::FloatGrid::ConstPtr grid = openvdb::tools::createLevelSetSphere&lt;openvdb::FloatGrid>(</pre></td>
     </tr>
@@ -911,8 +911,8 @@
     <tr>
     <td align="right" class="lineno"><pre>88</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        radius, center, voxelSize, halfWidth);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        radius, center, voxelSize, halfWidth);</pre></td>
     </tr>
 
     <tr>
@@ -1253,7 +1253,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>137</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>            tools::fillWithSpheres(*grid, spheres, Vec2i(minSphereCount, maxSphereCount),</pre></td>
     </tr>
@@ -1373,8 +1373,8 @@
     <tr>
     <td align="right" class="lineno"><pre>154</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        CoordBBox bbox(Coord(1), Coord(2));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        CoordBBox bbox(Coord(1), Coord(2));</pre></td>
     </tr>
 
     <tr>
@@ -1519,7 +1519,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>175</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="takenBranch" title="Branch 3 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>3</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (const float radius: { 8.0f, 50.0f }) {</pre></td>
     </tr>
@@ -1533,9 +1533,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>177</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        const auto sphere = tools::createLevelSetSphere&lt;FloatGrid>(radius, center, voxelSize);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="left" class="src coveredLine"><pre>        const auto sphere = tools::createLevelSetSphere&lt;FloatGrid>(radius, center, voxelSize);</pre></td>
     </tr>
 
     <tr>
@@ -1653,7 +1653,7 @@
     <tr>
     <td align="right" class="lineno"><pre>194</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
     <td align="left" class="src coveredLine"><pre>        auto csp = tools::ClosestSurfacePoint&lt;FloatGrid>::create(*sphere);</pre></td>
     </tr>
 

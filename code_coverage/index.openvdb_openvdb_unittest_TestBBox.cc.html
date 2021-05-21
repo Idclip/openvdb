@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/unittest/TestBBox.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">22</td>
-            <td class="headerTableEntry">22</td>
+            <td class="headerTableEntry">30</td>
+            <td class="headerTableEntry">30</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">18</td>
-            <td class="headerTableEntry">126</td>
-            <td class="headerTableEntry" style="background-color:LightPink">14.3 %</td>
+            <td class="headerTableEntry">21</td>
+            <td class="headerTableEntry">140</td>
+            <td class="headerTableEntry" style="background-color:LightPink">15.0 %</td>
           </tr>
         </table>
       </td>
@@ -427,7 +427,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>19</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>TEST_F(TestBBox, testBBox)</pre></td>
     </tr>
@@ -469,9 +469,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>25</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        BBoxType B(Vec3R(1,1,1),Vec3R(2,2,2));</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        BBoxType B(Vec3R(1,1,1),Vec3R(2,2,2));</pre></td>
     </tr>
 
     <tr>
@@ -483,9 +483,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>27</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        EXPECT_TRUE(B.isSorted());</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        EXPECT_TRUE(B.isSorted());</pre></td>
     </tr>
 
     <tr>
@@ -652,8 +652,8 @@
     <tr>
     <td align="right" class="lineno"><pre>51</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    BBox&lt;openvdb::Vec3R> fbox(openvdb::Vec3R(1.0), openvdb::Vec3R(2.0));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    BBox&lt;openvdb::Vec3R> fbox(openvdb::Vec3R(1.0), openvdb::Vec3R(2.0));</pre></td>
     </tr>
 
     <tr>
@@ -673,8 +673,8 @@
     <tr>
     <td align="right" class="lineno"><pre>54</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    BBox&lt;openvdb::Vec3i> ibox(openvdb::Vec3i(1), openvdb::Vec3i(2));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    BBox&lt;openvdb::Vec3i> ibox(openvdb::Vec3i(1), openvdb::Vec3i(2));</pre></td>
     </tr>
 
     <tr>
@@ -694,8 +694,8 @@
     <tr>
     <td align="right" class="lineno"><pre>57</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    openvdb::CoordBBox cbox(openvdb::Coord(1), openvdb::Coord(2));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    openvdb::CoordBBox cbox(openvdb::Coord(1), openvdb::Coord(2));</pre></td>
     </tr>
 
     <tr>
@@ -722,7 +722,7 @@
     <tr>
     <td align="right" class="lineno"><pre>61</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
     <td align="left" class="src coveredLine"><pre>TEST_F(TestBBox, testExtent)</pre></td>
     </tr>
 
@@ -764,8 +764,8 @@
     <tr>
     <td align="right" class="lineno"><pre>67</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        BBoxType B(Vec3R(-20,0,1),Vec3R(2,2,2));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        BBoxType B(Vec3R(-20,0,1),Vec3R(2,2,2));</pre></td>
     </tr>
 
     <tr>
@@ -799,8 +799,8 @@
     <tr>
     <td align="right" class="lineno"><pre>72</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        BBoxType B(Vec3R(1,0,1),Vec3R(2,21,20));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        BBoxType B(Vec3R(1,0,1),Vec3R(2,21,20));</pre></td>
     </tr>
 
     <tr>
@@ -834,8 +834,8 @@
     <tr>
     <td align="right" class="lineno"><pre>77</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        BBoxType B(Vec3R(1,0,1),Vec3R(3,1.5,20));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        BBoxType B(Vec3R(1,0,1),Vec3R(3,1.5,20));</pre></td>
     </tr>
 
     <tr>

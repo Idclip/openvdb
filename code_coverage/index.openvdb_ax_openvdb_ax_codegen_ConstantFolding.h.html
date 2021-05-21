@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb_ax/openvdb_ax/codegen/ConstantFolding.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">20</td>
-            <td class="headerTableEntry">20</td>
+            <td class="headerTableEntry">16</td>
+            <td class="headerTableEntry">16</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">16</td>
-            <td class="headerTableEntry">30</td>
-            <td class="headerTableEntry" style="background-color:LightPink">53.3 %</td>
+            <td class="headerTableEntry">17</td>
+            <td class="headerTableEntry">32</td>
+            <td class="headerTableEntry" style="background-color:LightPink">53.1 %</td>
           </tr>
         </table>
       </td>
@@ -679,7 +679,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>55</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 777 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1554</pre></td>
     <td align="left" class="src coveredLine"><pre>    fold(const std::vector&lt;llvm::Constant*>&amp; args,</pre></td>
     </tr>
@@ -721,16 +721,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>61</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 132 times">&check;</span><span class="takenBranch" title="Branch 1 taken 645 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1554</pre></td>
     <td align="left" class="src coveredLine"><pre>        llvm::Constant* constant = args[I-1];</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>62</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 132 times">&check;</span><span class="takenBranch" title="Branch 1 taken 645 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1554</pre></td>
-    <td align="left" class="src coveredLine"><pre>        const llvm::Type* type = constant->getType();</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        const llvm::Type* type = constant->getType();</pre></td>
     </tr>
 
     <tr>
@@ -771,8 +771,8 @@
     <tr>
     <td align="right" class="lineno"><pre>68</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>112</pre></td>
-    <td align="left" class="src coveredLine"><pre>            return call&lt;uint64_t, ArgumentValueType>(args, function, C, val, ts...);</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>            return call&lt;uint64_t, ArgumentValueType>(args, function, C, val, ts...);</pre></td>
     </tr>
 
     <tr>
@@ -834,8 +834,8 @@
     <tr>
     <td align="right" class="lineno"><pre>77</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>128</pre></td>
-    <td align="left" class="src coveredLine"><pre>                return call&lt;float, ArgumentValueType>(args, function, C, val, ts...);</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>                return call&lt;float, ArgumentValueType>(args, function, C, val, ts...);</pre></td>
     </tr>
 
     <tr>
@@ -862,8 +862,8 @@
     <tr>
     <td align="right" class="lineno"><pre>81</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>216</pre></td>
-    <td align="left" class="src coveredLine"><pre>                return call&lt;double, ArgumentValueType>(args, function, C, val, ts...);</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>                return call&lt;double, ArgumentValueType>(args, function, C, val, ts...);</pre></td>
     </tr>
 
     <tr>

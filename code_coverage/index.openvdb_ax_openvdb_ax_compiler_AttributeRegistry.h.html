@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb_ax/openvdb_ax/compiler/AttributeRegistry.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">61</td>
-            <td class="headerTableEntry">61</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
+            <td class="headerTableEntry">67</td>
+            <td class="headerTableEntry">68</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">98.5 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">69</td>
-            <td class="headerTableEntry">100</td>
-            <td class="headerTableEntry" style="background-color:LightPink">69.0 %</td>
+            <td class="headerTableEntry">66</td>
+            <td class="headerTableEntry">93</td>
+            <td class="headerTableEntry" style="background-color:LightPink">71.0 %</td>
           </tr>
         </table>
       </td>
@@ -735,16 +735,16 @@
 
     <tr>
     <td align="right" class="lineno"><pre>63</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        bool reads() const { return mAccess.first; }</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 9864 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>10193</pre></td>
+    <td align="left" class="src coveredLine"><pre>        bool reads() const { return mAccess.first; }</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>64</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        bool writes() const { return mAccess.second; }</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 9721 times">&check;</span><span class="takenBranch" title="Branch 1 taken 14947 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>24668</pre></td>
+    <td align="left" class="src coveredLine"><pre>        bool writes() const { return mAccess.second; }</pre></td>
     </tr>
 
     <tr>
@@ -763,9 +763,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>67</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 46 times">&check;</span><span class="takenBranch" title="Branch 1 taken 19628 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 48 times">&check;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 55 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 9880 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 4862594 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>4960095</pre></td>
-    <td align="left" class="src coveredLine"><pre>        ast::tokens::CoreType type() const { return mAttrib.type(); }</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        ast::tokens::CoreType type() const { return mAttrib.type(); }</pre></td>
     </tr>
 
     <tr>
@@ -812,7 +812,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>74</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 24230 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3406 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3406 times">&check;</span><span class="takenBranch" title="Branch 1 taken 24230 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>27636</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (dep == data) return true;</pre></td>
     </tr>
@@ -827,8 +827,8 @@
     <tr>
     <td align="right" class="lineno"><pre>76</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            return false;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>123280</pre></td>
+    <td align="left" class="src coveredLine"><pre>            return false;</pre></td>
     </tr>
 
     <tr>
@@ -861,7 +861,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>81</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 60 times">&check;</span><span class="takenBranch" title="Branch 1 taken 183 times">&check;</span><span class="takenBranch" title="Branch 2 taken 684 times">&check;</span><span class="takenBranch" title="Branch 3 taken 329 times">&check;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 183 times">&check;</span><span class="takenBranch" title="Branch 1 taken 60 times">&check;</span><span class="takenBranch" title="Branch 2 taken 329 times">&check;</span><span class="takenBranch" title="Branch 3 taken 684 times">&check;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 329 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1256</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (dep != this) return true;</pre></td>
     </tr>
@@ -1093,8 +1093,8 @@
     <tr>
     <td align="right" class="lineno"><pre>114</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    accessPattern(const std::string&amp; name, const ast::tokens::CoreType type) const</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>712</pre></td>
+    <td align="left" class="src coveredLine"><pre>    accessPattern(const std::string&amp; name, const ast::tokens::CoreType type) const</pre></td>
     </tr>
 
     <tr>
@@ -1113,7 +1113,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>117</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2 times">&check;</span><span class="takenBranch" title="Branch 1 taken 710 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 710 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>712</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (!data) return std::pair&lt;bool,bool>(false,false);</pre></td>
     </tr>
@@ -1268,8 +1268,8 @@
     <tr>
     <td align="right" class="lineno"><pre>139</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                return i;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>14651</pre></td>
+    <td align="left" class="src coveredLine"><pre>                return i;</pre></td>
     </tr>
 
     <tr>
@@ -1296,8 +1296,8 @@
     <tr>
     <td align="right" class="lineno"><pre>143</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        return -1;</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        return -1;</pre></td>
     </tr>
 
     <tr>
@@ -1359,8 +1359,8 @@
     <tr>
     <td align="right" class="lineno"><pre>152</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                return &amp;data;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1417</pre></td>
+    <td align="left" class="src coveredLine"><pre>                return &amp;data;</pre></td>
     </tr>
 
     <tr>
@@ -1380,8 +1380,8 @@
     <tr>
     <td align="right" class="lineno"><pre>155</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        return nullptr;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>711</pre></td>
+    <td align="left" class="src coveredLine"><pre>        return nullptr;</pre></td>
     </tr>
 
     <tr>
@@ -1904,8 +1904,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>230</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 2242 times">&check;</span><span class="takenBranch" title="Branch 5 taken 2242 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 9 taken 2746 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>7734</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 2242 times">&check;</span><span class="takenBranch" title="Branch 5 taken 2242 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>4988</pre></td>
     <td align="left" class="src coveredLine"><pre>            assert(indexmap.find(attrib) != indexmap.cend());</pre></td>
     </tr>
 
@@ -1932,7 +1932,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>234</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 2746 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 2746 times">&check;</span><span class="takenBranch" title="Branch 4 taken 2746 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>2746</pre></td>
     <td align="left" class="src coveredLine"><pre>                assert(indexmap.find(dep) != indexmap.cend());</pre></td>
     </tr>

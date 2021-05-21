@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb_ax/openvdb_ax/codegen/SymbolTable.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">32</td>
-            <td class="headerTableEntry">32</td>
+            <td class="headerTableEntry">42</td>
+            <td class="headerTableEntry">42</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">55</td>
-            <td class="headerTableEntry">84</td>
-            <td class="headerTableEntry" style="background-color:LightPink">65.5 %</td>
+            <td class="headerTableEntry">65</td>
+            <td class="headerTableEntry">95</td>
+            <td class="headerTableEntry" style="background-color:LightPink">68.4 %</td>
           </tr>
         </table>
       </td>
@@ -568,7 +568,7 @@
     <tr>
     <td align="right" class="lineno"><pre>39</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1746</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4421</pre></td>
     <td align="left" class="src coveredLine"><pre>    SymbolTable() : mMap() {}</pre></td>
     </tr>
 
@@ -617,8 +617,8 @@
     <tr>
     <td align="right" class="lineno"><pre>46</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    inline llvm::Value* get(const std::string&amp; name) const</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>58139</pre></td>
+    <td align="left" class="src coveredLine"><pre>    inline llvm::Value* get(const std::string&amp; name) const</pre></td>
     </tr>
 
     <tr>
@@ -630,22 +630,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>48</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        const auto iter = mMap.find(name);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 51098 times">&check;</span><span class="takenBranch" title="Branch 1 taken 7041 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>58139</pre></td>
+    <td align="left" class="src coveredLine"><pre>        const auto iter = mMap.find(name);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>49</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 10807 times">&check;</span><span class="takenBranch" title="Branch 1 taken 81 times">&check;</span><span class="takenBranch" title="Branch 2 taken 19865 times">&check;</span><span class="takenBranch" title="Branch 3 taken 6946 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 10699 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 4928 times">&check;</span><span class="takenBranch" title="Branch 7 taken 5 times">&check;</span><br/><span class="takenBranch" title="Branch 8 taken 4799 times">&check;</span><span class="takenBranch" title="Branch 9 taken 9 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 51098 times">&check;</span><span class="takenBranch" title="Branch 1 taken 7041 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>58139</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (iter == mMap.end()) return nullptr;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>50</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>41087</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>51098</pre></td>
     <td align="left" class="src coveredLine"><pre>        return iter->second;</pre></td>
     </tr>
 
@@ -707,9 +707,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>59</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        const auto iter = mMap.find(name);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 28282 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4836 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 7 times">&check;</span><span class="takenBranch" title="Branch 14 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>33132</pre></td>
+    <td align="left" class="src coveredLine"><pre>        const auto iter = mMap.find(name);</pre></td>
     </tr>
 
     <tr>
@@ -1107,7 +1107,7 @@
     <tr>
     <td align="right" class="lineno"><pre>116</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1746 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1746 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 1746 times">&check;</span><span class="takenBranch" title="Branch 7 taken 1746 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>5238</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6984</pre></td>
     <td align="left" class="src coveredLine"><pre>    SymbolTableBlocks() : mTables({{0, SymbolTable()}}) {}</pre></td>
     </tr>
 
@@ -1247,8 +1247,8 @@
     <tr>
     <td align="right" class="lineno"><pre>136</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        const bool existed = (mTables.find(index) != mTables.end());</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>2168</pre></td>
+    <td align="left" class="src coveredLine"><pre>        const bool existed = (mTables.find(index) != mTables.end());</pre></td>
     </tr>
 
     <tr>
@@ -1386,9 +1386,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>156</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        auto iter = mTables.find(index);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4928 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 4927 times">&check;</span><span class="takenBranch" title="Branch 3 taken 1 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 718 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>10574</pre></td>
+    <td align="left" class="src coveredLine"><pre>        auto iter = mTables.find(index);</pre></td>
     </tr>
 
     <tr>
@@ -1519,9 +1519,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>175</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        auto it = mTables.lower_bound(startIndex);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 13549 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>13550</pre></td>
+    <td align="left" class="src coveredLine"><pre>        auto it = mTables.lower_bound(startIndex);</pre></td>
     </tr>
 
     <tr>
@@ -1569,8 +1569,8 @@
     <tr>
     <td align="right" class="lineno"><pre>182</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        MapType::const_reverse_iterator iter(++it);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>13550</pre></td>
+    <td align="left" class="src coveredLine"><pre>        MapType::const_reverse_iterator iter(++it);</pre></td>
     </tr>
 
     <tr>
@@ -1590,14 +1590,14 @@
     <tr>
     <td align="right" class="lineno"><pre>185</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            llvm::Value* value = iter->second.get(name);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>16965</pre></td>
+    <td align="left" class="src coveredLine"><pre>            llvm::Value* value = iter->second.get(name);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>186</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 10010 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>10010</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6955 times">&check;</span><span class="takenBranch" title="Branch 1 taken 10010 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>16965</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (value) return value;</pre></td>
     </tr>
 
@@ -1771,8 +1771,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>211</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (it->second.get(name)) {</pre></td>
     </tr>
 
@@ -1786,8 +1786,8 @@
     <tr>
     <td align="right" class="lineno"><pre>213</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>                return true;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>                return true;</pre></td>
     </tr>
 
     <tr>
@@ -1814,8 +1814,8 @@
     <tr>
     <td align="right" class="lineno"><pre>217</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        return false;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        return false;</pre></td>
     </tr>
 
     <tr>

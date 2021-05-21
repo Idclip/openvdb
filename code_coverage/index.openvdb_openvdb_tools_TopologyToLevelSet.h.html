@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tools/TopologyToLevelSet.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">29</td>
-            <td class="headerTableEntry">49</td>
-            <td class="headerTableEntry" style="background-color:LightPink">59.2 %</td>
+            <td class="headerTableEntry">33</td>
+            <td class="headerTableEntry">53</td>
+            <td class="headerTableEntry" style="background-color:LightPink">62.3 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
             <td class="headerTableEntry">25</td>
-            <td class="headerTableEntry">88</td>
-            <td class="headerTableEntry" style="background-color:LightPink">28.4 %</td>
+            <td class="headerTableEntry">90</td>
+            <td class="headerTableEntry" style="background-color:LightPink">27.8 %</td>
           </tr>
         </table>
       </td>
@@ -854,7 +854,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>80</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    DilateOp(TreeT&amp; t, int n) : tree(&amp;t), size(n) {}</pre></td>
     </tr>
@@ -946,29 +946,29 @@
     <tr>
     <td align="right" class="lineno"><pre>93</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    void operator()() const {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    void operator()() const {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>94</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        tools::erodeActiveValues(*tree, /*iterations=*/size, tools::NN_FACE, tools::IGNORE_TILES);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        tools::erodeActiveValues(*tree, /*iterations=*/size, tools::NN_FACE, tools::IGNORE_TILES);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>95</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        tools::pruneInactive(*tree);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        tools::pruneInactive(*tree);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>96</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
     <tr>
@@ -1855,7 +1855,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>223</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>1</pre></td>
     <td align="left" class="src coveredLine"><pre>    pool.run( ttls_internal::ErodeOp&lt; MaskTreeT >( maskTree, halfWidth ) );</pre></td>
     </tr>

@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/unittest/TestMultiResGrid.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">85</td>
-            <td class="headerTableEntry">85</td>
+            <td class="headerTableEntry">88</td>
+            <td class="headerTableEntry">88</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">129</td>
-            <td class="headerTableEntry">462</td>
-            <td class="headerTableEntry" style="background-color:LightPink">27.9 %</td>
+            <td class="headerTableEntry">128</td>
+            <td class="headerTableEntry">460</td>
+            <td class="headerTableEntry" style="background-color:LightPink">27.8 %</td>
           </tr>
         </table>
       </td>
@@ -1065,8 +1065,8 @@
     <tr>
     <td align="right" class="lineno"><pre>110</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    const CoordBBox bbox( Coord(-w), Coord(w) );// both inclusive</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>    const CoordBBox bbox( Coord(-w), Coord(w) );// both inclusive</pre></td>
     </tr>
 
     <tr>
@@ -1092,7 +1092,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>114</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 41704 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 41704 times">&check;</span><span class="takenBranch" title="Branch 2 taken 4 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>41708</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (CoordBBox::Iterator&lt;true> iter(bbox>>level); iter; ++iter) {</pre></td>
     </tr>
@@ -1148,7 +1148,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>122</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>8</pre></td>
     <td align="left" class="src coveredLine"><pre>        mrg->tree(level).fill( bbox>>level, double(level));</pre></td>
     </tr>
@@ -1169,7 +1169,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>125</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 41704 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 41704 times">&check;</span><span class="takenBranch" title="Branch 2 taken 4 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>41708</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (CoordBBox::Iterator&lt;true> iter(bbox>>level); iter; ++iter) {</pre></td>
     </tr>
@@ -1212,8 +1212,8 @@
     <tr>
     <td align="right" class="lineno"><pre>131</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        CoordBBox bbox_actual;// Expected Tree dimensions: 33^3 -> 17^3 -> 9^3 ->5^3</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="left" class="src coveredLine"><pre>        CoordBBox bbox_actual;// Expected Tree dimensions: 33^3 -> 17^3 -> 9^3 ->5^3</pre></td>
     </tr>
 
     <tr>
@@ -1225,8 +1225,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>133</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
     <td align="left" class="src coveredLine"><pre>        EXPECT_EQ( bbox >> level, bbox_actual );</pre></td>
     </tr>
 
@@ -1400,7 +1400,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>158</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 125 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 125 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>126</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (CoordBBox::Iterator&lt;true> iter(bbox>>size_t(3)); iter; ++iter) {</pre></td>
     </tr>
@@ -1442,7 +1442,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>164</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 729 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 729 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>730</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (CoordBBox::Iterator&lt;true> iter(bbox>>size_t(2)); iter; ++iter) {</pre></td>
     </tr>
@@ -1484,7 +1484,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>170</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4913 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 4913 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>4914</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (CoordBBox::Iterator&lt;true> iter(bbox>>size_t(1)); iter; ++iter) {</pre></td>
     </tr>
@@ -1807,8 +1807,8 @@
     <tr>
     <td align="right" class="lineno"><pre>216</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        openvdb::tools::createLevelSetSphere&lt;openvdb::FloatGrid>(radius, center, voxelSize);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
+    <td align="left" class="src coveredLine"><pre>        openvdb::tools::createLevelSetSphere&lt;openvdb::FloatGrid>(radius, center, voxelSize);</pre></td>
     </tr>
 
     <tr>

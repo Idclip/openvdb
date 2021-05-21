@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb_ax/openvdb_ax/ast/PrintTree.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">149</td>
-            <td class="headerTableEntry">426</td>
+            <td class="headerTableEntry">152</td>
+            <td class="headerTableEntry">434</td>
             <td class="headerTableEntry" style="background-color:LightPink">35.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">58</td>
-            <td class="headerTableEntry">212</td>
-            <td class="headerTableEntry" style="background-color:LightPink">27.4 %</td>
+            <td class="headerTableEntry">66</td>
+            <td class="headerTableEntry">224</td>
+            <td class="headerTableEntry" style="background-color:LightPink">29.5 %</td>
           </tr>
         </table>
       </td>
@@ -4697,7 +4697,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>629</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>    bool traverse(NodeType&lt;ast::Loop>* loop) {</pre></td>
     </tr>
@@ -4705,8 +4705,8 @@
     <tr>
     <td align="right" class="lineno"><pre>630</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
-    <td align="left" class="src coveredLine"><pre>        const ast::tokens::LoopToken loopType = loop->loopType();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        const ast::tokens::LoopToken loopType = loop->loopType();</pre></td>
     </tr>
 
     <tr>
@@ -5019,7 +5019,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>675</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>    bool traverse(NodeType&lt;ast::Crement>* crmt) {</pre></td>
     </tr>
@@ -5936,8 +5936,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>806</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>16</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 10 times">&check;</span><span class="takenBranch" title="Branch 3 taken 6 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>32</pre></td>
     <td align="left" class="src coveredLine"><pre>    mOs &lt;&lt; ' ' &lt;&lt; tokens::operatorNameFromToken(node->operation());</pre></td>
     </tr>
 
@@ -5978,7 +5978,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>812</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>bool ReprintVisitor::visit(const ast::Crement* node)</pre></td>
     </tr>
@@ -6413,8 +6413,8 @@
     <tr>
     <td align="right" class="lineno"><pre>874</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>bool ReprintVisitor::visitValue(const ast::Value&lt;T>* node)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>52</pre></td>
+    <td align="left" class="src coveredLine"><pre>bool ReprintVisitor::visitValue(const ast::Value&lt;T>* node)</pre></td>
     </tr>
 
     <tr>
@@ -6427,64 +6427,64 @@
     <tr>
     <td align="right" class="lineno"><pre>876</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    if (std::is_same&lt;T, bool>::value) mOs &lt;&lt; std::boolalpha;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="left" class="src coveredLine"><pre>    if (std::is_same&lt;T, bool>::value) mOs &lt;&lt; std::boolalpha;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>877</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    if (std::is_same&lt;T, std::string>::value) mOs &lt;&lt; '"';</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    if (std::is_same&lt;T, std::string>::value) mOs &lt;&lt; '"';</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>878</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>22</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>52</pre></td>
     <td align="left" class="src coveredLine"><pre>    mOs &lt;&lt; node->value();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>879</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    if (std::is_same&lt;T, bool>::value) mOs &lt;&lt; std::noboolalpha;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
+    <td align="left" class="src coveredLine"><pre>    if (std::is_same&lt;T, bool>::value) mOs &lt;&lt; std::noboolalpha;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>880</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    if (std::is_same&lt;T, std::string>::value) mOs &lt;&lt; '"';</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    if (std::is_same&lt;T, std::string>::value) mOs &lt;&lt; '"';</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>881</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    if (std::is_same&lt;T, int16_t>::value) mOs &lt;&lt; 's';</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    if (std::is_same&lt;T, int16_t>::value) mOs &lt;&lt; 's';</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>882</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    if (std::is_same&lt;T, int64_t>::value) mOs &lt;&lt; 'l';</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    if (std::is_same&lt;T, int64_t>::value) mOs &lt;&lt; 'l';</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>883</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    if (std::is_same&lt;T, float>::value)   mOs &lt;&lt; 'f';</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    if (std::is_same&lt;T, float>::value)   mOs &lt;&lt; 'f';</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>884</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    return true;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>52</pre></td>
+    <td align="left" class="src coveredLine"><pre>    return true;</pre></td>
     </tr>
 
     <tr>

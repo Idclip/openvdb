@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb_ax/openvdb_ax/test/integration/CompareGrids.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">59</td>
-            <td class="headerTableEntry">140</td>
+            <td class="headerTableEntry">61</td>
+            <td class="headerTableEntry">145</td>
             <td class="headerTableEntry" style="background-color:LightPink">42.1 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
             <td class="headerTableEntry">112</td>
-            <td class="headerTableEntry">386</td>
-            <td class="headerTableEntry" style="background-color:LightPink">29.0 %</td>
+            <td class="headerTableEntry">388</td>
+            <td class="headerTableEntry" style="background-color:LightPink">28.9 %</td>
           </tr>
         </table>
       </td>
@@ -568,8 +568,8 @@
     <tr>
     <td align="right" class="lineno"><pre>39</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        : mSizeMatch(true)</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        : mSizeMatch(true)</pre></td>
     </tr>
 
     <tr>
@@ -589,8 +589,8 @@
     <tr>
     <td align="right" class="lineno"><pre>42</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        , mArrayValueFlags() {}</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        , mArrayValueFlags() {}</pre></td>
     </tr>
 
     <tr>
@@ -1149,8 +1149,8 @@
     <tr>
     <td align="right" class="lineno"><pre>122</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        os &lt;&lt; "    Coord        : " &lt;&lt; mOrigin &lt;&lt; std::endl;</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        os &lt;&lt; "    Coord        : " &lt;&lt; mOrigin &lt;&lt; std::endl;</pre></td>
     </tr>
 
     <tr>
@@ -1170,8 +1170,8 @@
     <tr>
     <td align="right" class="lineno"><pre>125</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>            const bool second = g1.constTree().template probeConstNode&lt;NodeT>(mOrigin);</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>            const bool second = g1.constTree().template probeConstNode&lt;NodeT>(mOrigin);</pre></td>
     </tr>
 
     <tr>
@@ -1219,8 +1219,8 @@
     <tr>
     <td align="right" class="lineno"><pre>132</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>        const auto&amp; l1 = g1.constTree().template probeConstNode&lt;NodeT>(mOrigin);</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        const auto&amp; l1 = g1.constTree().template probeConstNode&lt;NodeT>(mOrigin);</pre></td>
     </tr>
 
     <tr>
@@ -1939,9 +1939,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>235</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        assert(n &lt; firstBuffer.size() &amp;&amp; n &lt; secondBuffer.size());</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 2461 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>4922</pre></td>
+    <td align="left" class="src coveredLine"><pre>        assert(n &lt; firstBuffer.size() &amp;&amp; n &lt; secondBuffer.size());</pre></td>
     </tr>
 
     <tr>
@@ -1954,15 +1954,15 @@
     <tr>
     <td align="right" class="lineno"><pre>237</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2461 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 2461 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>4922</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>9844</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (settings.mCheckActiveStates &amp;&amp;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>238</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            firstMask.isOn(n) ^ secondMask.isOn(n)) {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4922</pre></td>
+    <td align="left" class="src coveredLine"><pre>            firstMask.isOn(n) ^ secondMask.isOn(n)) {</pre></td>
     </tr>
 
     <tr>
@@ -1988,15 +1988,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>242</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2461 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1107 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>7136</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2461 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 1829 times">&check;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>8580</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (settings.mCheckBufferValues &amp;&amp;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>243</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 1742 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>4012</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 200 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>928</pre></td>
     <td align="left" class="src coveredLine"><pre>            !openvdb::math::isApproxEqual(firstBuffer[n], secondBuffer[n], tolerance)) {</pre></td>
     </tr>
 
@@ -2206,8 +2206,8 @@
     <tr>
     <td align="right" class="lineno"><pre>273</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            (cmask1.isOn(n) ^ cmask2.isOn(n))) {</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>            (cmask1.isOn(n) ^ cmask2.isOn(n))) {</pre></td>
     </tr>
 
     <tr>
@@ -3591,7 +3591,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>471</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 2784 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>20322</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator()(MaskNodeT&amp; node) const</pre></td>
     </tr>
@@ -3626,21 +3626,21 @@
 
     <tr>
     <td align="right" class="lineno"><pre>476</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 2784 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>20322</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>14754</pre></td>
     <td align="left" class="src coveredLine"><pre>        const NodeT* const n1 = mFirst.template probeConstNode&lt;NodeT>(origin);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>477</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 2784 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>20322</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>14754</pre></td>
     <td align="left" class="src coveredLine"><pre>        const NodeT* const n2 = mSecond.template probeConstNode&lt;NodeT>(origin);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>478</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 7377 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 7377 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>14754</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (n1 == nullptr &amp;&amp; n2 == nullptr) return;</pre></td>
     </tr>
@@ -4558,8 +4558,8 @@
     <tr>
     <td align="right" class="lineno"><pre>609</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    for (const auto&amp; diag : data) {</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    for (const auto&amp; diag : data) {</pre></td>
     </tr>
 
     <tr>

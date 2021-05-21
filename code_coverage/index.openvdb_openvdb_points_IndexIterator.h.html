@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/points/IndexIterator.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">68</td>
-            <td class="headerTableEntry">70</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">97.1 %</td>
+            <td class="headerTableEntry">69</td>
+            <td class="headerTableEntry">71</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">97.2 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">244</td>
-            <td class="headerTableEntry">588</td>
-            <td class="headerTableEntry" style="background-color:LightPink">41.5 %</td>
+            <td class="headerTableEntry">254</td>
+            <td class="headerTableEntry">582</td>
+            <td class="headerTableEntry" style="background-color:LightPink">43.6 %</td>
           </tr>
         </table>
       </td>
@@ -785,15 +785,15 @@
     <tr>
     <td align="right" class="lineno"><pre>70</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>46494</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>46495</pre></td>
     <td align="left" class="src coveredLine"><pre>        explicit Parent(Index32 offset): mOffset(offset) { }</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>71</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        Index32 getValue(unsigned /*offset*/) const { return mOffset; }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>44416</pre></td>
+    <td align="left" class="src coveredLine"><pre>        Index32 getValue(unsigned /*offset*/) const { return mOffset; }</pre></td>
     </tr>
 
     <tr>
@@ -869,7 +869,7 @@
     <tr>
     <td align="right" class="lineno"><pre>82</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>46530</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>87855</pre></td>
     <td align="left" class="src coveredLine"><pre>        : mOffset(other.mOffset), mParent(other.mParent), mValid(other.mValid) {}</pre></td>
     </tr>
 
@@ -931,9 +931,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>91</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    operator bool() const { return mValid; }</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 39 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4610 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5 times">&check;</span><span class="takenBranch" title="Branch 3 taken 513 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="takenBranch" title="Branch 14 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 16 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><span class="takenBranch" title="Branch 18 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 20 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span><span class="takenBranch" title="Branch 22 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 23 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 24 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 25 not taken">&cross;</span><span class="takenBranch" title="Branch 26 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 27 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 28 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 29 not taken">&cross;</span><span class="takenBranch" title="Branch 30 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 32 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 33 not taken">&cross;</span><span class="notTakenBranch" title="Branch 34 not taken">&cross;</span><span class="takenBranch" title="Branch 35 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 36 not taken">&cross;</span><span class="takenBranch" title="Branch 37 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 38 not taken">&cross;</span><span class="takenBranch" title="Branch 39 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 40 not taken">&cross;</span><span class="takenBranch" title="Branch 41 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 42 not taken">&cross;</span><span class="takenBranch" title="Branch 43 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 44 not taken">&cross;</span><span class="takenBranch" title="Branch 45 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><span class="takenBranch" title="Branch 47 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 48 not taken">&cross;</span><span class="takenBranch" title="Branch 49 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 50 not taken">&cross;</span><span class="takenBranch" title="Branch 51 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 52 not taken">&cross;</span><span class="takenBranch" title="Branch 53 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 54 not taken">&cross;</span><span class="takenBranch" title="Branch 55 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 56 not taken">&cross;</span><span class="takenBranch" title="Branch 57 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 58 not taken">&cross;</span><span class="takenBranch" title="Branch 59 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 60 not taken">&cross;</span><span class="takenBranch" title="Branch 61 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>126612</pre></td>
+    <td align="left" class="src coveredLine"><pre>    operator bool() const { return mValid; }</pre></td>
     </tr>
 
     <tr>
@@ -974,7 +974,7 @@
     <tr>
     <td align="right" class="lineno"><pre>97</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5182</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>46508</pre></td>
     <td align="left" class="src coveredLine"><pre>    Parent&amp; parent() { return mParent; }</pre></td>
     </tr>
 
@@ -1268,7 +1268,7 @@
     <tr>
     <td align="right" class="lineno"><pre>139</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="takenBranch" title="Branch 3 taken 2 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="takenBranch" title="Branch 7 taken 8 times">&check;</span><br/><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="takenBranch" title="Branch 14 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 16 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><span class="takenBranch" title="Branch 18 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 20 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>34926</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>34953</pre></td>
     <td align="left" class="src coveredLine"><pre>class IndexIter</pre></td>
     </tr>
 
@@ -1317,14 +1317,14 @@
     <tr>
     <td align="right" class="lineno"><pre>146</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>126845</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>214686</pre></td>
     <td align="left" class="src coveredLine"><pre>        ValueIndexIter(const IteratorT&amp; iter)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>147</pre></td>
     <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 61606 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>128389</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>214686</pre></td>
     <td align="left" class="src coveredLine"><pre>            : mIter(iter), mParent(&amp;mIter.parent())</pre></td>
     </tr>
 
@@ -1337,29 +1337,29 @@
 
     <tr>
     <td align="right" class="lineno"><pre>149</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 63149 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>128386</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 108113 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>214686</pre></td>
     <td align="left" class="src coveredLine"><pre>            if (mIter) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>150</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 61605 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>123204</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 108113 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>214684</pre></td>
     <td align="left" class="src coveredLine"><pre>                assert(mParent);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>151</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 50759 times">&check;</span><span class="takenBranch" title="Branch 1 taken 16005 times">&check;</span><span class="takenBranch" title="Branch 2 taken 15 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 4 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>128387</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 92108 times">&check;</span><span class="takenBranch" title="Branch 1 taken 16005 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>214684</pre></td>
     <td align="left" class="src coveredLine"><pre>                Index32 start = (mIter.offset() > 0 ?</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>152</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>98475</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>95384</pre></td>
     <td align="left" class="src coveredLine"><pre>                    Index32(mParent->getValue(mIter.offset() - 1)) : Index32(0));</pre></td>
     </tr>
 
@@ -1373,7 +1373,7 @@
     <tr>
     <td align="right" class="lineno"><pre>154</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>16069</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>102366</pre></td>
     <td align="left" class="src coveredLine"><pre>                if (mItem >= mEnd)   this->operator++();</pre></td>
     </tr>
 
@@ -1387,21 +1387,21 @@
     <tr>
     <td align="right" class="lineno"><pre>156</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>123206</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>214686</pre></td>
     <td align="left" class="src coveredLine"><pre>        }</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>157</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>14944286</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>14944282</pre></td>
     <td align="left" class="src coveredLine"><pre>        ValueIndexIter(const ValueIndexIter&amp; other)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>158</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>29882741</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>29882734</pre></td>
     <td align="left" class="src coveredLine"><pre>            : mEnd(other.mEnd), mItem(other.mItem), mIter(other.mIter), mParent(other.mParent)</pre></td>
     </tr>
 
@@ -1415,14 +1415,14 @@
     <tr>
     <td align="right" class="lineno"><pre>160</pre></td>
     <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 14944282 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>29882741</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>29882734</pre></td>
     <td align="left" class="src coveredLine"><pre>            assert(mParent);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>161</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>29882741</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>29882734</pre></td>
     <td align="left" class="src coveredLine"><pre>        }</pre></td>
     </tr>
 
@@ -1442,9 +1442,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>164</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        inline Index32 end() const { return mEnd; }</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><br/><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>20543</pre></td>
+    <td align="left" class="src coveredLine"><pre>        inline Index32 end() const { return mEnd; }</pre></td>
     </tr>
 
     <tr>
@@ -1470,15 +1470,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>168</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1543 times">&check;</span><span class="takenBranch" title="Branch 1 taken 14631 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5315 times">&check;</span><span class="takenBranch" title="Branch 3 taken 593 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 3575 times">&check;</span><span class="takenBranch" title="Branch 5 taken 38183 times">&check;</span><span class="takenBranch" title="Branch 6 taken 16 times">&check;</span><span class="takenBranch" title="Branch 7 taken 4 times">&check;</span><br/><span class="takenBranch" title="Branch 8 taken 74 times">&check;</span><span class="takenBranch" title="Branch 9 taken 2 times">&check;</span><span class="takenBranch" title="Branch 10 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 7 times">&check;</span><span class="takenBranch" title="Branch 13 taken 2 times">&check;</span><span class="takenBranch" title="Branch 14 taken 2 times">&check;</span><span class="takenBranch" title="Branch 15 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><span class="takenBranch" title="Branch 17 taken 2822 times">&check;</span><span class="notTakenBranch" title="Branch 18 not taken">&cross;</span><span class="takenBranch" title="Branch 19 taken 2 times">&check;</span><br/><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="takenBranch" title="Branch 21 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><span class="takenBranch" title="Branch 23 taken 1 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>66788</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1542 times">&check;</span><span class="takenBranch" title="Branch 1 taken 39634 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5315 times">&check;</span><span class="takenBranch" title="Branch 3 taken 549 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 3576 times">&check;</span><span class="takenBranch" title="Branch 5 taken 13224 times">&check;</span><span class="takenBranch" title="Branch 6 taken 16 times">&check;</span><span class="takenBranch" title="Branch 7 taken 4 times">&check;</span><br/><span class="takenBranch" title="Branch 8 taken 74 times">&check;</span><span class="takenBranch" title="Branch 9 taken 2 times">&check;</span><span class="takenBranch" title="Branch 10 taken 7 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 7 times">&check;</span><span class="takenBranch" title="Branch 13 taken 2 times">&check;</span><span class="takenBranch" title="Branch 14 taken 2 times">&check;</span><span class="takenBranch" title="Branch 15 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><span class="takenBranch" title="Branch 17 taken 2822 times">&check;</span><span class="notTakenBranch" title="Branch 18 not taken">&cross;</span><span class="takenBranch" title="Branch 19 taken 2 times">&check;</span><br/><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="takenBranch" title="Branch 21 taken 41334 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>108113</pre></td>
     <td align="left" class="src coveredLine"><pre>            mEnd = end;</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>169</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>8161374</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>8074992</pre></td>
     <td align="left" class="src coveredLine"><pre>        }</pre></td>
     </tr>
 
@@ -1527,15 +1527,15 @@
     <tr>
     <td align="right" class="lineno"><pre>176</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>3664</pre></td>
-    <td align="left" class="src coveredLine"><pre>        inline operator bool() const { return mIter; }</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        inline operator bool() const { return mIter; }</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>177</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 38 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4610 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5 times">&check;</span><span class="takenBranch" title="Branch 3 taken 512 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="takenBranch" title="Branch 14 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 16 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><span class="takenBranch" title="Branch 18 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 20 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span><span class="takenBranch" title="Branch 22 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 23 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 24 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 25 not taken">&cross;</span><span class="takenBranch" title="Branch 26 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 27 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 28 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 29 not taken">&cross;</span><span class="takenBranch" title="Branch 30 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 32 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 33 not taken">&cross;</span><span class="notTakenBranch" title="Branch 34 not taken">&cross;</span><span class="takenBranch" title="Branch 35 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 36 not taken">&cross;</span><span class="takenBranch" title="Branch 37 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 38 not taken">&cross;</span><span class="takenBranch" title="Branch 39 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 40 not taken">&cross;</span><span class="takenBranch" title="Branch 41 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 42 not taken">&cross;</span><span class="takenBranch" title="Branch 43 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 44 not taken">&cross;</span><span class="takenBranch" title="Branch 45 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><span class="takenBranch" title="Branch 47 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 48 not taken">&cross;</span><span class="takenBranch" title="Branch 49 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 50 not taken">&cross;</span><span class="takenBranch" title="Branch 51 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 52 not taken">&cross;</span><span class="takenBranch" title="Branch 53 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 54 not taken">&cross;</span><span class="takenBranch" title="Branch 55 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 56 not taken">&cross;</span><span class="takenBranch" title="Branch 57 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 58 not taken">&cross;</span><span class="takenBranch" title="Branch 59 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 60 not taken">&cross;</span><span class="takenBranch" title="Branch 61 taken 1 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>126602</pre></td>
-    <td align="left" class="src coveredLine"><pre>        inline bool test() const { return mIter; }</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        inline bool test() const { return mIter; }</pre></td>
     </tr>
 
     <tr>
@@ -1568,7 +1568,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>182</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 8203889 times">&check;</span><span class="takenBranch" title="Branch 1 taken 50136464 times">&check;</span><span class="takenBranch" title="Branch 2 taken 8144330 times">&check;</span><span class="takenBranch" title="Branch 3 taken 61594 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 3 times">&check;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="takenBranch" title="Branch 6 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 41327 times">&check;</span><span class="takenBranch" title="Branch 9 taken 38706 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 2 times">&check;</span><br/><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 15 taken 2 times">&check;</span><br/><span class="takenBranch" title="Branch 16 taken 1 times">&check;</span><span class="takenBranch" title="Branch 17 taken 1 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 8203889 times">&check;</span><span class="takenBranch" title="Branch 1 taken 50136464 times">&check;</span><span class="takenBranch" title="Branch 2 taken 8144308 times">&check;</span><span class="takenBranch" title="Branch 3 taken 61587 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 25 times">&check;</span><span class="takenBranch" title="Branch 5 taken 8 times">&check;</span><span class="takenBranch" title="Branch 6 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 9 taken 2 times">&check;</span><span class="takenBranch" title="Branch 10 taken 41327 times">&check;</span><span class="takenBranch" title="Branch 11 taken 38706 times">&check;</span><br/><span class="takenBranch" title="Branch 12 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 15 taken 2 times">&check;</span><br/><span class="takenBranch" title="Branch 16 taken 1 times">&check;</span><span class="takenBranch" title="Branch 17 taken 1 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>133160627</pre></td>
     <td align="left" class="src coveredLine"><pre>            while (mItem >= mEnd &amp;&amp; mIter.next()) {</pre></td>
     </tr>
@@ -1799,8 +1799,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>215</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3639 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>130465</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>130471</pre></td>
     <td align="left" class="src coveredLine"><pre>    IndexIter(const IteratorT&amp; iterator, const FilterT&amp; filter)</pre></td>
     </tr>
 
@@ -1814,7 +1814,7 @@
     <tr>
     <td align="right" class="lineno"><pre>217</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>130410</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>173340</pre></td>
     <td align="left" class="src coveredLine"><pre>        , mFilter(filter)</pre></td>
     </tr>
 
@@ -1855,15 +1855,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>223</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 61671 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3564 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>130464</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 61674 times">&check;</span><span class="takenBranch" title="Branch 1 taken 3564 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>130470</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (mIterator) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>224</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 72 times">&check;</span><span class="takenBranch" title="Branch 2 taken 20534 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>123336</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>123334</pre></td>
     <td align="left" class="src coveredLine"><pre>            this->reset(*mIterator, mIterator.end());</pre></td>
     </tr>
 
@@ -1877,7 +1877,7 @@
     <tr>
     <td align="right" class="lineno"><pre>226</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>130464</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>130470</pre></td>
     <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
@@ -1891,14 +1891,14 @@
     <tr>
     <td align="right" class="lineno"><pre>228</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>59785</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>59778</pre></td>
     <td align="left" class="src coveredLine"><pre>        : mIterator(other.mIterator)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>229</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>14905705</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>14905745</pre></td>
     <td align="left" class="src coveredLine"><pre>        , mFilter(other.mFilter)</pre></td>
     </tr>
 
@@ -1912,7 +1912,7 @@
     <tr>
     <td align="right" class="lineno"><pre>231</pre></td>
     <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 10958 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>16092</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>16085</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (!mFilter.initialized()) {</pre></td>
     </tr>
 
@@ -1940,7 +1940,7 @@
     <tr>
     <td align="right" class="lineno"><pre>235</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>59785</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>59778</pre></td>
     <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
@@ -2037,9 +2037,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>249</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
-    <td align="left" class="src coveredLine"><pre>    Index32 end() const { return mIterator.end(); }</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    Index32 end() const { return mIterator.end(); }</pre></td>
     </tr>
 
     <tr>
@@ -2248,28 +2248,28 @@
     <tr>
     <td align="right" class="lineno"><pre>279</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    IndexIter operator++(int /*dummy*/) {</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>7</pre></td>
+    <td align="left" class="src coveredLine"><pre>    IndexIter operator++(int /*dummy*/) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>280</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 10 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 6 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 5000 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><span class="notTakenBranch" title="Branch 23 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 25 not taken">&cross;</span><span class="notTakenBranch" title="Branch 26 not taken">&cross;</span><span class="notTakenBranch" title="Branch 28 not taken">&cross;</span><span class="notTakenBranch" title="Branch 29 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><span class="notTakenBranch" title="Branch 32 not taken">&cross;</span><span class="notTakenBranch" title="Branch 34 not taken">&cross;</span><span class="notTakenBranch" title="Branch 35 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 37 not taken">&cross;</span><span class="notTakenBranch" title="Branch 38 not taken">&cross;</span><span class="notTakenBranch" title="Branch 40 not taken">&cross;</span><span class="notTakenBranch" title="Branch 41 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 43 not taken">&cross;</span><span class="notTakenBranch" title="Branch 44 not taken">&cross;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><span class="notTakenBranch" title="Branch 47 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 49 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 50 not taken">&cross;</span><span class="takenBranch" title="Branch 52 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 53 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 55 not taken">&cross;</span><span class="notTakenBranch" title="Branch 56 not taken">&cross;</span><span class="notTakenBranch" title="Branch 58 not taken">&cross;</span><span class="notTakenBranch" title="Branch 59 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 61 not taken">&cross;</span><span class="notTakenBranch" title="Branch 62 not taken">&cross;</span><span class="notTakenBranch" title="Branch 64 not taken">&cross;</span><span class="notTakenBranch" title="Branch 65 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 67 not taken">&cross;</span><span class="notTakenBranch" title="Branch 68 not taken">&cross;</span><span class="notTakenBranch" title="Branch 70 not taken">&cross;</span><span class="notTakenBranch" title="Branch 71 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 73 not taken">&cross;</span><span class="notTakenBranch" title="Branch 74 not taken">&cross;</span><span class="notTakenBranch" title="Branch 76 not taken">&cross;</span><span class="notTakenBranch" title="Branch 77 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 79 not taken">&cross;</span><span class="notTakenBranch" title="Branch 80 not taken">&cross;</span><span class="notTakenBranch" title="Branch 82 not taken">&cross;</span><span class="notTakenBranch" title="Branch 83 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 85 not taken">&cross;</span><span class="notTakenBranch" title="Branch 86 not taken">&cross;</span><span class="notTakenBranch" title="Branch 88 not taken">&cross;</span><span class="notTakenBranch" title="Branch 89 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 91 not taken">&cross;</span><span class="notTakenBranch" title="Branch 92 not taken">&cross;</span><span class="notTakenBranch" title="Branch 94 not taken">&cross;</span><span class="notTakenBranch" title="Branch 95 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 97 not taken">&cross;</span><span class="notTakenBranch" title="Branch 98 not taken">&cross;</span><span class="takenBranch" title="Branch 100 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 101 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>5029</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 10 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 2 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 6 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 16 taken 6 times">&check;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 19 taken 5000 times">&check;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><span class="notTakenBranch" title="Branch 23 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 25 not taken">&cross;</span><span class="notTakenBranch" title="Branch 26 not taken">&cross;</span><span class="notTakenBranch" title="Branch 28 not taken">&cross;</span><span class="notTakenBranch" title="Branch 29 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><span class="notTakenBranch" title="Branch 32 not taken">&cross;</span><span class="notTakenBranch" title="Branch 34 not taken">&cross;</span><span class="notTakenBranch" title="Branch 35 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 37 not taken">&cross;</span><span class="notTakenBranch" title="Branch 38 not taken">&cross;</span><span class="notTakenBranch" title="Branch 40 not taken">&cross;</span><span class="notTakenBranch" title="Branch 41 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 43 not taken">&cross;</span><span class="notTakenBranch" title="Branch 44 not taken">&cross;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><span class="notTakenBranch" title="Branch 47 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 49 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 50 not taken">&cross;</span><span class="takenBranch" title="Branch 52 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 53 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 55 not taken">&cross;</span><span class="notTakenBranch" title="Branch 56 not taken">&cross;</span><span class="notTakenBranch" title="Branch 58 not taken">&cross;</span><span class="notTakenBranch" title="Branch 59 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 61 not taken">&cross;</span><span class="notTakenBranch" title="Branch 62 not taken">&cross;</span><span class="notTakenBranch" title="Branch 64 not taken">&cross;</span><span class="notTakenBranch" title="Branch 65 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 67 not taken">&cross;</span><span class="notTakenBranch" title="Branch 68 not taken">&cross;</span><span class="notTakenBranch" title="Branch 70 not taken">&cross;</span><span class="notTakenBranch" title="Branch 71 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 73 not taken">&cross;</span><span class="notTakenBranch" title="Branch 74 not taken">&cross;</span><span class="notTakenBranch" title="Branch 76 not taken">&cross;</span><span class="notTakenBranch" title="Branch 77 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 79 not taken">&cross;</span><span class="notTakenBranch" title="Branch 80 not taken">&cross;</span><span class="notTakenBranch" title="Branch 82 not taken">&cross;</span><span class="notTakenBranch" title="Branch 83 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 85 not taken">&cross;</span><span class="notTakenBranch" title="Branch 86 not taken">&cross;</span><span class="notTakenBranch" title="Branch 88 not taken">&cross;</span><span class="notTakenBranch" title="Branch 89 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 91 not taken">&cross;</span><span class="notTakenBranch" title="Branch 92 not taken">&cross;</span><span class="notTakenBranch" title="Branch 94 not taken">&cross;</span><span class="notTakenBranch" title="Branch 95 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 97 not taken">&cross;</span><span class="notTakenBranch" title="Branch 98 not taken">&cross;</span><span class="takenBranch" title="Branch 100 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 101 not taken">&cross;</span><br/></td>
+    <td align="right" class="linecount coveredLine"><pre>5046</pre></td>
     <td align="left" class="src coveredLine"><pre>        IndexIter newIterator(*this);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>281</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 80008 times">&check;</span><span class="takenBranch" title="Branch 2 taken 7 times">&check;</span><span class="takenBranch" title="Branch 4 taken 1654108 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="takenBranch" title="Branch 8 taken 4 times">&check;</span><span class="takenBranch" title="Branch 10 taken 12 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 12 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 16 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 19 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><span class="takenBranch" title="Branch 23 taken 1 times">&check;</span><br/><span class="takenBranch" title="Branch 25 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 26 not taken">&cross;</span><span class="notTakenBranch" title="Branch 28 not taken">&cross;</span><span class="takenBranch" title="Branch 29 taken 6 times">&check;</span><br/><span class="takenBranch" title="Branch 31 taken 15 times">&check;</span><span class="notTakenBranch" title="Branch 32 not taken">&cross;</span><span class="takenBranch" title="Branch 34 taken 1654104 times">&check;</span><span class="notTakenBranch" title="Branch 35 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 37 not taken">&cross;</span><span class="takenBranch" title="Branch 38 taken 5000 times">&check;</span><span class="takenBranch" title="Branch 40 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 41 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 43 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 44 not taken">&cross;</span><span class="takenBranch" title="Branch 46 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 47 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 49 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 50 not taken">&cross;</span><span class="notTakenBranch" title="Branch 52 not taken">&cross;</span><span class="notTakenBranch" title="Branch 53 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 55 not taken">&cross;</span><span class="notTakenBranch" title="Branch 56 not taken">&cross;</span><span class="notTakenBranch" title="Branch 58 not taken">&cross;</span><span class="notTakenBranch" title="Branch 59 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 61 not taken">&cross;</span><span class="notTakenBranch" title="Branch 62 not taken">&cross;</span><span class="notTakenBranch" title="Branch 64 not taken">&cross;</span><span class="notTakenBranch" title="Branch 65 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 67 not taken">&cross;</span><span class="notTakenBranch" title="Branch 68 not taken">&cross;</span><span class="notTakenBranch" title="Branch 70 not taken">&cross;</span><span class="notTakenBranch" title="Branch 71 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 73 not taken">&cross;</span><span class="takenBranch" title="Branch 74 taken 4 times">&check;</span><span class="takenBranch" title="Branch 76 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 77 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 79 not taken">&cross;</span><span class="notTakenBranch" title="Branch 80 not taken">&cross;</span><span class="notTakenBranch" title="Branch 82 not taken">&cross;</span><span class="notTakenBranch" title="Branch 83 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 85 not taken">&cross;</span><span class="notTakenBranch" title="Branch 86 not taken">&cross;</span><span class="notTakenBranch" title="Branch 88 not taken">&cross;</span><span class="notTakenBranch" title="Branch 89 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 91 not taken">&cross;</span><span class="notTakenBranch" title="Branch 92 not taken">&cross;</span><span class="notTakenBranch" title="Branch 94 not taken">&cross;</span><span class="notTakenBranch" title="Branch 95 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 97 not taken">&cross;</span><span class="notTakenBranch" title="Branch 98 not taken">&cross;</span><span class="takenBranch" title="Branch 100 taken 3837100 times">&check;</span><span class="notTakenBranch" title="Branch 101 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 103 not taken">&cross;</span><span class="takenBranch" title="Branch 104 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 106 not taken">&cross;</span><span class="notTakenBranch" title="Branch 107 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 109 not taken">&cross;</span><span class="notTakenBranch" title="Branch 110 not taken">&cross;</span><span class="notTakenBranch" title="Branch 112 not taken">&cross;</span><span class="notTakenBranch" title="Branch 113 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 115 not taken">&cross;</span><span class="notTakenBranch" title="Branch 116 not taken">&cross;</span><span class="notTakenBranch" title="Branch 118 not taken">&cross;</span><span class="notTakenBranch" title="Branch 119 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 121 not taken">&cross;</span><span class="notTakenBranch" title="Branch 122 not taken">&cross;</span><span class="notTakenBranch" title="Branch 124 not taken">&cross;</span><span class="notTakenBranch" title="Branch 125 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 127 not taken">&cross;</span><span class="notTakenBranch" title="Branch 128 not taken">&cross;</span><span class="notTakenBranch" title="Branch 130 not taken">&cross;</span><span class="notTakenBranch" title="Branch 131 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 133 not taken">&cross;</span><span class="notTakenBranch" title="Branch 134 not taken">&cross;</span><span class="notTakenBranch" title="Branch 136 not taken">&cross;</span><span class="notTakenBranch" title="Branch 137 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 139 not taken">&cross;</span><span class="notTakenBranch" title="Branch 140 not taken">&cross;</span><span class="notTakenBranch" title="Branch 142 not taken">&cross;</span><span class="notTakenBranch" title="Branch 143 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 145 not taken">&cross;</span><span class="notTakenBranch" title="Branch 146 not taken">&cross;</span><span class="notTakenBranch" title="Branch 148 not taken">&cross;</span><span class="notTakenBranch" title="Branch 149 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 151 not taken">&cross;</span><span class="notTakenBranch" title="Branch 152 not taken">&cross;</span><span class="notTakenBranch" title="Branch 154 not taken">&cross;</span><span class="notTakenBranch" title="Branch 155 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 157 not taken">&cross;</span><span class="notTakenBranch" title="Branch 158 not taken">&cross;</span><span class="notTakenBranch" title="Branch 160 not taken">&cross;</span><span class="notTakenBranch" title="Branch 161 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 163 not taken">&cross;</span><span class="notTakenBranch" title="Branch 164 not taken">&cross;</span><span class="notTakenBranch" title="Branch 166 not taken">&cross;</span><span class="notTakenBranch" title="Branch 167 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 169 not taken">&cross;</span><span class="notTakenBranch" title="Branch 170 not taken">&cross;</span><span class="notTakenBranch" title="Branch 172 not taken">&cross;</span><span class="notTakenBranch" title="Branch 173 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 175 not taken">&cross;</span><span class="takenBranch" title="Branch 176 taken 4 times">&check;</span><span class="takenBranch" title="Branch 178 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 179 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 181 not taken">&cross;</span><span class="notTakenBranch" title="Branch 182 not taken">&cross;</span><span class="notTakenBranch" title="Branch 184 not taken">&cross;</span><span class="notTakenBranch" title="Branch 185 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 187 not taken">&cross;</span><span class="notTakenBranch" title="Branch 188 not taken">&cross;</span><span class="notTakenBranch" title="Branch 190 not taken">&cross;</span><span class="notTakenBranch" title="Branch 191 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 193 not taken">&cross;</span><span class="notTakenBranch" title="Branch 194 not taken">&cross;</span><span class="notTakenBranch" title="Branch 196 not taken">&cross;</span><span class="notTakenBranch" title="Branch 197 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 199 not taken">&cross;</span><span class="notTakenBranch" title="Branch 200 not taken">&cross;</span><span class="takenBranch" title="Branch 202 taken 3837100 times">&check;</span><span class="notTakenBranch" title="Branch 203 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 205 taken 3827080 times">&check;</span><span class="notTakenBranch" title="Branch 206 not taken">&cross;</span><span class="takenBranch" title="Branch 208 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 209 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 211 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 212 not taken">&cross;</span><span class="takenBranch" title="Branch 214 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 215 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 217 not taken">&cross;</span><span class="notTakenBranch" title="Branch 218 not taken">&cross;</span><span class="notTakenBranch" title="Branch 220 not taken">&cross;</span><span class="notTakenBranch" title="Branch 221 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 223 not taken">&cross;</span><span class="notTakenBranch" title="Branch 224 not taken">&cross;</span><span class="notTakenBranch" title="Branch 226 not taken">&cross;</span><span class="notTakenBranch" title="Branch 227 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>14894617</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 80010 times">&check;</span><span class="takenBranch" title="Branch 2 taken 10 times">&check;</span><span class="takenBranch" title="Branch 4 taken 12 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 12 times">&check;</span><span class="takenBranch" title="Branch 8 taken 1 times">&check;</span><span class="takenBranch" title="Branch 10 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 13 taken 12 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 16 taken 4 times">&check;</span><span class="takenBranch" title="Branch 17 taken 1 times">&check;</span><br/><span class="takenBranch" title="Branch 19 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><span class="takenBranch" title="Branch 23 taken 6 times">&check;</span><br/><span class="takenBranch" title="Branch 25 taken 15 times">&check;</span><span class="notTakenBranch" title="Branch 26 not taken">&cross;</span><span class="takenBranch" title="Branch 28 taken 1654104 times">&check;</span><span class="notTakenBranch" title="Branch 29 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><span class="takenBranch" title="Branch 32 taken 3 times">&check;</span><span class="takenBranch" title="Branch 34 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 35 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 37 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 38 not taken">&cross;</span><span class="notTakenBranch" title="Branch 40 not taken">&cross;</span><span class="notTakenBranch" title="Branch 41 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 43 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 44 not taken">&cross;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><span class="takenBranch" title="Branch 47 taken 1 times">&check;</span><br/><span class="takenBranch" title="Branch 49 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 50 not taken">&cross;</span><span class="notTakenBranch" title="Branch 52 not taken">&cross;</span><span class="takenBranch" title="Branch 53 taken 6 times">&check;</span><br/><span class="takenBranch" title="Branch 55 taken 15 times">&check;</span><span class="notTakenBranch" title="Branch 56 not taken">&cross;</span><span class="takenBranch" title="Branch 58 taken 1654104 times">&check;</span><span class="notTakenBranch" title="Branch 59 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 61 not taken">&cross;</span><span class="takenBranch" title="Branch 62 taken 5000 times">&check;</span><span class="takenBranch" title="Branch 64 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 65 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 67 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 68 not taken">&cross;</span><span class="takenBranch" title="Branch 70 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 71 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 73 taken 4 times">&check;</span><span class="takenBranch" title="Branch 74 taken 4 times">&check;</span><span class="takenBranch" title="Branch 76 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 77 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 79 not taken">&cross;</span><span class="notTakenBranch" title="Branch 80 not taken">&cross;</span><span class="notTakenBranch" title="Branch 82 not taken">&cross;</span><span class="notTakenBranch" title="Branch 83 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 85 not taken">&cross;</span><span class="notTakenBranch" title="Branch 86 not taken">&cross;</span><span class="notTakenBranch" title="Branch 88 not taken">&cross;</span><span class="notTakenBranch" title="Branch 89 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 91 not taken">&cross;</span><span class="notTakenBranch" title="Branch 92 not taken">&cross;</span><span class="notTakenBranch" title="Branch 94 not taken">&cross;</span><span class="notTakenBranch" title="Branch 95 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 97 not taken">&cross;</span><span class="notTakenBranch" title="Branch 98 not taken">&cross;</span><span class="takenBranch" title="Branch 100 taken 3837100 times">&check;</span><span class="notTakenBranch" title="Branch 101 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 103 not taken">&cross;</span><span class="takenBranch" title="Branch 104 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 106 not taken">&cross;</span><span class="notTakenBranch" title="Branch 107 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 109 not taken">&cross;</span><span class="notTakenBranch" title="Branch 110 not taken">&cross;</span><span class="notTakenBranch" title="Branch 112 not taken">&cross;</span><span class="notTakenBranch" title="Branch 113 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 115 not taken">&cross;</span><span class="notTakenBranch" title="Branch 116 not taken">&cross;</span><span class="notTakenBranch" title="Branch 118 not taken">&cross;</span><span class="notTakenBranch" title="Branch 119 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 121 not taken">&cross;</span><span class="notTakenBranch" title="Branch 122 not taken">&cross;</span><span class="notTakenBranch" title="Branch 124 not taken">&cross;</span><span class="notTakenBranch" title="Branch 125 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 127 not taken">&cross;</span><span class="notTakenBranch" title="Branch 128 not taken">&cross;</span><span class="notTakenBranch" title="Branch 130 not taken">&cross;</span><span class="notTakenBranch" title="Branch 131 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 133 not taken">&cross;</span><span class="notTakenBranch" title="Branch 134 not taken">&cross;</span><span class="notTakenBranch" title="Branch 136 not taken">&cross;</span><span class="notTakenBranch" title="Branch 137 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 139 not taken">&cross;</span><span class="notTakenBranch" title="Branch 140 not taken">&cross;</span><span class="notTakenBranch" title="Branch 142 not taken">&cross;</span><span class="notTakenBranch" title="Branch 143 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 145 not taken">&cross;</span><span class="notTakenBranch" title="Branch 146 not taken">&cross;</span><span class="notTakenBranch" title="Branch 148 not taken">&cross;</span><span class="notTakenBranch" title="Branch 149 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 151 not taken">&cross;</span><span class="notTakenBranch" title="Branch 152 not taken">&cross;</span><span class="notTakenBranch" title="Branch 154 not taken">&cross;</span><span class="notTakenBranch" title="Branch 155 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 157 not taken">&cross;</span><span class="notTakenBranch" title="Branch 158 not taken">&cross;</span><span class="notTakenBranch" title="Branch 160 not taken">&cross;</span><span class="notTakenBranch" title="Branch 161 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 163 not taken">&cross;</span><span class="notTakenBranch" title="Branch 164 not taken">&cross;</span><span class="notTakenBranch" title="Branch 166 not taken">&cross;</span><span class="notTakenBranch" title="Branch 167 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 169 not taken">&cross;</span><span class="notTakenBranch" title="Branch 170 not taken">&cross;</span><span class="notTakenBranch" title="Branch 172 not taken">&cross;</span><span class="notTakenBranch" title="Branch 173 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 175 not taken">&cross;</span><span class="takenBranch" title="Branch 176 taken 4 times">&check;</span><span class="takenBranch" title="Branch 178 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 179 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 181 not taken">&cross;</span><span class="notTakenBranch" title="Branch 182 not taken">&cross;</span><span class="notTakenBranch" title="Branch 184 not taken">&cross;</span><span class="notTakenBranch" title="Branch 185 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 187 not taken">&cross;</span><span class="notTakenBranch" title="Branch 188 not taken">&cross;</span><span class="notTakenBranch" title="Branch 190 not taken">&cross;</span><span class="notTakenBranch" title="Branch 191 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 193 not taken">&cross;</span><span class="notTakenBranch" title="Branch 194 not taken">&cross;</span><span class="notTakenBranch" title="Branch 196 not taken">&cross;</span><span class="notTakenBranch" title="Branch 197 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 199 not taken">&cross;</span><span class="notTakenBranch" title="Branch 200 not taken">&cross;</span><span class="takenBranch" title="Branch 202 taken 3837100 times">&check;</span><span class="notTakenBranch" title="Branch 203 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 205 taken 3 times">&check;</span><span class="notTakenBranch" title="Branch 206 not taken">&cross;</span><span class="takenBranch" title="Branch 208 taken 3827080 times">&check;</span><span class="notTakenBranch" title="Branch 209 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 211 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 212 not taken">&cross;</span><span class="takenBranch" title="Branch 214 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 215 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 217 taken 4 times">&check;</span><span class="notTakenBranch" title="Branch 218 not taken">&cross;</span><span class="notTakenBranch" title="Branch 220 not taken">&cross;</span><span class="notTakenBranch" title="Branch 221 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 223 not taken">&cross;</span><span class="notTakenBranch" title="Branch 224 not taken">&cross;</span><span class="notTakenBranch" title="Branch 226 not taken">&cross;</span><span class="notTakenBranch" title="Branch 227 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 229 not taken">&cross;</span><span class="notTakenBranch" title="Branch 230 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>14894681</pre></td>
     <td align="left" class="src coveredLine"><pre>        this->operator++();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>282</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>14889588</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>14889642</pre></td>
     <td align="left" class="src coveredLine"><pre>        return newIterator;</pre></td>
     </tr>
 
@@ -2513,7 +2513,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>317</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3827873 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1502371 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5830 times">&check;</span><span class="takenBranch" title="Branch 4 taken 1500020 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 3827873 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1502381 times">&check;</span><span class="takenBranch" title="Branch 2 taken 5837 times">&check;</span><span class="takenBranch" title="Branch 4 taken 1500030 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>5467635</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (IterT newIter(iter); newIter; ++newIter, ++size) { }</pre></td>
     </tr>

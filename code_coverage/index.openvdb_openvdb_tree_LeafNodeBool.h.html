@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tree/LeafNodeBool.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">232</td>
-            <td class="headerTableEntry">258</td>
+            <td class="headerTableEntry">249</td>
+            <td class="headerTableEntry">277</td>
             <td class="headerTableEntry" style="background-color:#FFFF55">89.9 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">168</td>
-            <td class="headerTableEntry">337</td>
-            <td class="headerTableEntry" style="background-color:LightPink">49.9 %</td>
+            <td class="headerTableEntry">127</td>
+            <td class="headerTableEntry">247</td>
+            <td class="headerTableEntry" style="background-color:LightPink">51.4 %</td>
           </tr>
         </table>
       </td>
@@ -1331,8 +1331,8 @@
     <tr>
     <td align="right" class="lineno"><pre>148</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    CoordBBox getNodeBoundingBox() const { return CoordBBox::createCube(mOrigin, DIM); }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>27183</pre></td>
+    <td align="left" class="src coveredLine"><pre>    CoordBBox getNodeBoundingBox() const { return CoordBBox::createCube(mOrigin, DIM); }</pre></td>
     </tr>
 
     <tr>
@@ -1351,8 +1351,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>151</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4359 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>71684</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>71692</pre></td>
     <td align="left" class="src coveredLine"><pre>    void setOrigin(const Coord&amp; origin) { mOrigin = origin; }</pre></td>
     </tr>
 
@@ -1372,8 +1372,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>154</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 6 taken 14088 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>54339</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 14088 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>54360</pre></td>
     <td align="left" class="src coveredLine"><pre>    const Coord&amp; origin() const { return mOrigin; }</pre></td>
     </tr>
 
@@ -1596,9 +1596,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>186</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>    Buffer&amp; buffer() { return mBuffer; }</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>131072</pre></td>
+    <td align="left" class="src coveredLine"><pre>    Buffer&amp; buffer() { return mBuffer; }</pre></td>
     </tr>
 
     <tr>
@@ -2178,8 +2178,8 @@
     <tr>
     <td align="right" class="lineno"><pre>269</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool isValueOn(const Coord&amp; xyz) const { return mValueMask.isOn(this->coordToOffset(xyz)); }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4873886</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool isValueOn(const Coord&amp; xyz) const { return mValueMask.isOn(this->coordToOffset(xyz)); }</pre></td>
     </tr>
 
     <tr>
@@ -2191,8 +2191,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>271</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 28330 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 28227 times">&check;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 28330 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="takenBranch" title="Branch 10 taken 28227 times">&check;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 28417 times">&check;</span><span class="notTakenBranch" title="Branch 15 not taken">&cross;</span><span class="takenBranch" title="Branch 16 taken 27842 times">&check;</span><br/><span class="notTakenBranch" title="Branch 18 not taken">&cross;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><span class="notTakenBranch" title="Branch 21 not taken">&cross;</span><span class="notTakenBranch" title="Branch 22 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 24 not taken">&cross;</span><span class="notTakenBranch" title="Branch 25 not taken">&cross;</span><span class="notTakenBranch" title="Branch 27 not taken">&cross;</span><span class="notTakenBranch" title="Branch 28 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 30 not taken">&cross;</span><span class="notTakenBranch" title="Branch 31 not taken">&cross;</span><span class="notTakenBranch" title="Branch 33 not taken">&cross;</span><span class="notTakenBranch" title="Branch 34 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 36 not taken">&cross;</span><span class="notTakenBranch" title="Branch 37 not taken">&cross;</span><span class="notTakenBranch" title="Branch 39 not taken">&cross;</span><span class="notTakenBranch" title="Branch 40 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 42 not taken">&cross;</span><span class="notTakenBranch" title="Branch 43 not taken">&cross;</span><span class="notTakenBranch" title="Branch 45 not taken">&cross;</span><span class="notTakenBranch" title="Branch 46 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 48 not taken">&cross;</span><span class="notTakenBranch" title="Branch 49 not taken">&cross;</span><span class="notTakenBranch" title="Branch 51 not taken">&cross;</span><span class="notTakenBranch" title="Branch 52 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>169373</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 1142035 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>1142035</pre></td>
     <td align="left" class="src coveredLine"><pre>    bool isValueOn(Index offset) const { assert(offset &lt; SIZE); return mValueMask.isOn(offset); }</pre></td>
     </tr>
 
@@ -2570,8 +2570,8 @@
     <tr>
     <td align="right" class="lineno"><pre>325</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    const bool&amp; getValueAndCache(const Coord&amp; xyz, AccessorT&amp;) const {return this->getValue(xyz);}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>13882</pre></td>
+    <td align="left" class="src coveredLine"><pre>    const bool&amp; getValueAndCache(const Coord&amp; xyz, AccessorT&amp;) const {return this->getValue(xyz);}</pre></td>
     </tr>
 
     <tr>
@@ -2605,8 +2605,8 @@
     <tr>
     <td align="right" class="lineno"><pre>330</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool isValueOnAndCache(const Coord&amp; xyz, AccessorT&amp;) const { return this->isValueOn(xyz); }</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4873868</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool isValueOnAndCache(const Coord&amp; xyz, AccessorT&amp;) const { return this->isValueOn(xyz); }</pre></td>
     </tr>
 
     <tr>
@@ -2976,8 +2976,8 @@
     <tr>
     <td align="right" class="lineno"><pre>383</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        return this->probeValue(xyz, val);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5274095</pre></td>
+    <td align="left" class="src coveredLine"><pre>        return this->probeValue(xyz, val);</pre></td>
     </tr>
 
     <tr>
@@ -3053,8 +3053,8 @@
     <tr>
     <td align="right" class="lineno"><pre>394</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    const bool&amp; getFirstValue() const { if (mValueMask.isOn(0)) return Buffer::sOn; else return Buffer::sOff; }</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    const bool&amp; getFirstValue() const { if (mValueMask.isOn(0)) return Buffer::sOn; else return Buffer::sOff; }</pre></td>
     </tr>
 
     <tr>
@@ -4369,8 +4369,8 @@
     <tr>
     <td align="right" class="lineno"><pre>582</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        ValueIter() {}</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>        ValueIter() {}</pre></td>
     </tr>
 
     <tr>
@@ -4838,7 +4838,7 @@
     <tr>
     <td align="right" class="lineno"><pre>649</pre></td>
     <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 531 times">&check;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>4803</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4797</pre></td>
     <td align="left" class="src coveredLine"><pre>    ValueOnCIter  cbeginValueOn() const { return ValueOnCIter(mValueMask.beginOn(), this); }</pre></td>
     </tr>
 
@@ -4852,7 +4852,7 @@
     <tr>
     <td align="right" class="lineno"><pre>651</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>35740</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>36626</pre></td>
     <td align="left" class="src coveredLine"><pre>    ValueOnIter    beginValueOn() { return ValueOnIter(mValueMask.beginOn(), this); }</pre></td>
     </tr>
 
@@ -4992,7 +4992,7 @@
     <tr>
     <td align="right" class="lineno"><pre>671</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>3717</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3711</pre></td>
     <td align="left" class="src coveredLine"><pre>    ChildOnCIter  cbeginChildOn() const { return ChildOnCIter(mValueMask.endOn(), this); }</pre></td>
     </tr>
 
@@ -5153,8 +5153,8 @@
     <tr>
     <td align="right" class="lineno"><pre>694</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool isValueMaskOn(Index n) const { return mValueMask.isOn(n); }</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>    bool isValueMaskOn(Index n) const { return mValueMask.isOn(n); }</pre></td>
     </tr>
 
     <tr>
@@ -5181,14 +5181,14 @@
     <tr>
     <td align="right" class="lineno"><pre>698</pre></td>
     <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 14088 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>14854</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>15303</pre></td>
     <td align="left" class="src coveredLine"><pre>    const NodeMaskType&amp; getValueMask() const { return mValueMask; }</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>699</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1518</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3088</pre></td>
     <td align="left" class="src coveredLine"><pre>    const NodeMaskType&amp; valueMask() const { return mValueMask; }</pre></td>
     </tr>
 
@@ -5670,8 +5670,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>768</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 590204 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>666567</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 641438 times">&check;</span><span class="takenBranch" title="Branch 1 taken 25362 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>666800</pre></td>
     <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::LeafNode(const Coord&amp; xyz, bool value, bool active)</pre></td>
     </tr>
 
@@ -5691,8 +5691,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>771</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 4 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 10 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 11 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 16 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 17 not taken">&cross;</span><span class="takenBranch" title="Branch 19 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 22 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 23 not taken">&cross;</span><span class="takenBranch" title="Branch 25 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 26 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 27 not taken">&cross;</span><span class="takenBranch" title="Branch 28 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 32 not taken">&cross;</span><span class="takenBranch" title="Branch 33 taken 1 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>79522</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>666800</pre></td>
     <td align="left" class="src coveredLine"><pre>    , mOrigin(xyz &amp; (~(DIM - 1)))</pre></td>
     </tr>
 
@@ -5706,7 +5706,7 @@
     <tr>
     <td align="right" class="lineno"><pre>773</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>590206</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>666800</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -5740,7 +5740,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>778</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 116 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>116</pre></td>
     <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::LeafNode(PartialCreate, const Coord&amp; xyz, bool value, bool active)</pre></td>
     </tr>
@@ -5797,8 +5797,8 @@
     <tr>
     <td align="right" class="lineno"><pre>786</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>116</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
     <tr>
@@ -6069,7 +6069,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>825</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 4612 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 3 taken 4 times">&check;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>296020</pre></td>
     <td align="left" class="src coveredLine"><pre>    , mOrigin(other.origin())</pre></td>
     </tr>
@@ -6300,8 +6300,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>858</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>3860</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>972902</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -6419,7 +6419,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>875</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 1487 times">&check;</span><span class="takenBranch" title="Branch 1 taken 90 times">&check;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1577</pre></td>
     <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::evalActiveBoundingBox(CoordBBox&amp; bbox, bool visitVoxels) const</pre></td>
     </tr>
@@ -6434,8 +6434,8 @@
     <tr>
     <td align="right" class="lineno"><pre>877</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    CoordBBox this_bbox = this->getNodeBoundingBox();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1577</pre></td>
+    <td align="left" class="src coveredLine"><pre>    CoordBBox this_bbox = this->getNodeBoundingBox();</pre></td>
     </tr>
 
     <tr>
@@ -6462,8 +6462,8 @@
     <tr>
     <td align="right" class="lineno"><pre>881</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            this_bbox.reset();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>500</pre></td>
+    <td align="left" class="src coveredLine"><pre>            this_bbox.reset();</pre></td>
     </tr>
 
     <tr>
@@ -6721,28 +6721,28 @@
     <tr>
     <td align="right" class="lineno"><pre>918</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>46449263</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>46449273</pre></td>
     <td align="left" class="src coveredLine"><pre>    assert ((xyz[0] &amp; (DIM-1u)) &lt; DIM &amp;&amp; (xyz[1] &amp; (DIM-1u)) &lt; DIM &amp;&amp; (xyz[2] &amp; (DIM-1u)) &lt; DIM);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>919</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>46449263</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>46449273</pre></td>
     <td align="left" class="src coveredLine"><pre>    return ((xyz[0] &amp; (DIM-1u)) &lt;&lt; 2*Log2Dim)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>920</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>46449263</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>46449273</pre></td>
     <td align="left" class="src coveredLine"><pre>         + ((xyz[1] &amp; (DIM-1u)) &lt;&lt; Log2Dim)</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>921</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 31937630 times">&check;</span><span class="takenBranch" title="Branch 1 taken 406 times">&check;</span><span class="takenBranch" title="Branch 2 taken 481 times">&check;</span><span class="takenBranch" title="Branch 3 taken 9987 times">&check;</span><br/><span class="takenBranch" title="Branch 4 taken 3018 times">&check;</span><span class="takenBranch" title="Branch 5 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><span class="takenBranch" title="Branch 7 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><span class="takenBranch" title="Branch 9 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span><span class="takenBranch" title="Branch 11 taken 1 times">&check;</span><br/><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="takenBranch" title="Branch 13 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 14 not taken">&cross;</span><span class="takenBranch" title="Branch 15 taken 9 times">&check;</span><br/><span class="notTakenBranch" title="Branch 16 not taken">&cross;</span><span class="takenBranch" title="Branch 17 taken 1 times">&check;</span><span class="takenBranch" title="Branch 18 taken 512 times">&check;</span><span class="notTakenBranch" title="Branch 19 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 20 not taken">&cross;</span><span class="takenBranch" title="Branch 21 taken 512 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>46449263</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 31937628 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>41175176</pre></td>
     <td align="left" class="src coveredLine"><pre>         +  (xyz[2] &amp; (DIM-1u));</pre></td>
     </tr>
 
@@ -8268,8 +8268,8 @@
     <tr>
     <td align="right" class="lineno"><pre>1139</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>LeafNode&lt;bool, Log2Dim>::getValue(const Coord&amp; xyz) const</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>14927</pre></td>
+    <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::getValue(const Coord&amp; xyz) const</pre></td>
     </tr>
 
     <tr>
@@ -8288,7 +8288,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1142</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 8147 times">&check;</span><span class="takenBranch" title="Branch 1 taken 2950 times">&check;</span><span class="takenBranch" title="Branch 2 taken 2743 times">&check;</span><span class="takenBranch" title="Branch 3 taken 1087 times">&check;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 10868 times">&check;</span><span class="takenBranch" title="Branch 2 taken 4059 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>14927</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (mBuffer.mData.isOn(this->coordToOffset(xyz))) return Buffer::sOn; else return Buffer::sOff;</pre></td>
     </tr>
@@ -8358,7 +8358,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1152</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 106118 times">&check;</span><span class="takenBranch" title="Branch 1 taken 122883 times">&check;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 387 times">&check;</span><span class="takenBranch" title="Branch 2 taken 105735 times">&check;</span><span class="takenBranch" title="Branch 3 taken 122879 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>229001</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (mBuffer.mData.isOn(offset)) return Buffer::sOn; else return Buffer::sOff;</pre></td>
     </tr>
@@ -8401,8 +8401,8 @@
     <tr>
     <td align="right" class="lineno"><pre>1158</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>LeafNode&lt;bool, Log2Dim>::probeValue(const Coord&amp; xyz, bool&amp; val) const</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5274097</pre></td>
+    <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::probeValue(const Coord&amp; xyz, bool&amp; val) const</pre></td>
     </tr>
 
     <tr>
@@ -8422,15 +8422,15 @@
     <tr>
     <td align="right" class="lineno"><pre>1161</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5274095</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5274097</pre></td>
     <td align="left" class="src coveredLine"><pre>    val = mBuffer.mData.isOn(offset);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1162</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    return mValueMask.isOn(offset);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5274097</pre></td>
+    <td align="left" class="src coveredLine"><pre>    return mValueMask.isOn(offset);</pre></td>
     </tr>
 
     <tr>
@@ -8841,7 +8841,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1221</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 522 times">&check;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>522</pre></td>
     <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::modifyValue(Index offset, const ModifyOp&amp; op)</pre></td>
     </tr>
@@ -8856,7 +8856,7 @@
     <tr>
     <td align="right" class="lineno"><pre>1223</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>512</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>522</pre></td>
     <td align="left" class="src coveredLine"><pre>    bool val = mBuffer.mData.isOn(offset);</pre></td>
     </tr>
 
@@ -8870,7 +8870,7 @@
     <tr>
     <td align="right" class="lineno"><pre>1225</pre></td>
     <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 511 times">&check;</span><span class="takenBranch" title="Branch 1 taken 1 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>522</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>512</pre></td>
     <td align="left" class="src coveredLine"><pre>    mBuffer.mData.set(offset, val);</pre></td>
     </tr>
 
@@ -9094,7 +9094,7 @@
     <tr>
     <td align="right" class="lineno"><pre>1257</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5007</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5001</pre></td>
     <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::resetBackground(bool oldBackground, bool newBackground)</pre></td>
     </tr>
 
@@ -9107,8 +9107,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1259</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 5007 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>5007</pre></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 5001 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>5001</pre></td>
     <td align="left" class="src coveredLine"><pre>    if (newBackground != oldBackground) {</pre></td>
     </tr>
 
@@ -9150,7 +9150,7 @@
     <tr>
     <td align="right" class="lineno"><pre>1265</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>5007</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>5001</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -9213,7 +9213,7 @@
     <tr>
     <td align="right" class="lineno"><pre>1274</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>3035</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3109</pre></td>
     <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::merge(const LeafNode&amp; other, bool /*bg*/, bool /*otherBG*/)</pre></td>
     </tr>
 
@@ -9240,8 +9240,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1278</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 71604 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1518 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>148818</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 76639 times">&check;</span><span class="takenBranch" title="Branch 2 taken 1555 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>159036</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (typename NodeMaskType::OnIterator iter = other.valueMask().beginOn(); iter; ++iter) {</pre></td>
     </tr>
 
@@ -9254,22 +9254,22 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1280</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 57990 times">&check;</span><span class="takenBranch" title="Branch 2 taken 13614 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>142748</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 62481 times">&check;</span><span class="takenBranch" title="Branch 2 taken 14158 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>152818</pre></td>
     <td align="left" class="src coveredLine"><pre>        if (mValueMask.isOff(n)) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1281</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2 times">&check;</span><span class="takenBranch" title="Branch 1 taken 57988 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>115520</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount coveredLine"><pre>124502</pre></td>
     <td align="left" class="src coveredLine"><pre>            mBuffer.mData.set(n, other.mBuffer.mData.isOn(n));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1282</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>115520</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>124502</pre></td>
     <td align="left" class="src coveredLine"><pre>            mValueMask.setOn(n);</pre></td>
     </tr>
 
@@ -9598,8 +9598,8 @@
     <tr>
     <td align="right" class="lineno"><pre>1329</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>LeafNode&lt;bool, Log2Dim>::topologyDifference(const LeafNode&lt;OtherType, Log2Dim>&amp; other,</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>17275</pre></td>
+    <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::topologyDifference(const LeafNode&lt;OtherType, Log2Dim>&amp; other,</pre></td>
     </tr>
 
     <tr>
@@ -9619,15 +9619,15 @@
     <tr>
     <td align="right" class="lineno"><pre>1332</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    mValueMask &amp;= !other.valueMask();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>17275</pre></td>
+    <td align="left" class="src coveredLine"><pre>    mValueMask &amp;= !other.valueMask();</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1333</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>17275</pre></td>
+    <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
     <tr>
@@ -9681,7 +9681,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1341</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 44 times">&check;</span><span class="takenBranch" title="Branch 1 taken 16 times">&check;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>60</pre></td>
     <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::clip(const CoordBBox&amp; clipBBox, bool background)</pre></td>
     </tr>
@@ -9696,8 +9696,8 @@
     <tr>
     <td align="right" class="lineno"><pre>1343</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    CoordBBox nodeBBox = this->getNodeBoundingBox();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>60</pre></td>
+    <td align="left" class="src coveredLine"><pre>    CoordBBox nodeBBox = this->getNodeBoundingBox();</pre></td>
     </tr>
 
     <tr>
@@ -9976,8 +9976,8 @@
     <tr>
     <td align="right" class="lineno"><pre>1383</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    auto clippedBBox = this->getNodeBoundingBox();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3245</pre></td>
+    <td align="left" class="src coveredLine"><pre>    auto clippedBBox = this->getNodeBoundingBox();</pre></td>
     </tr>
 
     <tr>
@@ -10122,9 +10122,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1404</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    mBuffer.fill(value);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4362 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>4362</pre></td>
+    <td align="left" class="src coveredLine"><pre>    mBuffer.fill(value);</pre></td>
     </tr>
 
     <tr>
@@ -10249,7 +10249,7 @@
     <tr>
     <td align="right" class="lineno"><pre>1422</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>932</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>940</pre></td>
     <td align="left" class="src coveredLine"><pre>LeafNode&lt;bool, Log2Dim>::copyToDense(const CoordBBox&amp; bbox, DenseT&amp; dense) const</pre></td>
     </tr>
 
@@ -10277,8 +10277,8 @@
     <tr>
     <td align="right" class="lineno"><pre>1426</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>932</pre></td>
-    <td align="left" class="src coveredLine"><pre>    const size_t xStride = dense.xStride(), yStride = dense.yStride(), zStride = dense.zStride();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    const size_t xStride = dense.xStride(), yStride = dense.yStride(), zStride = dense.zStride();</pre></td>
     </tr>
 
     <tr>
@@ -10291,42 +10291,42 @@
     <tr>
     <td align="right" class="lineno"><pre>1428</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>932</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>940</pre></td>
     <td align="left" class="src coveredLine"><pre>    DenseValueType* t0 = dense.data() + zStride * (bbox.min()[2] - min[2]); // target array</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1429</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>932</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>940</pre></td>
     <td align="left" class="src coveredLine"><pre>    const Int32 n0 = bbox.min()[2] &amp; (DIM-1u);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1430</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 652 times">&check;</span><span class="takenBranch" title="Branch 1 taken 466 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2236</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 656 times">&check;</span><span class="takenBranch" title="Branch 1 taken 470 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>2252</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (Int32 x = bbox.min()[0], ex = bbox.max()[0] + 1; x &lt; ex; ++x) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1431</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1304</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1312</pre></td>
     <td align="left" class="src coveredLine"><pre>        DenseValueType* t1 = t0 + xStride * (x - min[0]);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1432</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1304</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>1312</pre></td>
     <td align="left" class="src coveredLine"><pre>        const Int32 n1 = n0 + ((x &amp; (DIM-1u)) &lt;&lt; 2*LOG2DIM);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1433</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 846 times">&check;</span><span class="takenBranch" title="Branch 1 taken 652 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2996</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 846 times">&check;</span><span class="takenBranch" title="Branch 1 taken 656 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>3004</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (Int32 y = bbox.min()[1], ey = bbox.max()[1] + 1; y &lt; ey; ++y) {</pre></td>
     </tr>
 
@@ -10353,7 +10353,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1437</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 976 times">&check;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>1952</pre></td>
     <td align="left" class="src coveredLine"><pre>                *t2 = DenseValueType(mBuffer.mData.isOn(n2++));</pre></td>
     </tr>
@@ -10382,7 +10382,7 @@
     <tr>
     <td align="right" class="lineno"><pre>1441</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>932</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>940</pre></td>
     <td align="left" class="src coveredLine"><pre>}</pre></td>
     </tr>
 
@@ -10480,8 +10480,8 @@
     <tr>
     <td align="right" class="lineno"><pre>1455</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>108</pre></td>
-    <td align="left" class="src coveredLine"><pre>    const size_t xStride = dense.xStride(), yStride = dense.yStride(), zStride = dense.zStride();</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>    const size_t xStride = dense.xStride(), yStride = dense.yStride(), zStride = dense.zStride();</pre></td>
     </tr>
 
     <tr>
@@ -10724,7 +10724,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1490</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 6038 times">&check;</span><span class="takenBranch" title="Branch 1 taken 4714 times">&check;</span></td>
+    <td align="right" class="linebranch"></td>
     <td align="right" class="linecount coveredLine"><pre>10752</pre></td>
     <td align="left" class="src coveredLine"><pre>        bool result = false, aVal = mBuffer.mData.isOn(i), bVal = other.mBuffer.mData.isOn(i);</pre></td>
     </tr>
@@ -10746,8 +10746,8 @@
     <tr>
     <td align="right" class="lineno"><pre>1493</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            .setBRef(bVal)</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>10752</pre></td>
+    <td align="left" class="src coveredLine"><pre>            .setBRef(bVal)</pre></td>
     </tr>
 
     <tr>
@@ -10760,15 +10760,15 @@
     <tr>
     <td align="right" class="lineno"><pre>1495</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            .setResultRef(result));</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>10752</pre></td>
+    <td align="left" class="src coveredLine"><pre>            .setResultRef(result));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1496</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 4764 times">&check;</span><span class="takenBranch" title="Branch 1 taken 5988 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>10752</pre></td>
-    <td align="left" class="src coveredLine"><pre>        mValueMask.set(i, args.resultIsActive());</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        mValueMask.set(i, args.resultIsActive());</pre></td>
     </tr>
 
     <tr>
@@ -10886,15 +10886,15 @@
     <tr>
     <td align="right" class="lineno"><pre>1513</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>            .setResultRef(result));</pre></td>
+    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
+    <td align="left" class="src uncoveredLine"><pre>            .setResultRef(result));</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>1514</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount uncoveredLine"><pre></pre></td>
-    <td align="left" class="src uncoveredLine"><pre>        mValueMask.set(i, args.resultIsActive());</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        mValueMask.set(i, args.resultIsActive());</pre></td>
     </tr>
 
     <tr>
@@ -11655,8 +11655,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>1623</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 8192 times">&check;</span><span class="takenBranch" title="Branch 1 taken 16 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>16416</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8192 times">&check;</span><span class="takenBranch" title="Branch 2 taken 16 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>16448</pre></td>
     <td align="left" class="src coveredLine"><pre>    for (ChildAllIterT iter = self.beginChildAll(); iter; ++iter) {</pre></td>
     </tr>
 

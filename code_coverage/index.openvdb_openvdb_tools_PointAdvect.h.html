@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/tools/PointAdvect.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">102</td>
-            <td class="headerTableEntry">115</td>
-            <td class="headerTableEntry" style="background-color:#FFFF55">88.7 %</td>
+            <td class="headerTableEntry">93</td>
+            <td class="headerTableEntry">106</td>
+            <td class="headerTableEntry" style="background-color:#FFFF55">87.7 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">79</td>
-            <td class="headerTableEntry">113</td>
-            <td class="headerTableEntry" style="background-color:LightPink">69.9 %</td>
+            <td class="headerTableEntry">78</td>
+            <td class="headerTableEntry">111</td>
+            <td class="headerTableEntry" style="background-color:LightPink">70.3 %</td>
           </tr>
         </table>
       </td>
@@ -1198,56 +1198,56 @@
     <tr>
     <td align="right" class="lineno"><pre>129</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>96</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>110</pre></td>
     <td align="left" class="src coveredLine"><pre>    PointAdvect(const PointAdvect &amp;other) :</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>130</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>96</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>110</pre></td>
     <td align="left" class="src coveredLine"><pre>        mVelGrid(other.mVelGrid),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>131</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>96</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>110</pre></td>
     <td align="left" class="src coveredLine"><pre>        mPoints(other.mPoints),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>132</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>96</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>110</pre></td>
     <td align="left" class="src coveredLine"><pre>        mDt(other.mDt),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>133</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>96</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>110</pre></td>
     <td align="left" class="src coveredLine"><pre>        mAdvIterations(other.mAdvIterations),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>134</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>96</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>110</pre></td>
     <td align="left" class="src coveredLine"><pre>        mIntegrationOrder(other.mIntegrationOrder),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>135</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>96</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>110</pre></td>
     <td align="left" class="src coveredLine"><pre>        mThreaded(other.mThreaded),</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>136</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6</pre></td>
     <td align="left" class="src coveredLine"><pre>        mInterrupter(other.mInterrupter)</pre></td>
     </tr>
 
@@ -1296,8 +1296,8 @@
     <tr>
     <td align="right" class="lineno"><pre>143</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    bool earlyOut() const { return (mIntegrationOrder==0);}</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>4</pre></td>
+    <td align="left" class="src coveredLine"><pre>    bool earlyOut() const { return (mIntegrationOrder==0);}</pre></td>
     </tr>
 
     <tr>
@@ -1464,7 +1464,7 @@
     <tr>
     <td align="right" class="lineno"><pre>167</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>512</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535</pre></td>
     <td align="left" class="src coveredLine"><pre>    void operator() (const tbb::blocked_range&lt;size_t> &amp;range) const</pre></td>
     </tr>
 
@@ -1506,22 +1506,22 @@
     <tr>
     <td align="right" class="lineno"><pre>173</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>512</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535</pre></td>
     <td align="left" class="src coveredLine"><pre>        VelocityFieldIntegrator  velField(*mVelGrid);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>174</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 128 times">&check;</span><span class="takenBranch" title="Branch 1 taken 128 times">&check;</span><span class="takenBranch" title="Branch 2 taken 128 times">&check;</span><span class="takenBranch" title="Branch 3 taken 128 times">&check;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>512</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 128 times">&check;</span><span class="takenBranch" title="Branch 1 taken 134 times">&check;</span><span class="takenBranch" title="Branch 2 taken 145 times">&check;</span><span class="takenBranch" title="Branch 3 taken 128 times">&check;</span><br/><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>535</pre></td>
     <td align="left" class="src coveredLine"><pre>        switch (mIntegrationOrder) {</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>175</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>128</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 1:</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 1:</pre></td>
     </tr>
 
     <tr>
@@ -1597,8 +1597,8 @@
     <tr>
     <td align="right" class="lineno"><pre>186</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>128</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 2:</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 2:</pre></td>
     </tr>
 
     <tr>
@@ -1610,8 +1610,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>188</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2000000 times">&check;</span><span class="takenBranch" title="Branch 1 taken 128 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2000128</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2000000 times">&check;</span><span class="takenBranch" title="Branch 1 taken 134 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>2000134</pre></td>
     <td align="left" class="src coveredLine"><pre>                for (size_t n = range.begin(); n != range.end(); ++n) {</pre></td>
     </tr>
 
@@ -1674,8 +1674,8 @@
     <tr>
     <td align="right" class="lineno"><pre>197</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>128</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 3:</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 3:</pre></td>
     </tr>
 
     <tr>
@@ -1687,8 +1687,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>199</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2000000 times">&check;</span><span class="takenBranch" title="Branch 1 taken 128 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>2000128</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 2000000 times">&check;</span><span class="takenBranch" title="Branch 1 taken 145 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>2000145</pre></td>
     <td align="left" class="src coveredLine"><pre>                for (size_t n = range.begin(); n != range.end(); ++n) {</pre></td>
     </tr>
 
@@ -1751,8 +1751,8 @@
     <tr>
     <td align="right" class="lineno"><pre>208</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>128</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 4:</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 4:</pre></td>
     </tr>
 
     <tr>
@@ -1835,7 +1835,7 @@
     <tr>
     <td align="right" class="lineno"><pre>220</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>512</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>535</pre></td>
     <td align="left" class="src coveredLine"><pre>    }</pre></td>
     </tr>
 
@@ -2359,9 +2359,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>295</pre></td>
-    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 5 times">&check;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>5</pre></td>
-    <td align="left" class="src coveredLine"><pre>        const size_t N = mPoints->size();</pre></td>
+    <td align="right" class="linebranch"></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        const size_t N = mPoints->size();</pre></td>
     </tr>
 
     <tr>
@@ -2507,8 +2507,8 @@
     <tr>
     <td align="right" class="lineno"><pre>316</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 0://pure CPT projection</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 0://pure CPT projection</pre></td>
     </tr>
 
     <tr>
@@ -2577,8 +2577,8 @@
     <tr>
     <td align="right" class="lineno"><pre>326</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 1://1'th order advection and CPT projection</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 1://1'th order advection and CPT projection</pre></td>
     </tr>
 
     <tr>
@@ -2654,8 +2654,8 @@
     <tr>
     <td align="right" class="lineno"><pre>337</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 2://2'nd order advection and CPT projection</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 2://2'nd order advection and CPT projection</pre></td>
     </tr>
 
     <tr>
@@ -2738,8 +2738,8 @@
     <tr>
     <td align="right" class="lineno"><pre>349</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 3://3'rd order advection and CPT projection</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 3://3'rd order advection and CPT projection</pre></td>
     </tr>
 
     <tr>
@@ -2815,8 +2815,8 @@
     <tr>
     <td align="right" class="lineno"><pre>360</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>1</pre></td>
-    <td align="left" class="src coveredLine"><pre>        case 4://4'th order advection and CPT projection</pre></td>
+    <td align="right" class="linecount "><pre></pre></td>
+    <td align="left" class="src "><pre>        case 4://4'th order advection and CPT projection</pre></td>
     </tr>
 
     <tr>

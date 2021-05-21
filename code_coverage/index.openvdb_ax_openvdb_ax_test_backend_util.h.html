@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb_ax/openvdb_ax/test/backend/util.h</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">18</td>
-            <td class="headerTableEntry">18</td>
+            <td class="headerTableEntry">20</td>
+            <td class="headerTableEntry">20</td>
             <td class="headerTableEntry" style="background-color:LightGreen">100.0 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
             <td class="headerTableEntry">21</td>
-            <td class="headerTableEntry">46</td>
-            <td class="headerTableEntry" style="background-color:LightPink">45.7 %</td>
+            <td class="headerTableEntry">40</td>
+            <td class="headerTableEntry" style="background-color:LightPink">52.5 %</td>
           </tr>
         </table>
       </td>
@@ -441,9 +441,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>21</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>struct LLVMState</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 281 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>309</pre></td>
+    <td align="left" class="src coveredLine"><pre>struct LLVMState</pre></td>
     </tr>
 
     <tr>
@@ -462,7 +462,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>24</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 309 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 309 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 309 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 12 not taken">&cross;</span><span class="notTakenBranch" title="Branch 13 not taken">&cross;</span><br/></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 2 taken 309 times">&check;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 309 times">&check;</span><span class="notTakenBranch" title="Branch 6 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 309 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>309</pre></td>
     <td align="left" class="src coveredLine"><pre>        : mCtx(new llvm::LLVMContext), mModule(new llvm::Module(name, *mCtx)) {}</pre></td>
     </tr>
@@ -623,8 +623,8 @@
 
     <tr>
     <td align="right" class="lineno"><pre>47</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span><span class="takenBranch" title="Branch 2 taken 600 times">&check;</span><span class="takenBranch" title="Branch 3 taken 8 times">&check;</span><br/></td>
-    <td align="right" class="linecount coveredLine"><pre>616</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 600 times">&check;</span><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>608</pre></td>
     <td align="left" class="src coveredLine"><pre>        for (auto&amp; feature : HostFeatures) {</pre></td>
     </tr>
 
@@ -651,15 +651,15 @@
 
     <tr>
     <td align="right" class="lineno"><pre>51</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        auto M = std::move(mModule);</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>16</pre></td>
+    <td align="left" class="src coveredLine"><pre>        auto M = std::move(mModule);</pre></td>
     </tr>
 
     <tr>
     <td align="right" class="lineno"><pre>52</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 7 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span></td>
-    <td align="right" class="linecount coveredLine"><pre>16</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><br/><span class="takenBranch" title="Branch 8 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>8</pre></td>
     <td align="left" class="src coveredLine"><pre>        mModule.reset(new llvm::Module(M->getName(), *mCtx));</pre></td>
     </tr>
 
@@ -672,7 +672,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>54</pre></td>
-    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 3 not taken">&cross;</span><span class="takenBranch" title="Branch 4 taken 8 times">&check;</span><br/><span class="notTakenBranch" title="Branch 5 not taken">&cross;</span><span class="takenBranch" title="Branch 6 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 7 not taken">&cross;</span><span class="notTakenBranch" title="Branch 8 not taken">&cross;</span><br/><span class="notTakenBranch" title="Branch 9 not taken">&cross;</span><span class="notTakenBranch" title="Branch 10 not taken">&cross;</span></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 1 taken 8 times">&check;</span><span class="notTakenBranch" title="Branch 2 not taken">&cross;</span><span class="notTakenBranch" title="Branch 4 not taken">&cross;</span><span class="takenBranch" title="Branch 5 taken 8 times">&check;</span><br/></td>
     <td align="right" class="linecount coveredLine"><pre>16</pre></td>
     <td align="left" class="src coveredLine"><pre>            EE(llvm::EngineBuilder(std::move(M))</pre></td>
     </tr>

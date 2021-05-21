@@ -269,18 +269,18 @@
             <td class="headerValue">openvdb/openvdb/points/StreamCompression.cc</td>
             <td></td>
             <td class="headerName">Lines:</td>
-            <td class="headerTableEntry">200</td>
-            <td class="headerTableEntry">211</td>
-            <td class="headerTableEntry" style="background-color:LightGreen">94.8 %</td>
+            <td class="headerTableEntry">205</td>
+            <td class="headerTableEntry">216</td>
+            <td class="headerTableEntry" style="background-color:LightGreen">94.9 %</td>
           </tr>
           <tr>
             <td class="headerName">Date:</td>
-            <td class="headerValue">2021-05-20 22:06:46</td>
+            <td class="headerValue">2021-05-21 14:29:09</td>
             <td></td>
             <td class="headerName">Branches:</td>
-            <td class="headerTableEntry">126</td>
-            <td class="headerTableEntry">212</td>
-            <td class="headerTableEntry" style="background-color:LightPink">59.4 %</td>
+            <td class="headerTableEntry">132</td>
+            <td class="headerTableEntry">224</td>
+            <td class="headerTableEntry" style="background-color:LightPink">58.9 %</td>
           </tr>
         </table>
       </td>
@@ -617,7 +617,7 @@
     <tr>
     <td align="right" class="lineno"><pre>46</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>2</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>295</pre></td>
     <td align="left" class="src coveredLine"><pre>        return;</pre></td>
     </tr>
 
@@ -813,8 +813,8 @@
     <tr>
     <td align="right" class="lineno"><pre>74</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    std::unique_ptr&lt;char[]> paddedBuffer;</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>6694</pre></td>
+    <td align="left" class="src coveredLine"><pre>    std::unique_ptr&lt;char[]> paddedBuffer;</pre></td>
     </tr>
 
     <tr>
@@ -1288,7 +1288,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>142</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 211 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>211</pre></td>
     <td align="left" class="src coveredLine"><pre>        std::memcpy(newBuffer.get(), outBuffer.get(), compressedBytes);</pre></td>
     </tr>
@@ -1764,7 +1764,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>210</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 210 times">&check;</span><span class="notTakenBranch" title="Branch 1 not taken">&cross;</span></td>
     <td align="right" class="linecount coveredLine"><pre>210</pre></td>
     <td align="left" class="src coveredLine"><pre>        std::memcpy(newBuffer.get(), outBuffer.get(), expectedBytes);</pre></td>
     </tr>
@@ -2730,7 +2730,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>348</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 67 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>67</pre></td>
     <td align="left" class="src coveredLine"><pre>        mInfo->filepos = filepos;</pre></td>
     </tr>
@@ -2829,8 +2829,8 @@
     <tr>
     <td align="right" class="lineno"><pre>362</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>        mInfo.reset();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>3</pre></td>
+    <td align="left" class="src coveredLine"><pre>        mInfo.reset();</pre></td>
     </tr>
 
     <tr>
@@ -3130,8 +3130,8 @@
     <tr>
     <td align="right" class="lineno"><pre>405</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    tbb::spin_mutex::scoped_lock lock(self->mMutex);</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>48</pre></td>
+    <td align="left" class="src coveredLine"><pre>    tbb::spin_mutex::scoped_lock lock(self->mMutex);</pre></td>
     </tr>
 
     <tr>
@@ -3178,9 +3178,9 @@
 
     <tr>
     <td align="right" class="lineno"><pre>412</pre></td>
-    <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    if (!compressed) compressedBytes = -compressedBytes;</pre></td>
+    <td align="right" class="linebranch"><span class="takenBranch" title="Branch 0 taken 8 times">&check;</span><span class="takenBranch" title="Branch 1 taken 38 times">&check;</span></td>
+    <td align="right" class="linecount coveredLine"><pre>46</pre></td>
+    <td align="left" class="src coveredLine"><pre>    if (!compressed) compressedBytes = -compressedBytes;</pre></td>
     </tr>
 
     <tr>
@@ -3312,8 +3312,8 @@
     <tr>
     <td align="right" class="lineno"><pre>431</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount "><pre></pre></td>
-    <td align="left" class="src "><pre>    self->mInfo.reset();</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>46</pre></td>
+    <td align="left" class="src coveredLine"><pre>    self->mInfo.reset();</pre></td>
     </tr>
 
     <tr>
@@ -3423,7 +3423,7 @@
 
     <tr>
     <td align="right" class="lineno"><pre>447</pre></td>
-    <td align="right" class="linebranch"></td>
+    <td align="right" class="linebranch"><span class="notTakenBranch" title="Branch 0 not taken">&cross;</span><span class="takenBranch" title="Branch 1 taken 14582 times">&check;</span></td>
     <td align="right" class="linecount coveredLine"><pre>14582</pre></td>
     <td align="left" class="src coveredLine"><pre>PageHandle::page()</pre></td>
     </tr>
@@ -3662,7 +3662,7 @@
     <tr>
     <td align="right" class="lineno"><pre>481</pre></td>
     <td align="right" class="linebranch"></td>
-    <td align="right" class="linecount coveredLine"><pre>70</pre></td>
+    <td align="right" class="linecount coveredLine"><pre>140</pre></td>
     <td align="left" class="src coveredLine"><pre>        mPage = std::make_shared&lt;Page>();</pre></td>
     </tr>
 
