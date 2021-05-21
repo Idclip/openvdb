@@ -79,7 +79,6 @@ option(OPENVDB_BUILD_AX_UNITTESTS "Build the OpenVDB AX unit tests" OFF)
 
 option(OPENVDB_BUILD_MAYA_PLUGIN "Build the Maya plugin" OFF)
 option(OPENVDB_ENABLE_RPATH "Build with RPATH information" ON)
-option(OPENVDB_CXX_STRICT "Enable or disable pre-defined compiler warnings" OFF)
 cmake_dependent_option(OPENVDB_INSTALL_CMAKE_MODULES
   "Install the provided OpenVDB CMake modules when building the core library"
   ON "OPENVDB_BUILD_CORE" OFF)
@@ -129,6 +128,9 @@ option(OPENVDB_ENABLE_UNINSTALL "Adds a CMake uninstall target." ON)
 option(USE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." OFF)
 option(USE_PKGCONFIG "Use pkg-config to search for dependent libraries." ON)
 
+set(OPENVDB_CXX_STRICT "0" CACHE STRING [=[
+Control level for pre-defined compiler warnings. [0] suppresses all warnings. [1] applies available
+warnings. [2] applies available warnings treats them as errors.]=])
 set(SYSTEM_LIBRARY_PATHS "" CACHE STRING [=[
 A global list of library paths to additionally use into when searching for dependencies.]=])
 set(MSVC_MP_THREAD_COUNT "" CACHE STRING [=[
@@ -136,17 +138,22 @@ The number of threads to use when invoking MSVC builds with cmake --build. CMake
 cmake --parallel and CMAKE_BUILD_PARALLEL_LEVEL only change the number of PROJECTS that are built in parallel,
 NOT the number of TU's ]=])
 
+# Older options for OPENVDB_CXX_STRICT were ON/OFF
+if(OPENVDB_CXX_STRICT STREQUAL "OFF")
+  set(OPENVDB_CXX_STRICT 0)
+elseif(OPENVDB_CXX_STRICT STREQUAL "ON")
+  set(OPENVDB_CXX_STRICT 2)
+endif()
 
 set(_CONCURRENT_MALLOC_OPTIONS None Auto Jemalloc Tbbmalloc)
 if(NOT CONCURRENT_MALLOC)
   set(CONCURRENT_MALLOC Auto CACHE STRING
     "Explicitly link the OpenVDB executables against a particular concurrent malloc library.
     Options are: None Auto Jemalloc Tbbmalloc. Although not required, it is strongly recommended
-    to use a concurrent memory allocator. Has no effect if OPENVDB_BUILD_BINARIES and
-    OPENVDB_BUILD_UNITTESTS are false. Auto is the default and implies Jemalloc, unless USE_MAYA
-    is ON or Jemalloc is unavailable, in which case Tbbmalloc is used. Note that this is not
-    linked into library builds and defers this choice to downstream applications via explicit
-    CMake targets." FORCE
+    to use a concurrent memory allocator. Has no effect if no executable artefacts are enabled.
+    Auto is the default and implies Jemalloc, unless USE_MAYA is ON or Jemalloc is unavailable,
+    in which case Tbbmalloc is used. Note that this is not linked into library builds and defers
+    this choice to downstream applications via explicit CMake targets." FORCE
   )
 elseif(NOT ${CONCURRENT_MALLOC} IN_LIST _CONCURRENT_MALLOC_OPTIONS)
   message(WARNING "Unrecognized value for CONCURRENT_MALLOC, using Auto instead.")
@@ -173,7 +180,9 @@ endif()
 # Top-level location for all openvdb headers
 set(OPENVDB_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/openvdb")
 
-###### Deprecated options
+###############################################################################
+
+# Deprecated options
 
 if(USE_EXR)
   message(FATAL_ERROR "The USE_EXR option has been removed. Use USE_IMATH_HALF to use the Half "
@@ -185,6 +194,13 @@ endif()
 if(DEFINED USE_SYSTEM_LIBRARY_PATHS)
   message(FATAL_ERROR "The USE_SYSTEM_LIBRARY_PATHS option has been removed. Use DISABLE_CMAKE_SEARCH_PATHS.")
 endif()
+if(OPENVDB_CODE_COVERAGE)
+  message(DEPRECATION "The OPENVDB_CODE_COVERAGE option is deprecated. Choose instead "
+    "the unique build type -DCMAKE_BUILD_TYPE=coverage")
+  set(CMAKE_BUILD_TYPE coverage)
+endif()
+
+###############################################################################
 
 # Various root level CMake options which are marked as advanced
 
@@ -207,6 +223,8 @@ mark_as_advanced(
   SYSTEM_LIBRARY_PATHS
   OPENVDB_SIMD
 )
+
+###############################################################################
 
 # Configure minimum version requirements - some are treated specially and fall
 # outside of the DISABLE_DEPENDENCY_VERSION_CHECKS catch
@@ -258,7 +276,7 @@ endif()
 set(FUTURE_MINIMUM_CMAKE_VERSION 3.15)
 
 # No compiler upgrades planned
-#set(FUTURE_MINIMUM_GCC_VERSION 6.3.1)
+set(FUTURE_MINIMUM_GCC_VERSION 9.3.1)
 #set(FUTURE_MINIMUM_ICC_VERSION 17)
 #set(FUTURE_MINIMUM_MSVC_VERSION 19.10)
 
@@ -273,7 +291,7 @@ set(FUTURE_MINIMUM_LLVM_VERSION 8.0.0)
 
 #########################################################################
 
-# General CMake and CXX settings
+# General CMake settings
 
 if(FUTURE_MINIMUM_CMAKE_VERSION)
   if(${CMAKE_VERSION} VERSION_LESS ${FUTURE_MINIMUM_CMAKE_VERSION})
@@ -282,15 +300,8 @@ if(FUTURE_MINIMUM_CMAKE_VERSION)
   endif()
 endif()
 
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD ${MINIMUM_CXX_STANDARD} CACHE STRING
-    "The C++ standard whose features are requested to build OpenVDB components." FORCE)
-elseif(CMAKE_CXX_STANDARD LESS ${MINIMUM_CXX_STANDARD})
-  message(FATAL_ERROR "Provided C++ Standard is less than the supported minimum."
-    "Required is at least \"${MINIMUM_CXX_STANDARD}\" (found ${CMAKE_CXX_STANDARD})")
-endif()
-
-# Configure MS Runtime
+set(CMAKE_DISABLE_SOURCE_CHANGES ON)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 if(CMAKE_MSVC_RUNTIME_LIBRARY AND CMAKE_VERSION VERSION_LESS 3.15)
   # CMAKE_MSVC_RUNTIME_LIBRARY selects the MSVC runtime library for use by compilers
@@ -298,31 +309,15 @@ if(CMAKE_MSVC_RUNTIME_LIBRARY AND CMAKE_VERSION VERSION_LESS 3.15)
   # MultiThreadedDebugDLL. If empty, CMake defaults to MultiThreaded$<$<CONFIG:Debug>:Debug>DLL
   message(FATAL_ERROR "CMAKE_MSVC_RUNTIME_LIBRARY support is only available from CMake 3.15")
 endif()
-if(WIN32 AND CMAKE_MSVC_RUNTIME_LIBRARY)
-  message(STATUS "CMAKE_MSVC_RUNTIME_LIBRARY set to target ${CMAKE_MSVC_RUNTIME_LIBRARY}")
 
-  # Configure Boost library varient on Windows
-  if(NOT Boost_USE_STATIC_RUNTIME)
-    set(Boost_USE_STATIC_RUNTIME OFF)
-    if(CMAKE_MSVC_RUNTIME_LIBRARY STREQUAL MultiThreaded OR
-       CMAKE_MSVC_RUNTIME_LIBRARY STREQUAL MultiThreadedDebug)
-      set(Boost_USE_STATIC_RUNTIME ON)
-    endif()
+# CMAKE_BUILD_TYPE is ignored for multi config generators i.e. MSVS
+get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(NOT _isMultiConfig)
+  if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
   endif()
-  if(NOT Boost_USE_DEBUG_RUNTIME)
-    set(Boost_USE_DEBUG_RUNTIME OFF)
-    if(CMAKE_MSVC_RUNTIME_LIBRARY STREQUAL MultiThreadedDebugDLL OR
-       CMAKE_MSVC_RUNTIME_LIBRARY STREQUAL MultiThreadedDebug)
-      set(Boost_USE_DEBUG_RUNTIME ON)
-    endif()
-  endif()
+  message(STATUS "CMake Build Type: ${CMAKE_BUILD_TYPE}")
 endif()
-
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(CMAKE_DISABLE_SOURCE_CHANGES ON)
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 if(OPENVDB_ENABLE_RPATH)
   # Configure rpath for installation base on the following:
@@ -336,15 +331,14 @@ endif()
 # forces the compiler -pthread flag vs -lpthread
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 
+# Enable CTest
 enable_testing()
 
 # Add our cmake modules
-
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-
 # Add backports to support older versions of CMake
 #  FindNumPy.cmake is needed if CMake < 3.14
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 if(${CMAKE_VERSION} VERSION_LESS 3.14)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/backports")
 endif()
@@ -395,7 +389,7 @@ if(OPENVDB_BUILD_DOCS)
   add_subdirectory(doc)
 endif()
 
-# Early exit if there's nothing to build
+# Early exit if there's nothing to build. Docs are handled above
 
 if(NOT (
     OPENVDB_BUILD_CORE OR
@@ -431,6 +425,8 @@ endif()
 
 #########################################################################
 
+# If we're here, we have CXX artifacts to build
+
 # ccache setup
 
 if(USE_CCACHE)
@@ -439,21 +435,15 @@ if(USE_CCACHE)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
     message(STATUS "Using ccache: ${CCACHE_PATH}")
+  else()
+    message(WARNING "Unable to find ccache on PATH. ccache will not be used.")
   endif()
 endif()
 
-# Build type configuration
-
-if(OPENVDB_CODE_COVERAGE)
-  message(DEPRECATION "The OPENVDB_CODE_COVERAGE option is deprecated. Choose instead the unique"
-    "build type -DCMAKE_BUILD_TYPE=coverage")
-  set(CMAKE_BUILD_TYPE coverage)
-endif()
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
+# Build type and CXX configuration
 
 include(cmake/config/OpenVDBBuildTypes.cmake)
+include(cmake/config/OpenVDBCXXConfig.cmake)
 
 if(CMAKE_BUILD_TYPE EQUAL coverage)
   # use .gcno extension instead of .cc.gcno
@@ -462,133 +452,12 @@ if(CMAKE_BUILD_TYPE EQUAL coverage)
   set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 endif()
 
-# CMAKE_BUILD_TYPE is ignored for multi config generators i.e. MSVS
-get_property(_isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-if(NOT _isMultiConfig)
-  message(STATUS "CMake Build Type: ${CMAKE_BUILD_TYPE}")
+# If a user has explicitly requested a parallel build, configure this during CMake
+if(MSVC_MP_THREAD_COUNT AND MSVC_MP_THREAD_COUNT GREATER 1)
+  add_compile_options("$<$<CXX_COMPILER_ID:MSVC>>:/MP${MSVC_MP_THREAD_COUNT}>")
 endif()
 
 #########################################################################
-
-# Compiler configuration. Add definitions for a number of compiler warnings
-# for sub projects and verify version requirements
-# @todo  add definitions for Intel.
-
-set(HAS_AVAILABLE_WARNINGS FALSE)
-
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS MINIMUM_CLANG_VERSION)
-    message(FATAL_ERROR "Insufficient clang++ version. Minimum required is "
-      "\"${MINIMUM_CLANG_VERSION}\". Found version \"${CMAKE_CXX_COMPILER_VERSION}\""
-    )
-  endif()
-  if(OPENVDB_CXX_STRICT)
-    message(STATUS "Configuring Clang CXX warnings")
-    set(HAS_AVAILABLE_WARNINGS TRUE)
-    add_compile_options(
-      -Werror
-      -Wall
-      -Wextra
-      -Wconversion
-      -Wno-sign-conversion
-    )
-  endif()
-  if(USE_COLORED_OUTPUT)
-    message(STATUS "Enabling colored compiler output")
-    add_compile_options(-fcolor-diagnostics)
-  endif()
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS MINIMUM_GCC_VERSION)
-    message(FATAL_ERROR "Insufficient g++ version. Minimum required is "
-      "\"${MINIMUM_GCC_VERSION}\". Found version \"${CMAKE_CXX_COMPILER_VERSION}\""
-    )
-  endif()
-  if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_GCC_VERSION)
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS FUTURE_MINIMUM_GCC_VERSION)
-      message(DEPRECATION "Support for GCC versions < ${FUTURE_MINIMUM_GCC_VERSION} "
-        "is deprecated and will be removed.")
-    endif()
-  endif()
-  if(OPENVDB_CXX_STRICT)
-    message(STATUS "Configuring GCC CXX warnings")
-    set(HAS_AVAILABLE_WARNINGS TRUE)
-    add_compile_options(
-      -Werror
-      -Wall
-      -Wextra
-      -pedantic
-      -Wcast-align
-      -Wcast-qual
-      -Wconversion
-      -Wdisabled-optimization
-      -Woverloaded-virtual
-    )
-  endif()
-  if(USE_COLORED_OUTPUT)
-    message(STATUS "Enabling colored compiler output")
-    add_compile_options(-fdiagnostics-color=always)
-  endif()
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS MINIMUM_ICC_VERSION)
-    message(FATAL_ERROR "Insufficient ICC version. Minimum required is "
-      "\"${MINIMUM_ICC_VERSION}\". Found version \"${CMAKE_CXX_COMPILER_VERSION}\""
-    )
-  endif()
-  if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_ICC_VERSION)
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS FUTURE_MINIMUM_ICC_VERSION)
-      message(DEPRECATION "Support for ICC versions < ${FUTURE_MINIMUM_ICC_VERSION} "
-        "is deprecated and will be removed.")
-    endif()
-  endif()
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS MINIMUM_MSVC_VERSION)
-    message(FATAL_ERROR "Insufficient MSVC version. Minimum required is "
-      "\"${MINIMUM_MSVC_VERSION}\". Found version \"${CMAKE_CXX_COMPILER_VERSION}\""
-  )
-  endif()
-  if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_MSVC_VERSION)
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS FUTURE_MINIMUM_MSVC_VERSION)
-      message(DEPRECATION "Support for MSVC versions < ${FUTURE_MINIMUM_MSVC_VERSION} "
-        "is deprecated and will be removed.")
-    endif()
-  endif()
-  # Increase the number of sections that an object file can contain
-  add_compile_options(/bigobj)
-  # Excludes APIs such as Cryptography, DDE, RPC, Shell, and Windows Sockets
-  add_definitions(-DWIN32_LEAN_AND_MEAN)
-  # Disable non-secure CRT library function warnings
-  # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/
-  #     compiler-warning-level-3-c4996?view=vs-2019#unsafe-crt-library-functions
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-  # Disable POSIX function name warnings
-  # https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/
-  #     compiler-warning-level-3-c4996?view=vs-2019#posix-function-names
-  add_definitions(-D_CRT_NONSTDC_NO_WARNINGS)
-  if(NOT OPENVDB_CXX_STRICT)
-    message(STATUS "Suppressing some noisy MSVC CXX warnings, "
-      "set OPENVDB_CXX_STRICT=ON to re-enable them.")
-    # Conversion from int64_t to long
-    add_compile_options(/wd4244)
-    # It's not possible to use STL types in DLL interfaces in a portable and
-    # reliable way so disable this warning
-    add_compile_options(/wd4251)
-    # Conversion from size_t to uLong
-    add_compile_options(/wd4267)
-    # Non dll-interface class used as base for dll-interface class
-    add_compile_options(/wd4275)
-    # Truncation from 'int' to 'bool'
-    add_compile_options(/wd4305)
-  endif()
-  # If a user has explicitly requested a parallel build, configure this during CMake
-  if(MSVC_MP_THREAD_COUNT AND MSVC_MP_THREAD_COUNT GREATER 1)
-    add_compile_options(/MP${MSVC_MP_THREAD_COUNT})
-  endif()
-endif()
-
-if(OPENVDB_CXX_STRICT AND NOT HAS_AVAILABLE_WARNINGS)
-  message(WARNING "No available CXX warnings for compiler ${CMAKE_CXX_COMPILER_ID}")
-endif()
-unset(HAS_AVAILABLE_WARNINGS)
 
 # Configure malloc library. Use Jemalloc for Linux and non-Maya, otherwise Tbbmalloc.
 # * On Mac OSX, linking against Jemalloc < 4.3.0 seg-faults with this error:
@@ -626,6 +495,25 @@ elseif(OPENVDB_SIMD STREQUAL "SSE42")
 endif()
 
 #########################################################################
+
+if(WIN32 AND CMAKE_MSVC_RUNTIME_LIBRARY)
+  message(STATUS "CMAKE_MSVC_RUNTIME_LIBRARY set to target ${CMAKE_MSVC_RUNTIME_LIBRARY}")
+  # Configure Boost library varient on Windows
+  if(NOT Boost_USE_STATIC_RUNTIME)
+    set(Boost_USE_STATIC_RUNTIME OFF)
+    if(CMAKE_MSVC_RUNTIME_LIBRARY STREQUAL MultiThreaded OR
+       CMAKE_MSVC_RUNTIME_LIBRARY STREQUAL MultiThreadedDebug)
+      set(Boost_USE_STATIC_RUNTIME ON)
+    endif()
+  endif()
+  if(NOT Boost_USE_DEBUG_RUNTIME)
+    set(Boost_USE_DEBUG_RUNTIME OFF)
+    if(CMAKE_MSVC_RUNTIME_LIBRARY STREQUAL MultiThreadedDebugDLL OR
+       CMAKE_MSVC_RUNTIME_LIBRARY STREQUAL MultiThreadedDebug)
+      set(Boost_USE_DEBUG_RUNTIME ON)
+    endif()
+  endif()
+endif()
 
 # Configure our cmake modules to only search for static libraries
 
