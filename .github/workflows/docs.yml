@@ -53,4 +53,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    # Make a config file which ignores 429 HTTP failures (too many requests)
+    - name: make_config
+      run: |
+        echo "{ \"aliveStatusCodes\": [429, 200] }" >> .mlc_config.json
     - uses: gaurav-nelson/github-action-markdown-link-check@v1
+      config-file: '.mlc_config.json'
