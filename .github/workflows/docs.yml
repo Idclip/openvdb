@@ -58,4 +58,5 @@ jobs:
       run: |
         echo "{ \"aliveStatusCodes\": [429, 200] }" >> .mlc_config.json
     - uses: gaurav-nelson/github-action-markdown-link-check@v1
-      config-file: '.mlc_config.json'
+      with:
+        config-file: '.mlc_config.json'
