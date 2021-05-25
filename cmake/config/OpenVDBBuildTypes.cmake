@@ -6,8 +6,17 @@ set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}
     coverage tsan asan lsan msan ubsan]=]
   FORCE)
 
+# Description of build types:
+#  - gcov: code coverage with either GCC or Clang (note, uses -Og)
+#  - sbcc: source based code coverage with Clang
+#  - tsan: ThreadSanitizer with GCC or Clang
+#  - asan: AddressSanitize with GCC or Clang
+#  - lsan: LeakSanitizer with GCC or Clang
+#  - msan: MemorySanitizer with GCC or Clang
+#  - ubsan: UndefinedBehaviour with GCC or Clang
+#
 # Note that the thread, address and memory sanitizers are incompatible with each other
-set(EXTRA_BUILD_TYPES coverage tsan asan lsan msan ubsan)
+set(EXTRA_BUILD_TYPES gcov sbcc tsan asan lsan msan ubsan)
 
 # Set all build flags to empty (unless they have been provided)
 
@@ -33,20 +42,25 @@ endforeach()
 # clang and GCC. Sanitizers are currently only configured for clang and GCC.
 # @todo from CMake 3.15, switch to comma list of CXX_COMPILER_ID.
 
-# Coverage
+# Coverage (gcov)
 # --coverage uses -fprofile-arcs -ftest-coverage (compiling) and -lgcov (linking)
 # @note consider -fprofile-abs-path from gcc 10
-# @todo consider using clang with source analysis: -fprofile-instr-generate -fcoverage-mapping.
-#   https://clang.llvm.org/docs/SourceBasedCodeCoverage.html
-#   note that clang also works with gcov (--coverage)
 # @note Ideally we'd use no optimisations (-O0) with --coverage, but a complete
 #   run of all unit tests takes upwards of a day without them. Thread usage also
 #   impacts total runtime. -Og implies -O1 but without optimisations "that would
 #   otherwise interfere with debugging". This still massively effects branch
 #   coverage tracking compared to -O0 so we should look to improve the speed of
-#   some of the unit tests and also experiment with clang.
-add_compile_options("$<$<CONFIG:COVERAGE>:--coverage;-Og>")
-add_link_options("$<$<CONFIG:COVERAGE>:--coverage>")
+#   some of the unit tests.
+add_compile_options("$<$<CONFIG:GCOV>:--coverage;-Og>")
+add_link_options("$<$<CONFIG:GCOV>:--coverage>")
+
+# Source Based Code Coverage (SBCC)
+# @note clang only. This will create profraw files for use with llvm-profdata.
+#   That will produce profdata files for use with llvm-cov:
+#   https://clang.llvm.org/docs/SourceBasedCodeCoverage.html
+add_compile_options("$<$<AND:$<CONFIG:SBCC>,$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:-fprofile-instr-generate;-fcoverage-mapping>")
+add_compile_options("$<$<AND:$<CONFIG:SBCC>,$<CXX_COMPILER_ID:GNU>>:\"GCC cannot be used with SBCC\">")
+add_link_options("$<$<AND:$<CONFIG:SBCC>,$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:-fprofile-instr-generate;-fcoverage-mapping>")
 
 # ThreadSanitizer
 add_compile_options("$<$<AND:$<CONFIG:TSAN>,$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:-fsanitize=thread>")
@@ -81,7 +95,7 @@ add_link_options("$<$<AND:$<CONFIG:UBSAN>,$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMP
 
 if(NOT TARGET gcov_html)
   find_program(GCOVR_PATH gcovr)
-  if(NOT GCOVR_PATH AND CMAKE_BUILD_TYPE STREQUAL "coverage")
+  if(NOT GCOVR_PATH AND CMAKE_BUILD_TYPE STREQUAL "gcov")
     message(WARNING "Unable to initialize gcovr target. coverage build types will still generate gcno files.")
   else()
     # init gcov commands
@@ -95,8 +109,8 @@ if(NOT TARGET gcov_html)
     # Note that this target does NOT run ctest or any binaries - that is left to
     # the implementor of the gcov workflow. Typically, the order of operations
     # would be:
-    #  - run CMake with unit tests on
-    #  - ctest
+    #  - run CMake (with unit tests on)
+    #  - ctest (or other instrumented binary)
     #  - make gcov_html
     add_custom_target(gcov_html
       COMMAND ${GCOVR_HTML_FOLDER_CMD}
@@ -114,4 +128,3 @@ if(NOT TARGET gcov_html)
     )
   endif()
 endif()
-

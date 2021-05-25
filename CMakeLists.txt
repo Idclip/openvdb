@@ -446,8 +446,8 @@ endif()
 
 if(OPENVDB_CODE_COVERAGE)
   message(DEPRECATION "The OPENVDB_CODE_COVERAGE option is deprecated. Choose instead the unique"
-    "build type -DCMAKE_BUILD_TYPE=coverage")
-  set(CMAKE_BUILD_TYPE coverage)
+    "build type -DCMAKE_BUILD_TYPE=gcov")
+  set(CMAKE_BUILD_TYPE gcov)
 endif()
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -455,7 +455,7 @@ endif()
 
 include(cmake/config/OpenVDBBuildTypes.cmake)
 
-if(CMAKE_BUILD_TYPE EQUAL coverage)
+if(CMAKE_BUILD_TYPE EQUAL gcov)
   # use .gcno extension instead of .cc.gcno
   # @note This is an undocumented internal cmake var and does not work
   # with multi config generators

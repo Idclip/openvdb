@@ -54,7 +54,7 @@ jobs:
     - name: install_gcovr
       run: pip install gcovr
     - name: build
-      run: ./ci/build.sh coverage None ON None "core,axcore,test,axtest" \
+      run: ./ci/build.sh gcov None ON None "core,axcore,test,axtest" \
         -DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF \
         -DCMAKE_VERBOSE_MAKEFILE=ON
     - name: test_and_gcov
