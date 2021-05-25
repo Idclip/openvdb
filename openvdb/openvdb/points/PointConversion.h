@@ -222,12 +222,12 @@ template <typename T> struct ConversionTraits
     using WriteHandle = AttributeWriteHandle<T, UnknownCodec>;
     static T zero() { return zeroVal<T>(); }
     template <typename LeafT>
-    static typename Handle::Ptr handleFromLeaf(LeafT& leaf, Index index) {
+    static typename Handle::Ptr handleFromLeaf(const LeafT& leaf, const Index index) {
         const AttributeArray& array = leaf.constAttributeArray(index);
         return Handle::create(array);
     }
     template <typename LeafT>
-    static typename WriteHandle::Ptr writeHandleFromLeaf(LeafT& leaf, Index index) {
+    static typename WriteHandle::Ptr writeHandleFromLeaf(LeafT& leaf, const Index index) {
         AttributeArray& array = leaf.attributeArray(index);
         return WriteHandle::create(array);
     }
@@ -238,13 +238,13 @@ template <> struct ConversionTraits<openvdb::Name>
     using WriteHandle = StringAttributeWriteHandle;
     static openvdb::Name zero() { return ""; }
     template <typename LeafT>
-    static typename Handle::Ptr handleFromLeaf(LeafT& leaf, Index index) {
+    static typename Handle::Ptr handleFromLeaf(const LeafT& leaf, const Index index) {
         const AttributeArray& array = leaf.constAttributeArray(index);
         const AttributeSet::Descriptor& descriptor = leaf.attributeSet().descriptor();
         return Handle::create(array, descriptor.getMetadata());
     }
     template <typename LeafT>
-    static typename WriteHandle::Ptr writeHandleFromLeaf(LeafT& leaf, Index index) {
+    static typename WriteHandle::Ptr writeHandleFromLeaf(LeafT& leaf, const Index index) {
         AttributeArray& array = leaf.attributeArray(index);
         const AttributeSet::Descriptor& descriptor = leaf.attributeSet().descriptor();
         return WriteHandle::create(array, descriptor.getMetadata());
@@ -939,35 +939,25 @@ computeVoxelSize(  const PositionWrapper& positions,
     CalculatePositionBounds<PositionWrapper> calculateBounds(positions, inverseTransform);
     tbb::parallel_reduce(range, calculateBounds);
 
-    BBoxd bbox = calculateBounds.getBoundingBox();
+    const BBoxd bbox = calculateBounds.getBoundingBox();
+    const double maxExtent = bbox.extents()[static_cast<int32_t>(bbox.maxExtent())];
 
     // return default size if points are coincident
 
-    if (bbox.min() == bbox.max())  return voxelSize;
+    if (math::isZero(maxExtent))  return voxelSize;
 
-    double volume = bbox.volume();
+    // handle points that are collinear or coplanar by using the maximum extent as the
+    // initial volume guess (this also ensures the volume is based on a square bounding
+    // region)
 
-    // handle points that are collinear or coplanar by expanding the volume
-
-    if (math::isApproxZero(volume)) {
-        Vec3d extents = bbox.extents().sorted().reversed();
-        if (math::isApproxZero(extents[1])) {
-            // colinear (maxExtent^3)
-            volume = extents[0]*extents[0]*extents[0];
-        }
-        else {
-            // coplanar (maxExtent*nextMaxExtent^2)
-            volume = extents[0]*extents[1]*extents[1];
-        }
-    }
-
-    double previousVolume = volume;
+    double volume = math::Pow3(maxExtent);
 
     if (!Local::voxelSizeFromVolume(volume, targetVoxelCount, voxelSize)) {
         OPENVDB_LOG_DEBUG("Out of range, clamping voxel size.");
         return voxelSize;
     }
 
+    double previousVolume = volume;
     size_t previousVoxelCount(0);
     size_t voxelCount(1);
 
