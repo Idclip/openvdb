@@ -114,6 +114,14 @@ public:
     /// @return  Whether this executable will generate new point attributes.
     bool getCreateMissing() const;
 
+    enum class IterType { ON, OFF, ALL };
+    /// @brief  Set the value iterator type to use with this executable. Options
+    ///  are ON, OFF, ALL. Default is ON.
+    /// @param iter The value iterator type to set
+    void setValueIterator(const IterType& iter);
+    /// @return  The current value iterator type
+    IterType getValueIterator() const;
+
     /// @brief  Set the threading grain size. Default is 1. A value of 0 has the
     ///   effect of disabling multi-threading.
     /// @param grain The grain size

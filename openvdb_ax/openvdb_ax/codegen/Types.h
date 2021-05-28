@@ -80,6 +80,7 @@ struct LLVMType
         }
         else if (std::is_floating_point<T>::value) {
             switch (bits) {
+                case 16: return llvm::Type::getHalfTy(C);
                 case 32: return llvm::Type::getFloatTy(C);
                 case 64: return llvm::Type::getDoubleTy(C);
             }
@@ -248,6 +249,7 @@ template <typename T> struct LLVMType<math::Vec3<T>> : public AliasTypeMap<math:
 template <typename T> struct LLVMType<math::Vec4<T>> : public AliasTypeMap<math::Vec4<T>, T[4]> {};
 template <typename T> struct LLVMType<math::Mat3<T>> : public AliasTypeMap<math::Mat3<T>, T[9]> {};
 template <typename T> struct LLVMType<math::Mat4<T>> : public AliasTypeMap<math::Mat4<T>, T[16]> {};
+template <> struct LLVMType<math::half> : public AliasTypeMap<math::half, uint16_t> {};
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////

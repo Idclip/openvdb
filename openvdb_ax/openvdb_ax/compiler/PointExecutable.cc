@@ -35,6 +35,7 @@ struct PointExecutable::Settings
     bool mCreateMissing = true;
     size_t mGrainSize = 1;
     std::string mGroup = "";
+    IterType mValueIterator = IterType::ON;
     bool mPostDelete = false;
 };
 
@@ -42,10 +43,54 @@ namespace {
 
 /// @brief Point Kernel types
 ///
-using KernelFunctionPtr = std::add_pointer<codegen::PointKernel::Signature>::type;
-using FunctionTraitsT = codegen::PointKernel::FunctionTraitsT;
-using ReturnT = FunctionTraitsT::ReturnType;
+using KernelValueFunctionPtr = std::add_pointer<codegen::PointKernelValue::Signature>::type;
+using KernelRangeFunctionPtr = std::add_pointer<codegen::PointKernelRange::Signature>::type;
 using PointLeafLocalData = codegen::codegen_internal::PointLeafLocalData;
+
+#ifndef NDEBUG
+inline bool supported(const ast::tokens::CoreType type)
+{
+    switch (type) {
+        case ast::tokens::BOOL    : return true;
+        case ast::tokens::CHAR    : return true;
+        case ast::tokens::INT16   : return true;
+        case ast::tokens::INT32   : return true;
+        case ast::tokens::INT64   : return true;
+        case ast::tokens::FLOAT   : return true;
+        case ast::tokens::DOUBLE  : return true;
+        case ast::tokens::VEC2I   : return true;
+        case ast::tokens::VEC2F   : return true;
+        case ast::tokens::VEC2D   : return true;
+        case ast::tokens::VEC3I   : return true;
+        case ast::tokens::VEC3F   : return true;
+        case ast::tokens::VEC3D   : return true;
+        case ast::tokens::VEC4I   : return true;
+        case ast::tokens::VEC4F   : return true;
+        case ast::tokens::VEC4D   : return true;
+        case ast::tokens::MAT3F   : return true;
+        case ast::tokens::MAT3D   : return true;
+        case ast::tokens::MAT4F   : return true;
+        case ast::tokens::MAT4D   : return true;
+        case ast::tokens::STRING  : return true;
+        case ast::tokens::UNKNOWN :
+        default                   : return false;
+    }
+}
+#endif
+
+/// @brief  Shared data for the parallel operator
+struct OpData
+{
+    KernelValueFunctionPtr mKernelValue;
+    KernelRangeFunctionPtr mKernelRange;
+    const CustomData* mCustomData;
+    const AttributeRegistry* mAttributeRegistry;
+    size_t mIterMode; // 0 = OFF, 1 = ON, 2 = ALL
+    const math::Transform* mTransform;
+    points::AttributeSet::Descriptor::GroupIndex mGroupIndex;
+    std::string mPositionAttribute;
+    std::pair<bool,bool> mPositionAccess;
+};
 
 /// @brief  The arguments of the generated function
 ///
@@ -65,39 +110,42 @@ struct PointFunctionArguments
     ///         automatic memory management and void pointer passing into the
     ///         generated point functions
     template <typename ValueT>
-    struct TypedHandle final : public Handles
+    struct ReadHandle final : public Handles
     {
-        using UniquePtr = std::unique_ptr<TypedHandle<ValueT>>;
+        using UniquePtr = std::unique_ptr<ReadHandle<ValueT>>;
         using HandleTraits = points::point_conversion_internal::ConversionTraits<ValueT>;
         using HandleT = typename HandleTraits::Handle;
+        ReadHandle(const LeafT& leaf, const Index idx)
+            : mHandle(HandleTraits::handleFromLeaf(leaf, idx)) {}
+        ~ReadHandle() override final = default;
+        const std::unique_ptr<HandleT> mHandle;
+    };
 
-        ~TypedHandle() override final = default;
+    template <typename ValueT>
+    struct WriteHandle final : public Handles
+    {
+        using UniquePtr = std::unique_ptr<WriteHandle<ValueT>>;
+        using HandleTraits = points::point_conversion_internal::ConversionTraits<ValueT>;
+        using HandleT = typename HandleTraits::WriteHandle;
+        WriteHandle(LeafT& leaf, const Index idx)
+            : mHandle(HandleTraits::writeHandleFromLeaf(leaf, idx)) {}
+        ~WriteHandle() override final = default;
+        const std::unique_ptr<HandleT> mHandle;
+    };
 
-        inline void*
-        initReadHandle(const LeafT& leaf, const size_t pos) {
-            mHandle = HandleTraits::handleFromLeaf(leaf, static_cast<Index>(pos));
-            return static_cast<void*>(mHandle.get());
-        }
-
-        inline void*
-        initWriteHandle(LeafT& leaf, const size_t pos) {
-            mHandle = HandleTraits::writeHandleFromLeaf(leaf, static_cast<Index>(pos));
-            return static_cast<void*>(mHandle.get());
-        }
-
-    private:
-        typename HandleT::Ptr mHandle;
+    enum Flags {
+        NONE = 0x0,
+        ARRAY_AS_BUFFER = 0x1,
+        ARRAY_IS_UNIFORM = 0x2,
     };
 
     ///////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////
 
-    PointFunctionArguments(const KernelFunctionPtr function,
-                           const CustomData* const customData,
+    PointFunctionArguments(const OpData& data,
                            const points::AttributeSet& attributeSet,
                            PointLeafLocalData* const leafLocalData)
-        : mFunction(function)
-        , mCustomData(customData)
+        : mData(data)
         , mAttributeSet(&attributeSet)
         , mVoidAttributeHandles()
         , mAttributeHandles()
@@ -105,35 +153,99 @@ struct PointFunctionArguments
         , mGroupHandles()
         , mLeafLocalData(leafLocalData) {}
 
-    /// @brief  Given a built version of the function signature, automatically
-    ///         bind the current arguments and return a callable function
-    ///         which takes no arguments
-    inline auto bind()
+    inline auto bindValueKernel()
     {
-        return [&](const uint64_t index) -> ReturnT {
-            return mFunction(static_cast<FunctionTraitsT::Arg<0>::Type>(mCustomData),
-                static_cast<FunctionTraitsT::Arg<1>::Type>(mAttributeSet),
-                static_cast<FunctionTraitsT::Arg<2>::Type>(index),
-                static_cast<FunctionTraitsT::Arg<3>::Type>(mVoidAttributeHandles.data()),
-                static_cast<FunctionTraitsT::Arg<4>::Type>(mVoidGroupHandles.data()),
-                static_cast<FunctionTraitsT::Arg<5>::Type>(mLeafLocalData));
+        using FunctionTraitsT = codegen::PointKernelValue::FunctionTraitsT;
+        using ReturnT = FunctionTraitsT::ReturnType;
+
+        return [&](const openvdb::Coord& origin, void* buffer, bool active, const size_t index) -> ReturnT {
+            mData.mKernelValue(static_cast<FunctionTraitsT::Arg<0>::Type>(mData.mCustomData),
+                reinterpret_cast<FunctionTraitsT::Arg<1>::Type>(origin.data()),
+                static_cast<FunctionTraitsT::Arg<2>::Type>(buffer),
+                static_cast<FunctionTraitsT::Arg<3>::Type>(active),
+                static_cast<FunctionTraitsT::Arg<4>::Type>(index),
+                static_cast<FunctionTraitsT::Arg<5>::Type>(nullptr/*mData.mVoidTransforms.data()*/),
+                static_cast<FunctionTraitsT::Arg<6>::Type>(mVoidAttributeHandles.data()),
+                static_cast<FunctionTraitsT::Arg<7>::Type>(mFlags.data()),
+                static_cast<FunctionTraitsT::Arg<8>::Type>(mAttributeSet),
+                static_cast<FunctionTraitsT::Arg<9>::Type>(mVoidGroupHandles.data()),
+                static_cast<FunctionTraitsT::Arg<10>::Type>(mLeafLocalData));
+        };
+    }
+
+    inline auto bindRangeKernel()
+    {
+        using FunctionTraitsT = codegen::PointKernelRange::FunctionTraitsT;
+        using ReturnT = FunctionTraitsT::ReturnType;
+
+        return [&](const openvdb::Coord& origin, void* buffer, Index64* mask, const size_t size) -> ReturnT {
+            mData.mKernelRange(static_cast<FunctionTraitsT::Arg<0>::Type>(mData.mCustomData),
+                reinterpret_cast<FunctionTraitsT::Arg<1>::Type>(origin.data()),
+                static_cast<FunctionTraitsT::Arg<2>::Type>(buffer),
+                static_cast<FunctionTraitsT::Arg<3>::Type>(mask),
+                static_cast<FunctionTraitsT::Arg<4>::Type>(size),
+                static_cast<FunctionTraitsT::Arg<5>::Type>(2/*mData.mIterMode*/),
+                static_cast<FunctionTraitsT::Arg<6>::Type>(nullptr/*mData.mVoidTransforms.data()*/),
+                static_cast<FunctionTraitsT::Arg<7>::Type>(mVoidAttributeHandles.data()),
+                static_cast<FunctionTraitsT::Arg<8>::Type>(mFlags.data()),
+                static_cast<FunctionTraitsT::Arg<9>::Type>(mAttributeSet),
+                static_cast<FunctionTraitsT::Arg<10>::Type>(mVoidGroupHandles.data()),
+                static_cast<FunctionTraitsT::Arg<11>::Type>(mLeafLocalData));
         };
     }
 
     template <typename ValueT>
     inline void addHandle(const LeafT& leaf, const size_t pos)
     {
-        typename TypedHandle<ValueT>::UniquePtr handle(new TypedHandle<ValueT>());
-        mVoidAttributeHandles.emplace_back(handle->initReadHandle(leaf, pos));
-        mAttributeHandles.emplace_back(std::move(handle));
+        const points::AttributeArray& array = leaf.constAttributeArray(pos);
+
+        uint8_t flag = NONE;
+        const bool nocompression =
+            !std::is_same<ValueT, std::string>::value &&
+            (std::strcmp(array.codecType().c_str(), points::NullCodec::name()) == 0);
+
+        if (nocompression) {
+            using TypedArray = points::TypedAttributeArray<ValueT>;
+            flag |= ARRAY_AS_BUFFER;
+            const TypedArray& typed = static_cast<const TypedArray&>(array);
+            if (typed.isUniform()) flag |= ARRAY_IS_UNIFORM;
+            const typename TypedArray::StorageType* data = typed.data();
+            void* ptr = static_cast<void*>(const_cast<typename TypedArray::StorageType*>(data));
+            mVoidAttributeHandles.emplace_back(ptr);
+        }
+        else {
+            typename ReadHandle<ValueT>::UniquePtr handle(new ReadHandle<ValueT>(leaf, Index(pos)));
+            mVoidAttributeHandles.emplace_back(handle->mHandle.get());
+            mAttributeHandles.emplace_back(std::move(handle));
+        }
+        mFlags.emplace_back(flag);
     }
 
     template <typename ValueT>
     inline void addWriteHandle(LeafT& leaf, const size_t pos)
     {
-        typename TypedHandle<ValueT>::UniquePtr handle(new TypedHandle<ValueT>());
-        mVoidAttributeHandles.emplace_back(handle->initWriteHandle(leaf, pos));
-        mAttributeHandles.emplace_back(std::move(handle));
+        points::AttributeArray& array = leaf.attributeArray(pos);
+
+        uint8_t flag = NONE;
+        const bool nocompression =
+            !std::is_same<ValueT, std::string>::value &&
+            (std::strcmp(array.codecType().c_str(), points::NullCodec::name()) == 0);
+
+        if (nocompression) {
+            using TypedArray = points::TypedAttributeArray<ValueT>;
+            flag |= ARRAY_AS_BUFFER;
+            TypedArray& typed = static_cast<TypedArray&>(array);
+            typed.expand(); // expand, ready for write
+            const typename TypedArray::StorageType* data = const_cast<const TypedArray&>(typed).data();
+            void* ptr = static_cast<void*>(const_cast<typename TypedArray::StorageType*>(data));
+            mVoidAttributeHandles.emplace_back(ptr);
+        }
+        else {
+            typename WriteHandle<ValueT>::UniquePtr handle(new WriteHandle<ValueT>(leaf, Index(pos)));
+            mVoidAttributeHandles.emplace_back(handle->mHandle.get());
+            mAttributeHandles.emplace_back(std::move(handle));
+        }
+        mFlags.emplace_back(flag);
     }
 
     inline void addGroupHandle(const LeafT& leaf, const std::string& name)
@@ -151,14 +263,56 @@ struct PointFunctionArguments
     }
 
     inline void addNullGroupHandle() { mVoidGroupHandles.emplace_back(nullptr); }
-    inline void addNullAttribHandle() { mVoidAttributeHandles.emplace_back(nullptr); }
+
+    inline void
+    addAttributeHandle(LeafT& leaf, const std::string& name, const ast::tokens::CoreType type, const bool write)
+    {
+        // assert so the executer can be marked as noexcept (assuming nothing throws in compute)
+        assert(supported(type) && "Could not retrieve attribute handle from unsupported type");
+        switch (type) {
+            case ast::tokens::BOOL    : return this->addAttributeHandleTyped<bool>(leaf, name, write);
+            case ast::tokens::CHAR    : return this->addAttributeHandleTyped<char>(leaf, name, write);
+            case ast::tokens::INT16   : return this->addAttributeHandleTyped<int16_t>(leaf, name, write);
+            case ast::tokens::INT32   : return this->addAttributeHandleTyped<int32_t>(leaf, name, write);
+            case ast::tokens::INT64   : return this->addAttributeHandleTyped<int64_t>(leaf, name, write);
+            case ast::tokens::FLOAT   : return this->addAttributeHandleTyped<float>(leaf, name, write);
+            case ast::tokens::DOUBLE  : return this->addAttributeHandleTyped<double>(leaf, name, write);
+            case ast::tokens::VEC2I   : return this->addAttributeHandleTyped<math::Vec2<int32_t>>(leaf, name, write);
+            case ast::tokens::VEC2F   : return this->addAttributeHandleTyped<math::Vec2<float>>(leaf, name, write);
+            case ast::tokens::VEC2D   : return this->addAttributeHandleTyped<math::Vec2<double>>(leaf, name, write);
+            case ast::tokens::VEC3I   : return this->addAttributeHandleTyped<math::Vec3<int32_t>>(leaf, name, write);
+            case ast::tokens::VEC3F   : return this->addAttributeHandleTyped<math::Vec3<float>>(leaf, name, write);
+            case ast::tokens::VEC3D   : return this->addAttributeHandleTyped<math::Vec3<double>>(leaf, name, write);
+            case ast::tokens::VEC4I   : return this->addAttributeHandleTyped<math::Vec4<int32_t>>(leaf, name, write);
+            case ast::tokens::VEC4F   : return this->addAttributeHandleTyped<math::Vec4<float>>(leaf, name, write);
+            case ast::tokens::VEC4D   : return this->addAttributeHandleTyped<math::Vec4<double>>(leaf, name, write);
+            case ast::tokens::MAT3F   : return this->addAttributeHandleTyped<math::Mat3<float>>(leaf, name, write);
+            case ast::tokens::MAT3D   : return this->addAttributeHandleTyped<math::Mat3<double>>(leaf, name, write);
+            case ast::tokens::MAT4F   : return this->addAttributeHandleTyped<math::Mat4<float>>(leaf, name, write);
+            case ast::tokens::MAT4D   : return this->addAttributeHandleTyped<math::Mat4<double>>(leaf, name, write);
+            case ast::tokens::STRING  : return this->addAttributeHandleTyped<std::string>(leaf, name, write);
+            case ast::tokens::UNKNOWN :
+            default                   : return;
+        }
+    }
 
 private:
-    const KernelFunctionPtr mFunction;
-    const CustomData* const mCustomData;
+    template <typename ValueType>
+    inline void
+    addAttributeHandleTyped(LeafT& leaf, const std::string& name, const bool write)
+    {
+        const size_t pos = leaf.attributeSet().find(name);
+        assert(pos != openvdb::points::AttributeSet::INVALID_POS);
+        if (write) this->addWriteHandle<ValueType>(leaf, pos);
+        else       this->addHandle<ValueType>(leaf, pos);
+    }
+
+private:
+    const OpData& mData;
     const points::AttributeSet* const mAttributeSet;
     std::vector<void*> mVoidAttributeHandles;
     std::vector<Handles::UniquePtr> mAttributeHandles;
+    std::vector<uint8_t> mFlags;
     std::vector<void*> mVoidGroupHandles;
     std::vector<points::GroupHandle::UniquePtr> mGroupHandles;
     PointLeafLocalData* const mLeafLocalData;
@@ -204,129 +358,30 @@ struct PointExecuterDeformer
     const std::string& mPositionAttribute;
 };
 
-
-template <typename ValueType>
-inline void
-addAttributeHandleTyped(PointFunctionArguments& args,
-                        openvdb::points::PointDataTree::LeafNodeType& leaf,
-                        const std::string& name,
-                        const bool write)
-{
-    const openvdb::points::AttributeSet& attributeSet = leaf.attributeSet();
-    const size_t pos = attributeSet.find(name);
-    assert(pos != openvdb::points::AttributeSet::INVALID_POS);
-
-    if (write) args.addWriteHandle<ValueType>(leaf, pos);
-    else       args.addHandle<ValueType>(leaf, pos);
-}
-
-#ifndef NDEBUG
-inline bool supported(const ast::tokens::CoreType type)
-{
-    switch (type) {
-        case ast::tokens::BOOL    : return true;
-        case ast::tokens::CHAR    : return true;
-        case ast::tokens::INT16   : return true;
-        case ast::tokens::INT32   : return true;
-        case ast::tokens::INT64   : return true;
-        case ast::tokens::FLOAT   : return true;
-        case ast::tokens::DOUBLE  : return true;
-        case ast::tokens::VEC2I   : return true;
-        case ast::tokens::VEC2F   : return true;
-        case ast::tokens::VEC2D   : return true;
-        case ast::tokens::VEC3I   : return true;
-        case ast::tokens::VEC3F   : return true;
-        case ast::tokens::VEC3D   : return true;
-        case ast::tokens::VEC4I   : return true;
-        case ast::tokens::VEC4F   : return true;
-        case ast::tokens::VEC4D   : return true;
-        case ast::tokens::MAT3F   : return true;
-        case ast::tokens::MAT3D   : return true;
-        case ast::tokens::MAT4F   : return true;
-        case ast::tokens::MAT4D   : return true;
-        case ast::tokens::STRING  : return true;
-        case ast::tokens::UNKNOWN :
-        default                   : return false;
-    }
-}
-#endif
-
-inline void
-addAttributeHandle(PointFunctionArguments& args,
-                   openvdb::points::PointDataTree::LeafNodeType& leaf,
-                   const std::string& name,
-                   const ast::tokens::CoreType type,
-                   const bool write)
-{
-    // assert so the executer can be marked as noexcept (assuming nothing throws in compute)
-    assert(supported(type) && "Could not retrieve attribute handle from unsupported type");
-    switch (type) {
-        case ast::tokens::BOOL    : return addAttributeHandleTyped<bool>(args, leaf, name, write);
-        case ast::tokens::CHAR    : return addAttributeHandleTyped<char>(args, leaf, name, write);
-        case ast::tokens::INT16   : return addAttributeHandleTyped<int16_t>(args, leaf, name, write);
-        case ast::tokens::INT32   : return addAttributeHandleTyped<int32_t>(args, leaf, name, write);
-        case ast::tokens::INT64   : return addAttributeHandleTyped<int64_t>(args, leaf, name, write);
-        case ast::tokens::FLOAT   : return addAttributeHandleTyped<float>(args, leaf, name, write);
-        case ast::tokens::DOUBLE  : return addAttributeHandleTyped<double>(args, leaf, name, write);
-        case ast::tokens::VEC2I   : return addAttributeHandleTyped<math::Vec2<int32_t>>(args, leaf, name, write);
-        case ast::tokens::VEC2F   : return addAttributeHandleTyped<math::Vec2<float>>(args, leaf, name, write);
-        case ast::tokens::VEC2D   : return addAttributeHandleTyped<math::Vec2<double>>(args, leaf, name, write);
-        case ast::tokens::VEC3I   : return addAttributeHandleTyped<math::Vec3<int32_t>>(args, leaf, name, write);
-        case ast::tokens::VEC3F   : return addAttributeHandleTyped<math::Vec3<float>>(args, leaf, name, write);
-        case ast::tokens::VEC3D   : return addAttributeHandleTyped<math::Vec3<double>>(args, leaf, name, write);
-        case ast::tokens::VEC4I   : return addAttributeHandleTyped<math::Vec4<int32_t>>(args, leaf, name, write);
-        case ast::tokens::VEC4F   : return addAttributeHandleTyped<math::Vec4<float>>(args, leaf, name, write);
-        case ast::tokens::VEC4D   : return addAttributeHandleTyped<math::Vec4<double>>(args, leaf, name, write);
-        case ast::tokens::MAT3F   : return addAttributeHandleTyped<math::Mat3<float>>(args, leaf, name, write);
-        case ast::tokens::MAT3D   : return addAttributeHandleTyped<math::Mat3<double>>(args, leaf, name, write);
-        case ast::tokens::MAT4F   : return addAttributeHandleTyped<math::Mat4<float>>(args, leaf, name, write);
-        case ast::tokens::MAT4D   : return addAttributeHandleTyped<math::Mat4<double>>(args, leaf, name, write);
-        case ast::tokens::STRING  : return addAttributeHandleTyped<std::string>(args, leaf, name, write);
-        case ast::tokens::UNKNOWN :
-        default                   : return;
-    }
-}
-
 /// @brief  VDB Points executer for a compiled function pointer
 struct PointExecuterOp
 {
     using LeafManagerT = openvdb::tree::LeafManager<openvdb::points::PointDataTree>;
     using LeafNode = openvdb::points::PointDataTree::LeafNodeType;
-
-    using Descriptor = openvdb::points::AttributeSet::Descriptor;
     using GroupFilter = openvdb::points::GroupFilter;
-    using GroupIndex = Descriptor::GroupIndex;
 
-    PointExecuterOp(const AttributeRegistry& attributeRegistry,
-               const CustomData* const customData,
-               const KernelFunctionPtr computeFunction,
-               const math::Transform& transform,
-               const GroupIndex& groupIndex,
-               std::vector<PointLeafLocalData::UniquePtr>& leafLocalData,
-               const std::string& positionAttribute,
-               const std::pair<bool,bool>& positionAccess)
-        : mAttributeRegistry(attributeRegistry)
-        , mCustomData(customData)
-        , mComputeFunction(computeFunction)
-        , mTransform(transform)
-        , mGroupIndex(groupIndex)
-        , mLeafLocalData(leafLocalData)
-        , mPositionAttribute(positionAttribute)
-        , mPositionAccess(positionAccess) {}
+    PointExecuterOp(const OpData& data,
+               std::vector<PointLeafLocalData::UniquePtr>& leafLocalData)
+        : mData(data)
+        , mLeafLocalData(leafLocalData) {}
 
     template<typename FilterT = openvdb::points::NullFilter>
     inline std::unique_ptr<points::AttributeWriteHandle<Vec3f>>
     initPositions(LeafNode& leaf, const FilterT& filter = FilterT()) const
     {
-        const points::AttributeHandle<Vec3f>::UniquePtr
-            positions(new points::AttributeHandle<Vec3f>(leaf.constAttributeArray("P")));
+        points::AttributeHandle<Vec3f> positions(leaf.constAttributeArray("P"));
         std::unique_ptr<points::AttributeWriteHandle<Vec3f>>
-            pws(new points::AttributeWriteHandle<Vec3f>(leaf.attributeArray(mPositionAttribute)));
+            pws(new points::AttributeWriteHandle<Vec3f>(leaf.attributeArray(mData.mPositionAttribute)));
 
         for (auto iter = leaf.beginIndexAll(filter); iter; ++iter) {
             const Index idx = *iter;
-            const openvdb::Vec3f pos = positions->get(idx) + iter.getCoord().asVec3s();
-            pws->set(idx, mTransform.indexToWorld(pos));
+            const openvdb::Vec3f pos = positions.get(idx) + iter.getCoord().asVec3s();
+            pws->set(idx, mData.mTransform->indexToWorld(pos));
         }
 
         return pws;
@@ -334,17 +389,16 @@ struct PointExecuterOp
 
     void operator()(LeafNode& leaf, size_t idx) const
     {
-        const size_t count = leaf.getLastValue();
         const points::AttributeSet& set = leaf.attributeSet();
         auto& leafLocalData = mLeafLocalData[idx];
-        leafLocalData.reset(new PointLeafLocalData(count));
+        leafLocalData.reset(new PointLeafLocalData(leaf.getLastValue()));
 
-        PointFunctionArguments args(mComputeFunction, mCustomData, set, leafLocalData.get());
+        PointFunctionArguments args(mData, set, leafLocalData.get());
 
         // add attributes based on the order and existence in the attribute registry
-        for (const auto& iter : mAttributeRegistry.data()) {
-            const std::string& name = (iter.name() == "P" ? mPositionAttribute : iter.name());
-            addAttributeHandle(args, leaf, name, iter.type(), iter.writes());
+        for (const auto& iter : mData.mAttributeRegistry->data()) {
+            const std::string& name = (iter.name() == "P" ? mData.mPositionAttribute : iter.name());
+            args.addAttributeHandle(leaf, name, iter.type(), iter.writes());
         }
 
         // add groups
@@ -375,13 +429,13 @@ struct PointExecuterOp
             }
         }
 
-        const bool group = mGroupIndex.first != points::AttributeSet::INVALID_POS;
+        const bool group = mData.mGroupIndex.first != points::AttributeSet::INVALID_POS;
 
         // if we are using position we need to initialise the world space storage
         std::unique_ptr<points::AttributeWriteHandle<Vec3f>> pws;
-        if (mPositionAccess.first || mPositionAccess.second) {
+        if (mData.mPositionAccess.first || mData.mPositionAccess.second) {
             if (group) {
-                const GroupFilter filter(mGroupIndex);
+                const GroupFilter filter(mData.mGroupIndex);
                 pws = this->initPositions(leaf, filter);
             }
             else {
@@ -389,22 +443,23 @@ struct PointExecuterOp
             }
         }
 
-        const auto run = args.bind();
+        void* buffer = static_cast<void*>(leaf.buffer().data());
 
         if (group) {
-            const GroupFilter filter(mGroupIndex);
+            const auto kernel = args.bindValueKernel();
+            const GroupFilter filter(mData.mGroupIndex);
             auto iter = leaf.beginIndex<LeafNode::ValueAllCIter, GroupFilter>(filter);
-            for (; iter; ++iter) run(*iter);
+            for (; iter; ++iter) kernel(leaf.origin(), buffer, /*active*/true, *iter);
         }
         else {
-            // the Compute function performs unsigned integer arithmetic and will wrap
-            // if count == 0 inside ComputeGenerator::genComputeFunction()
-            if (count > 0) run(count);
+            const auto kernel = args.bindRangeKernel();
+            Index64* masks = &(leaf.getValueMask().template getWord<Index64>(0));
+            kernel(leaf.origin(), buffer, masks, size_t(LeafNode::NUM_VOXELS));
         }
 
         // if not writing to position (i.e. post sorting) collapse the temporary attribute
 
-        if (pws && !mPositionAccess.second) {
+        if (pws && !mData.mPositionAccess.second) {
             pws->collapse();
             pws.reset();
         }
@@ -423,14 +478,8 @@ struct PointExecuterOp
     }
 
 private:
-    const AttributeRegistry&  mAttributeRegistry;
-    const CustomData* const   mCustomData;
-    const KernelFunctionPtr   mComputeFunction;
-    const math::Transform&    mTransform;
-    const GroupIndex&         mGroupIndex;
+    const OpData& mData;
     std::vector<PointLeafLocalData::UniquePtr>& mLeafLocalData;
-    const std::string&          mPositionAttribute;
-    const std::pair<bool,bool>& mPositionAccess;
 };
 
 void processAttributes(points::PointDataGrid& grid,
@@ -571,19 +620,31 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
     // create any missing attributes
     processAttributes(grid, *mAttributeRegistry, mSettings->mCreateMissing, *logger);
 
-    const std::pair<bool,bool> positionAccess =
-        mAttributeRegistry->accessPattern("P", ast::tokens::VEC3F);
-    const bool usingPosition = positionAccess.first || positionAccess.second;
+    // Initialize the shared op data
+    OpData data;
+    data.mKernelValue =
+        reinterpret_cast<KernelValueFunctionPtr>
+            (mFunctionAddresses.at(codegen::PointKernelValue::getDefaultName()));
+    data.mKernelRange =
+        reinterpret_cast<KernelRangeFunctionPtr>
+            (mFunctionAddresses.at(codegen::PointKernelRange::getDefaultName()));
+    data.mTransform = &grid.transform();
+    data.mCustomData = mCustomData.get();
+    data.mGroupIndex.first = openvdb::points::AttributeSet::INVALID_POS;
+    data.mAttributeRegistry = mAttributeRegistry.get();
+    data.mPositionAccess = mAttributeRegistry->accessPattern("P", ast::tokens::VEC3F);
+
+    const bool usingPosition = data.mPositionAccess.first || data.mPositionAccess.second;
 
     // create temporary world space position attribute if P is being accessed
     // @todo  should avoid actually adding this attribute to the tree as its temporary
 
-    std::string positionAttribute = "P";
+    data.mPositionAttribute = "P";
     if (usingPosition /*mAttributeRegistry->isWritable("P", ast::tokens::VEC3F)*/) {
         const points::AttributeSet::Descriptor& desc =
             leafIter->attributeSet().descriptor();
-        positionAttribute = desc.uniqueName("__P");
-        points::appendAttribute<openvdb::Vec3f>(grid.tree(), positionAttribute);
+        data.mPositionAttribute = desc.uniqueName("__P");
+        points::appendAttribute<openvdb::Vec3f>(grid.tree(), data.mPositionAttribute);
     }
 
     // init the internal dead group if necessary
@@ -601,9 +662,6 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
         }
     }
 
-    openvdb::points::AttributeSet::Descriptor::GroupIndex groupIndex;
-    groupIndex.first = openvdb::points::AttributeSet::INVALID_POS;
-
     const bool usingGroup = !mSettings->mGroup.empty();
     if (usingGroup) {
         if (!leafIter->attributeSet().descriptor().hasGroup(mSettings->mGroup)) {
@@ -611,31 +669,18 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
                 "\" on grid \"" + grid.getName() + "\" does not exist.");
         }
         else {
-            groupIndex = leafIter->attributeSet().groupIndex(mSettings->mGroup);
+            data.mGroupIndex =
+                leafIter->attributeSet().groupIndex(mSettings->mGroup);
         }
     }
 
-    // extract appropriate function pointer
-    KernelFunctionPtr compute = nullptr;
-    const auto iter = usingGroup ?
-        mFunctionAddresses.find(codegen::PointKernel::getDefaultName()) :
-        mFunctionAddresses.find(codegen::PointRangeKernel::getDefaultName());
-    if (iter != mFunctionAddresses.end()) {
-        compute = reinterpret_cast<KernelFunctionPtr>(iter->second);
-    }
-    if (!compute) {
-        logger->error("No AX kernel found for execution.");
-    }
     if (logger->hasError()) return;
 
-    const math::Transform& transform = grid.transform();
     LeafManagerT leafManager(grid.tree());
     std::vector<PointLeafLocalData::UniquePtr> leafLocalData(leafManager.leafCount());
     const bool threaded = mSettings->mGrainSize > 0;
 
-    PointExecuterOp executerOp(*mAttributeRegistry,
-        mCustomData.get(), compute, transform, groupIndex,
-        leafLocalData, positionAttribute, positionAccess);
+    PointExecuterOp executerOp(data, leafLocalData);
     leafManager.foreach(executerOp, threaded, mSettings->mGrainSize);
 
     // Check to see if any new data has been added and apply it accordingly
@@ -646,9 +691,9 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
     {
         points::StringMetaInserter
             inserter(leafIter->attributeSet().descriptorPtr()->getMetadata());
-        for (const auto& data : leafLocalData) {
-            data->getGroups(groups);
-            newStrings |= data->insertNewStrings(inserter);
+        for (const auto& leafData : leafLocalData) {
+            leafData->getGroups(groups);
+            newStrings |= leafData->insertNewStrings(inserter);
         }
     }
 
@@ -665,7 +710,7 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
     leafManager.foreach(
         [&groups, &leafLocalData, newStrings] (auto& leaf, size_t idx) {
 
-            PointLeafLocalData::UniquePtr& data = leafLocalData[idx];
+            PointLeafLocalData::UniquePtr& leafData = leafLocalData[idx];
 
             for (const auto& name : groups) {
 
@@ -674,7 +719,7 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
                 // to the tree (above), not every leaf may have been directly touched
                 // by every new group. Some leaf nodes may not require any bit mask copying
 
-                points::GroupWriteHandle* tmpHandle = data->get(name);
+                points::GroupWriteHandle* tmpHandle = leafData->get(name);
                 if (!tmpHandle) continue;
 
                 points::GroupWriteHandle handle = leaf.groupWriteHandle(name);
@@ -691,7 +736,7 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
 
             if (newStrings) {
                 const MetaMap& metadata = leaf.attributeSet().descriptor().getMetadata();
-                const PointLeafLocalData::StringArrayMap& stringArrayMap = data->getStringArrayMap();
+                const PointLeafLocalData::StringArrayMap& stringArrayMap = leafData->getStringArrayMap();
 
                 for (const auto& arrayIter : stringArrayMap) {
                     points::StringAttributeWriteHandle::Ptr handle =
@@ -704,22 +749,22 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
             }
     }, threaded, mSettings->mGrainSize);
 
-    if (positionAccess.second) {
+    if (data.mPositionAccess.second) {
         // if position is writable, sort the points
         if (usingGroup) {
-            openvdb::points::GroupFilter filter(groupIndex);
-            PointExecuterDeformer<openvdb::points::GroupFilter> deformer(positionAttribute, filter);
+            openvdb::points::GroupFilter filter(data.mGroupIndex);
+            PointExecuterDeformer<openvdb::points::GroupFilter> deformer(data.mPositionAttribute, filter);
             openvdb::points::movePoints(grid, deformer);
         }
         else {
-            PointExecuterDeformer<> deformer(positionAttribute);
+            PointExecuterDeformer<> deformer(data.mPositionAttribute);
             openvdb::points::movePoints(grid, deformer);
         }
     }
 
     if (usingPosition) {
         // remove temporary world space storage
-        points::dropAttribute(grid.tree(), positionAttribute);
+        points::dropAttribute(grid.tree(), data.mPositionAttribute);
     }
 
     if (mSettings->mPostDelete) {
@@ -740,6 +785,16 @@ void PointExecutable::setCreateMissing(const bool flag)
 bool PointExecutable::getCreateMissing() const
 {
     return mSettings->mCreateMissing;
+}
+
+void PointExecutable::setValueIterator(const PointExecutable::IterType& iter)
+{
+    mSettings->mValueIterator = iter;
+}
+
+PointExecutable::IterType PointExecutable::getValueIterator() const
+{
+    return mSettings->mValueIterator;
 }
 
 void PointExecutable::setGrainSize(const size_t grain)

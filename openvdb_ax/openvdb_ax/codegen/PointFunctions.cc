@@ -66,6 +66,242 @@ groupHandle(const std::string& name, void** groupHandles, const void* const data
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+/// Codec functions
+
+inline FunctionGroup::UniquePtr axtruncdecode(const FunctionOptions& op)
+{
+    static auto generate =
+        [](const std::vector<llvm::Value*>& args,
+             llvm::IRBuilder<>& B) -> llvm::Value*
+    {
+        assert(args.size() <= 2);
+        if (args.size() == 1) {
+            llvm::Value* in = args.front();
+            const bool intconversion = in->getType()->isIntegerTy();
+            assert(intconversion || in->getType()->isHalfTy());
+            return intconversion ?
+                arithmeticConversion(in, B.getInt32Ty(), B) :
+                arithmeticConversion(in, B.getFloatTy(), B);
+        }
+        else {
+            std::vector<llvm::Value*> out, in;
+            arrayUnpack(args[0], out, B, /*load*/false);
+            arrayUnpack(args[1], in, B, /*load*/true);
+            assert(out.size() == in.size());
+            const bool intconversion = in.front()->getType()->isIntegerTy();
+            assert(intconversion || in.front()->getType()->isHalfTy());
+
+            if (intconversion) arithmeticConversion(in, B.getInt32Ty(), B);
+            else               arithmeticConversion(in, B.getHalfTy(), B);
+
+            for (size_t i = 0; i < in.size(); ++i) {
+                B.CreateStore(in[i], out[i]);
+            }
+            return nullptr;
+        }
+    };
+
+    return FunctionBuilder("__truncdecode")
+        .addSignature<float(openvdb::math::half)>(generate)
+        .addSignature<int32_t(int16_t)>(generate)
+        .addSignature<void(openvdb::math::Vec2<int32_t>*,openvdb::math::Vec2<int16_t>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec2<float>*,openvdb::math::Vec2<openvdb::math::half>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec3<int32_t>*,openvdb::math::Vec3<int16_t>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec3<float>*,openvdb::math::Vec3<openvdb::math::half>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec4<int32_t>*,openvdb::math::Vec4<int16_t>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec4<float>*,openvdb::math::Vec4<openvdb::math::half>*), true>(generate)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axtruncencode(const FunctionOptions& op)
+{
+    static auto generate =
+        [](const std::vector<llvm::Value*>& args,
+             llvm::IRBuilder<>& B) -> llvm::Value*
+    {
+        assert(args.size() <= 2);
+        if (args.size() == 1) {
+            llvm::Value* in = args.front();
+            const bool intconversion = in->getType()->isIntegerTy();
+            assert(intconversion || in->getType()->isFloatTy());
+            return intconversion ?
+                arithmeticConversion(in, B.getInt16Ty(), B) :
+                arithmeticConversion(in, B.getHalfTy(), B);
+        }
+        else {
+            std::vector<llvm::Value*> out, in;
+            arrayUnpack(args[0], out, B, /*load*/false);
+            arrayUnpack(args[1], in, B, /*load*/true);
+            assert(out.size() == in.size());
+            const bool intconversion = in.front()->getType()->isIntegerTy();
+            assert(intconversion || in.front()->getType()->isFloatTy());
+
+            if (intconversion) arithmeticConversion(in, B.getInt16Ty(), B);
+            else               arithmeticConversion(in, B.getHalfTy(), B);
+
+            for (size_t i = 0; i < in.size(); ++i) {
+                B.CreateStore(in[i], out[i]);
+            }
+            return nullptr;
+        }
+    };
+
+    return FunctionBuilder("__truncencode")
+        .addSignature<openvdb::math::half(float)>(generate)
+        .addSignature<int16_t(int32_t)>(generate)
+        .addSignature<void(openvdb::math::Vec2<int16_t>*, openvdb::math::Vec2<int32_t>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec2<openvdb::math::half>*, openvdb::math::Vec2<float>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec3<int16_t>*, openvdb::math::Vec3<int32_t>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec3<openvdb::math::half>*, openvdb::math::Vec3<float>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec4<int16_t>*, openvdb::math::Vec4<int32_t>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec4<openvdb::math::half>*, openvdb::math::Vec4<float>*), true>(generate)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axfixeddecode(const FunctionOptions& op)
+{
+    static auto generate =
+        [](const std::vector<llvm::Value*>& args,
+             llvm::IRBuilder<>& B) -> llvm::Value*
+    {
+        assert(args.size() <= 2);
+        if (args.size() == 1) {
+            llvm::Value* in = args.front();
+            assert(in->getType()->isIntegerTy(8) || in->getType()->isIntegerTy(16));
+            llvm::Value* s = arithmeticConversion(in, B.getFloatTy(), B);
+            llvm::Value* d = in->getType()->isIntegerTy(8) ?
+                LLVMType<float>::get(B.getContext(), float(std::numeric_limits<uint8_t>::max())) :
+                LLVMType<float>::get(B.getContext(), float(std::numeric_limits<uint16_t>::max()));
+            return B.CreateFDiv(s, d);
+        }
+        else {
+            std::vector<llvm::Value*> out, in;
+            arrayUnpack(args[0], out, B, /*load*/false);
+            arrayUnpack(args[1], in, B, /*load*/true);
+            assert(out.size() == in.size());
+            assert(in.front()->getType()->isIntegerTy(8) || in.front()->getType()->isIntegerTy(16));
+
+            llvm::Value* d = in.front()->getType()->isIntegerTy(8) ?
+                LLVMType<float>::get(B.getContext(), float(std::numeric_limits<uint8_t>::max())) :
+                LLVMType<float>::get(B.getContext(), float(std::numeric_limits<uint16_t>::max()));
+
+            arithmeticConversion(in, B.getFloatTy(), B);
+            for (size_t i = 0; i < in.size(); ++i) {
+                B.CreateStore(B.CreateFDiv(in[i], d), out[i]);
+            }
+            return nullptr;
+        }
+    };
+
+    return FunctionBuilder("__fixeddecode")
+        .addSignature<float(uint8_t)>(generate)
+        .addSignature<float(uint16_t)>(generate)
+        .addSignature<void(openvdb::math::Vec3<float>*,openvdb::math::Vec3<uint8_t>*), true>(generate)
+        .addSignature<void(openvdb::math::Vec3<float>*,openvdb::math::Vec3<uint16_t>*), true>(generate)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("")
+        .get();
+}
+
+inline FunctionGroup::UniquePtr axfixedencode(const FunctionOptions& op)
+{
+    static auto generate =
+        [](const std::vector<llvm::Value*>& args,
+             llvm::IRBuilder<>& B) -> llvm::Value*
+    {
+        assert(args.size() == 2);
+        llvm::LLVMContext& C = B.getContext();
+        llvm::Function* base = B.GetInsertBlock()->getParent();
+        llvm::Value* u = args[0];
+        llvm::Value* s = args[1];
+
+        const bool ftx8 = u->getType()->getPointerElementType()->isIntegerTy(8);
+
+        llvm::BasicBlock* lt0 = llvm::BasicBlock::Create(C, "lt0", base);
+        llvm::BasicBlock* els = llvm::BasicBlock::Create(C, "else", base);
+        llvm::BasicBlock* fin = llvm::BasicBlock::Create(C, "finish", base);
+        llvm::Value* r1 = binaryOperator(LLVMType<float>::get(C, 0.0f), s, ast::tokens::MORETHAN, B);
+        B.CreateCondBr(r1, lt0, els);
+
+        B.SetInsertPoint(lt0);
+        {
+            llvm::Value* d = ftx8 ?
+                LLVMType<uint8_t>::get(C, std::numeric_limits<uint8_t>::min()) :
+                LLVMType<uint16_t>::get(C, std::numeric_limits<uint16_t>::min());
+            B.CreateStore(d, u);
+            B.CreateBr(fin);
+        }
+
+        B.SetInsertPoint(els);
+        {
+            llvm::BasicBlock* lte1 = llvm::BasicBlock::Create(C, "lte1", base);
+            llvm::BasicBlock* post = llvm::BasicBlock::Create(C, "post", base);
+            r1 = binaryOperator(LLVMType<float>::get(C, 1.0f), s, ast::tokens::LESSTHANOREQUAL, B);
+            B.CreateCondBr(r1, lte1, post);
+            B.SetInsertPoint(lte1);
+            {
+                llvm::Value* d = ftx8 ?
+                    LLVMType<uint8_t>::get(C, std::numeric_limits<uint8_t>::max()) :
+                    LLVMType<uint16_t>::get(C, std::numeric_limits<uint16_t>::max());
+                B.CreateStore(d, u);
+                B.CreateBr(fin);
+            }
+
+            B.SetInsertPoint(post);
+            {
+                llvm::Value* d = ftx8 ?
+                    LLVMType<float>::get(C, float(std::numeric_limits<uint8_t>::max())) :
+                    LLVMType<float>::get(C, float(std::numeric_limits<uint16_t>::max()));
+                d = binaryOperator(s, d, ast::tokens::MULTIPLY, B);
+                d = arithmeticConversion(d, u->getType()->getPointerElementType(), B);
+                B.CreateStore(d, u);
+                B.CreateBr(fin);
+            }
+        }
+
+        B.SetInsertPoint(fin);
+        return B.CreateRetVoid();
+    };
+
+    static auto generate_vec =
+        [op](const std::vector<llvm::Value*>& args,
+             llvm::IRBuilder<>& B) -> llvm::Value*
+    {
+        assert(args.size() == 2);
+        std::vector<llvm::Value*> out, in;
+        arrayUnpack(args[0], out, B, /*load*/false);
+        arrayUnpack(args[1], in, B, /*load*/true);
+        assert(out.size() == in.size());
+
+        auto F = axfixedencode(op);
+        for (size_t i = 0; i < in.size(); ++i) {
+            llvm::Value* r = F->execute({in[i]}, B);
+            B.CreateStore(r, out[i]);
+        }
+
+        return nullptr;
+    };
+
+    return FunctionBuilder("__fixedencode")
+        .addSignature<void(uint8_t*, float), true>(generate)
+        .addSignature<void(uint16_t*, float), true>(generate)
+        .addSignature<void(openvdb::math::Vec3<uint8_t>*,openvdb::math::Vec3<float>*), true>(generate_vec)
+        .addSignature<void(openvdb::math::Vec3<uint16_t>*,openvdb::math::Vec3<float>*), true>(generate_vec)
+        .setPreferredImpl(op.mPrioritiseIR ? FunctionBuilder::IR : FunctionBuilder::C)
+        .setDocumentation("")
+        .get();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 inline FunctionGroup::UniquePtr ax_ingroup(const FunctionOptions& op)
 {
     static auto ingroup =

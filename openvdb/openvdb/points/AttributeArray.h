@@ -739,12 +739,13 @@ public:
     /// Return @c true if all data has been loaded
     bool isDataLoaded() const override;
 
+    inline const StorageType* data() const { assert(validData()); return mData.get(); }
+
 protected:
     AccessorBasePtr getAccessor() const override;
 
     /// Return the raw data buffer
     inline StorageType* data() { assert(validData()); return mData.get(); }
-    inline const StorageType* data() const { assert(validData()); return mData.get(); }
 
     /// Verify that data is not out-of-core or in a partially-read state
     inline bool validData() const { return !(isOutOfCore() || (flags() & PARTIALREAD)); }
