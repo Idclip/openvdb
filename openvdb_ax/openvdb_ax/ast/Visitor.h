@@ -210,6 +210,10 @@ struct Visitor
         return this->defaultTraversal<ast::Cast>(cast);
     }
 
+    bool traverse(NodeType<ast::Function>* call) {
+        return this->defaultTraversal<ast::Function>(call);
+    }
+
     bool traverse(NodeType<ast::FunctionCall>* call) {
         return this->defaultTraversal<ast::FunctionCall>(call);
     }
@@ -242,9 +246,6 @@ struct Visitor
         return this->defaultTraversal<ast::Value<bool>>(val);
     }
 
-    bool traverse(NodeType<ast::Value<int16_t>>* val) {
-        return this->defaultTraversal<ast::Value<int16_t>>(val);
-    }
 
     bool traverse(NodeType<ast::Value<int32_t>>* val) {
         return this->defaultTraversal<ast::Value<int32_t>>(val);
@@ -287,6 +288,7 @@ struct Visitor
             case Node::TernaryOperatorNode : return this->derived().traverse(static_cast<NodeType<ast::TernaryOperator>*>(node));
             case Node::CastNode : return this->derived().traverse(static_cast<NodeType<ast::Cast>*>(node));
             case Node::AttributeNode : return this->derived().traverse(static_cast<NodeType<ast::Attribute>*>(node));
+            case Node::FunctionNode : return this->derived().traverse(static_cast<NodeType<ast::Function>*>(node));
             case Node::FunctionCallNode : return this->derived().traverse(static_cast<NodeType<ast::FunctionCall>*>(node));
             case Node::ExternalVariableNode : return this->derived().traverse(static_cast<NodeType<ast::ExternalVariable>*>(node));
             case Node::DeclareLocalNode : return this->derived().traverse(static_cast<NodeType<ast::DeclareLocal>*>(node));
@@ -294,7 +296,6 @@ struct Visitor
             case Node::ArrayUnpackNode : return this->derived().traverse(static_cast<NodeType<ast::ArrayUnpack>*>(node));
             case Node::LocalNode : return this->derived().traverse(static_cast<NodeType<ast::Local>*>(node));
             case Node::ValueBoolNode : return this->derived().traverse(static_cast<NodeType<ast::Value<bool>>*>(node));
-            case Node::ValueInt16Node : return this->derived().traverse(static_cast<NodeType<ast::Value<int16_t>>*>(node));
             case Node::ValueInt32Node : return this->derived().traverse(static_cast<NodeType<ast::Value<int32_t>>*>(node));
             case Node::ValueInt64Node : return this->derived().traverse(static_cast<NodeType<ast::Value<int64_t>>*>(node));
             case Node::ValueFloatNode : return this->derived().traverse(static_cast<NodeType<ast::Value<float>>*>(node));
@@ -334,6 +335,7 @@ struct Visitor
     inline bool visit(NodeType<ast::BinaryOperator>*) { return true; }
     inline bool visit(NodeType<ast::TernaryOperator>*) { return true; }
     inline bool visit(NodeType<ast::Cast>*) { return true; }
+    inline bool visit(NodeType<ast::Function>*) { return true; }
     inline bool visit(NodeType<ast::FunctionCall>*) { return true; }
     inline bool visit(NodeType<ast::Attribute>*) { return true; }
     inline bool visit(NodeType<ast::ExternalVariable>*) { return true; }
@@ -342,7 +344,6 @@ struct Visitor
     inline bool visit(NodeType<ast::ArrayPack>*) { return true; }
     inline bool visit(NodeType<ast::ArrayUnpack>*) { return true; }
     inline bool visit(NodeType<ast::Value<bool>>*) { return true; }
-    inline bool visit(NodeType<ast::Value<int16_t>>*) { return true; }
     inline bool visit(NodeType<ast::Value<int32_t>>*) { return true; }
     inline bool visit(NodeType<ast::Value<int64_t>>*) { return true; }
     inline bool visit(NodeType<ast::Value<float>>*) { return true; }

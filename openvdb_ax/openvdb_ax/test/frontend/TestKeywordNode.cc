@@ -19,7 +19,18 @@ namespace {
 
 static const unittest_util::CodeTests tests =
 {
-    { "return;", Node::Ptr(new Keyword(KeywordToken::RETURN)) },
+    { "return;",          Node::Ptr(new Keyword(KeywordToken::RETURN)) },
+    { "return a;",        Node::Ptr(new Keyword(KeywordToken::RETURN, new Local("a"))) },
+    { "return a+b;",      Node::Ptr(new Keyword(KeywordToken::RETURN, new BinaryOperator(new Local("a"), new Local("b"), OperatorToken::PLUS))) },
+    { "return -b;",       Node::Ptr(new Keyword(KeywordToken::RETURN, new UnaryOperator(new Local("b"), OperatorToken::MINUS))) },
+    { "return a?b:c;",    Node::Ptr(new Keyword(KeywordToken::RETURN, new TernaryOperator(new Local("a"), new Local("b"), new Local("c")))) },
+    { "return a=b;",      Node::Ptr(new Keyword(KeywordToken::RETURN, new AssignExpression(new Local("a"), new Local("b")))) },
+    { "return a();",      Node::Ptr(new Keyword(KeywordToken::RETURN, new FunctionCall("a"))) },
+    { "return a++;",      Node::Ptr(new Keyword(KeywordToken::RETURN, new Crement(new Local("a"), Crement::Operation::Increment, /*post=*/true))) },
+    { "return a[0];",     Node::Ptr(new Keyword(KeywordToken::RETURN, new ArrayUnpack(new Local("a"), new Value<int32_t>(0)))) },
+    { "return {a,b,c};",  Node::Ptr(new Keyword(KeywordToken::RETURN, new ArrayPack({new Local("a"), new Local("b"), new Local("c")}))) },
+    { "return (a);",      Node::Ptr(new Keyword(KeywordToken::RETURN, new Local("a"))) },
+    // break and continue
     { "break;", Node::Ptr(new Keyword(KeywordToken::BREAK)) },
     { "continue;", Node::Ptr(new Keyword(KeywordToken::CONTINUE)) }
 };

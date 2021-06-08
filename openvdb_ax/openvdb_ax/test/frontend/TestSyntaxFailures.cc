@@ -567,7 +567,24 @@ static const std::vector<StrWrapper> tests {
     "|;",
     ",;",
     "!;",
-    "\\;"
+    "\\;",
+
+    // functions
+    "f() {}",
+    "int f() {",
+    "int f() }",
+    "int f() [] {}",
+    "int f(int) {}",
+    "int f() { a,b,c }",
+    "int f(int) { return }",
+    "int f(int) { a }",
+    "int f(int f, int) {}",
+    "int f(int f int) {}",
+    "int f(int@f) {}",
+    "int f(int$f) {}",
+    "int f(int f() {}) {}",
+    "int 1() {}",
+    "int () {}"
 };
 
 }
