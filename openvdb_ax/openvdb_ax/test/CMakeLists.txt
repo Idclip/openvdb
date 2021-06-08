@@ -73,6 +73,7 @@ set(TEST_SOURCE_FILES
   frontend/TestSyntaxFailures.cc
   frontend/TestTernaryOperatorNode.cc
   frontend/TestUnaryOperatorNode.cc
+  frontend/TestFunctionNode.cc
   frontend/TestValueNode.cc
   integration/CompareGrids.cc
   integration/TestArrayUnpack.cc

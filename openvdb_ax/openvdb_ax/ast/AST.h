@@ -75,6 +75,7 @@ struct Tree;
 ///  - Crement
 ///  - UnaryOperator
 ///  - Cast
+///  - Function
 ///  - FunctionCall
 ///  - ArrayUnpack
 ///  - ArrayPack
@@ -82,7 +83,7 @@ struct Tree;
 ///  - ExternalVariable
 ///  - DeclareLocal
 ///  - Local
-///  - Value<double/float/int32_t/int16_t/int64_t/bool>
+///  - Value<double/float/int32_t/int64_t/bool>
 ///  - Value<std::string>
 
 ////////////////////////////////////////////////////////////////////////
@@ -129,6 +130,7 @@ struct Node
         TernaryOperatorNode,
         CastNode,
         AttributeNode,
+        FunctionNode,
         FunctionCallNode,
         ExternalVariableNode,
         DeclareLocalNode,
@@ -136,7 +138,6 @@ struct Node
         ArrayUnpackNode,
         LocalNode,
         ValueBoolNode,
-        ValueInt16Node,
         ValueInt32Node,
         ValueInt64Node,
         ValueFloatNode,
@@ -1643,8 +1644,9 @@ struct Keyword : public Statement
 
     /// @brief  Construct a new Keyword with a given tokens::KeywordToken.
     /// @param  keyw   The keyword token.
-    Keyword(const tokens::KeywordToken keyw)
-        : mKeyword(keyw) {}
+    Keyword(const tokens::KeywordToken keyw, Expression* exp = nullptr)
+        : mKeyword(keyw)
+        , mExpression(exp) {}
     /// @brief  Deep copy constructor for a Keyword.
     /// @param  other  A const reference to another Keyword to deep copy
     Keyword(const Keyword& other)
@@ -1662,10 +1664,20 @@ struct Keyword : public Statement
     /// @copybrief Node::basetype()
     const Statement* basetype() const override { return this; }
     /// @copybrief Node::children()
-    size_t children() const override final { return 0; }
+    size_t children() const override final { return 1; }
     /// @copybrief Node::child()
-    const Node* child(const size_t) const override final {
-        return nullptr;
+    const Node* child(const size_t i) const override final {
+        if (i != 0) return nullptr;
+        return mExpression.get();
+    }
+    /// @copybrief Node::replacechild()
+    inline bool replacechild(const size_t i, Node* node) override final {
+        if (i != 0) return false;
+        Expression* expr = dynamic_cast<Expression*>(node);
+        if (!expr) return false;
+        mExpression.reset(expr);
+        mExpression->setParent(this);
+        return true;
     }
     /// @brief  Query the keyword held on this node.
     /// @return The keyword as a tokens::KeywordToken
@@ -1673,6 +1685,7 @@ struct Keyword : public Statement
 
 private:
     const tokens::KeywordToken mKeyword;
+    Expression::UniquePtr mExpression;
 };
 
 /// @brief  ArrayUnpack represent indexing operations into AX container types,
@@ -2228,6 +2241,129 @@ private:
     Expression::UniquePtr  mInit;
 };
 
+/// @brief Functions represent a single call to a function and any provided
+///        arguments. The argument list can be empty. The function name is
+///        expected to exist in the AX function registry.
+struct Function : public Statement
+{
+    using UniquePtr = std::unique_ptr<Function>;
+
+    /// @brief  Construct a new Function with a given function identifier
+    ///         and optional argument list, transferring ownership of any
+    ///         provided arguments to the Function and updating parent data
+    ///         on the arguments.
+    /// @param  function   The name/identifier of the function
+    /// @param  arguments  Function arguments
+    Function(const std::string& function,
+        const tokens::CoreType returntype,
+        const std::vector<DeclareLocal*>& parameters,
+        Block* body)
+        : mFunctionName(function)
+        , mReturnType(returntype)
+        , mParams()
+        , mBody(body) {
+            mParams.reserve(parameters.size());
+            for (DeclareLocal* param : parameters) {
+                this->append(param);
+            }
+        }
+
+    /// @brief  Construct a new Function with a given function identifier
+    ///         and optional argument list, transferring ownership of any
+    ///         provided arguments to the Function and updating parent data
+    ///         on the arguments.
+    /// @param  function   The name/identifier of the function
+    /// @param  arguments  Function arguments
+    Function(const std::string& function,
+        const tokens::CoreType returntype,
+        Block* body)
+        : Function(function, returntype, {}, body) {}
+
+    /// @brief  Deep copy constructor for a Function, performing a deep copy
+    ///         on all held function arguments, ensuring parent information is
+    ///         updated.
+    /// @param  other  A const reference to another Function to deep copy
+    Function(const Function& other)
+        : mFunctionName(other.mFunctionName)
+        , mReturnType(other.mReturnType)
+        , mParams()
+        , mBody(other.mBody->copy()) {
+            mParams.reserve(other.mParams.size());
+            for (const DeclareLocal::UniquePtr& param : other.mParams) {
+                this->append(param->copy());
+            }
+        }
+    ~Function() override = default;
+
+    /// @copybrief Node::copy()
+    Function* copy() const override final { return new Function(*this); }
+    /// @copybrief Node::nodetype()
+    NodeType nodetype() const override { return Node::FunctionNode; }
+    /// @copybrief Node::nodename()
+    const char* nodename() const override { return "function"; }
+    /// @copybrief Node::subname()
+    const char* subname() const override { return "fnc"; }
+    /// @copybrief Node::basetype()
+    const Statement* basetype() const override { return this; }
+    /// @copybrief Node::children()
+    size_t children() const override final { return this->size(); }
+    /// @copybrief Node::child()
+    const Statement* child(const size_t i) const override final {
+        if (i >= this->size())   return nullptr;
+        if (i == mParams.size()) return mBody.get();
+        return mParams[i].get();
+    }
+    /// @copybrief Node::replacechild()
+    inline bool replacechild(const size_t i, Node* node) override final {
+        if (this->size() <= i) {
+            return false;
+        }
+        if (mParams.size() == i) {
+            Block* body = dynamic_cast<Block*>(node);
+            mBody.reset(body);
+            mBody->setParent(this);
+        }
+        else {
+            DeclareLocal* param = dynamic_cast<DeclareLocal*>(node);
+            mParams[i].reset(param);
+            mParams[i]->setParent(this);
+        }
+        return true;
+    }
+
+    /// @brief  Access the function name/identifier
+    /// @return A const reference to the function name
+    inline const std::string& name() const { return mFunctionName; }
+    ///
+    inline tokens::CoreType retType() const { return mReturnType; }
+    inline std::string retTypeStr() const {
+        return ast::tokens::typeStringFromToken(mReturnType);
+    }
+    const Block* body() const { return mBody.get() }
+    /// @brief  Query the total number of parameters stored on this function
+    /// @return The number of parameters. Can be 0
+    inline size_t numParams() const { return mParams.size(); }
+
+    /// @brief  Alias for Function::children
+    inline size_t size() const { return mParams.size() + /*body*/1; }
+    /// @brief  Query whether this Expression list holds any valid expressions
+    /// @return True if this node if empty, false otherwise
+    inline bool empty() const { return mParams.empty(); }
+    /// @brief  Appends an argument to this function call, transferring
+    ///         ownership to the Function and updating parent data on the
+    ///         expression. If the expression is a nullptr, it is ignored.
+    inline void append(DeclareLocal* param) {
+        if (param) {
+            mParams.emplace_back(param);
+            param->setParent(this);
+        }
+    }
+private:
+    const std::string mFunctionName;
+    const tokens::CoreType mReturnType;
+    std::vector<DeclareLocal::UniquePtr> mParams;
+    Block::UniquePtr mBody;
+};
 
 /// @brief  A Value (literal) AST node holds either literal text or absolute
 ///         value information on all numerical, string and boolean constants.
@@ -2264,7 +2400,6 @@ struct Value : public ValueBase
     /// @note   Strings are specialized and handled separately
     static constexpr bool IsSupported =
         std::is_same<T, bool>::value ||
-        std::is_same<T, int16_t>::value ||
         std::is_same<T, int32_t>::value ||
         std::is_same<T, int64_t>::value ||
         std::is_same<T, float>::value ||
@@ -2289,7 +2424,6 @@ struct Value : public ValueBase
     /// @copybrief Node::nodetype()
     NodeType nodetype() const override {
         if (std::is_same<T, bool>::value)    return Node::ValueBoolNode;
-        if (std::is_same<T, int16_t>::value) return Node::ValueInt16Node;
         if (std::is_same<T, int32_t>::value) return Node::ValueInt32Node;
         if (std::is_same<T, int64_t>::value) return Node::ValueInt64Node;
         if (std::is_same<T, float>::value)   return Node::ValueFloatNode;
@@ -2298,7 +2432,6 @@ struct Value : public ValueBase
     /// @copybrief Node::nodename()
     const char* nodename() const override {
         if (std::is_same<T, bool>::value)    return "boolean literal";
-        if (std::is_same<T, int16_t>::value) return "int16 literal";
         if (std::is_same<T, int32_t>::value) return "int32 literal";
         if (std::is_same<T, int64_t>::value) return "int64 literal";
         if (std::is_same<T, float>::value)   return "float (32bit) literal";
@@ -2307,7 +2440,6 @@ struct Value : public ValueBase
     /// @copybrief Node::subname()
     const char* subname() const override {
         if (std::is_same<T, bool>::value)    return "bool";
-        if (std::is_same<T, int16_t>::value) return "i16";
         if (std::is_same<T, int32_t>::value) return "i32";
         if (std::is_same<T, int64_t>::value) return "i64";
         if (std::is_same<T, float>::value)   return "flt";

@@ -763,6 +763,33 @@ struct IRFunction : public IRFunctionBase
     }
 };
 
+struct AXFunction : public IRFunctionBase
+{
+    using Ptr = std::shared_ptr<AXFunction>;
+
+    AXFunction(const std::string& symbol,
+        const std::vector<ast::tokens::CoreType>& params,
+        const ast::tokens::CoreType& ret,
+        const GeneratorCb& gen)
+        : IRFunctionBase(symbol, gen, params.size())
+        , mParams(params)
+        , mRet(ret) {}
+
+    inline llvm::Type*
+    types(std::vector<llvm::Type*>& types, llvm::LLVMContext& C) const override
+    {
+        types.reserve(mParams.size());
+        for (const auto& token : mParams) {
+            types.emplace_back(llvmTypeFromToken(token, C));
+        }
+        return llvmTypeFromToken(mRet, C);
+    }
+
+private:
+    const std::vector<ast::tokens::CoreType> mParams;
+    const ast::tokens::CoreType mRet;
+};
+
 /// @brief  Represents a concrete C function binding with the first argument as
 ///         its return type.
 template <typename SignatureT>
@@ -924,6 +951,30 @@ struct FunctionBuilder
         else s = this->genSymbol<Signature>();
 
         auto ir = IRPtr(new IRFType(s, cb));
+        mIRFunctions.emplace_back(ir);
+        mSettings[ir.get()] = settings;
+        mCurrentSettings = settings;
+        return *this;
+    }
+
+    inline FunctionBuilder&
+    addSignature(const IRFunctionBase::GeneratorCb& cb,
+            const std::vector<ax::ast::CoreType>& params,
+            const ax::ast::CoreType ret,
+            const char* symbol = nullptr)
+    {
+        using AXPtr = AXFunction::Ptr;
+
+        Settings::Ptr settings = mCurrentSettings;
+        if (!mCurrentSettings->isDefault()) {
+            settings.reset(new Settings());
+        }
+
+        std::string s;
+        if (symbol) s = std::string(symbol);
+        else s = this->genSymbol(params, ret);
+
+        auto ir = AXPtr(new AXFunction(s, params, ret cb));
         mIRFunctions.emplace_back(ir);
         mSettings[ir.get()] = settings;
         mCurrentSettings = settings;
@@ -1129,6 +1180,53 @@ private:
         // assemble the symbol
         return "ax." + std::string(this->mName) + "." +
             TypeToSymbol<typename Traits::ReturnType>::s() + args;
+    }
+
+    std::string
+    genSymbol(const std::vector<ax::ast::CoreToken>& params,
+              const ax::ast::CoreToken ret) const
+    {
+        const auto appendSymbol = [](const  ax::ast::CoreToken& p, std::string& s) {
+            switch (p) {
+                case BOOL    : { s += TypeToSymbol<bool>::s(); return; }
+                case CHAR    : { s += TypeToSymbol<char>::s(); return; }
+                case INT16   : { s += TypeToSymbol<int16_t>::s(); return; }
+                case INT32   : { s += TypeToSymbol<int32_t>::s(); return; }
+                case INT64   : { s += TypeToSymbol<int64_t>::s(); return; }
+                case FLOAT   : { s += TypeToSymbol<float>::s(); return; }
+                case DOUBLE  : { s += TypeToSymbol<double>::s(); return; }
+                case VEC2I   : { s += TypeToSymbol<int32_t[2]>::s(); return; }
+                case VEC2F   : { s += TypeToSymbol<float[2]>::s(); return; }
+                case VEC2D   : { s += TypeToSymbol<double[2]>::s(); return; }
+                case VEC3I   : { s += TypeToSymbol<int32_t[3]>::s(); return; }
+                case VEC3F   : { s += TypeToSymbol<float[3]>::s(); return; }
+                case VEC3D   : { s += TypeToSymbol<double[3]>::s(); return; }
+                case VEC4I   : { s += TypeToSymbol<int32_t[4]>::s(); return; }
+                case VEC4F   : { s += TypeToSymbol<float[4]>::s(); return; }
+                case VEC4D   : { s += TypeToSymbol<double[4]>::s(); return; }
+                case MAT3F   : { s += TypeToSymbol<float[9]>::s(); return; }
+                case MAT3D   : { s += TypeToSymbol<double[9]>::s(); return; }
+                case MAT4F   : { s += TypeToSymbol<float[16]>::s(); return; }
+                case MAT4D   : { s += TypeToSymbol<double[16]>::s(); return; }
+                case STRING  : { s += TypeToSymbol<codegen::String>::s(); return; }
+                case VOID    : { s += TypeToSymbol<void>::s(); return; }
+                case UNKNOWN :
+                default      : { assert(false && "invalid type passed to genSymbol"); return; }
+            }
+        }
+
+        std::string s
+
+        // assemble the symbol
+        appendSymbol(ret, s);
+        for (const auto& p : params) {
+            appendSymbol(p, s);
+        }
+
+        /// @note  important to prefix all symbols with "ax." so that
+        ///        they will never conflict with internal llvm symbol
+        ///        names (such as standard library methods e.g, cos, cosh
+        return "ax." + std::string(this->mName) + "." + s;
     }
 
     const char* mName = "";

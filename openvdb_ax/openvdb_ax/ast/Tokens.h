@@ -60,6 +60,7 @@ enum CoreType
     QUATD,
     //
     STRING,
+    VOID,
     UNKNOWN
 };
 
@@ -75,6 +76,7 @@ inline CoreType tokenFromTypeString(const std::string& type)
         if (type == "vec4i") return VEC4I;
         if (type == "vec4f") return VEC4F;
         if (type == "vec4d") return VEC4D;
+        if (type == "void")  return VOID;
     }
     else if (type[0] == 'm') {
         if (type == "mat3f") return MAT3F;
@@ -141,6 +143,7 @@ inline std::string typeStringFromToken(const CoreType type)
         case QUATF   : return "quatf";
         case QUATD   : return "quatd";
         case STRING  : return "string";
+        case VOID    : return "void";
         case UNKNOWN :
         default      :
             return "unknown";

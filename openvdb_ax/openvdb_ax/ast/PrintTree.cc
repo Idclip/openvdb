@@ -329,6 +329,7 @@ struct PrintVisitor : public ast::Visitor<PrintVisitor>
     bool visit(const ast::BinaryOperator* node);
     bool visit(const ast::TernaryOperator* node);
     bool visit(const ast::Cast* node);
+    bool visit(const ast::Function* node);
     bool visit(const ast::FunctionCall* node);
     bool visit(const ast::Attribute* node);
     bool visit(const ast::ExternalVariable* node);
@@ -338,9 +339,6 @@ struct PrintVisitor : public ast::Visitor<PrintVisitor>
     bool visit(const ast::ArrayPack* node);
 
     bool visit(const ast::Value<bool>* node) {
-        return this->visitValue(node);
-    }
-    bool visit(const ast::Value<int16_t>* node) {
         return this->visitValue(node);
     }
     bool visit(const ast::Value<int32_t>* node) {
@@ -450,6 +448,12 @@ bool PrintVisitor::visit(const ast::Cast* node)
     return true;
 }
 
+bool PrintVisitor::visit(const ast::Function* node)
+{
+    mOs << node->nodename() << ": " << node->retTypeStr() << ' ' << node->name() << "()\n";
+    return true;
+}
+
 bool PrintVisitor::visit(const ast::FunctionCall* node)
 {
     mOs << node->nodename() << ": " << node->name() << '\n';
@@ -542,11 +546,13 @@ struct ReprintVisitor : public ast::Visitor<ReprintVisitor>
         mOs << '{' << '\n';
         ++mLevel;
         for (size_t i = 0; i < children; ++i) {
-            indent();
-            this->derived().traverse(block->child(i));
             const auto type = block->child(i)->nodetype();
+            if (type != ast::Node::BlockNode) indent();
+            this->derived().traverse(block->child(i));
             if (type != ast::Node::ConditionalStatementNode &&
-                type != ast::Node::LoopNode) {
+                type != ast::Node::LoopNode &&
+                type != ast::Node::BlockNode &&
+                type != ast::Node::FunctionNode) {
                 mOs << ';' << '\n';
             }
         }
@@ -561,7 +567,6 @@ struct ReprintVisitor : public ast::Visitor<ReprintVisitor>
         if (children == 0) return true;
         if (children == 1) {
             this->derived().traverse(stmtl->child(0));
-            mOs << ';';
             return true;
         }
 
@@ -722,6 +727,22 @@ struct ReprintVisitor : public ast::Visitor<ReprintVisitor>
         return true;
     }
 
+    bool traverse(NodeType<ast::Function>* func) {
+        this->visit(func);
+        mOs << '(';
+        if (func->numParams() > 0) {
+            const size_t children = func->children() - 1;
+            for (size_t i = 0; i < children; ++i) {
+                this->derived().traverse(func->child(i));
+                if (i != children-1) mOs << ',' << ' ';
+            }
+        }
+        mOs << ")\n";
+        assert(func->children() >= 1);
+        this->derived().traverse(func->child(func->children()-1));
+        return true;
+    }
+
     bool traverse(NodeType<ast::FunctionCall>* call) {
         this->visit(call);
         mOs << '(';
@@ -762,6 +783,7 @@ struct ReprintVisitor : public ast::Visitor<ReprintVisitor>
     bool visit(const ast::UnaryOperator* node);
     bool visit(const ast::BinaryOperator* node);
     bool visit(const ast::Cast* node);
+    bool visit(const ast::Function* node);
     bool visit(const ast::FunctionCall* node);
     bool visit(const ast::Attribute* node);
     bool visit(const ast::ExternalVariable* node);
@@ -770,9 +792,6 @@ struct ReprintVisitor : public ast::Visitor<ReprintVisitor>
     bool visit(const ast::Keyword* node);
 
     bool visit(const ast::Value<bool>* node) {
-        return this->visitValue(node);
-    }
-    bool visit(const ast::Value<int16_t>* node) {
         return this->visitValue(node);
     }
     bool visit(const ast::Value<int32_t>* node) {
@@ -834,6 +853,12 @@ bool ReprintVisitor::visit(const ast::Cast* node)
     return true;
 }
 
+bool ReprintVisitor::visit(const ast::Function* node)
+{
+    mOs << node->retTypeStr() << ' ' << node->name();
+    return true;
+}
+
 bool ReprintVisitor::visit(const ast::FunctionCall* node)
 {
     mOs << node->name();
@@ -848,7 +873,7 @@ bool ReprintVisitor::visit(const ast::Attribute* node)
 
 bool ReprintVisitor::visit(const ast::DeclareLocal* node)
 {
-    mOs << node->typestr() << " ";
+    mOs << node->typestr() << ' ';
     return true;
 }
 
@@ -861,6 +886,7 @@ bool ReprintVisitor::visit(const ast::Local* node)
 bool ReprintVisitor::visit(const ast::Keyword* node)
 {
     mOs << tokens::keywordNameFromToken(node->keyword());
+    if (node->child(0)) mOs << ' ';
     return true;
 }
 
@@ -878,7 +904,6 @@ bool ReprintVisitor::visitValue(const ast::Value<T>* node)
     mOs << node->value();
     if (std::is_same<T, bool>::value) mOs << std::noboolalpha;
     if (std::is_same<T, std::string>::value) mOs << '"';
-    if (std::is_same<T, int16_t>::value) mOs << 's';
     if (std::is_same<T, int64_t>::value) mOs << 'l';
     if (std::is_same<T, float>::value)   mOs << 'f';
     return true;

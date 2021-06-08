@@ -814,6 +814,67 @@ bool ComputeGenerator::visit(const ast::Crement* node)
     return true;
 }
 
+bool ComputeGenerator::visit(const ast::Function* node)
+{
+    const std::string& name = node->name();
+    const FunctionGroup* const function =
+        mFunctionRegistry.getOrInsert(name, mOptions, false);
+    if (function) {
+        mLog.error("user function \"" + node->name() + "\" shadows a native AX"
+            "function of the same name.", node);
+        return false;
+    }
+
+    auto generate =
+        [&](const std::vector<llvm::Value*>& args,
+           llvm::IRBuilder<>& B) -> llvm::Value*
+    {
+        assert(args.size() == node->numParams());
+
+        ComputeGenerator gen(mModule, mOptions, mFunctionRegistry, mLog);
+        gen.mBuilder = B;
+        SymbolTable* current = gen.mSymbolTables.getOrInsert(1);
+
+        for (size_t i = 0; i < node->numParams(); ++i) {
+            const ast::DeclareLocal* dcl = node->child(i);
+            const std::string& name = dcl->local()->name();
+            if (!current->insert(name, args[i])) {
+                mLog.error("local variable \"" + name +
+                        "\" has already been declared", dcl);
+                return false;
+            }
+        }
+
+        // gen the function body
+        const ast::Block* block = node->body();
+        assert(block);
+        gen.visit(block);
+    }
+
+    std::vector<ax::ast::CoreType> params;
+    params.reserve(node->numParams());
+    for (size_t i = 0; i < node->numParams(); ++i) {
+        params.emplace_back(node->child(i)->type());
+    }
+
+    auto group = FunctionBuilder(name)
+        .addSignature(generate, params, node->retType())
+        .get();
+
+    auto F = group->list().front();
+    if (llvm::Function* function = mModule.getFunction(F->symbol())) {
+        // llvm::raw_os_ostream stream(os);
+        // printTypes(stream, inputTypes);
+        // stream << ")";
+        mLog.error("user function \"" + node->name() + "\" has already been created "
+            "in this AX program.", node);
+        return false;
+    }
+
+    // gen the function
+    F->create();
+}
+
 bool ComputeGenerator::visit(const ast::FunctionCall* node)
 {
     const FunctionGroup* const function =
@@ -1162,11 +1223,6 @@ bool ComputeGenerator::visit(const ast::Value<bool>* node)
     llvm::Constant* value = LLVMType<bool>::get(mContext, node->value());
     mValues.push(value);
     return true;
-}
-
-bool ComputeGenerator::visit(const ast::Value<int16_t>* node)
-{
-    return visit<int16_t>(node);
 }
 
 bool ComputeGenerator::visit(const ast::Value<int32_t>* node)

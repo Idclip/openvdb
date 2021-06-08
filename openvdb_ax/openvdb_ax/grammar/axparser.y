@@ -52,6 +52,7 @@
 {
     /// @brief Temporary storage for comma separated expressions
     using ExpList = std::vector<openvdb::ax::ast::Expression*>;
+    using PrmList = std::vector<openvdb::ax::ast::DeclareLocal*>;
 
     const char* string;
     uint64_t index;
@@ -63,7 +64,8 @@
     openvdb::ax::ast::StatementList* statementlist;
     openvdb::ax::ast::Block* block;
     openvdb::ax::ast::Expression* expression;
-    openvdb::ax::ast::FunctionCall* function;
+    openvdb::ax::ast::FunctionCall* call;
+    openvdb::ax::ast::Function* function;
     openvdb::ax::ast::ArrayPack* arraypack;
     openvdb::ax::ast::CommaOperator* comma;
     openvdb::ax::ast::Variable* variable;
@@ -72,11 +74,15 @@
     openvdb::ax::ast::DeclareLocal* declare_local;
     openvdb::ax::ast::Local* local;
     ExpList* explist;
+    PrmList* prmlist;
 }
 
 
 %code
 {
+    using ExpList = std::vector<openvdb::ax::ast::Expression*>;
+    using PrmList = std::vector<openvdb::ax::ast::DeclareLocal*>;
+
     template<typename T, typename... Args>
     T* newNode(AXLTYPE* loc, const Args&... args) {
         T* ptr = new T(args...);
@@ -96,7 +102,7 @@
 %token RETURN BREAK CONTINUE
 %token LCURLY RCURLY
 %token LSQUARE RSQUARE
-%token STRING DOUBLE FLOAT INT32 INT64 BOOL
+%token STRING DOUBLE FLOAT INT32 INT64 BOOL VOID
 %token VEC2I VEC2F VEC2D VEC3I VEC3F VEC3D VEC4I VEC4F VEC4D
 %token F_AT I_AT V_AT S_AT I16_AT
 %token MAT3F MAT3D MAT4F MAT4D M3F_AT M4F_AT
@@ -116,12 +122,14 @@
 %type <statement> statement
 %type <statement> conditional_statement
 %type <statement> loop loop_init loop_condition loop_condition_optional
+%type <statement> return_statement
 %type <expression> loop_iter
 
 %type <statement> declarations
 %type <statementlist> declaration_list
 
-%type <function> function_start_expression
+%type <call> function_start_expression
+%type <function> function
 
 %type <expression> assign_expression
 %type <expression> function_call_expression
@@ -135,6 +143,7 @@
 %type <expression> expression
 %type <expression> expressions
 %type <explist> comma_operator
+%type <prmlist> parameter_list
 %type <variable> variable
 %type <attribute> attribute
 %type <external> external
@@ -159,6 +168,7 @@
 %destructor { } <tree>
 %destructor { free(const_cast<char*>($$)); } <string>
 %destructor { for (auto& ptr : *$$) delete ptr; delete $$; } <explist>
+%destructor { for (auto& ptr : *$$) delete ptr; delete $$; } <prmlist>
 %destructor { delete $$; } <*> // all other AST nodes
 
 /*  Operator Precedence Definitions. Precendence goes from lowest to
@@ -234,11 +244,17 @@ statement:
       expressions SEMICOLON   { $$ = $1; }
     | declarations SEMICOLON  { $$ = $1; }
     | conditional_statement   { $$ = $1; }
+    | return_statement        { $$ = $1; }
     | loop                    { $$ = $1; }
-    | RETURN SEMICOLON        { $$ = newNode<Keyword>(&@$, tokens::RETURN); }
+    | function                { $$ = $1; }
     | BREAK SEMICOLON         { $$ = newNode<Keyword>(&@$, tokens::BREAK); }
     | CONTINUE SEMICOLON      { $$ = newNode<Keyword>(&@$, tokens::CONTINUE); }
     | SEMICOLON               { $$ = nullptr; }
+
+return_statement:
+      RETURN expression SEMICOLON   { $$ = newNode<Keyword>(&@$, tokens::RETURN, $2); }
+    | RETURN SEMICOLON              { $$ = newNode<Keyword>(&@$, tokens::RETURN); }
+;
 
 expressions:
       expression      { $$ = $1; }
@@ -366,6 +382,18 @@ function_call_expression:
       IDENTIFIER LPARENS RPARENS              { $$ = newNode<FunctionCall>(&@1, $1); free(const_cast<char*>($1)); }
     | function_start_expression RPARENS       { $$ = $1; }
     | scalar_type LPARENS expression RPARENS  { $$ = newNode<Cast>(&@1, $3, static_cast<tokens::CoreType>($1)); }
+;
+
+parameter_list:
+      type IDENTIFIER                       { $$ = new PrmList(); $$->emplace_back(newNode<DeclareLocal>(&@1, static_cast<tokens::CoreType>($1), newNode<Local>(&@2, $2))); free(const_cast<char*>($2)); }
+    | parameter_list COMMA type IDENTIFIER  { $1->emplace_back(newNode<DeclareLocal>(&@3, static_cast<tokens::CoreType>($3), newNode<Local>(&@4, $4))); free(const_cast<char*>($4)); $$ = $1; }
+;
+
+function:
+      VOID IDENTIFIER LPARENS RPARENS block                { $$ = newNode<Function>(&@1, $2, tokens::CoreType::VOID, $5); free(const_cast<char*>($2)); }
+    | type IDENTIFIER LPARENS RPARENS block                { $$ = newNode<Function>(&@1, $2, static_cast<tokens::CoreType>($1), $5); free(const_cast<char*>($2)); }
+    | type IDENTIFIER LPARENS parameter_list RPARENS block { $$ = newNode<Function>(&@1, $2, static_cast<tokens::CoreType>($1), *$4, $6); free(const_cast<char*>($2)); delete $4; }
+    | VOID IDENTIFIER LPARENS parameter_list RPARENS block { $$ = newNode<Function>(&@1, $2, tokens::CoreType::VOID, *$4, $6); free(const_cast<char*>($2)); delete $4; }
 ;
 
 /// @brief  Assign expressions for attributes and local variables

@@ -28,13 +28,15 @@
 
 #define TEST_SYNTAX_PASSES(Tests) \
 { \
-    openvdb::ax::Logger logger;\
+    std::stringstream ss; \
+    openvdb::ax::Logger logger([&](const std::string& s) { ss << s; }); \
     for (const auto& test : Tests) { \
         logger.clear();\
+        ss.str(""); ss.clear(); \
         const std::string& code = test.first; \
         openvdb::ax::ast::Tree::ConstPtr tree = openvdb::ax::ast::parse(code.c_str(), logger);\
-        std::stringstream str; \
-        CPPUNIT_ASSERT_MESSAGE(ERROR_MSG("Unexpected parsing error(s)\n", str.str()), tree); \
+        CPPUNIT_ASSERT_MESSAGE(ERROR_MSG("Unexpected parsing error(s)\n", \
+            code.c_str() + std::string("\n") + ss.str()), tree); \
     } \
 } \
 
@@ -121,6 +123,16 @@ inline bool compareLinearTrees(const std::vector<const openvdb::ax::ast::Node*>&
                 return false;
             }
         }
+        else if (a[i]->nodetype() == openvdb::ax::ast::Node::FunctionNode) {
+            if (static_cast<const openvdb::ax::ast::Function*>(a[i])->name() !=
+                static_cast<const openvdb::ax::ast::Function*>(b[i])->name()) {
+                return false;
+            }
+            if (static_cast<const openvdb::ax::ast::Function*>(a[i])->retType() !=
+                static_cast<const openvdb::ax::ast::Function*>(b[i])->retType()) {
+                return false;
+            }
+        }
         else if (a[i]->nodetype() == openvdb::ax::ast::Node::LoopNode) {
             if (static_cast<const openvdb::ax::ast::Loop*>(a[i])->loopType() !=
                 static_cast<const openvdb::ax::ast::Loop*>(b[i])->loopType()) {
@@ -173,12 +185,6 @@ inline bool compareLinearTrees(const std::vector<const openvdb::ax::ast::Node*>&
         else if (a[i]->nodetype() == openvdb::ax::ast::Node::ValueBoolNode) {
             if (static_cast<const openvdb::ax::ast::Value<bool>*>(a[i])->value() !=
                 static_cast<const openvdb::ax::ast::Value<bool>*>(b[i])->value()) {
-                return false;
-            }
-        }
-        else if (a[i]->nodetype() == openvdb::ax::ast::Node::ValueInt16Node) {
-            if (static_cast<const openvdb::ax::ast::Value<int16_t>*>(a[i])->value() !=
-                static_cast<const openvdb::ax::ast::Value<int16_t>*>(b[i])->value()) {
                 return false;
             }
         }

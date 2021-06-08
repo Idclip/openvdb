@@ -126,7 +126,6 @@ struct OPENVDB_AX_API ComputeGenerator : public ast::Visitor<ComputeGenerator>
         return true;
     }
 
-
     /// @brief  Custom traversal of conditional statements
     /// @note   This overrides the default traversal to handle
     ///         branching between different code paths
@@ -168,6 +167,18 @@ struct OPENVDB_AX_API ComputeGenerator : public ast::Visitor<ComputeGenerator>
         return true;
     }
 
+    /// @brief  Custom traversal of Functions
+    /// @note   This overrides the default traversal to avoid
+    ///         creating the function params from DeclareLocals
+    ///         and delegating the function body creation to the
+    ///         function visit.
+    bool traverse(const ast::Function* func)
+    {
+        if (!func) return true;
+        if (!this->visit(func)) return false;
+        return true;
+    }
+
     /// @brief  Custom traversal of declarations
     /// @note   This overrides the default traversal to
     ///         handle traversal of the local and
@@ -184,6 +195,7 @@ struct OPENVDB_AX_API ComputeGenerator : public ast::Visitor<ComputeGenerator>
     virtual bool visit(const ast::CommaOperator*);
     virtual bool visit(const ast::AssignExpression*);
     virtual bool visit(const ast::Crement*);
+    virtual bool visit(const ast::Function*);
     virtual bool visit(const ast::FunctionCall*);
     virtual bool visit(const ast::Attribute*);
     virtual bool visit(const ast::Tree*);
@@ -201,7 +213,6 @@ struct OPENVDB_AX_API ComputeGenerator : public ast::Visitor<ComputeGenerator>
     virtual bool visit(const ast::ArrayUnpack*);
     virtual bool visit(const ast::ArrayPack*);
     virtual bool visit(const ast::Value<bool>*);
-    virtual bool visit(const ast::Value<int16_t>*);
     virtual bool visit(const ast::Value<int32_t>*);
     virtual bool visit(const ast::Value<int64_t>*);
     virtual bool visit(const ast::Value<float>*);

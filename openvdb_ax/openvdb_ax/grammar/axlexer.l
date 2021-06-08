@@ -179,6 +179,7 @@ COMMENT     "//".*
 "break"                     { return BREAK;}
 "continue"                  { return CONTINUE;}
 
+"void"                      { return VOID; }
 "bool"                      { return BOOL; }
 "int"                       { return INT32; }
 "int32"                     { return INT32; }
@@ -237,7 +238,7 @@ COMMENT     "//".*
 "private"|"protected"|"signed"|"sizeof"|"static" | \
 "struct"|"switch"|"template"|"this"|"typedef" | \
 "uniform"|"union"|"unsigned"|"until"|"virtual" | \
-"void"|"byte"|"flt"|"flt16"|"flt32"|"flt64"|"int8" | \
+"byte"|"flt"|"flt16"|"flt32"|"flt64"|"int8" | \
 "half" {
     /* @todo: move this into parser */
     std::ostringstream os;
