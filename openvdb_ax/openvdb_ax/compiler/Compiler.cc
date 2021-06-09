@@ -701,13 +701,14 @@ Compiler::compile(const ast::Tree& tree,
     }
 
     // optimise and verify
-    //module->print(llvm::errs(), nullptr);
 
     if (mCompilerOptions.mVerify && !verify(*module, logger)) return nullptr;
     optimise(*module, mCompilerOptions.mOptLevel, EE->getTargetMachine());
     if (mCompilerOptions.mOptLevel != CompilerOptions::OptLevel::NONE) {
         if (mCompilerOptions.mVerify && !verify(*module, logger)) return nullptr;
     }
+
+    module->print(llvm::errs(), nullptr);
 
     // @todo re-constant fold!! although constant folding will work with constant
     //       expressions prior to optimisation, expressions like "int a = 1; cosh(a);"

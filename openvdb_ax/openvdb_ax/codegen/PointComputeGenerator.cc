@@ -385,31 +385,31 @@ AttributeRegistry::Ptr PointComputeGenerator::generate(const ast::Tree& tree)
 
             mBuilder.SetInsertPoint(then);
             {
-                llvm::Type* type = value->getType()->getPointerElementType();
-                llvm::Type* strType = LLVMType<codegen::String>::get(mContext);
-                const bool usingString = type == strType;
+                // llvm::Type* type = value->getType()->getPointerElementType();
+                // llvm::Type* strType = LLVMType<codegen::String>::get(mContext);
+                // const bool usingString = type == strType;
 
-                llvm::Value* array = mBuilder.CreateGEP(arrays, index);
-                array = mBuilder.CreateLoad(array); // void** = void*
+                // llvm::Value* array = mBuilder.CreateGEP(arrays, index);
+                // array = mBuilder.CreateLoad(array); // void** = void*
 
-                // load the result (if its a scalar)
-                if (type->isIntegerTy() || type->isFloatingPointTy()) {
-                    value = mBuilder.CreateLoad(value);
-                }
+                // // load the result (if its a scalar)
+                // if (type->isIntegerTy() || type->isFloatingPointTy()) {
+                //     value = mBuilder.CreateLoad(value);
+                // }
 
-                // construct function arguments
-                std::vector<llvm::Value*> args {
-                    array, // handle
-                    pindex, // point index
-                    value // set value
-                };
+                // // construct function arguments
+                // std::vector<llvm::Value*> args {
+                //     array, // handle
+                //     pindex, // point index
+                //     value // set value
+                // };
 
-                if (usingString) {
-                    args.emplace_back(extractArgument(mFunction, "leaf_data"));
-                }
+                // if (usingString) {
+                //     args.emplace_back(extractArgument(mFunction, "leaf_data"));
+                // }
 
-                const FunctionGroup* const F = this->getFunction("setattribute", true);
-                F->execute(args, mBuilder);
+                // const FunctionGroup* const F = this->getFunction("setattribute", true);
+                // F->execute(args, mBuilder);
                 mBuilder.CreateBr(post);
             }
 
@@ -491,8 +491,8 @@ void PointComputeGenerator::getAttributeValue(const std::string& token, llvm::Va
 
         mBuilder.SetInsertPoint(then2);
         {
-            llvm::Value* value = mBuilder.CreateGEP(buffer, mBuilder.getInt64(0));
-            mBuilder.CreateStore(value, locationptr);
+            // llvm::Value* value = mBuilder.CreateGEP(buffer, mBuilder.getInt64(0));
+            // mBuilder.CreateStore(value, locationptr);
             mBuilder.CreateBr(post);
         }
 
