@@ -8,6 +8,7 @@
 #include <openvdb/points/PointScatter.h>
 #include <openvdb/openvdb.h>
 #include <openvdb/Types.h>
+#include <openvdb/util/CpuTimer.h>
 #include "util.h"
 
 #include <gtest/gtest.h>
@@ -1166,3 +1167,199 @@ TEST_F(TestPointMove, testPointOrder)
     ASSERT_APPROX_EQUAL(positions1, positions2, __LINE__);
     ASSERT_APPROX_EQUAL(positions1, positions3, __LINE__);
 }
+
+//#ifdef PROFILE
+struct IndexOffsetDeformer : public OffsetDeformer {
+    IndexOffsetDeformer(const Vec3d& o) : OffsetDeformer(o) {}
+};
+
+namespace openvdb {
+OPENVDB_USE_VERSION_NAMESPACE
+namespace OPENVDB_VERSION_NAME {
+namespace points {
+
+template<>
+struct DeformerTraits<IndexOffsetDeformer> {
+    static const bool IndexSpace = true;
+};
+
+} // namespace points
+} // namespace OPENVDB_VERSION_NAME
+} // namespace openvdb
+
+template <typename ValueType>
+inline void randomizeFloatAttribute(PointDataTree& tree, const std::string& attr)
+{
+    using ElementT = typename ValueTraits<ValueType>::ElementType;
+    tree::LeafManager<PointDataTree> manager(tree);
+    manager.foreach([&](auto& leaf, size_t idx) {
+        math::Rand01<ElementT, std::mt19937> gen(static_cast<unsigned int>(idx));
+        AttributeWriteHandle<ValueType> handle(leaf.attributeArray(attr));
+        for (Index i = 0; i < handle.size(); ++i) handle.set(i, ValueType(gen()));
+    });
+}
+
+template <typename ValueType>
+inline void randomizeIntAttribute(PointDataTree& tree, const std::string& attr)
+{
+    using ElementT = typename ValueTraits<ValueType>::ElementType;
+    tree::LeafManager<PointDataTree> manager(tree);
+    manager.foreach([&](auto& leaf, size_t idx) {
+        math::RandInt<ElementT, std::mt19937> gen(/*seed=*/static_cast<unsigned int>(idx), /*min*/0, /*max*/100);
+        AttributeWriteHandle<ValueType> handle(leaf.attributeArray(attr));
+        for (Index i = 0; i < handle.size(); ++i) handle.set(i, ValueType(gen()));
+    });
+}
+
+TEST_F(TestPointMove, testProfile)
+{
+    auto mask = MaskGrid::create();
+    auto transform = math::Transform::createLinearTransform(/*voxelSize=*/1.0);
+    mask->setTransform(transform);
+
+    // -60 -> 60 world space units (+/-0.5 of a voxel)
+    mask->denseFill(CoordBBox(Coord(-60,-60,-60), Coord(60,60,60)), true);
+
+    // World space
+    {
+        // spread @ 0.9 to allow for a test which moves points inside of voxels only
+        // ~28m points
+        auto points = points::denseUniformPointScatter(*mask,
+            /*pointsPerVoxel=*/16.0f, /*seed=*/0, /*spread=*/0.9f);
+
+        // test no movement
+        {
+            OffsetDeformer offset(Vec3d(0.0));
+            util::CpuTimer timer("WS: No movement");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test only voxel movement
+        {
+            OffsetDeformer offset(Vec3d(0.01)); // 1/100th of a voxel
+            util::CpuTimer timer("WS: Moving all data inside voxels");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test half moves into existing, half out
+        {
+            OffsetDeformer offset(Vec3d(0,0,60));
+            util::CpuTimer timer("WS: Moving all data to half new/half existing");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test everything moving into brand new nodes
+        {
+            OffsetDeformer offset(Vec3d(0,0,200));
+            util::CpuTimer timer("WS: Moving all data to new space");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+    }
+
+    // Index space
+    {
+        // spread @ 0.9 to allow for a test which moves points inside of voxels only
+        // ~28m points
+        auto points = points::denseUniformPointScatter(*mask,
+            /*pointsPerVoxel=*/16.0f, /*seed=*/0, /*spread=*/0.9f);
+
+        // test no movement
+        {
+            IndexOffsetDeformer offset(Vec3d(0.0));
+            util::CpuTimer timer("IS: No movement");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test only voxel movement
+        {
+            IndexOffsetDeformer offset(Vec3d(0.01)); // 1/100th of a voxel
+            util::CpuTimer timer("IS: Moving all data inside voxels");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test half moves into existing, half out
+        {
+            IndexOffsetDeformer offset(Vec3d(0,0,60));
+            util::CpuTimer timer("IS: Moving all data to half new/half existing");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test everything moving into brand new nodes
+        {
+            IndexOffsetDeformer offset(Vec3d(0,0,200));
+            util::CpuTimer timer("IS: Moving all data to new space");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+    }
+
+    // Add attributes and test in Index space
+    {
+        // spread @ 0.9 to allow for a test which moves points inside of voxels only
+        // ~28m points
+        auto points = points::denseUniformPointScatter(*mask,
+            /*pointsPerVoxel=*/16.0f, /*seed=*/0, /*spread=*/0.9f);
+
+        points::appendAttribute<float>(points->tree(), "rand_float");
+        points::appendAttribute<double>(points->tree(), "rand_double");
+        points::appendAttribute<int32_t>(points->tree(), "rand_i32");
+        points::appendAttribute<int64_t>(points->tree(), "rand_i64");
+        points::appendAttribute<Vec3d>(points->tree(), "rand_vec3d");
+        points::appendAttribute<Vec3f>(points->tree(), "rand_vec3f");
+        points::appendAttribute<Vec3i>(points->tree(), "rand_vec3i");
+
+        randomizeFloatAttribute<float>(points->tree(),"rand_float");
+        randomizeFloatAttribute<double>(points->tree(), "rand_double");
+        randomizeIntAttribute<int32_t>(points->tree(),"rand_i32");
+        randomizeIntAttribute<int64_t>(points->tree(), "rand_i64");
+        randomizeFloatAttribute<Vec3d>(points->tree(), "rand_vec3d");
+        randomizeFloatAttribute<Vec3f>(points->tree(), "rand_vec3f");
+        randomizeIntAttribute<Vec3i>(points->tree(), "rand_vec3i");
+
+        // add some collapsed uniform attributes too
+        points::appendAttribute<bool>(points->tree(), "const_bool");
+        points::appendAttribute<int64_t>(points->tree(), "const_i64");
+        points::appendAttribute<Vec3d>(points->tree(), "const_ve3d");
+
+        // test no movement
+        {
+            IndexOffsetDeformer offset(Vec3d(0.0));
+            util::CpuTimer timer("IS (Attributes): No movement");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test only voxel movement
+        {
+            IndexOffsetDeformer offset(Vec3d(0.01)); // 1/100th of a voxel
+            util::CpuTimer timer("IS (Attributes): Moving all data inside voxels");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test half moves into existing, half out
+        {
+            IndexOffsetDeformer offset(Vec3d(0,0,60));
+            util::CpuTimer timer("IS (Attributes): Moving all data to half new/half existing");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+
+        // test everything moving into brand new nodes
+        {
+            IndexOffsetDeformer offset(Vec3d(0,0,200));
+            util::CpuTimer timer("IS (Attributes): Moving all data to new space");
+            points::movePoints(*points, offset);
+            timer.stop();
+        }
+    }
+}
+
+//#endif
