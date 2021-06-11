@@ -38,6 +38,7 @@
 #include "PointMask.h"
 
 #include <tbb/concurrent_vector.h>
+#include <tbb/task_group.h>
 
 #include <algorithm>
 #include <iterator> // for std::begin(), std::end()
@@ -184,6 +185,7 @@ struct BuildMoveMapsOp
     BuildMoveMapsOp(const DeformerT& deformer,
                     GlobalPointIndexMap& globalMoveLeafMap,
                     LocalPointIndexMap& localMoveLeafMap,
+                    IndexArray& staticLeafs,
                     const LeafMap& targetLeafMap,
                     const math::Transform& targetTransform,
                     const math::Transform& sourceTransform,
@@ -191,6 +193,7 @@ struct BuildMoveMapsOp
         : mDeformer(deformer)
         , mGlobalMoveLeafMap(globalMoveLeafMap)
         , mLocalMoveLeafMap(localMoveLeafMap)
+        , mStaticLeafs(staticLeafs)
         , mTargetLeafMap(targetLeafMap)
         , mTargetTransform(targetTransform)
         , mSourceTransform(sourceTransform)
@@ -198,36 +201,73 @@ struct BuildMoveMapsOp
 
     void operator()(LeafT& leaf, size_t idx) const
     {
+        constexpr bool useIndexSpace = DeformerTraits<DeformerT>::IndexSpace;
+
+        // Don't bother applying any transformations if the transforms match and
+        // we're operating purely in index space
+
+        const bool applyTransform = useIndexSpace && mSourceTransform != mTargetTransform;
+
         DeformerT deformer(mDeformer);
         deformer.reset(leaf, idx);
 
         // determine source leaf node origin and offset in the source leaf vector
 
-        Coord sourceLeafOrigin = leaf.origin();
+        const Coord& sourceLeafOrigin = leaf.origin();
 
-        auto sourceHandle = AttributeWriteHandle<Vec3f>::create(leaf.attributeArray("P"));
+        // Pull out this leaf node's local move map if it has a matching leaf if the
+        // target tree - this is a common case (i.e. points moving between voxels in
+        // the same tree) and avoids having to perform a find for every point that
+        // exhibits this behaviour
 
-        for (auto iter = leaf.beginIndexOn(mFilter); iter; iter++) {
+        IndexPairArray* localArray = nullptr;
+        {
+            const auto iter = mTargetLeafMap.find(sourceLeafOrigin);
+            if (iter != mTargetLeafMap.cend()) {
+                localArray = &(mLocalMoveLeafMap[iter->second]);
+            }
+        }
 
-            const bool useIndexSpace = DeformerTraits<DeformerT>::IndexSpace;
+        AttributeWriteHandle<Vec3f> sourceHandle(leaf.attributeArray("P"));
 
-            // extract index-space position and apply index-space deformation (if applicable)
+        // If the transforms are the same and no points in the leaf change voxel
+        // then we provisionally mark this leaf as "static". Later we must determine
+        // if any points move _into it_ from outside leaves.
 
-            Vec3d positionIS = sourceHandle->get(*iter) + iter.getCoord().asVec3d();
+        bool isStatic = true;
+
+        FilterT local(mFilter);
+        local.reset(leaf);
+
+        for (auto iter = leaf.beginIndexOn(); iter; iter++) {
+
+            if (!local.valid(iter)) {
+                // If this point isn't being moved (delete) we have re-alloc this
+                // leaf and can't steal it
+                isStatic = false;
+                continue;
+            }
+
+            const Coord coord = iter.getCoord();
+
+            // extract index-space position
+            Vec3d positionIS = sourceHandle.get(*iter) + coord.asVec3d();
+
             if (useIndexSpace) {
-               deformer.apply(positionIS, iter);
+                // apply index-space deformation
+                deformer.apply(positionIS, iter);
+                // only apply index/world transforms if necessary
+                if (applyTransform) {
+                    positionIS = mTargetTransform.worldToIndex(mSourceTransform.indexToWorld(positionIS));
+                }
             }
-
-            // transform to world-space position and apply world-space deformation (if applicable)
-
-            Vec3d positionWS = mSourceTransform.indexToWorld(positionIS);
-            if (!useIndexSpace) {
+            else {
+                // transform to world-space position and apply world-space deformation
+                Vec3d positionWS = mSourceTransform.indexToWorld(positionIS);
                 deformer.apply(positionWS, iter);
+                // transform to index-space position of target grid
+                positionIS = mTargetTransform.worldToIndex(positionWS);
             }
-
-            // transform to index-space position of target grid
-
-            positionIS = mTargetTransform.worldToIndex(positionWS);
 
             // determine target voxel and offset
 
@@ -236,31 +276,39 @@ struct BuildMoveMapsOp
 
             // set new local position in source transform space (if point has been deformed)
 
-            Vec3d voxelPosition(positionIS - targetVoxel.asVec3d());
-            sourceHandle->set(*iter, voxelPosition);
+            const Vec3d voxelPosition(positionIS - targetVoxel.asVec3d());
+            sourceHandle.set(*iter, voxelPosition);
 
             // determine target leaf node origin and offset in the target leaf vector
 
             Coord targetLeafOrigin = targetVoxel & ~(LeafT::DIM - 1);
             assert(mTargetLeafMap.find(targetLeafOrigin) != mTargetLeafMap.end());
-            const LeafIndex targetLeafOffset(mTargetLeafMap.at(targetLeafOrigin));
 
             // insert into move map based on whether point ends up in a new leaf node or not
 
             if (targetLeafOrigin == sourceLeafOrigin) {
-                mLocalMoveLeafMap[targetLeafOffset].emplace_back(targetOffset, *iter);
+                // stays in current leaf
+                assert(localArray);
+                localArray->emplace_back(targetOffset, *iter);
+                if (isStatic) isStatic &= (targetVoxel == coord);
             }
             else {
-                mGlobalMoveLeafMap[targetLeafOffset].push_back(IndexTriple(
-                    LeafIndex(static_cast<LeafIndex>(idx)), targetOffset, *iter));
+                // moves to different leaf
+                const LeafIndex targetLeafOffset(mTargetLeafMap.at(targetLeafOrigin));
+                mGlobalMoveLeafMap[targetLeafOffset].emplace_back(
+                    static_cast<LeafIndex>(idx), targetOffset, *iter);
+                isStatic = false;
             }
         }
+
+        mStaticLeafs[idx] = static_cast<Index>(isStatic);
     }
 
 private:
     const DeformerT& mDeformer;
     GlobalPointIndexMap& mGlobalMoveLeafMap;
     LocalPointIndexMap& mLocalMoveLeafMap;
+    IndexArray& mStaticLeafs;
     const LeafMap& mTargetLeafMap;
     const math::Transform& mTargetTransform;
     const math::Transform& mSourceTransform;
@@ -292,13 +340,13 @@ struct GlobalMovePointsOp
     using AttributeArrays = std::vector<AttributeArray*>;
 
     GlobalMovePointsOp(LeafOffsetArray& offsetMap,
-                       LeafManagerT& sourceLeafManager,
-                       const Index attributeIndex,
+                       const LeafManagerT& sourceLeafManager,
+                       const AttributeSet::Descriptor& desc,
                        const GlobalPointIndexMap& moveLeafMap,
                        const GlobalPointIndexIndices& moveLeafIndices)
         : mOffsetMap(offsetMap)
         , mSourceLeafManager(sourceLeafManager)
-        , mAttributeIndex(attributeIndex)
+        , mDescriptor(desc)
         , mMoveLeafMap(moveLeafMap)
         , mMoveLeafIndices(moveLeafIndices) { }
 
@@ -381,52 +429,77 @@ struct GlobalMovePointsOp
         if (moveIndices.empty())  return;
         const IndexArray& sortedIndices = mMoveLeafIndices[idx];
 
-        // extract per-voxel offsets for this leaf
+        // Store offsets per attribute
+        // @todo These will all be computed to be the same - maybe just do
+        //   one attribute first then read those offsets?
 
-        LeafIndexArray& offsets = mOffsetMap[idx];
+        std::vector<LeafIndexArray> offsets;
+        offsets.resize(mDescriptor.map().size());
+        LeafIndexArray* offset = &(offsets.front());
 
-        // extract target array and ensure data is out-of-core and non-uniform
+        tbb::task_group tasks;
 
-        auto& targetArray = leaf.attributeArray(mAttributeIndex);
-        targetArray.loadData();
-        targetArray.expand();
+        for (auto& it : mDescriptor.map()) {
+            const size_t index = it.second;
 
-        // perform the copy
+            tasks.run([&, index, offset]() {
 
-        CopyIterator copyIterator(leaf, sortedIndices, moveIndices, offsets);
+                // extract per-voxel offsets for this leaf and set to 0
+                offset->resize(LeafT::SIZE, 0);
 
-        // use the sorted indices to track the index of the source leaf
+                // extract target array and ensure data is out-of-core and non-uniform
 
-        Index sourceLeafIndex = copyIterator.leafIndex(0);
-        Index startIndex = 0;
+                auto& targetArray = leaf.attributeArray(index);
+                targetArray.loadData();
+                targetArray.expand();
 
-        for (size_t i = 1; i <= sortedIndices.size(); i++) {
-            Index endIndex = static_cast<Index>(i);
-            Index newSourceLeafIndex = copyIterator.leafIndex(endIndex);
+                // perform the copy
 
-            // when it changes, do a batch-copy of all the indices that lie within this range
-            // TODO: this step could use nested parallelization for cases where there are a
-            // large number of points being moved per attribute
+                CopyIterator copyIterator(leaf, sortedIndices, moveIndices, *offset);
 
-            if (newSourceLeafIndex > sourceLeafIndex) {
-                copyIterator.reset(startIndex, endIndex);
+                // use the sorted indices to track the index of the source leaf
 
-                const LeafT& sourceLeaf = mSourceLeafManager.leaf(sourceLeafIndex);
-                const auto& sourceArray = sourceLeaf.constAttributeArray(mAttributeIndex);
-                sourceArray.loadData();
+                Index sourceLeafIndex = copyIterator.leafIndex(0);
+                Index startIndex = 0;
 
-                targetArray.copyValuesUnsafe(sourceArray, copyIterator);
+                for (size_t i = 1; i <= sortedIndices.size(); i++) {
+                    Index endIndex = static_cast<Index>(i);
+                    Index newSourceLeafIndex = copyIterator.leafIndex(endIndex);
 
-                sourceLeafIndex = newSourceLeafIndex;
-                startIndex = endIndex;
-            }
+                    // when it changes, do a batch-copy of all the indices that lie within this range
+                    // TODO: this step could use nested parallelization for cases where there are a
+                    // large number of points being moved per attribute
+
+                    if (newSourceLeafIndex > sourceLeafIndex) {
+                        copyIterator.reset(startIndex, endIndex);
+
+                        const LeafT& sourceLeaf = mSourceLeafManager.leaf(sourceLeafIndex);
+                        const auto& sourceArray = sourceLeaf.constAttributeArray(index);
+                        sourceArray.loadData();
+
+                        targetArray.copyValuesUnsafe(sourceArray, copyIterator);
+
+                        sourceLeafIndex = newSourceLeafIndex;
+                        startIndex = endIndex;
+                    }
+                }
+            });
+
+            ++offset;
         }
+
+        tasks.wait();
+
+        // Set the main offset array to one of the computed offsets (they will all
+        // be the same) for the subsequent local move task
+
+        mOffsetMap[idx] = offsets.front();
     }
 
 private:
     LeafOffsetArray& mOffsetMap;
-    LeafManagerT& mSourceLeafManager;
-    const Index mAttributeIndex;
+    const LeafManagerT& mSourceLeafManager;
+    const AttributeSet::Descriptor& mDescriptor;
     const GlobalPointIndexMap& mMoveLeafMap;
     const GlobalPointIndexIndices& mMoveLeafIndices;
 }; // struct GlobalMovePointsOp
@@ -442,13 +515,13 @@ struct LocalMovePointsOp
 
     LocalMovePointsOp( LeafOffsetArray& offsetMap,
                        const LeafIndexArray& sourceIndices,
-                       LeafManagerT& sourceLeafManager,
-                       const Index attributeIndex,
+                       const LeafManagerT& sourceLeafManager,
+                       const AttributeSet::Descriptor& desc,
                        const LocalPointIndexMap& moveLeafMap)
         : mOffsetMap(offsetMap)
         , mSourceIndices(sourceIndices)
         , mSourceLeafManager(sourceLeafManager)
-        , mAttributeIndex(attributeIndex)
+        , mDescriptor(desc)
         , mMoveLeafMap(moveLeafMap) { }
 
     // A CopyIterator is designed to use the indices in a LocalPointIndexMap for this leaf
@@ -486,38 +559,49 @@ struct LocalMovePointsOp
         const IndexPairArray& moveIndices = mMoveLeafMap[idx];
         if (moveIndices.empty())  return;
 
-        // extract per-voxel offsets for this leaf
-
-        LeafIndexArray& offsets = mOffsetMap[idx];
-
         // extract source array that has the same origin as the target leaf
 
         assert(idx < mSourceIndices.size());
         const Index sourceLeafOffset(mSourceIndices[idx]);
-        LeafT& sourceLeaf = mSourceLeafManager.leaf(sourceLeafOffset);
-        const auto& sourceArray = sourceLeaf.constAttributeArray(mAttributeIndex);
-        sourceArray.loadData();
+        const LeafT& sourceLeaf = mSourceLeafManager.leaf(sourceLeafOffset);
 
-        // extract target array and ensure data is out-of-core and non-uniform
+        tbb::task_group tasks;
 
-        auto& targetArray = leaf.attributeArray(mAttributeIndex);
-        targetArray.loadData();
-        targetArray.expand();
+        for (auto& it : mDescriptor.map()) {
+            const size_t index = it.second;
 
-        // perform the copy
+            tasks.run([&, index]() {
+                // @todo These will all be computed to be the same - maybe just do
+                //   one attribute first then read those offsets?
+                LeafIndexArray offsets = mOffsetMap[idx];
+                if (offsets.empty()) offsets.resize(LeafT::SIZE, 0);
 
-        CopyIterator copyIterator(leaf, moveIndices, offsets);
-        targetArray.copyValuesUnsafe(sourceArray, copyIterator);
+                const auto& sourceArray = sourceLeaf.constAttributeArray(index);
+                sourceArray.loadData();
+
+                // extract target array and ensure data is out-of-core and non-uniform
+
+                auto& targetArray = leaf.attributeArray(index);
+                targetArray.loadData();
+                targetArray.expand();
+
+                // perform the copy
+
+                CopyIterator copyIterator(leaf, moveIndices, offsets);
+                targetArray.copyValuesUnsafe(sourceArray, copyIterator);
+            });
+        }
+
+        tasks.wait();
     }
 
 private:
     LeafOffsetArray& mOffsetMap;
     const LeafIndexArray& mSourceIndices;
-    LeafManagerT& mSourceLeafManager;
-    const Index mAttributeIndex;
+    const LeafManagerT& mSourceLeafManager;
+    const AttributeSet::Descriptor& mDescriptor;
     const LocalPointIndexMap& mMoveLeafMap;
 }; // struct LocalMovePointsOp
-
 
 } // namespace point_move_internal
 
@@ -573,42 +657,51 @@ inline void movePoints( PointDataGridT& points,
     LeafIndexArray sourceIndices(targetLeafManager.leafCount(),
         std::numeric_limits<LeafIndex>::max());
 
-    LeafOffsetArray offsetMap(targetLeafManager.leafCount());
-
     {
         LeafMap sourceLeafMap;
-        auto sourceRange = sourceLeafManager.leafRange();
-        for (auto leaf = sourceRange.begin(); leaf; ++leaf) {
-            sourceLeafMap.insert({leaf->origin(), LeafIndex(static_cast<LeafIndex>(leaf.pos()))});
-        }
-        auto targetRange = targetLeafManager.leafRange();
-        for (auto leaf = targetRange.begin(); leaf; ++leaf) {
-            targetLeafMap.insert({leaf->origin(), LeafIndex(static_cast<LeafIndex>(leaf.pos()))});
-        }
 
-         // acquire registry lock to avoid locking when appending attributes in parallel
+        tbb::task_group tasks;
+        tasks.run([&]() {
+            sourceLeafMap.reserve(sourceLeafManager.leafCount());
+            sourceLeafManager.foreach([&](const auto& leaf, const size_t idx) {
+                sourceLeafMap.emplace(leaf.origin(), LeafIndex(idx));
+            }, /*threaded=*/false);
+        });
 
-        AttributeArray::ScopedRegistryLock lock;
+        if (!threaded) tasks.wait();
+        tasks.run([&]() {
+            targetLeafMap.reserve(targetLeafManager.leafCount());
+            targetLeafManager.foreach([&](const auto& leaf, const size_t idx) {
+                targetLeafMap.emplace(leaf.origin(), LeafIndex(idx));
+            }, /*threaded=*/false);
+        });
 
-        // perform four independent per-leaf operations in parallel
+        if (!threaded) tasks.wait();
+        tasks.run([&]() {
+            AttributeArray::ScopedRegistryLock lock;
+            targetLeafManager.foreach(
+                [&](LeafT& leaf, size_t) {
+                    // map frequency => cumulative histogram
+                    auto* buffer = leaf.buffer().data();
+                    for (Index i = 1; i < leaf.buffer().size(); i++) {
+                        buffer[i] = buffer[i-1] + buffer[i];
+                    }
+                    // replace attribute set with a copy of the existing one
+                    leaf.replaceAttributeSet(
+                        new AttributeSet(existingAttributeSet, leaf.getLastValue(), &lock),
+                        /*allowMismatchingDescriptors=*/true);
+                },
+            threaded);
+        });
+
+        tasks.wait(); // requires sourceLeafMap
         targetLeafManager.foreach(
-            [&](LeafT& leaf, size_t idx) {
-                // map frequency => cumulative histogram
-                auto* buffer = leaf.buffer().data();
-                for (Index i = 1; i < leaf.buffer().size(); i++) {
-                    buffer[i] = buffer[i-1] + buffer[i];
-                }
-                // replace attribute set with a copy of the existing one
-                leaf.replaceAttributeSet(
-                    new AttributeSet(existingAttributeSet, leaf.getLastValue(), &lock),
-                    /*allowMismatchingDescriptors=*/true);
+            [&](const LeafT& leaf, size_t idx) {
                 // store the index of the source leaf in a corresponding target leaf array
                 const auto it = sourceLeafMap.find(leaf.origin());
                 if (it != sourceLeafMap.end()) {
                     sourceIndices[idx] = it->second;
                 }
-                // allocate offset maps
-                offsetMap[idx].resize(LeafT::SIZE);
             },
         threaded);
     }
@@ -618,20 +711,50 @@ inline void movePoints( PointDataGridT& points,
     GlobalPointIndexMap globalMoveLeafMap(targetLeafManager.leafCount());
     LocalPointIndexMap localMoveLeafMap(targetLeafManager.leafCount());
 
+    // This vector will mark the set of leafs in the source tree which are "static".
+    // Static leafs are leafs whose voxel data doesn't change during the move, i.e.
+    // points can move inside their original voxels, but they can't move into new
+    // voxels or have new points move into their voxels from outside the leaf.
+
+    IndexArray staticLeafs(sourceLeafManager.leafCount());
+
     // build global and local move leaf maps and update local positions
 
     if (filter.state() == index::ALL) {
         NullFilter nullFilter;
         BuildMoveMapsOp<DeformerT, PointDataTreeT, NullFilter> op(deformer,
-            globalMoveLeafMap, localMoveLeafMap, targetLeafMap,
+            globalMoveLeafMap, localMoveLeafMap, staticLeafs, targetLeafMap,
             transform, points.transform(), nullFilter);
         sourceLeafManager.foreach(op, threaded);
     } else {
         BuildMoveMapsOp<DeformerT, PointDataTreeT, FilterT> op(deformer,
-            globalMoveLeafMap, localMoveLeafMap, targetLeafMap,
+            globalMoveLeafMap, localMoveLeafMap, staticLeafs, targetLeafMap,
             transform, points.transform(), filter);
         sourceLeafManager.foreach(op, threaded);
     }
+
+    // At this point, staticLeafs only marks leafs which don't have points moving
+    // out of their original voxels. However, it doesn't mark leafs which may also
+    // have points moving into them from other leafs. We now correct this.
+
+    sourceLeafManager.foreach([&](const auto& leaf, const size_t idx) {
+        if (!staticLeafs[idx]) return; // not static
+        const auto iter = targetLeafMap.find(leaf.origin());
+        assert(iter != targetLeafMap.end()); // should exist as it's marked as static
+        const Index targetLeafIndex = iter->second;
+
+        if (!globalMoveLeafMap[targetLeafIndex].empty()) {
+            // this means that points are moving _into_ this leaf, so it should not be
+            // marked as static
+            staticLeafs[idx] = 0;
+        }
+        else {
+            // nothing moves into the leaf - as it's already marked as static,
+            // nothing moves out or out of voxel bounds either. keep as static
+            // and clear the move indices.
+            localMoveLeafMap[targetLeafIndex].clear();
+        }
+    }, threaded);
 
     // build a sorted index vector for each leaf that references the global move map
     // indices in order of their source leafs and voxels to ensure determinism in the
@@ -660,29 +783,36 @@ inline void movePoints( PointDataGridT& points,
         },
     threaded);
 
-    for (const auto& it : existingAttributeSet.descriptor().map()) {
+    const auto& descriptor = existingAttributeSet.descriptor();
 
-        const Index attributeIndex = static_cast<Index>(it.second);
+    {
+        LeafOffsetArray offsetMap(targetLeafManager.leafCount());
 
-        // zero offsets
-        targetLeafManager.foreach(
-            [&offsetMap](const LeafT& /*leaf*/, size_t idx) {
-                std::fill(offsetMap[idx].begin(), offsetMap[idx].end(), 0);
-            },
-        threaded);
-
-        // move points between leaf nodes
+        // move points between leaf nodes and update the offsetMap
 
         GlobalMovePointsOp<PointDataTreeT> globalMoveOp(offsetMap,
-            sourceLeafManager, attributeIndex, globalMoveLeafMap, globalMoveLeafIndices);
+            sourceLeafManager, descriptor, globalMoveLeafMap, globalMoveLeafIndices);
+
         targetLeafManager.foreach(globalMoveOp, threaded);
 
         // move points within leaf nodes
 
         LocalMovePointsOp<PointDataTreeT> localMoveOp(offsetMap,
-            sourceIndices, sourceLeafManager, attributeIndex, localMoveLeafMap);
+            sourceIndices, sourceLeafManager, descriptor, localMoveLeafMap);
+
         targetLeafManager.foreach(localMoveOp, threaded);
     }
+
+    // start stealing static leaf nodes - this can be done while attributes
+    // are being copied as leaf pointers remain consistent, but only for
+    // ABI >= 6 (as the older branch uses the sourceLeafManager). This is minor
+    // so can be part of the task_group when the branching is removed.
+
+    const auto background = tree.background();
+    sourceLeafManager.foreach([&](const auto& leaf, size_t idx) {
+        if (!staticLeafs[idx]) return;
+        newTree.addLeaf(tree.template stealNode<LeafT>(leaf.origin(), background, false));
+    }, /*threaded=*/false);
 
     points.setTree(newPoints->treePtr());
 }
