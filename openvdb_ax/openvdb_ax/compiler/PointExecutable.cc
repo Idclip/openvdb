@@ -43,8 +43,8 @@ namespace {
 
 /// @brief Point Kernel types
 ///
-using KernelValueFunctionPtr = std::add_pointer<codegen::PointKernelValue::Signature>::type;
-using KernelRangeFunctionPtr = std::add_pointer<codegen::PointKernelRange::Signature>::type;
+using KernelValueFunctionPtr = std::add_pointer<codegen::PointKernelAttributeArray::Signature>::type;
+using KernelBufferRangeFunctionPtr = std::add_pointer<codegen::PointKernelBufferRange::Signature>::type;
 using PointLeafLocalData = codegen::codegen_internal::PointLeafLocalData;
 
 #ifndef NDEBUG
@@ -81,8 +81,8 @@ inline bool supported(const ast::tokens::CoreType type)
 /// @brief  Shared data for the parallel operator
 struct OpData
 {
-    KernelValueFunctionPtr mKernelValue;
-    KernelRangeFunctionPtr mKernelRange;
+    KernelValueFunctionPtr mKernelAttributeArray;
+    KernelBufferRangeFunctionPtr mKernelBufferRange;
     const CustomData* mCustomData;
     const AttributeRegistry* mAttributeRegistry;
     size_t mIterMode; // 0 = OFF, 1 = ON, 2 = ALL
@@ -135,8 +135,13 @@ struct PointFunctionArguments
 
     enum Flags {
         NONE = 0x0,
-        ARRAY_AS_BUFFER = 0x1,
-        ARRAY_IS_UNIFORM = 0x2,
+        UNIFORM = 0x1,
+        TRUNCATE = 0x2,
+        POSITION = 0x4,
+        FXPT_8 = 0x8,
+        FXPT_16 = 0x16,
+        UNIT_VEC = 0x32,
+        UNKNOWN = 0x64
     };
 
     ///////////////////////////////////////////////////////////////////////
@@ -144,28 +149,30 @@ struct PointFunctionArguments
 
     PointFunctionArguments(const OpData& data,
                            const points::AttributeSet& attributeSet,
-                           PointLeafLocalData* const leafLocalData)
+                           PointLeafLocalData* const leafLocalData,
+                           const bool buffers)
         : mData(data)
         , mAttributeSet(&attributeSet)
-        , mVoidAttributeHandles()
+        , mHandlesOrBuffers()
         , mAttributeHandles()
         , mVoidGroupHandles()
         , mGroupHandles()
-        , mLeafLocalData(leafLocalData) {}
+        , mLeafLocalData(leafLocalData)
+        , mUseBufferKernel(buffers) {}
 
     inline auto bindValueKernel()
     {
-        using FunctionTraitsT = codegen::PointKernelValue::FunctionTraitsT;
+        using FunctionTraitsT = codegen::PointKernelAttributeArray::FunctionTraitsT;
         using ReturnT = FunctionTraitsT::ReturnType;
 
         return [&](const openvdb::Coord& origin, void* buffer, bool active, const size_t index) -> ReturnT {
-            mData.mKernelValue(static_cast<FunctionTraitsT::Arg<0>::Type>(mData.mCustomData),
+            mData.mKernelAttributeArray(static_cast<FunctionTraitsT::Arg<0>::Type>(mData.mCustomData),
                 reinterpret_cast<FunctionTraitsT::Arg<1>::Type>(origin.data()),
                 static_cast<FunctionTraitsT::Arg<2>::Type>(buffer),
                 static_cast<FunctionTraitsT::Arg<3>::Type>(active),
                 static_cast<FunctionTraitsT::Arg<4>::Type>(index),
                 static_cast<FunctionTraitsT::Arg<5>::Type>(nullptr/*mData.mVoidTransforms.data()*/),
-                static_cast<FunctionTraitsT::Arg<6>::Type>(mVoidAttributeHandles.data()),
+                static_cast<FunctionTraitsT::Arg<6>::Type>(mHandlesOrBuffers.data()),
                 static_cast<FunctionTraitsT::Arg<7>::Type>(mFlags.data()),
                 static_cast<FunctionTraitsT::Arg<8>::Type>(mAttributeSet),
                 static_cast<FunctionTraitsT::Arg<9>::Type>(mVoidGroupHandles.data()),
@@ -175,18 +182,20 @@ struct PointFunctionArguments
 
     inline auto bindRangeKernel()
     {
-        using FunctionTraitsT = codegen::PointKernelRange::FunctionTraitsT;
+        using FunctionTraitsT = codegen::PointKernelBufferRange::FunctionTraitsT;
         using ReturnT = FunctionTraitsT::ReturnType;
 
+        assert(mUseBufferKernel);
+
         return [&](const openvdb::Coord& origin, void* buffer, Index64* mask, const size_t size) -> ReturnT {
-            mData.mKernelRange(static_cast<FunctionTraitsT::Arg<0>::Type>(mData.mCustomData),
+            mData.mKernelBufferRange(static_cast<FunctionTraitsT::Arg<0>::Type>(mData.mCustomData),
                 reinterpret_cast<FunctionTraitsT::Arg<1>::Type>(origin.data()),
                 static_cast<FunctionTraitsT::Arg<2>::Type>(buffer),
                 static_cast<FunctionTraitsT::Arg<3>::Type>(mask),
                 static_cast<FunctionTraitsT::Arg<4>::Type>(size),
                 static_cast<FunctionTraitsT::Arg<5>::Type>(2/*mData.mIterMode*/),
                 static_cast<FunctionTraitsT::Arg<6>::Type>(nullptr/*mData.mVoidTransforms.data()*/),
-                static_cast<FunctionTraitsT::Arg<7>::Type>(mVoidAttributeHandles.data()),
+                static_cast<FunctionTraitsT::Arg<7>::Type>(mHandlesOrBuffers.data()),
                 static_cast<FunctionTraitsT::Arg<8>::Type>(mFlags.data()),
                 static_cast<FunctionTraitsT::Arg<9>::Type>(mAttributeSet),
                 static_cast<FunctionTraitsT::Arg<10>::Type>(mVoidGroupHandles.data()),
@@ -198,24 +207,19 @@ struct PointFunctionArguments
     inline void addHandle(const LeafT& leaf, const size_t pos)
     {
         const points::AttributeArray& array = leaf.constAttributeArray(pos);
-
         uint8_t flag = NONE;
-        const bool nocompression =
-            !std::is_same<ValueT, std::string>::value &&
-            (std::strcmp(array.codecType().c_str(), points::NullCodec::name()) == 0);
 
-        if (nocompression) {
+        if (mUseBufferKernel) {
             using TypedArray = points::TypedAttributeArray<ValueT>;
-            flag |= ARRAY_AS_BUFFER;
             const TypedArray& typed = static_cast<const TypedArray&>(array);
-            if (typed.isUniform()) flag |= ARRAY_IS_UNIFORM;
+            if (typed.isUniform()) flag |= UNIFORM;
             const typename TypedArray::StorageType* data = typed.data();
             void* ptr = static_cast<void*>(const_cast<typename TypedArray::StorageType*>(data));
-            mVoidAttributeHandles.emplace_back(ptr);
+            mHandlesOrBuffers.emplace_back(ptr);
         }
         else {
             typename ReadHandle<ValueT>::UniquePtr handle(new ReadHandle<ValueT>(leaf, Index(pos)));
-            mVoidAttributeHandles.emplace_back(handle->mHandle.get());
+            mHandlesOrBuffers.emplace_back(handle->mHandle.get());
             mAttributeHandles.emplace_back(std::move(handle));
         }
         mFlags.emplace_back(flag);
@@ -225,24 +229,19 @@ struct PointFunctionArguments
     inline void addWriteHandle(LeafT& leaf, const size_t pos)
     {
         points::AttributeArray& array = leaf.attributeArray(pos);
-
         uint8_t flag = NONE;
-        const bool nocompression =
-            !std::is_same<ValueT, std::string>::value &&
-            (std::strcmp(array.codecType().c_str(), points::NullCodec::name()) == 0);
 
-        if (nocompression) {
+        if (mUseBufferKernel) {
             using TypedArray = points::TypedAttributeArray<ValueT>;
-            flag |= ARRAY_AS_BUFFER;
             TypedArray& typed = static_cast<TypedArray&>(array);
             typed.expand(); // expand, ready for write
             const typename TypedArray::StorageType* data = const_cast<const TypedArray&>(typed).data();
             void* ptr = static_cast<void*>(const_cast<typename TypedArray::StorageType*>(data));
-            mVoidAttributeHandles.emplace_back(ptr);
+            mHandlesOrBuffers.emplace_back(ptr);
         }
         else {
             typename WriteHandle<ValueT>::UniquePtr handle(new WriteHandle<ValueT>(leaf, Index(pos)));
-            mVoidAttributeHandles.emplace_back(handle->mHandle.get());
+            mHandlesOrBuffers.emplace_back(handle->mHandle.get());
             mAttributeHandles.emplace_back(std::move(handle));
         }
         mFlags.emplace_back(flag);
@@ -310,12 +309,13 @@ private:
 private:
     const OpData& mData;
     const points::AttributeSet* const mAttributeSet;
-    std::vector<void*> mVoidAttributeHandles;
+    std::vector<void*> mHandlesOrBuffers;
     std::vector<Handles::UniquePtr> mAttributeHandles;
     std::vector<uint8_t> mFlags;
     std::vector<void*> mVoidGroupHandles;
     std::vector<points::GroupHandle::UniquePtr> mGroupHandles;
     PointLeafLocalData* const mLeafLocalData;
+    const bool mUseBufferKernel;
 };
 
 
@@ -393,7 +393,24 @@ struct PointExecuterOp
         auto& leafLocalData = mLeafLocalData[idx];
         leafLocalData.reset(new PointLeafLocalData(leaf.getLastValue()));
 
-        PointFunctionArguments args(mData, set, leafLocalData.get());
+        const bool group = mData.mGroupIndex.first != points::AttributeSet::INVALID_POS;
+        bool allowBufferOptimisation = !group;
+
+        if (allowBufferOptimisation) {
+            for (const auto& iter : mData.mAttributeRegistry->data()) {
+                const std::string& name = (iter.name() == "P" ? mData.mPositionAttribute : iter.name());
+                auto& desc = set.descriptor();
+                const std::string& codec = desc.type(desc.find(name)).second;
+                const bool nocompression =
+                    (std::strcmp(codec.c_str(), points::NullCodec::name()) == 0);
+                if (!nocompression)  {
+                    allowBufferOptimisation = false;
+                    break;
+                }
+            }
+        }
+
+        PointFunctionArguments args(mData, set, leafLocalData.get(), allowBufferOptimisation);
 
         // add attributes based on the order and existence in the attribute registry
         for (const auto& iter : mData.mAttributeRegistry->data()) {
@@ -429,7 +446,6 @@ struct PointExecuterOp
             }
         }
 
-        const bool group = mData.mGroupIndex.first != points::AttributeSet::INVALID_POS;
 
         // if we are using position we need to initialise the world space storage
         std::unique_ptr<points::AttributeWriteHandle<Vec3f>> pws;
@@ -444,14 +460,24 @@ struct PointExecuterOp
         }
 
         void* buffer = static_cast<void*>(leaf.buffer().data());
+        static std::once_flag flag;
 
         if (group) {
+            std::call_once(flag, [](){ std::cerr << "runing nonopt group" << std::endl; });
             const auto kernel = args.bindValueKernel();
             const GroupFilter filter(mData.mGroupIndex);
             auto iter = leaf.beginIndex<LeafNode::ValueAllCIter, GroupFilter>(filter);
             for (; iter; ++iter) kernel(leaf.origin(), buffer, /*active*/true, *iter);
         }
+        else if (!allowBufferOptimisation) {
+            //
+            std::call_once(flag, [](){ std::cerr << "runing nonopt" << std::endl; });
+            const auto kernel = args.bindValueKernel();
+            auto iter = leaf.beginIndexAll();
+            for (; iter; ++iter) kernel(leaf.origin(), buffer, /*active*/true, *iter);
+        }
         else {
+            std::call_once(flag, [](){ std::cerr << "runing opt" << std::endl; });
             const auto kernel = args.bindRangeKernel();
             Index64* masks = &(leaf.getValueMask().template getWord<Index64>(0));
             kernel(leaf.origin(), buffer, masks, size_t(LeafNode::NUM_VOXELS));
@@ -622,12 +648,12 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
 
     // Initialize the shared op data
     OpData data;
-    data.mKernelValue =
+    data.mKernelAttributeArray =
         reinterpret_cast<KernelValueFunctionPtr>
-            (mFunctionAddresses.at(codegen::PointKernelValue::getDefaultName()));
-    data.mKernelRange =
-        reinterpret_cast<KernelRangeFunctionPtr>
-            (mFunctionAddresses.at(codegen::PointKernelRange::getDefaultName()));
+            (mFunctionAddresses.at(codegen::PointKernelAttributeArray::getDefaultName()));
+    data.mKernelBufferRange =
+        reinterpret_cast<KernelBufferRangeFunctionPtr>
+            (mFunctionAddresses.at(codegen::PointKernelBufferRange::getDefaultName()));
     data.mTransform = &grid.transform();
     data.mCustomData = mCustomData.get();
     data.mGroupIndex.first = openvdb::points::AttributeSet::INVALID_POS;

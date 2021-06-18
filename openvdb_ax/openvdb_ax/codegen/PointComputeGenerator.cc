@@ -35,14 +35,87 @@ namespace OPENVDB_VERSION_NAME {
 namespace ax {
 namespace codegen {
 
-const std::array<std::string, PointKernelValue::N_ARGS>&
+const std::array<const char*, PointKernelValue::N_ARGS>&
 PointKernelValue::argumentKeys()
 {
-    static const std::array<std::string, PointKernelValue::N_ARGS> arguments = {{
+    static const std::array<const char*, PointKernelValue::N_ARGS> arguments = {{
         "custom_data",
         "origin",
         "value_buffer",
-        "active",
+        "isactive",
+        "point_index",
+        "transforms",
+        "values",
+        "flags",
+        "attribute_set",
+        "group_handles",
+        "leaf_data"
+    }};
+
+    return arguments;
+}
+
+const char* PointKernelValue::getDefaultName() { return "ax.compute.point.PKV"; }
+
+//
+
+const std::array<const char*, PointKernelBufferRange::N_ARGS>&
+PointKernelBufferRange::argumentKeys()
+{
+    static const std::array<const char*, PointKernelBufferRange::N_ARGS> arguments = {{
+        "custom_data",
+        "origin",
+        "value_buffer",
+        "active_buffer",
+        "buffer_size",
+        "mode",
+        "transforms",
+        "buffers",
+        "flags",
+        "attribute_set",
+        "group_handles",
+        "leaf_data"
+    }};
+
+    return arguments;
+}
+
+const char* PointKernelBufferRange::getDefaultName() { return "ax.compute.point.PKBR"; }
+
+//
+
+const std::array<const char*, PointKernelBuffer::N_ARGS>&
+PointKernelBuffer::argumentKeys()
+{
+    static const std::array<const char*, PointKernelBuffer::N_ARGS> arguments = {{
+        "custom_data",
+        "origin",
+        "value_buffer",
+        "isactive",
+        "point_index",
+        "transforms",
+        "buffers",
+        "flags",
+        "attribute_set",
+        "group_handles",
+        "leaf_data"
+    }};
+
+    return arguments;
+}
+
+const char* PointKernelBuffer::getDefaultName() { return "ax.compute.point.PKB"; }
+
+//
+
+const std::array<const char*, PointKernelAttributeArray::N_ARGS>&
+PointKernelAttributeArray::argumentKeys()
+{
+    static const std::array<const char*, PointKernelAttributeArray::N_ARGS> arguments = {{
+        "custom_data",
+        "origin",
+        "value_buffer",
+        "isactive",
         "point_index",
         "transforms",
         "attribute_arrays",
@@ -55,46 +128,22 @@ PointKernelValue::argumentKeys()
     return arguments;
 }
 
-const char* PointKernelValue::getDefaultName() { return "ax.compute.point.k1"; }
-
-//
-
-const std::array<std::string, PointKernelRange::N_ARGS>&
-PointKernelRange::argumentKeys()
-{
-    static const std::array<std::string, PointKernelRange::N_ARGS> arguments = {{
-        "custom_data",
-        "origin",
-        "value_buffer",
-        "active_buffer",
-        "buffer_size",
-        "mode",
-        "transforms",
-        "attribute_arrays",
-        "flags",
-        "attribute_set",
-        "group_handles",
-        "leaf_data"
-    }};
-
-    return arguments;
-}
-
-const char* PointKernelRange::getDefaultName() { return "ax.compute.point.k2"; }
-
+const char* PointKernelAttributeArray::getDefaultName() { return "ax.compute.point.PKAA"; }
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
 namespace codegen_internal {
 
-inline void PointComputeGenerator::computek2(llvm::Function* compute, const AttributeRegistry&)
+inline void PointComputeGenerator::computePKBR(const AttributeRegistry&)
 {
+    llvm::Function* compute = mModule.getFunction(PointKernelBuffer::getDefaultName());
+
     auto generate =
         [&](const std::vector<llvm::Value*>& args,
             llvm::IRBuilder<>& B) -> llvm::Value*
     {
-        assert(args.size() == 9);
+        assert(args.size() == 12);
         llvm::Value* vbuff = args[2]; //extractArgument(rangeFunction, "value_buffer");
         llvm::Value* abuff = args[3]; //extractArgument(rangeFunction, "active_buffer");
         llvm::Value* buffSize = args[4]; //extractArgument(rangeFunction, "buffer_size");
@@ -205,12 +254,13 @@ inline void PointComputeGenerator::computek2(llvm::Function* compute, const Attr
                         ison,     // active/inactive
                         B.CreateLoad(pindex),  // offset in the point array
                         args[6],  // transforms
-                        args[7],  // attr arrays
+                        args[7],  // buffers
                         args[8],  // flags
                         args[9],  // attr set
                         args[10], // groups
                         args[11]  // leafdata
                     };
+
                     B.CreateCall(compute, input);
                     B.CreateBr(piter);
                 }
@@ -227,8 +277,8 @@ inline void PointComputeGenerator::computek2(llvm::Function* compute, const Attr
     };
 
     // Use the function builder to generate the correct prototype and body for K2
-    auto k2 = FunctionBuilder(PointKernelRange::getDefaultName())
-        .addSignature<PointKernelRange::Signature>(generate, PointKernelRange::getDefaultName())
+    auto k = FunctionBuilder(PointKernelBufferRange::getDefaultName())
+        .addSignature<PointKernelBufferRange::Signature>(generate, PointKernelBufferRange::getDefaultName())
         .setConstantFold(false)
         .setEmbedIR(false)
         .addParameterAttribute(0, llvm::Attribute::ReadOnly)
@@ -248,9 +298,332 @@ inline void PointComputeGenerator::computek2(llvm::Function* compute, const Attr
         .addFunctionAttribute(llvm::Attribute::NoRecurse)
         .get();
 
-    k2->list()[0]->create(mContext, &mModule);
+    k->list()[0]->create(mContext, &mModule);
 }
 
+
+inline void PointComputeGenerator::computePKB(const AttributeRegistry& registry)
+{
+    llvm::Function* compute = mModule.getFunction(PointKernelValue::getDefaultName());
+
+    /// @brief  The function for retrieving point buffer values
+    static auto getBufferValue =
+        [](const std::string& token,
+           llvm::Value* pindex,
+           llvm::Value* store,
+           llvm::Type* type,
+           llvm::IRBuilder<>& B)
+    {
+        llvm::Function* self = B.GetInsertBlock()->getParent();
+        llvm::Module* M = self->getParent();
+        llvm::LLVMContext& C = B.getContext();
+
+        // insert the attribute into the map of global variables and get a unique global representing
+        // the location which will hold the attribute handle offset.
+        llvm::Value* index = M->getGlobalVariable(token);
+        assert(index);
+        index = B.CreateLoad(index);
+
+        // get the current buffer
+        llvm::Value* buffers = extractArgument(self, "buffers");
+        assert(buffers);
+        llvm::Value* buffer = B.CreateGEP(buffers, index);
+        buffer = B.CreateLoad(buffer); // void** = void*
+        // assume buffer is passed directly
+        buffer = B.CreatePointerCast(buffer, type->getPointerTo()); // void* = ValueType*
+
+        // get the flags
+        llvm::Value* flags = extractArgument(self, "flags");
+        llvm::Value* flag = B.CreateLoad(B.CreateGEP(flags, index));
+
+        llvm::BasicBlock* then = llvm::BasicBlock::Create(C, "k1.get_buffer.uniform", self);
+        llvm::BasicBlock* els  = llvm::BasicBlock::Create(C, "k1.get_buffer.nuniform", self);
+        llvm::BasicBlock* post = llvm::BasicBlock::Create(C, "k1.get_buffer.nuniform", self);
+        llvm::Value* isuniform = B.CreateAnd(flag, LLVMType<uint8_t>::get(C, uint8_t(0x1)));
+        isuniform = boolComparison(isuniform, B);
+
+        // @note  This branch inhibits some vectorisation - could instead expand the read accessors?
+        //   need to profile
+        B.CreateCondBr(isuniform, then, els);
+
+        B.SetInsertPoint(then);
+        {
+            llvm::Value* value = B.CreateGEP(buffer, B.getInt64(0));
+            value = B.CreatePointerCast(value, LLVMType<void*>::get(C));
+            B.CreateStore(value, store);
+            B.CreateBr(post);
+        }
+
+        B.SetInsertPoint(els);
+        {
+            llvm::Value* value = B.CreateGEP(buffer, pindex);
+            value = B.CreatePointerCast(value, LLVMType<void*>::get(C));
+            B.CreateStore(value, store);
+            B.CreateBr(post);
+        }
+
+        B.SetInsertPoint(post);
+    };
+
+    //
+
+    auto generate =
+        [&](const std::vector<llvm::Value*>& args,
+            llvm::IRBuilder<>& B) -> llvm::Value*
+    {
+        assert(args.size() == 11);
+        auto& C = B.getContext();
+        llvm::Function* self = B.GetInsertBlock()->getParent();
+        llvm::Value* pindex = extractArgument(self, "point_index");
+        assert(pindex);
+
+        // create array of void*. each element will hold the attribute values
+        llvm::Type* locType = llvm::ArrayType::get(LLVMType<void*>::get(C), registry.data().size()); // [SIZE x i8*]
+        llvm::Value* loc = insertStaticAlloca(B, locType);
+
+        size_t i = 0;
+        for (const AttributeRegistry::AccessData& data : registry.data()) {
+            const std::string token = data.tokenname();
+            llvm::Type* type = llvmTypeFromToken(data.type(), C);
+            // store the allocated ptr in the array of void*
+            llvm::Value* store = B.CreateConstInBoundsGEP2_64(loc, 0, i); // void**, location to hold the typed ptr
+            getBufferValue(token, pindex, store, type, B);
+            ++i;
+        }
+
+        // invoke the point kernel for this value
+        std::array<llvm::Value*, 11> input;
+        std::copy_n(args.begin(), 11, input.begin());
+        input[6] = B.CreateConstInBoundsGEP2_64(loc, 0, 0); // void**, replace the buffers with the extracted values
+        B.CreateCall(compute, input);
+        return B.CreateRetVoid();
+    };
+
+    const auto& keys = PointKernelBuffer::argumentKeys();
+
+    // Use the function builder to generate the correct prototype and body for K2
+    auto k = FunctionBuilder(PointKernelBuffer::getDefaultName())
+        .addSignature<PointKernelBuffer::Signature>(generate, PointKernelBuffer::getDefaultName())
+        .setConstantFold(false)
+        .setEmbedIR(false)
+        .setArgumentNames(std::vector<const char*>(keys.begin(), keys.end()))
+        .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+        .addParameterAttribute(0, llvm::Attribute::NoCapture)
+        .addParameterAttribute(0, llvm::Attribute::NoAlias)
+        .addParameterAttribute(1, llvm::Attribute::ReadOnly)
+        .addParameterAttribute(1, llvm::Attribute::NoCapture)
+        .addParameterAttribute(1, llvm::Attribute::NoAlias)
+        .addParameterAttribute(2, llvm::Attribute::NoCapture)
+        .addParameterAttribute(2, llvm::Attribute::NoAlias)
+        .addParameterAttribute(5, llvm::Attribute::NoCapture)
+        .addParameterAttribute(5, llvm::Attribute::NoAlias)
+        .addParameterAttribute(6, llvm::Attribute::NoCapture)
+        .addParameterAttribute(6, llvm::Attribute::NoAlias)
+        .addParameterAttribute(7, llvm::Attribute::NoCapture)
+        .addParameterAttribute(7, llvm::Attribute::NoAlias)
+        .addParameterAttribute(8, llvm::Attribute::NoCapture)
+        .addParameterAttribute(8, llvm::Attribute::NoAlias)
+        .addFunctionAttribute(llvm::Attribute::NoRecurse)
+        .get();
+
+    k->list()[0]->create(mContext, &mModule);
+}
+
+inline void PointComputeGenerator::computePKAA(const AttributeRegistry& registry)
+{
+    llvm::Function* compute = mModule.getFunction(PointKernelValue::getDefaultName());
+
+    /// @brief PKAA function for getting a point value from an attribute array
+    auto getAttributeValue = [this](const std::string& token,
+        llvm::Value* pindex,
+        llvm::Value* store,
+        llvm::IRBuilder<>& B)
+    {
+        llvm::Function* self = B.GetInsertBlock()->getParent();
+        llvm::Module* M = self->getParent();
+        llvm::LLVMContext& C = B.getContext();
+
+        llvm::Type* type = store->getType();
+
+        // insert the attribute into the map of global variables and get a unique global representing
+        // the location which will hold the attribute handle offset.
+        llvm::Value* index = M->getGlobalVariable(token);
+        assert(index);
+        index = B.CreateLoad(index);
+
+        llvm::Value* arrays = extractArgument(self, "attribute_arrays");
+        assert(arrays);
+        llvm::Value* array = B.CreateGEP(arrays, index);
+        array = B.CreateLoad(array); // void** = void*
+
+        // invoke C binding
+        const bool usingString =
+            type == LLVMType<codegen::String*>::get(C);
+
+        std::vector<llvm::Value*> args {
+            array,
+            pindex,
+            store
+        };
+
+        if (usingString) {
+            args.emplace_back(extractArgument(self, "leaf_data"));
+        }
+
+        const FunctionGroup* const F = this->getFunction("getattribute", true);
+        F->execute(args, B);
+    };
+
+    /// @brief PKAA function for setting a point value on an attribute array
+    auto setAttributeValue = [this](const std::string& token,
+        llvm::Value* pindex,
+        llvm::Value* load,
+        llvm::IRBuilder<>& B)
+    {
+        llvm::Function* self = B.GetInsertBlock()->getParent();
+        llvm::Module* M = self->getParent();
+        llvm::LLVMContext& C = B.getContext();
+
+        llvm::Type* type = load->getType()->getPointerElementType();
+
+        // insert the attribute into the map of global variables and get a unique global representing
+        // the location which will hold the attribute handle offset.
+        llvm::Value* index = M->getGlobalVariable(token);
+        assert(index);
+        index = B.CreateLoad(index);
+
+        llvm::Value* arrays = extractArgument(self, "attribute_arrays");
+        assert(arrays);
+        llvm::Value* array = B.CreateGEP(arrays, index);
+        array = B.CreateLoad(array); // void** = void*
+
+        // load the result (if its a scalar)
+        if (type->isIntegerTy() || type->isFloatingPointTy()) {
+            load = B.CreateLoad(load);
+        }
+
+        // construct function arguments
+        std::vector<llvm::Value*> args {
+            array, // handle
+            pindex, // point index
+            load // set value
+        };
+
+        llvm::Type* strType = LLVMType<codegen::String>::get(C);
+        const bool usingString = type == strType;
+
+        if (usingString) {
+            llvm::Value* leafdata = extractArgument(self, "leaf_data");
+            assert(leafdata);
+            args.emplace_back(leafdata);
+        }
+
+        const FunctionGroup* const function = this->getFunction("setattribute", true);
+        function->execute(args, B);
+    };
+
+    //
+
+    auto generate =
+        [&](const std::vector<llvm::Value*>& args,
+            llvm::IRBuilder<>& B) -> llvm::Value*
+    {
+        assert(args.size() == 11);
+        auto& C = B.getContext();
+        llvm::Function* self = B.GetInsertBlock()->getParent();
+        llvm::Value* pindex = extractArgument(self, "point_index");
+
+        SymbolTable table;
+
+        // create array of void*. each element will hold the attribute values
+        llvm::Type* locType = llvm::ArrayType::get(LLVMType<void*>::get(C), registry.data().size()); // [SIZE x i8*]
+        llvm::Value* loc = insertStaticAlloca(B, locType);
+
+        // run allocations
+        size_t i = 0;
+        for (const AttributeRegistry::AccessData& access : registry.data()) {
+            llvm::Value* value = insertStaticAlloca(B, llvmTypeFromToken(access.type(), C));
+            assert(llvm::cast<llvm::AllocaInst>(value)->isStaticAlloca());
+            table.insert(access.tokenname(), value);
+
+            // store the allocated ptr in the array of void*
+            llvm::Value* store = B.CreateConstInBoundsGEP2_64(loc, 0, i); // void**, location to hold the typed ptr
+            value = B.CreatePointerCast(value, LLVMType<void*>::get(C));
+            B.CreateStore(value, store);
+
+            ++i;
+        }
+
+        // get attributes
+        for (const AttributeRegistry::AccessData& data : registry.data()) {
+            const std::string token = data.tokenname();
+            llvm::Value* store = table.get(token);
+            getAttributeValue(token, pindex, store, B);
+        }
+
+        // invoke the point kernel for this value
+        std::array<llvm::Value*, 11> input;
+        std::copy_n(args.begin(), 11, input.begin());
+        input[6] = B.CreateConstInBoundsGEP2_64(loc, 0, 0); // void**, replace the buffers with the extracted values
+        B.CreateCall(compute, input);
+
+        // insert set code and deallocations
+        for (const AttributeRegistry::AccessData& data : registry.data()) {
+            if (!data.writes()) continue;
+
+            const std::string token = data.tokenname();
+            llvm::Value* value = table.get(token);
+            // // Expected to be used more than one (i.e. should never be zero)
+            // assert(value->hasNUsesOrMore(1));
+            // // Check to see if this value is still being used - it may have
+            // // been cleaned up due to returns. If there's only one use, it's
+            // // the original get of this attribute.
+            // if (value->hasOneUse()) {
+            //     // @todo  The original get can also be optimized out in this case
+            //     // this->globals().remove(variable.first);
+            //     // mModule.getGlobalVariable(variable.first)->eraseFromParent();
+            //     continue;
+            // }
+            setAttributeValue(token, pindex, value, B);
+        }
+
+        llvm::Value* last = B.CreateRetVoid();
+
+        // insert free calls for any strings
+        this->createFreeSymbolStrings(B);
+
+        return last;
+    };
+
+    const auto& keys = PointKernelAttributeArray::argumentKeys();
+
+    // Use the function builder to generate the correct prototype and body for K2
+    auto k = FunctionBuilder(PointKernelAttributeArray::getDefaultName())
+        .addSignature<PointKernelAttributeArray::Signature>(generate, PointKernelAttributeArray::getDefaultName())
+        .setConstantFold(false)
+        .setEmbedIR(false)
+        .setArgumentNames(std::vector<const char*>(keys.begin(), keys.end()))
+        .addParameterAttribute(0, llvm::Attribute::ReadOnly)
+        .addParameterAttribute(0, llvm::Attribute::NoCapture)
+        .addParameterAttribute(0, llvm::Attribute::NoAlias)
+        .addParameterAttribute(1, llvm::Attribute::ReadOnly)
+        .addParameterAttribute(1, llvm::Attribute::NoCapture)
+        .addParameterAttribute(1, llvm::Attribute::NoAlias)
+        .addParameterAttribute(2, llvm::Attribute::NoCapture)
+        .addParameterAttribute(2, llvm::Attribute::NoAlias)
+        .addParameterAttribute(5, llvm::Attribute::NoCapture)
+        .addParameterAttribute(5, llvm::Attribute::NoAlias)
+        .addParameterAttribute(6, llvm::Attribute::NoCapture)
+        .addParameterAttribute(6, llvm::Attribute::NoAlias)
+        .addParameterAttribute(7, llvm::Attribute::NoCapture)
+        .addParameterAttribute(7, llvm::Attribute::NoAlias)
+        .addParameterAttribute(8, llvm::Attribute::NoCapture)
+        .addParameterAttribute(8, llvm::Attribute::NoAlias)
+        .addFunctionAttribute(llvm::Attribute::NoRecurse)
+        .get();
+
+    k->list()[0]->create(mContext, &mModule);
+}
 
 PointComputeGenerator::PointComputeGenerator(llvm::Module& module,
                                              const FunctionOptions& options,
@@ -286,44 +659,13 @@ AttributeRegistry::Ptr PointComputeGenerator::generate(const ast::Tree& tree)
 
     AttributeRegistry::Ptr registry = AttributeRegistry::create(tree);
 
-    // Visit all attributes and allocate them in local IR memory - assumes attributes
-    // have been verified by the ax compiler
-    // @note  Call all attribute allocs at the start of this block so that llvm folds
-    // them into the function prologue (as a static allocation)
+    // intialise the global indices - do this here so it's only done once
 
-    SymbolTable* localTable = this->mSymbolTables.getOrInsert(1);
-
-    // run allocations and update the symbol table
-
-    for (const AttributeRegistry::AccessData& data : registry->data()) {
-        llvm::Type* type = llvmTypeFromToken(data.type(), mContext);
-        {
-            llvm::Value* vptr = mBuilder.CreateAlloca(type->getPointerTo(0));
-            localTable->insert(data.tokenname() + "_vptr", vptr);
-            assert(llvm::cast<llvm::AllocaInst>(vptr)->isStaticAlloca());
-        }
-
-        // @warning This method will insert the alloc before the above alloc.
-        //  This is fine, but is worth noting
-        llvm::Value* value = insertStaticAlloca(mBuilder, type);
-        assert(llvm::cast<llvm::AllocaInst>(value)->isStaticAlloca());
-
-        // @note  this technically doesn't need to live in the local table
-        //  (only the pointer to this value (_vptr) needs to) but it's
-        //  re-accessed by the subsequent loop. could remove this.
-        localTable->insert(data.tokenname(), value);
-    }
-
-    // insert getters for read variables
-
-    llvm::Value* pindex = extractArgument(mFunction, "point_index");
-    llvm::Value* flags = extractArgument(mFunction, "flags");
-    llvm::Value* arrays = extractArgument(mFunction, "attribute_arrays");
-
-    for (const AttributeRegistry::AccessData& data : registry->data()) {
-        if (!data.reads()) continue;
-        const std::string token = data.tokenname();
-        this->getAttributeValue(token, pindex, localTable->get(token));
+    for (const AttributeRegistry::AccessData& access : registry->data()) {
+        const std::string token = access.tokenname();
+        llvm::Value* index = llvm::cast<llvm::GlobalVariable>
+            (mModule.getOrInsertGlobal(token, LLVMType<int64_t>::get(mContext)));
+        this->globals().insert(token, index);
     }
 
     // full code generation
@@ -331,203 +673,34 @@ AttributeRegistry::Ptr PointComputeGenerator::generate(const ast::Tree& tree)
 
     if (!this->traverse(&tree) || mLog.hasError()) return nullptr;
 
-    // insert set code and deallocations
-
-    std::vector<const AttributeRegistry::AccessData*> write;
-    for (const AttributeRegistry::AccessData& data : registry->data()) {
-        if (data.writes()) write.emplace_back(&data);
-    }
-
-    // cache the basic blocks with return instructions
-
-    std::vector<llvm::BasicBlock*> blocks;
-    for (auto block = mFunction->begin(); block != mFunction->end(); ++block) {
-        // Only inset set calls if theres a valid return instruction in this block
-        llvm::Instruction* inst = block->getTerminator();
-        if (!inst || !llvm::isa<llvm::ReturnInst>(inst)) continue;
-        blocks.emplace_back(&*block);
-    }
-
-    for (auto& block : blocks) {
-
-        llvm::Instruction* inst = block->getTerminator();
-        mBuilder.SetInsertPoint(inst);
-
-        // Insert set attribute instructions before termination
-
-        for (const AttributeRegistry::AccessData* data : write) {
-
-            const std::string token = data->tokenname();
-            llvm::Value* value = localTable->get(token);
-
-            // Expected to be used more than one (i.e. should never be zero)
-            assert(value->hasNUsesOrMore(1));
-
-            // Check to see if this value is still being used - it may have
-            // been cleaned up due to returns. If there's only one use, it's
-            // the original get of this attribute.
-            if (value->hasOneUse()) {
-                // @todo  The original get can also be optimized out in this case
-                // this->globals().remove(variable.first);
-                // mModule.getGlobalVariable(variable.first)->eraseFromParent();
-                continue;
-            }
-
-            llvm::Value* index = this->globals().get(token);
-            index = mBuilder.CreateLoad(index);
-            llvm::Value* flag = mBuilder.CreateLoad(mBuilder.CreateGEP(flags, index));
-            llvm::Value* isbuffer = mBuilder.CreateAnd(flag, LLVMType<uint8_t>::get(mContext, uint8_t(0x1)));
-            llvm::Value* isnotbuffer = mBuilder.CreateICmpEQ(isbuffer, LLVMType<uint8_t>::get(mContext, uint8_t(0)));
-
-            llvm::BasicBlock* then = llvm::BasicBlock::Create(mContext, "k1.set", mFunction);
-            llvm::BasicBlock* post = llvm::BasicBlock::Create(mContext, "k1.set_post", mFunction);
-            mBuilder.CreateCondBr(isnotbuffer, then, post);
-
-            mBuilder.SetInsertPoint(then);
-            {
-                // llvm::Type* type = value->getType()->getPointerElementType();
-                // llvm::Type* strType = LLVMType<codegen::String>::get(mContext);
-                // const bool usingString = type == strType;
-
-                // llvm::Value* array = mBuilder.CreateGEP(arrays, index);
-                // array = mBuilder.CreateLoad(array); // void** = void*
-
-                // // load the result (if its a scalar)
-                // if (type->isIntegerTy() || type->isFloatingPointTy()) {
-                //     value = mBuilder.CreateLoad(value);
-                // }
-
-                // // construct function arguments
-                // std::vector<llvm::Value*> args {
-                //     array, // handle
-                //     pindex, // point index
-                //     value // set value
-                // };
-
-                // if (usingString) {
-                //     args.emplace_back(extractArgument(mFunction, "leaf_data"));
-                // }
-
-                // const FunctionGroup* const F = this->getFunction("setattribute", true);
-                // F->execute(args, mBuilder);
-                mBuilder.CreateBr(post);
-            }
-
-            mBuilder.SetInsertPoint(post);
-        }
-
-        // move the return instruction into the new, final, post block
-        inst->removeFromParent(); // unlink
-        mBuilder.Insert(inst); // insert
-    }
-
     // insert free calls for any strings
 
     this->createFreeSymbolStrings(mBuilder);
 
-    this->computek2(mFunction, *registry);
+    // compute extra kernels (order here is important)
+
+    this->computePKB(*registry);
+    this->computePKAA(*registry);
+    // must come after PKB
+    this->computePKBR(*registry);
 
     return registry;
 }
 
 bool PointComputeGenerator::visit(const ast::Attribute* node)
 {
-    SymbolTable* localTable = this->mSymbolTables.getOrInsert(1);
-    const std::string globalName = node->tokenname();
-    llvm::Value* value;
-    value = localTable->get(globalName + "_vptr");
-    value = mBuilder.CreateLoad(value);
-    assert(value);
-    mValues.push(value);
-    return true;
-}
+    llvm::Value* index = mModule.getGlobalVariable(node->tokenname());
+    llvm::Type* type = llvmTypeFromToken(node->type(), mContext);
 
-
-///////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-
-
-void PointComputeGenerator::getAttributeValue(const std::string& token, llvm::Value* pindex, llvm::Value* location)
-{
-    llvm::Type* type = location->getType(); // ValueType*
-    llvm::Value* locationptr = this->mSymbolTables.get(1)->get(token + "_vptr"); // ValueType**
-
-    // insert the attribute into the map of global variables and get a unique global representing
-    // the location which will hold the attribute handle offset.
-    llvm::Value* index = llvm::cast<llvm::GlobalVariable>
-        (mModule.getOrInsertGlobal(token, LLVMType<int64_t>::get(mContext)));
-    this->globals().insert(token, index);
-
+    assert(index);
     // index into the void* array of handles and load the value.
     index = mBuilder.CreateLoad(index);
-
-    llvm::Value* arrays = extractArgument(mFunction, "attribute_arrays");
-    assert(arrays);
-    llvm::Value* array = mBuilder.CreateGEP(arrays, index);
-    array = mBuilder.CreateLoad(array); // void** = void*
-
-    // Check to see if we can directly extract the value or if we need to invoke the C binding
-    llvm::Value* flags = extractArgument(mFunction, "flags");
-    llvm::Value* flag = mBuilder.CreateLoad(mBuilder.CreateGEP(flags, index));
-    llvm::Value* isbuffer = mBuilder.CreateAnd(flag, LLVMType<uint8_t>::get(mContext, uint8_t(0x1)));
-    isbuffer = boolComparison(isbuffer, mBuilder);
-
-    llvm::BasicBlock* then = llvm::BasicBlock::Create(mContext, "k1.get_buffer", mFunction);
-    llvm::BasicBlock* els  = llvm::BasicBlock::Create(mContext, "k1.get_attr", mFunction);
-    llvm::BasicBlock* post = llvm::BasicBlock::Create(mContext, "k1.post_get", mFunction);
-    mBuilder.CreateCondBr(isbuffer, then, els);
-
-    mBuilder.SetInsertPoint(then);
-    {
-        // buffer passed directly
-        llvm::Value* buffer = mBuilder.CreatePointerCast(array, type); // void* = ValueType*
-
-        llvm::BasicBlock* then2 = llvm::BasicBlock::Create(mContext, "k1.get_buffer.uniform", mFunction);
-        llvm::BasicBlock* els2  = llvm::BasicBlock::Create(mContext, "k1.get_buffer.nuniform", mFunction);
-        llvm::Value* isuniform = mBuilder.CreateAnd(flag, LLVMType<uint8_t>::get(mContext, uint8_t(0x2)));
-        isuniform = boolComparison(isuniform, mBuilder);
-
-        mBuilder.CreateCondBr(isuniform, then2, els2);
-
-        mBuilder.SetInsertPoint(then2);
-        {
-            // llvm::Value* value = mBuilder.CreateGEP(buffer, mBuilder.getInt64(0));
-            // mBuilder.CreateStore(value, locationptr);
-            mBuilder.CreateBr(post);
-        }
-
-        mBuilder.SetInsertPoint(els2);
-        {
-            llvm::Value* value = mBuilder.CreateGEP(buffer, pindex);
-            mBuilder.CreateStore(value, locationptr);
-            mBuilder.CreateBr(post);
-        }
-    }
-
-    mBuilder.SetInsertPoint(els);
-    {
-        // invoke C binding
-        const bool usingString =
-            type == LLVMType<codegen::String*>::get(mContext);
-
-        std::vector<llvm::Value*> args {
-            array,
-            pindex,
-            location
-        };
-
-        if (usingString) {
-            args.emplace_back(extractArgument(mFunction, "leaf_data"));
-        }
-
-        const FunctionGroup* const F = this->getFunction("getattribute", true);
-        F->execute(args, mBuilder);
-
-        mBuilder.CreateStore(location, locationptr);
-        mBuilder.CreateBr(post);
-    }
-
-    mBuilder.SetInsertPoint(post);
+    llvm::Value* value = extractArgument(mFunction, "values"); // void**
+    value = mBuilder.CreateGEP(value, index); // void**
+    value = mBuilder.CreateLoad(value); // void*
+    value = mBuilder.CreatePointerCast(value, type->getPointerTo()); // void* = ValueType*
+    mValues.push(value);
+    return true;
 }
 
 } // namespace codegen_internal

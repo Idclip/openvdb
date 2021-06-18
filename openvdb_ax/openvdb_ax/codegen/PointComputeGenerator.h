@@ -38,7 +38,7 @@ struct PointKernelValue
              bool,     // active
              int32_t,  // pindex
              void**,   // transforms
-             void**,   // arrays
+             void**,   // values
              uint8_t*, // flags
              const void* const, // attribute set
              void**, // group handles
@@ -47,20 +47,19 @@ struct PointKernelValue
     using FunctionTraitsT = codegen::FunctionTraits<Signature>;
     static const size_t N_ARGS = FunctionTraitsT::N_ARGS;
 
-    static const std::array<std::string, N_ARGS>& argumentKeys();
+    static const std::array<const char*, N_ARGS>& argumentKeys();
     static const char* getDefaultName();
 };
 
-struct PointKernelRange
+struct PointKernelAttributeArray
 {
     // The signature of the generated function
     using Signature =
         void(const void* const,
              const int32_t (*)[3],
              Index32*, // leaf value buffer
-             uint64_t*, // active buffer
-             int64_t,  // leaf buffer size (512)
-             uint64_t,  // mode (0 = off, 1 = active, 2 = both)
+             bool,     // active
+             int32_t,  // pindex
              void**,   // transforms
              void**,   // arrays
              uint8_t*, // flags
@@ -71,7 +70,54 @@ struct PointKernelRange
     using FunctionTraitsT = codegen::FunctionTraits<Signature>;
     static const size_t N_ARGS = FunctionTraitsT::N_ARGS;
 
-    static const std::array<std::string, N_ARGS>& argumentKeys();
+    static const std::array<const char*, N_ARGS>& argumentKeys();
+    static const char* getDefaultName();
+};
+
+struct PointKernelBuffer
+{
+    // The signature of the generated function
+    using Signature =
+        void(const void* const,
+             const int32_t (*)[3],
+             Index32*, // leaf value buffer
+             bool,     // active
+             int32_t,  // pindex
+             void**,   // transforms
+             void**,   // buffers
+             uint8_t*, // flags
+             const void* const, // attribute set
+             void**, // group handles
+             void*);  // leaf data
+
+    using FunctionTraitsT = codegen::FunctionTraits<Signature>;
+    static const size_t N_ARGS = FunctionTraitsT::N_ARGS;
+
+    static const std::array<const char*, N_ARGS>& argumentKeys();
+    static const char* getDefaultName();
+};
+
+struct PointKernelBufferRange
+{
+    // The signature of the generated function
+    using Signature =
+        void(const void* const,
+             const int32_t (*)[3],
+             Index32*, // leaf value buffer
+             uint64_t*, // active buffer
+             int64_t,  // leaf buffer size (512)
+             uint64_t,  // mode (0 = off, 1 = active, 2 = both)
+             void**,   // transforms
+             void**,   // buffers
+             uint8_t*, // flags
+             const void* const, // attribute set
+             void**, // group handles
+             void*);  // leaf data
+
+    using FunctionTraitsT = codegen::FunctionTraits<Signature>;
+    static const size_t N_ARGS = FunctionTraitsT::N_ARGS;
+
+    static const std::array<const char*, N_ARGS>& argumentKeys();
     static const char* getDefaultName();
 };
 
@@ -107,8 +153,9 @@ struct PointComputeGenerator : public ComputeGenerator
     bool visit(const ast::Attribute*) override;
 
 private:
-    void getAttributeValue(const std::string&, llvm::Value*, llvm::Value*);
-    void computek2(llvm::Function*, const AttributeRegistry&);
+    void computePKBR(const AttributeRegistry&);
+    void computePKB(const AttributeRegistry&);
+    void computePKAA(const AttributeRegistry&);
 };
 
 } // namespace namespace codegen_internal
