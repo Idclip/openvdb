@@ -238,7 +238,30 @@ public:
     size_t getActiveTileStreamingGrainSize() const;
     ///@}
 
+    ////////////////////////////////////////////////////////
 
+    // foward declaration of settings for this executable
+    template <bool> struct Settings;
+
+    /// @brief Command Line Interface handling for the VolumeExecutable.
+    /// @details  This class wraps the logic for converting commands specific
+    ///   to the VolumeExecutable to the internal Settings. Subsequent
+    ///   executables can be initialized from the CLI object that gets created
+    struct CLI
+    {
+        ~CLI();
+        CLI(CLI&&);
+        static CLI create(int argc, char* argv[], int* used=nullptr);
+        static void usage(std::ostream& os);
+    private:
+        friend class VolumeExecutable;
+        CLI();
+        std::unique_ptr<Settings<true>> mSettings;
+    };
+
+    /// @brief  Intialize the Settings of this executables from the CLI object
+    /// @param cli The CLI object
+    void setSettingsFromCLI(const CLI& cli);
 
     ////////////////////////////////////////////////////////
 
@@ -246,9 +269,6 @@ public:
     [[deprecated]] Index getTreeExecutionLevel() const;
 
     ////////////////////////////////////////////////////////
-
-    // foward declaration of settings for this executable
-    struct Settings;
 
 private:
     friend class Compiler;
@@ -283,7 +303,7 @@ private:
     const AttributeRegistry::ConstPtr mAttributeRegistry;
     const CustomData::ConstPtr mCustomData;
     const std::unordered_map<std::string, uint64_t> mFunctionAddresses;
-    std::unique_ptr<Settings> mSettings;
+    std::unique_ptr<Settings<false>> mSettings;
 };
 
 } // namespace ax

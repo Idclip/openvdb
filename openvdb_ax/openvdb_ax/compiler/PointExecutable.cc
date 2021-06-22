@@ -6,12 +6,13 @@
 #include "PointExecutable.h"
 #include "Logger.h"
 
-#include "../ast/Scanners.h"
-#include "../Exceptions.h"
+#include "openvdb_ax/Exceptions.h"
+#include "openvdb_ax/cmd/cli.h"
+#include "openvdb_ax/ast/Scanners.h"
 // @TODO refactor so we don't have to include PointComputeGenerator.h,
 // but still have the functions defined in one place
-#include "../codegen/PointComputeGenerator.h"
-#include "../codegen/PointLeafLocalData.h"
+#include "openvdb_ax/codegen/PointComputeGenerator.h"
+#include "openvdb_ax/codegen/PointLeafLocalData.h"
 
 #include <openvdb/Types.h>
 
@@ -30,11 +31,64 @@ namespace OPENVDB_VERSION_NAME {
 
 namespace ax {
 
+/// @brief Settings which are stored on the point executer
+///   and are configurable by the user.
+template <bool CLI>
 struct PointExecutable::Settings
 {
-    bool mCreateMissing = true;
-    size_t mGrainSize = 1;
-    std::string mGroup = "";
+    template <typename T>
+    using ParamT = typename std::conditional<CLI, CLIParam<T>, BasicParam<T>>::type;
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    inline std::array<ParamBase*, 3> members()
+    {
+        assert(CLI);
+        std::array<ParamBase*, 3> params;
+        params[0] = (&this->mCreateMissing);
+        params[1] = (&this->mGrainSize);
+        params[2] = (&this->mGroup);
+        return params;
+    }
+
+    inline void init(const PointExecutable::Settings<true>& S)
+    {
+        if (S.mCreateMissing.isInit())  mCreateMissing = S.mCreateMissing.get();
+        if (S.mGrainSize.isInit())      mGrainSize = S.mGrainSize.get();
+        if (S.mGroup.isInit())          mGroup = S.mGroup.get();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ParamT<bool> mCreateMissing {
+        true,
+        "--create-missing [ON|OFF]",
+        "whether to implicitly create point attributes if they are referenced in\n"
+        "the AX program but do not exist on the input geometry.",
+        [](bool& v, const char* arg) {
+            if (std::strcmp(arg, "ON") == 0)       v = true;
+            else if (std::strcmp(arg, "OFF") == 0) v = false;
+            else throw std::runtime_error("");
+        }
+    };
+
+    ParamT<std::string> mGroup {
+        "",
+        "--group [name]",
+        "set a point group to process. Note that this has the equivalent behaviour\n"
+        "of using 'if (!ingroup(\"name\")) return;' at the start of the AX program.",
+        [](std::string& v, const char* arg) { v = arg; }
+    };
+
+    ParamT<size_t> mGrainSize {
+        size_t(1),
+        "--grain [g1]",
+        "sets the threading grain size for processing PointDataGrid leaf nodes.",
+        [](size_t& v, const char* arg) { v = size_t(std::stol(arg)); }
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+
     bool mPostDelete = false;
 };
 
@@ -527,7 +581,7 @@ PointExecutable::PointExecutable(const std::shared_ptr<const llvm::LLVMContext>&
     , mAttributeRegistry(attributeRegistry)
     , mCustomData(customData)
     , mFunctionAddresses(functions)
-    , mSettings(new Settings)
+    , mSettings(new Settings<false>)
 {
     assert(mContext);
     assert(mExecutionEngine);
@@ -543,7 +597,7 @@ PointExecutable::PointExecutable(const PointExecutable& other)
     , mAttributeRegistry(other.mAttributeRegistry)
     , mCustomData(other.mCustomData)
     , mFunctionAddresses(other.mFunctionAddresses)
-    , mSettings(new Settings(*other.mSettings)) {}
+    , mSettings(new Settings<false>(*other.mSettings)) {}
 
 PointExecutable::~PointExecutable() {}
 
@@ -604,14 +658,14 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
     openvdb::points::AttributeSet::Descriptor::GroupIndex groupIndex;
     groupIndex.first = openvdb::points::AttributeSet::INVALID_POS;
 
-    const bool usingGroup = !mSettings->mGroup.empty();
+    const bool usingGroup = !mSettings->mGroup.get().empty();
     if (usingGroup) {
-        if (!leafIter->attributeSet().descriptor().hasGroup(mSettings->mGroup)) {
-            logger->error("Requested point group \"" + mSettings->mGroup +
+        if (!leafIter->attributeSet().descriptor().hasGroup(mSettings->mGroup.get())) {
+            logger->error("Requested point group \"" + mSettings->mGroup.get() +
                 "\" on grid \"" + grid.getName() + "\" does not exist.");
         }
         else {
-            groupIndex = leafIter->attributeSet().groupIndex(mSettings->mGroup);
+            groupIndex = leafIter->attributeSet().groupIndex(mSettings->mGroup.get());
         }
     }
 
@@ -631,12 +685,12 @@ void PointExecutable::execute(openvdb::points::PointDataGrid& grid) const
     const math::Transform& transform = grid.transform();
     LeafManagerT leafManager(grid.tree());
     std::vector<PointLeafLocalData::UniquePtr> leafLocalData(leafManager.leafCount());
-    const bool threaded = mSettings->mGrainSize > 0;
+    const bool threaded = mSettings->mGrainSize.get() > 0;
 
     PointExecuterOp executerOp(*mAttributeRegistry,
         mCustomData.get(), compute, transform, groupIndex,
         leafLocalData, positionAttribute, positionAccess);
-    leafManager.foreach(executerOp, threaded, mSettings->mGrainSize);
+    leafManager.foreach(executerOp, threaded, mSettings->mGrainSize.get());
 
     // Check to see if any new data has been added and apply it accordingly
 
@@ -761,6 +815,78 @@ const std::string& PointExecutable::getGroupExecution() const
 {
     return mSettings->mGroup;
 }
+
+
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+
+PointExecutable::CLI::CLI()
+    : mSettings(new PointExecutable::Settings<true>) {}
+PointExecutable::CLI::~CLI() {}
+PointExecutable::CLI::CLI(CLI&& other) {
+    mSettings = std::move(other.mSettings);
+}
+
+PointExecutable::CLI
+PointExecutable::CLI::create(int argc, char* argv[], int* used)
+{
+    CLI cli;
+    PointExecutable::Settings<true>& S = *cli.mSettings;
+
+    auto param = S.members();
+    for (int i = 1; i < argc; ++i) {
+        const char* current = argv[i];
+        if (current[0] != '-') continue;
+        for (auto& P : param) {
+            size_t count = std::numeric_limits<size_t>::max();
+            if (auto space = std::strchr(P->name(), ' ')) {
+                count = space - P->name();
+            }
+            // assumes strings are null terminated
+            if (std::strncmp(current, P->name(), count) != 0) continue;
+            if (i + 1 >= argc) {
+                OPENVDB_THROW(CLIError, "option " << current << " requires an argument");
+            }
+            if (!P->init(argv[++i]))  {
+                OPENVDB_THROW(CLIError, "option " << current <<
+                    " has an invalid or missing argument");
+            }
+            for (int j = i; j <= i+1; ++j) used[j]=1;
+        }
+    }
+
+    return cli;
+}
+
+void PointExecutable::CLI::usage(std::ostream& os)
+{
+    PointExecutable::Settings<true> S;
+    const auto param = S.members();
+    const char indent = '\t';
+    for (const auto& P : param) {
+        os << indent << P->name() << " : Default [";
+        P->str(os);
+        os << ']' << '\n';
+
+        const char* doc = P->doc();
+        if (!doc) continue;
+        os << indent << indent;;
+        while (*doc != '\0') {
+            os << *doc;
+            if (*doc == '\n') os << indent << indent;
+            ++doc;
+        }
+        os << '\n';
+    }
+}
+
+void PointExecutable::setSettingsFromCLI(const PointExecutable::CLI& cli)
+{
+    mSettings->init(*cli.mSettings);
+}
+
+
 
 } // namespace ax
 } // namespace OPENVDB_VERSION_NAME

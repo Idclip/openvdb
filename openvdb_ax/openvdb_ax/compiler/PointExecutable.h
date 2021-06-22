@@ -124,7 +124,29 @@ public:
     ////////////////////////////////////////////////////////
 
     // foward declaration of settings for this executable
-    struct Settings;
+    template <bool> struct Settings;
+
+    /// @brief Command Line Interface handling for the PointExecutable.
+    /// @details  This class wraps the logic for converting commands specific
+    ///   to the PointExecutable to the internal Settings. Subsequent
+    ///   executables can be initialized from the CLI object that gets created
+    struct CLI
+    {
+        ~CLI();
+        CLI(CLI&&);
+        static CLI create(int argc, char* argv[], int* used=nullptr);
+        static void usage(std::ostream& os);
+    private:
+        friend class PointExecutable;
+        CLI();
+        std::unique_ptr<Settings<true>> mSettings;
+    };
+
+    /// @brief  Intialize the Settings of this executables from the CLI object
+    /// @param cli The CLI object
+    void setSettingsFromCLI(const CLI& cli);
+
+    ////////////////////////////////////////////////////////
 
 private:
     friend class Compiler;
@@ -159,7 +181,7 @@ private:
     const AttributeRegistry::ConstPtr mAttributeRegistry;
     const CustomData::ConstPtr mCustomData;
     const std::unordered_map<std::string, uint64_t> mFunctionAddresses;
-    std::unique_ptr<Settings> mSettings;
+    std::unique_ptr<Settings<false>> mSettings;
 };
 
 } // namespace ax

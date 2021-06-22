@@ -7,6 +7,7 @@
 #include "Logger.h"
 
 #include "openvdb_ax/Exceptions.h"
+#include "openvdb_ax/cmd/cli.h"
 // @TODO refactor so we don't have to include VolumeComputeGenerator.h,
 // but still have the functions defined in one place
 #include "openvdb_ax/codegen/VolumeComputeGenerator.h"
@@ -33,17 +34,117 @@ namespace OPENVDB_VERSION_NAME {
 
 namespace ax {
 
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::pair<T, T>& v)
+{
+    os << v.first << ':' << v.second;
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const VolumeExecutable::Streaming& v)
+{
+    if (v == VolumeExecutable::Streaming::ON)        os << "ON";
+    else if (v == VolumeExecutable::Streaming::OFF)  os << "OFF";
+    else if (v == VolumeExecutable::Streaming::AUTO) os << "AUTO";
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const VolumeExecutable::IterType& v)
+{
+    if (v == VolumeExecutable::IterType::ON)        os << "ON";
+    else if (v == VolumeExecutable::IterType::OFF)  os << "OFF";
+    else if (v == VolumeExecutable::IterType::ALL)  os << "ALL";
+    return os;
+}
+
 /// @brief Settings which are stored on the volume executer
 ///   and are configurable by the user.
+template <bool CLI>
 struct VolumeExecutable::Settings
 {
-    Index mTreeExecutionLevelMin = 0;
-    Index mTreeExecutionLevelMax = FloatTree::DEPTH-1;
-    bool mCreateMissing = true;
-    IterType mValueIterator = IterType::ON;
-    Streaming mActiveTileStreaming = Streaming::AUTO;
-    size_t mGrainSize = 1;
-    size_t mTileGrainSize = 32;
+    template <typename T>
+    using ParamT = typename std::conditional<CLI, CLIParam<T>, BasicParam<T>>::type;
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    inline std::array<ParamBase*, 4> members()
+    {
+        assert(CLI);
+        std::array<ParamBase*, 4> params;
+        params[0] = (&this->mTreeExecutionLevel);
+        params[1] = (&this->mValueIterator);
+        params[2] = (&this->mActiveTileStreaming);
+        params[3] = (&this->mGrainSizes);
+        return params;
+    }
+
+    inline void init(const VolumeExecutable::Settings<true>& S)
+    {
+        if (S.mTreeExecutionLevel.isInit())  mTreeExecutionLevel = S.mTreeExecutionLevel.get();
+        if (S.mValueIterator.isInit())       mValueIterator = S.mValueIterator.get();
+        if (S.mActiveTileStreaming.isInit()) mActiveTileStreaming = S.mActiveTileStreaming.get();
+        if (S.mGrainSizes.isInit())          mGrainSizes = S.mGrainSizes.get();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    BasicParam<bool> mCreateMissing = true;
+
+    ParamT<std::pair<Index,Index>> mTreeExecutionLevel {
+        std::pair<Index,Index>{ 0, FloatTree::DEPTH-1 },
+        "--tree-level [l1 | l1:l2]",
+        "set the desired tree levels to process, from [l1] to [l2]. If [l2] is\n"
+        "not provided, only a single level [l1] is processed. By default, AX\n"
+        "processes the entire VDB tree.",
+        [](std::pair<Index,Index>& v, const char* arg) {
+            v.first = Index(std::stoi(arg));
+            if (const char* sep = std::strchr(arg, ':')) {
+                v.second = Index(std::stoi(sep+1));
+            }
+        }
+    };
+
+    ParamT<IterType> mValueIterator {
+        IterType::ON,
+        "--iter [ON|OFF|ALL]",
+        "the iterator type to use. ON processes active values, OFF processes\n"
+        "inactive values, ALL processes both.",
+        [](IterType& v, const char* arg) {
+            if (std::strcmp(arg, "ON") == 0)       v = IterType::ON;
+            else if (std::strcmp(arg, "OFF") == 0) v = IterType::OFF;
+            else if (std::strcmp(arg, "ALL") == 0) v = IterType::ALL;
+            else throw std::runtime_error("");
+        }
+    };
+
+    ParamT<Streaming> mActiveTileStreaming {
+        Streaming::AUTO,
+        "--tile-stream [ON|OFF|AUTO]",
+        "explicitly set the active tile streaming behaviour. By default, AX will\n"
+        "stream active-tiles in Volumes where it detects that the AX program may\n"
+        "write to finer tree levels.",
+        [](Streaming& v, const char* arg) {
+            if (std::strcmp(arg, "ON") == 0)        v = Streaming::ON;
+            else if (std::strcmp(arg, "OFF") == 0)  v = Streaming::OFF;
+            else if (std::strcmp(arg, "AUTO") == 0) v = Streaming::AUTO;
+            else throw std::runtime_error("");
+        }
+    };
+
+    ParamT<std::pair<size_t,size_t>> mGrainSizes {
+        std::pair<size_t,size_t>{ 1, 32 },
+        "--grain [g1 | g1:g2]",
+        "sets the threading grain size for processing VDB nodes. [g1] controls\n"
+        "the outer layer's grain size. The outer layer visits each individual\n"
+        "node in a VDB. [g2] controls the inner layer's grain size. This is used\n"
+        "for Volumes during task splitting of active tile streaming.",
+        [](std::pair<size_t,size_t>& v, const char* arg) {
+            v.first = size_t(std::stol(arg));
+            if (const char* sep = std::strchr(arg, ':')) {
+                v.second = size_t(std::stol(sep+1));
+            }
+        }
+    };
 };
 
 namespace {
@@ -1008,7 +1109,7 @@ inline void run(GridCache& cache,
                 const std::unordered_map<std::string, uint64_t>& functions,
                 const AttributeRegistry& registry,
                 const CustomData* const custom,
-                const VolumeExecutable::Settings& S,
+                const VolumeExecutable::Settings<false>& S,
                 const VolumeExecutable& E,
                 Logger& logger)
 {
@@ -1026,13 +1127,13 @@ inline void run(GridCache& cache,
     data.mCustomData = custom;
     data.mAttributeRegistry = &registry;
     data.mGrids = cache.mRead.data();
-    data.mTreeLevelMin = S.mTreeExecutionLevelMin;
-    data.mTreeLevelMax = S.mTreeExecutionLevelMax;
+    data.mTreeLevelMin = S.mTreeExecutionLevel.get().first;
+    data.mTreeLevelMax = S.mTreeExecutionLevel.get().second;
     data.mIterMode =
         std::is_same<IterT, ValueOnIter>::value  ? 1 :
         std::is_same<IterT, ValueOffIter>::value ? 0 :
         std::is_same<IterT, ValueAllIter>::value ? 2 : 2;
-    data.mTileGrainSize = S.mTileGrainSize;
+    data.mTileGrainSize = S.mGrainSizes.get().second;
     // @note If Streaming::AUTO, this value can be temporarily
     // changed by the next invocation of run().
     data.mActiveTileStreaming = ((data.mIterMode == 1 || data.mIterMode == 2) &&
@@ -1070,7 +1171,7 @@ VolumeExecutable::VolumeExecutable(const std::shared_ptr<const llvm::LLVMContext
     , mAttributeRegistry(accessRegistry)
     , mCustomData(customData)
     , mFunctionAddresses(functionAddresses)
-    , mSettings(new Settings)
+    , mSettings(new Settings<false>)
 {
     assert(mContext);
     assert(mExecutionEngine);
@@ -1107,7 +1208,7 @@ VolumeExecutable::VolumeExecutable(const VolumeExecutable& other)
     , mAttributeRegistry(other.mAttributeRegistry)
     , mCustomData(other.mCustomData)
     , mFunctionAddresses(other.mFunctionAddresses)
-    , mSettings(new Settings(*other.mSettings)) {}
+    , mSettings(new Settings<false>(*other.mSettings)) {}
 
 VolumeExecutable::~VolumeExecutable() {}
 
@@ -1180,19 +1281,13 @@ void VolumeExecutable::setTreeExecutionLevel(const Index min, const Index max)
         OPENVDB_THROW(RuntimeError,
             "Invalid tree execution level in VolumeExecutable.");
     }
-    mSettings->mTreeExecutionLevelMin = min;
-    mSettings->mTreeExecutionLevelMax = max;
-}
-
-Index VolumeExecutable::getTreeExecutionLevel() const
-{
-    return mSettings->mTreeExecutionLevelMin;
+    mSettings->mTreeExecutionLevel.set({ min, max});
 }
 
 void VolumeExecutable::getTreeExecutionLevel(Index& min, Index& max) const
 {
-    min = mSettings->mTreeExecutionLevelMin;
-    max = mSettings->mTreeExecutionLevelMax;
+    min = mSettings->mTreeExecutionLevel.get().first;
+    max = mSettings->mTreeExecutionLevel.get().second;
 }
 
 void VolumeExecutable::setActiveTileStreaming(const Streaming& s)
@@ -1243,22 +1338,100 @@ VolumeExecutable::IterType VolumeExecutable::getValueIterator() const
 
 void VolumeExecutable::setGrainSize(const size_t grain)
 {
-    mSettings->mGrainSize = grain;
+    mSettings->mGrainSizes.get().first = grain;
 }
 
 size_t VolumeExecutable::getGrainSize() const
 {
-    return mSettings->mGrainSize;
+    return mSettings->mGrainSizes.get().first;
 }
 
 void VolumeExecutable::setActiveTileStreamingGrainSize(const size_t grain)
 {
-    mSettings->mTileGrainSize = grain;
+    mSettings->mGrainSizes.get().second = grain;
 }
 
 size_t VolumeExecutable::getActiveTileStreamingGrainSize() const
 {
-    return mSettings->mTileGrainSize;
+    return mSettings->mGrainSizes.get().second;
+}
+
+
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+
+VolumeExecutable::CLI::CLI()
+    : mSettings(new VolumeExecutable::Settings<true>) {}
+VolumeExecutable::CLI::~CLI() {}
+VolumeExecutable::CLI::CLI(CLI&& other) {
+    mSettings = std::move(other.mSettings);
+}
+
+VolumeExecutable::CLI
+VolumeExecutable::CLI::create(int argc, char* argv[], int* used)
+{
+    CLI cli;
+    VolumeExecutable::Settings<true>& S = *cli.mSettings;
+
+    auto param = S.members();
+    for (int i = 1; i < argc; ++i) {
+        const char* current = argv[i];
+        if (current[0] != '-') continue;
+        for (auto& P : param) {
+            size_t count = std::numeric_limits<size_t>::max();
+            if (auto space = std::strchr(P->name(), ' ')) {
+                count = space - P->name();
+            }
+            // assumes strings are null terminated
+            if (std::strncmp(current, P->name(), count) != 0) continue;
+            if (i + 1 >= argc) {
+                OPENVDB_THROW(CLIError, "option " << current << " requires an argument");
+            }
+            if (!P->init(argv[++i]))  {
+                OPENVDB_THROW(CLIError, "option " << current <<
+                    " has an invalid or missing argument");
+            }
+            for (int j = i; j <= i+1; ++j) used[j]=1;
+        }
+    }
+
+    return cli;
+}
+
+void VolumeExecutable::CLI::usage(std::ostream& os)
+{
+    VolumeExecutable::Settings<true> S;
+    const auto param = S.members();
+    const char indent = '\t';
+    for (const auto& P : param) {
+        os << indent << P->name() << " : Default [";
+        P->str(os);
+        os << ']' << '\n';
+
+        const char* doc = P->doc();
+        if (!doc) continue;
+        os << indent << indent;;
+        while (*doc != '\0') {
+            os << *doc;
+            if (*doc == '\n') os << indent << indent;
+            ++doc;
+        }
+        os << '\n';
+    }
+}
+
+void VolumeExecutable::setSettingsFromCLI(const VolumeExecutable::CLI& cli)
+{
+    mSettings->init(*cli.mSettings);
+}
+
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+Index VolumeExecutable::getTreeExecutionLevel() const
+{
+    return mSettings->mTreeExecutionLevel.get().first;
 }
 
 
