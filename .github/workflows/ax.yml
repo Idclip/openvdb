@@ -29,7 +29,7 @@ on:
   workflow_dispatch:
     inputs:
       type:
-        description: 'The type of CI to run (all, mac, linux)'
+        description: 'The type of CI to run (all, mac, linux, grammar)'
         required: true
         default: 'all'
 
@@ -152,3 +152,19 @@ jobs:
         run: cd build && ctest -V
       - name: test_doxygen_examples
         run: ./ci/extract_test_examples.sh
+
+  gen-grammar:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.type == 'grammar' }}
+    runs-on: ubuntu-latest
+    container:
+      image: aswf/ci-openvdb:2021-clang10
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      run: ./ci/build.sh --components=axgr --target=openvdb_ax_grammar --cargs=\"-DOPENVDB_AX_GRAMMAR_NO_LINES=ON\"
+    - name: upload grammar
+      uses: actions/upload-artifact@v2
+      with:
+        name: ax_grammar
+        path: ./build/openvdb_ax/openvdb_ax/openvdb_ax/grammar
+        retention-days: 5
