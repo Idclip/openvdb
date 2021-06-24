@@ -25,6 +25,7 @@ on:
   schedule:
     # run this workflow every midnight Tuesday
     - cron:  '0 0 * * 2'
+  workflow_dispatch:
 
 jobs:
   linux-ax-vfx:
@@ -129,3 +130,19 @@ jobs:
         run: cd build && ctest -V
       - name: test_doxygen_examples
         run: ./ci/extract_test_examples.sh
+
+  gen-grammar:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    container:
+      image: aswf/ci-openvdb:2021-clang10
+    steps:
+    - uses: actions/checkout@v2
+    - name: build
+      run: ./ci/build.sh Release "axgr"
+    - name: upload grammar
+      uses: actions/upload-artifact@v2
+      with:
+        name: ax_grammar
+        path: ./build/openvdb_ax/openvdb_ax/openvdb_ax/grammar
+        retention-days: 5
