@@ -77,16 +77,18 @@ jobs:
     name: windows-vc:${{ matrix.config.vc }}-type:${{ matrix.config.build }}
     env:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.config.vc }}
+      CXX: ${{ matrix.config.cxx }}
     strategy:
       matrix:
         config:
           # static build of blosc from vcpkg does not build internal sources.
           # USE_STATIC_DEPENDENCIES is required for IlmBase/OpenEXR defines and
           # Boost as both shared and static libs are installed.
-          - { vc: 'x64-windows-static', build: 'Release', cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
-          - { vc: 'x64-windows-static', build: 'Debug',   cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
-          - { vc: 'x64-windows',        build: 'Release', cmake: '-DOPENVDB_CORE_STATIC=OFF' }
-          - { vc: 'x64-windows',        build: 'Debug',   cmake: '-DOPENVDB_CORE_STATIC=OFF' }
+          - { cxx: 'CL.exe', vc: 'x64-windows-static', build: 'Release', cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
+          - { cxx: 'CL.exe', vc: 'x64-windows-static', build: 'Debug',   cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
+          - { cxx: 'CL.exe', vc: 'x64-windows',        build: 'Release', cmake: '-DOPENVDB_CORE_STATIC=OFF' }
+          - { cxx: 'CL.exe', vc: 'x64-windows',        build: 'Debug',   cmake: '-DOPENVDB_CORE_STATIC=OFF' }
+          - { cxx: 'g++',    vc: 'x64-windows',        build: 'Release', cmake: '-DOPENVDB_CORE_STATIC=OFF' } # MinGW-w64 
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
