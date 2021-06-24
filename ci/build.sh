@@ -12,7 +12,7 @@ cmake --version
 BUILD_TYPE="$1"; shift
 # Command seperated list of components i.e. "core,ax,bin"
 IN_COMPONENTS="$1"; shift
-CMAKE_EXTRA="$@"
+# Other arguments are passed directly to the final cmake command
 
 ################################################
 #
@@ -40,6 +40,7 @@ for comp in "${IN_COMPONENTS[@]}"; do
 done
 
 # Build CMake command
+CMAKE_EXTRA=()
 for comp in "${!COMPONENTS[@]}"; do
     found=false
     for in in "${IN_COMPONENTS[@]}"; do
@@ -49,9 +50,9 @@ for comp in "${!COMPONENTS[@]}"; do
     done
 
     if $found; then
-        CMAKE_EXTRA+=" -D${COMPONENTS[$comp]}=ON "
+        CMAKE_EXTRA+=("-D${COMPONENTS[$comp]}=ON")
     else
-        CMAKE_EXTRA+=" -D${COMPONENTS[$comp]}=OFF "
+        CMAKE_EXTRA+=("-D${COMPONENTS[$comp]}=OFF")
     fi
 done
 
@@ -78,7 +79,17 @@ cmake \
     -DOPENVDB_BUILD_VDB_RENDER=ON \
     -DOPENVDB_BUILD_VDB_VIEW=ON \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
-    ${CMAKE_EXTRA} \
+    -DMSVC_MP_THREAD_COUNT=4 \
+    "${CMAKE_EXTRA[@]}" \
+    "$@" \
     ..
 
-cmake --build . --config $BUILD_TYPE --target install
+# NOTE: --parallel only effects the number of projects build, not t-units.
+# We support this with out own MSVC_MP_THREAD_COUNT option for MSVC.
+# Alternatively it is mentioned that the following should work:
+#   cmake --build . --  /p:CL_MPcount=8
+# However it does not seem to for our project.
+# https://gitlab.kitware.com/cmake/cmake/-/issues/20564
+
+# cmake 3.14 and later required for --verbose
+cmake --build . --parallel 4 --config $BUILD_TYPE --target install

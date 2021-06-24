@@ -77,18 +77,17 @@ jobs:
     name: windows-vc:${{ matrix.config.vc }}-type:${{ matrix.config.build }}
     env:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.config.vc }}
-      CXX: ${{ matrix.config.cxx }}
     strategy:
       matrix:
         config:
           # static build of blosc from vcpkg does not build internal sources.
           # USE_STATIC_DEPENDENCIES is required for IlmBase/OpenEXR defines and
           # Boost as both shared and static libs are installed.
-          - { cxx: 'CL.exe', vc: 'x64-windows-static', build: 'Release', cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
-          - { cxx: 'CL.exe', vc: 'x64-windows-static', build: 'Debug',   cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
-          - { cxx: 'CL.exe', vc: 'x64-windows',        build: 'Release', cmake: '-DOPENVDB_CORE_STATIC=OFF' }
-          - { cxx: 'CL.exe', vc: 'x64-windows',        build: 'Debug',   cmake: '-DOPENVDB_CORE_STATIC=OFF' }
-          - { cxx: 'g++',    vc: 'x64-windows',        build: 'Release', cmake: '-DOPENVDB_CORE_STATIC=OFF' } # MinGW-w64 
+          - { vc: 'x64-windows-static', build: 'Release', cmake: '-G \"Visual Studio 16 2019\" -DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
+          - { vc: 'x64-windows-static', build: 'Debug',   cmake: '-G \"Visual Studio 16 2019\" -DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
+          - { vc: 'x64-windows',        build: 'Release', cmake: '-G \"Visual Studio 16 2019\" -DOPENVDB_CORE_STATIC=OFF' }
+          - { vc: 'x64-windows',        build: 'Debug',   cmake: '-G \"Visual Studio 16 2019\" -DOPENVDB_CORE_STATIC=OFF' }
+          - { vc: 'x64-windows',        build: 'Release', cmake: '-G \"MinGW Makefiles\" -DOPENVDB_CORE_STATIC=OFF' }
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
@@ -102,7 +101,10 @@ jobs:
       run: ./ci/install_windows.sh
     - name: build
       shell: bash
-      run: ./ci/build_windows.sh ${{ matrix.config.build }} ${{ matrix.config.cmake }}
+      run: ./ci/build.sh ${{ matrix.config.build }} "core,bin,test" \
+        ${{ matrix.config.cmake }} -A x64 \
+        -DVCPKG_TARGET_TRIPLET="${VCPKG_DEFAULT_TRIPLET}" \
+        -DCMAKE_TOOLCHAIN_FILE="${VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake"
     - name: test
       shell: bash
       # Always run tests on weekly builds but skip Debug on commits as they take a while.
