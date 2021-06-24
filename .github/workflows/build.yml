@@ -62,7 +62,7 @@ jobs:
       run: ./ci/install_gtest.sh 1.8.0
     - name: build
       run: ./ci/build.sh ${{ matrix.config.build }} "core,python,bin,test" \
-        -DOPENVDB_CXX_STRICT=ON -DOPENVDB_ABI_VERSION_NUMBER=${{ matrix.config.abi }}
+       -DOPENVDB_CXX_STRICT=ON -DOPENVDB_ABI_VERSION_NUMBER=${{ matrix.config.abi }}
     - name: test
       # Always run tests on weekly builds but skip Debug on commits as they take a while.
       # https://github.community/t/distinct-job-for-each-schedule/17811/2
@@ -102,9 +102,9 @@ jobs:
     - name: build
       shell: bash
       run: ./ci/build.sh ${{ matrix.config.build }} "core,bin,test" \
-        ${{ matrix.config.cmake }} -A x64 \
-        -DVCPKG_TARGET_TRIPLET="${VCPKG_DEFAULT_TRIPLET}" \
-        -DCMAKE_TOOLCHAIN_FILE="${VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake"
+       ${{ matrix.config.cmake }} -A x64 \
+       -DVCPKG_TARGET_TRIPLET="${VCPKG_DEFAULT_TRIPLET}" \
+       -DCMAKE_TOOLCHAIN_FILE="${VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake"
     - name: test
       shell: bash
       # Always run tests on weekly builds but skip Debug on commits as they take a while.
@@ -136,7 +136,7 @@ jobs:
       run: ./ci/install_gtest.sh 1.10.0
     - name: build
       run: ./ci/build.sh Release "core,python,bin,test" \
-        -DOPENVDB_CXX_STRICT=ON -DOPENVDB_ABI_VERSION_NUMBER=8 ${{ matrix.config.cmake }}
+       -DOPENVDB_CXX_STRICT=ON -DOPENVDB_ABI_VERSION_NUMBER=8 ${{ matrix.config.cmake }}
     - name: test
       run: cd build && ctest -V
 
@@ -154,7 +154,7 @@ jobs:
       run: sudo apt-get -q install -y libgtest-dev
     - name: build
       run: ./ci/build.sh Release "core,test" \
-        -DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DOPENVDB_ABI_VERSION_NUMBER=8 -DCMAKE_INSTALL_PREFIX=`pwd`
+       -DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DOPENVDB_ABI_VERSION_NUMBER=8 -DCMAKE_INSTALL_PREFIX=`pwd`
     - name: test
       run: cd build && ctest -V
 
@@ -172,7 +172,7 @@ jobs:
       run: sudo apt-get -q install -y libgtest-dev
     - name: build
       run: ./ci/build.sh Release "core,test" \
-        -DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DOPENVDB_ABI_VERSION_NUMBER=8 -DCMAKE_INSTALL_PREFIX=`pwd`
+       -DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DOPENVDB_ABI_VERSION_NUMBER=8 -DCMAKE_INSTALL_PREFIX=`pwd`
     - name: test
       run: cd build && ctest -V
 
@@ -200,7 +200,7 @@ jobs:
       # Also need to disable compiler warnings for ABI 6 and above due to
       # the version of clang installed
       run: ./ci/build.sh Release "core,python,bin,test" \
-        -DOPENVDB_CXX_STRICT=OFF -DOPENVDB_ABI_VERSION_NUMBER=8 -DOPENVDB_SIMD=SSE42
+       -DOPENVDB_CXX_STRICT=OFF -DOPENVDB_ABI_VERSION_NUMBER=8 -DOPENVDB_SIMD=SSE42
     - name: test
       shell: bash
       run: cd build && ctest -V

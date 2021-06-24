@@ -124,7 +124,7 @@ jobs:
       - name: build
         run: |
           ./ci/build.sh ${{ matrix.build }} "core,axcore,axbin,axtest" \
-            -DLLVM_DIR=/usr/local/opt/llvm@${{ matrix.llvm }}/lib/cmake/llvm
+           -DLLVM_DIR=/usr/local/opt/llvm@${{ matrix.llvm }}/lib/cmake/llvm
       - name: test
         run: cd build && ctest -V
       - name: test_doxygen_examples
