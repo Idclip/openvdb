@@ -9,10 +9,6 @@ cmake --version
 
 ################################################
 
-# Each option may be followed by one colon to indicate it
-# has a required argument, and by two colons to indicate it
-# has an optional argument
-
 OPTS_ARGS+=("t:")  ## See --target
 OPTS_ARGS+=("j:")  ## Thread usage
 OPTS_ARGS+=("c:")  ## See --cargs
@@ -52,13 +48,6 @@ HAS_PARM() {
     else return 0; fi
 }
 
-CONTAINS () {
-    local e match="$1"
-    shift
-    for e; do [[ "$e" == "$match" ]] && return 0; done
-    return 1
-}
-
 # Format to string and replace spaces with commas
 LARGS_STR="${OPTL_ARGS[@]}"
 LARGS_STR=${LARGS_STR// /,}
@@ -66,43 +55,27 @@ SARGS_STR="${OPTS_ARGS[@]}"
 SARGS_STR=${SARGS_STR// /,}
 
 # Parse all arguments and store them in an array, split by whitespace. Error if unsupported
-ARGS="$(eval getopt --options=$SARGS_STR --longoptions=$LARGS_STR -- $@)"
-eval "ARGS=($ARGS)"
+ARGS="$(eval getopt --options=$SARGS_STR --longoptions=$LARGS_STR -- "$@")"
+eval set -- "$ARGS"
 
-# Parse all user supplied command line arguments into an assosiate array
-NUM_ARGS=${#ARGS[@]}
-USED_ARGS=0
-for ARG in "${ARGS[@]}"; do
-    USED_ARGS=$((USED_ARGS+1))
-    if [[ $ARG == "--" ]]; then break; fi
-    if [[ $ARG == "--"* ]] || [[ $ARG == "-"* ]]; then
-        if CONTAINS "${ARG:1}:" "${OPTS_ARGS[@]}"; then
-            key=$ARG
-        elif CONTAINS "${ARG:2}:" "${OPTL_ARGS[@]}"; then
-            key=$ARG
-        elif [ ! -z $key ]; then
-            PARMS[$key]="$ARG"
-            key=""
-        else
-            PARMS[$ARG]=1
-        fi
-    elif [ ! -z $key ]; then
-        PARMS[$key]=$ARG
-        key=""
-    fi
+# split into associative array
+while true; do
+    case "$1" in
+        -v|--verbose) # options which dont take an argument
+            PARMS["$1"]="ON"; shift
+            ;;
+        --[a-z]*) # all other arguments (key/values)
+            PARMS["$1"]="$2"; shift 2
+            ;;
+        --)
+            shift; break
+            ;;
+    esac
 done
-
-if [ $USED_ARGS -ne $NUM_ARGS ]; then
-    for ARG in $(seq $USED_ARGS $NUM_ARGS); do
-        IGNORED+=${ARGS[$ARG]}
-    done
-    echo "Warning: The following arguments were ignored -- $IGNORED"
-fi
 
 ################################################
 
 # extract arguments
-
 if HAS_PARM -t; then TARGET=${PARMS[-t]}; fi
 if HAS_PARM --target; then
     if [ -z $TARGET ]; then TARGET=${PARMS[--target]}
@@ -113,6 +86,7 @@ if HAS_PARM --cargs; then
     if [ -z $CMAKE_EXTRA ]; then CMAKE_EXTRA=${PARMS[--cargs]}
     else CMAKE_EXTRA+=" "${PARMS[--cargs]}; fi
 fi
+# handle whitespace
 eval "CMAKE_EXTRA=($CMAKE_EXTRA)"
 
 # Using CMAKE_VERBOSE_MAKEFILE rather than `cmake --verbose` to support older
@@ -132,18 +106,13 @@ for comp in "${IN_COMPONENTS[@]}"; do
 done
 # Build Components command
 for comp in "${!COMPONENTS[@]}"; do
-    found=false
+    setting="OFF"
     for in in "${IN_COMPONENTS[@]}"; do
         if [[ $comp == "$in" ]]; then
-            found=true; break
+            setting="ON"; break
         fi
     done
-
-    if $found; then
-        CMAKE_EXTRA+=("-D${COMPONENTS[$comp]}=ON")
-    else
-        CMAKE_EXTRA+=("-D${COMPONENTS[$comp]}=OFF")
-    fi
+    CMAKE_EXTRA+=("-D${COMPONENTS[$comp]}=$setting")
 done
 
 ################################################
