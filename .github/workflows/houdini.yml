@@ -28,7 +28,7 @@ on:
 
 jobs:
   linux-vfx-houdini:
-    if: ${{ github.repository_owner == 'AcademySoftwareFoundation' }}
+    if: github.repository_owner == 'AcademySoftwareFoundation'
     runs-on: ubuntu-latest
     name: hou:${{ matrix.config.hou }}-vfx:${{ matrix.config.image }}-cxx:${{ matrix.config.cxx }}
     container:

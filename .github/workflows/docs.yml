@@ -55,9 +55,9 @@ jobs:
     - name: deploy
       # only deploy documentation to gh-pages on a manual workflow dispatch
       if: |
-        ${{ github.repository_owner == 'AcademySoftwareFoundation' &&
-            github.event_name == 'workflow_dispatch' &&
-            github.event.inputs.deploy == 'true' }}
+        github.repository_owner == 'AcademySoftwareFoundation' &&
+        github.event_name == 'workflow_dispatch' &&
+        github.event.inputs.deploy == 'true'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -12,7 +12,7 @@ on:
 
 jobs:
   houdini18_5:
-    if: ${{ github.repository_owner == 'AcademySoftwareFoundation' }}
+    if: github.repository_owner == 'AcademySoftwareFoundation'
     runs-on: ubuntu-latest
     env:
       CXX: clang++
@@ -39,7 +39,7 @@ jobs:
         key: vdb1-houdini18_5-${{ hashFiles('hou/hou.tar.gz') }}
 
   houdini18_0:
-    if: ${{ github.repository_owner == 'AcademySoftwareFoundation' }}
+    if: github.repository_owner == 'AcademySoftwareFoundation'
     runs-on: ubuntu-latest
     env:
       CXX: clang++
