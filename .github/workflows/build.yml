@@ -43,8 +43,8 @@ jobs:
     # VFX platform jobs. These are run on the appropriate CentOS images from
     # the provided ASWF docker containers
     if: |
-      github.event_name != 'workflow_dispatch'
-      github.event.inputs.type == 'all'
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.type == 'all' ||
       github.event.inputs.type == 'linux'
     runs-on: ubuntu-latest
     name: >
