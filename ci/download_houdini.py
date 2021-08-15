@@ -26,6 +26,14 @@ only_production = True if sys.argv[2] == 'ON' else False
 user_client_id = os.getenv('HOUDINI_CLIENT_ID')
 user_client_secret_key = os.getenv('HOUDINI_SECRET_KEY')
 
+# choose the appropriate platform key (either macos, linux or win64)
+platform = sys.platform
+if platform.startswith('darwin'):  platform = 'macos'
+elif platform.startswith('win'):   platform = 'win64'
+elif platform.startswith('linux'): platform = 'linux'
+else:
+    raise Exception('Unsupported platform ' + platform + ' for download.')
+
 if not re.match('[0-9][0-9]\.[0-9]$', version):
     raise IOError('Invalid Houdini Version "%s", expecting in the form "major.minor" such as "16.0"' % version)
 
@@ -94,7 +102,7 @@ def get_access_token_and_expiry_time(
             ),
         })
     if response.status_code != 200:
-        raise AuthorizationError(response.status_code, reponse.text)
+        raise AuthorizationError(response.status_code, response.text)
 
     response_json = response.json()
     access_token_expiry_time = time.time() - 2 + response_json["expires_in"]
@@ -146,10 +154,11 @@ service = service(
     )
 
 releases_list = service.download.get_daily_builds_list(
-        product='houdini', version=version, platform='linux', only_production=only_production)
+        product='houdini', version=version, platform=platform, only_production=only_production)
 
 latest_release = service.download.get_daily_build_download(
-        product='houdini', version=version, platform='linux', build=releases_list[0]['build'])
+        product='houdini', version=version, platform=platform, build=releases_list[0]['build'])
+print('Downloading ' + latest_release['filename'] + '...')
 
 # Download the file as hou.tar.gz
 local_filename = 'hou.tar.gz'
