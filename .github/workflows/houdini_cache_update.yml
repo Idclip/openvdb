@@ -127,7 +127,10 @@ jobs:
     - name: download_houdini
       run: ./ci/download_houdini.sh 18.5 ON
     - name: install_houdini
-      run: mv hou/hou.tar.gz . && tar -xzf hou.tar.gz
+      run: |
+        mkdir $HOME/houdini_install
+        cp hou/hou.tar.gz $HOME/houdini_install/hou.tar.gz
+        cd $HOME/houdini_install && tar -xzf hou.tar.gz && cd -
     - name: install_gtest
       run: ./ci/install_gtest.sh 1.10.0
     - name: update_bash
@@ -138,7 +141,7 @@ jobs:
     - name: build
       shell: bash
       run: >
-        cd hou/Frameworks/Houdini.framework/Versions/Current/Resources && source houdini_setup_bash && cd - &&
+        cd $HOME/houdini_install/hou/Frameworks/Houdini.framework/Versions/Current/Resources && source houdini_setup_bash && cd - &&
         ./ci/build.sh -v
         --build-type=Release
         --components="core,hou,bin,python,test,axcore,axbin,axtest"
