@@ -322,22 +322,25 @@ jobs:
     strategy:
       matrix:
         blosc: ['1.5.0','1.10.0','1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
+      fail-fast: false
     steps:
     - uses: actions/checkout@v2
     - name: install_boost
-      run: sudo apt-get -q install -y libboost-dev libboost-system-dev libboost-iostreams-dev
+      run: sudo apt-get -q install -y libboost-dev libboost-system-dev libboost-iostreams-dev libboost-python-dev
     - name: install_tbb
       run: sudo apt-get -q install -y libtbb-dev
+    - name: install_gtest
+      run: sudo apt-get -q install -y libgtest-dev
     - name: install_blosc
       shell: bash
-      run: ./ci/install_blosc.sh ${{ matrix.blosc }}
+      run: sudo ./ci/install_blosc.sh ${{ matrix.blosc }}
     - name: build
       run: >
-        ./ci/build.sh -v
+        sudo ./ci/build.sh -v
         --build-type=Release
         --components=\"core,python,test\"
         --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
     - name: test
-      run: cd build && ctest -V
+      run: cd build && sudo ctest -V
     - name: test_vdbs
-      run: python3 ./ci/read_write_test_compression.py
+      run: sudo python3 ./ci/read_write_test_compression.py

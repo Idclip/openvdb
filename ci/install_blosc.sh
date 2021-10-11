@@ -13,6 +13,7 @@ fi
 
 mkdir build
 cd build
-cmake ../.
+
+cmake -DBUILD_STATIC=OFF -DBUILD_TESTS=OFF -DBUILD_FUZZERS=OFF -DBUILD_BENCHMARKS=OFF ../.
 make -j4
 make install
