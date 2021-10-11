@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       type:
-        description: 'The type of CI to run (all, houdini, sanitize, mac, extra, ax)'
+        description: 'The type of CI to run (all, houdini, sanitize, mac, extra, ax, blosc)'
         required: true
         default: 'all'
 
@@ -43,12 +43,12 @@ jobs:
   # succeeds, put it into the GitHub Actions cache
   linux_houdini18_5:
     needs: [checksecret]
-    if: >
-      ${{ (needs.checksecret.outputs.HOUDINI_SECRETS == 'true' ||
-           github.repository_owner == 'AcademySoftwareFoundation') &&
-          (github.event_name != 'workflow_dispatch' ||
-           github.event.inputs.type == 'all' ||
-           github.event.inputs.type == 'houdini') }}
+    if: |
+      (needs.checksecret.outputs.HOUDINI_SECRETS == 'true' ||
+      github.repository_owner == 'AcademySoftwareFoundation') &&
+      (github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.type == 'all' ||
+      github.event.inputs.type == 'houdini')
     runs-on: ubuntu-latest
     env:
       CXX: clang++
@@ -305,3 +305,76 @@ jobs:
         run: cd build && ctest -V
       - name: test_doxygen_examples
         run: ./ci/extract_test_examples.sh
+
+  #############################################################################
+  ################################## Blosc ####################################
+  #############################################################################
+
+  macos-blosc:
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.type == 'all' ||
+      github.event.inputs.type == 'blosc'
+    runs-on: macos-latest
+    name: macos-blosc:${{ matrix.blosc }}
+    strategy:
+      matrix:
+        blosc: ['1.5.0','1.10.0','1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: install
+      shell: bash
+      run: |
+        brew update
+        brew install bash gnu-getopt cmake boost boost-python3 tbb llvm googletest
+        echo "/usr/local/opt/gnu-getopt/bin" >> $GITHUB_PATH
+    - name: install_blosc
+      shell: bash
+      run: ./ci/install_blosc.sh ${{ matrix.blosc }}
+    - name: install_req
+      shell: bash
+      run: pip3 install --user requests
+    - name: build
+      run: >
+        ./ci/build.sh -v
+        --build-type=Release
+        --components=\"core,python,test,axcore,axbin\"
+        --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm\"
+    # @note  Run read/write script. We can't run this on the linux runner as
+    #   it hits memory limits.
+    - name: test_vdbs
+      run: python3 ./ci/read_write_test_compression.py
+    - name: test
+      run: cd build && sudo ctest -V
+
+  linux-blosc:
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.type == 'all' ||
+      github.event.inputs.type == 'blosc'
+    runs-on: ubuntu-latest
+    name: linux-blosc:${{ matrix.blosc }}
+    strategy:
+      matrix:
+        blosc: ['1.5.0','1.10.0','1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: install_boost
+      run: sudo apt-get -q install -y libboost-dev libboost-system-dev libboost-iostreams-dev libboost-python-dev
+    - name: install_tbb
+      run: sudo apt-get -q install -y libtbb-dev
+    - name: install_gtest
+      run: sudo apt-get -q install -y libgtest-dev
+    - name: install_blosc
+      shell: bash
+      run: sudo ./ci/install_blosc.sh ${{ matrix.blosc }}
+    - name: build
+      run: >
+        sudo ./ci/build.sh -v
+        --build-type=Release
+        --components=\"core,test\"
+        --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
+    - name: test
+      run: cd build && sudo ctest -V
