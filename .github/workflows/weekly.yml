@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       type:
-        description: 'The type of CI to run (all, houdini, sanitize, mac, extra, ax)'
+        description: 'The type of CI to run (all, houdini, sanitize, mac, extra, ax, blosc)'
         required: true
         default: 'all'
 
@@ -305,3 +305,39 @@ jobs:
         run: cd build && ctest -V
       - name: test_doxygen_examples
         run: ./ci/extract_test_examples.sh
+
+  #############################################################################
+  ############################## Blosc readers ################################
+  #############################################################################
+
+  blosc-read-write:
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.type == 'all' ||
+      github.event.inputs.type == 'blosc'
+    runs-on: ubuntu-latest
+    name: blosc-read-write:${{ matrix.blosc }}
+    env:
+      CXX: clang++-10
+    strategy:
+      matrix:
+        blosc: ['1.5.0','1.10.0','1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
+    steps:
+    - uses: actions/checkout@v2
+    - name: install_boost
+      run: sudo apt-get -q install -y libboost-dev libboost-system-dev libboost-iostreams-dev
+    - name: install_tbb
+      run: sudo apt-get -q install -y libtbb-dev
+    - name: install_blosc
+      shell: bash
+      run: ./ci/install_blosc.sh ${{ matrix.blosc }}
+    - name: build
+      run: >
+        ./ci/build.sh -v
+        --build-type=Release
+        --components=\"core,python,test\"
+        --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
+    - name: test
+      run: cd build && ctest -V
+    - name: test_vdbs
+      run: python3 ./ci/read_write_test_compression.py
