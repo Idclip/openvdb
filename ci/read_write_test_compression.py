@@ -6,11 +6,19 @@ import time
 import requests
 import threading
 import zipfile
+import subprocess
 
 # Disable delay loading to fully test full compress/decompress
 os.environ['OPENVDB_DISABLE_DELAYED_LOAD'] = "1"
 
 import pyopenvdb as vdb
+
+if hasattr(vdb, 'ax'):
+    print('ax enabled')
+    diff_with_ax = True
+else:
+    print('ax disabled')
+    diff_with_ax = False
 
 vdb_urls = [
     'https://artifacts.aswf.io/io/aswf/openvdb/models/armadillo.vdb/1.0.0/armadillo.vdb-1.0.0.zip',
@@ -52,6 +60,26 @@ def download(link, filelocation):
         for chunk in r.iter_content(1024):
             if chunk:
                 f.write(chunk)
+
+def diff(src_file, dst_file):
+    print('Comparing grids with AX...')
+
+    grids = vdb.readAllGridMetadata(src_file)
+    a = grids[0].valueTypeName + '@' + grids[0].name
+    grids = vdb.readAllGridMetadata(dst_file)
+    b = grids[0].valueTypeName + '@' + grids[0].name
+    assert(a!=b)
+
+    ax_code = '''
+        if ({a} != {b}) print({a}-{b});
+    '''.format(a=a, b=b)
+
+    ax_cmd = ['vdb_ax', src_file, dst_file, '-s', ax_code]
+    process = subprocess.Popen(ax_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out, err = process.communicate()
+
+    if out:
+        print('VDBs from "' + src_file + '" and "' + dst_file + '" differ.')
 
 # Init downloads
 
@@ -104,6 +132,7 @@ while downloads:
             print(grids)
             raise RuntimeError('Multiple grids in file "' + src_file + '", refusing to read.')
 
+        grids[0][0].name += '_output'
         vdb.write(dst_file, grids[0])
         # Also try and read the compressed grids to make sure they are legit
         compressed = vdb.readAll(dst_file)
@@ -118,6 +147,10 @@ while downloads:
     except Exception as e:
         print(e)
         pass
+
+    if diff_with_ax:
+        if os.path.isfile(src_file) and os.path.isfile(dst_file):
+            diff(src_file, dst_file)
 
     # Cleanup
     print('Cleaning up "' + name + '" files...')
