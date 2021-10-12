@@ -331,6 +331,8 @@ jobs:
       run: sudo apt-get -q install -y libtbb-dev
     - name: install_gtest
       run: sudo apt-get -q install -y libgtest-dev
+    - name: install_llvm
+      run: sudo apt-get -q install -y llvm-dev
     - name: install_blosc
       shell: bash
       run: sudo ./ci/install_blosc.sh ${{ matrix.blosc }}
@@ -338,9 +340,9 @@ jobs:
       run: >
         sudo ./ci/build.sh -v
         --build-type=Release
-        --components=\"core,python,test\"
-        --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
-    - name: test
-      run: cd build && sudo ctest -V
+        --components=\"core,axcore,axbin,python,test\"
+        --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
     - name: test_vdbs
       run: sudo python3 ./ci/read_write_test_compression.py
+    - name: test
+      run: cd build && sudo ctest -V
