@@ -321,7 +321,7 @@ jobs:
       CXX: clang++-10
     strategy:
       matrix:
-        blosc: ['1.5.0','1.10.0','1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
+        blosc: ['1.5.0']
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
@@ -339,7 +339,7 @@ jobs:
     - name: build
       run: >
         sudo ./ci/build.sh -v
-        --build-type=Release
+        --build-type=Debug
         --components=\"core,axcore,axbin,python\"
         --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
     - name: test_vdbs

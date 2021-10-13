@@ -75,7 +75,7 @@ def diff(src_file, dst_file):
         if ({a} != {b}) print({a}-{b});
     '''.format(a=a, b=b)
 
-    ax_cmd = ['vdb_ax', src_file, dst_file, '-s', ax_code]
+    ax_cmd = ['vdb_ax', src_file, dst_file, '-s', ax_code, '-v']
     process = subprocess.Popen(ax_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
 
