@@ -340,9 +340,11 @@ jobs:
       run: >
         sudo ./ci/build.sh -v
         --build-type=Release
-        --components=\"core,axcore,axbin,python,test\"
+        --components=\"core,axcore,axbin,python\"
         --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
     - name: test_vdbs
-      run: sudo python3 ./ci/read_write_test_compression.py
-    - name: test
-      run: cd build && sudo ctest -V
+      run: |
+        sudo python3 -c "print('Starting...')"
+        sudo python3 ./ci/read_write_test_compression.py
+#    - name: test
+#      run: cd build && sudo ctest -V

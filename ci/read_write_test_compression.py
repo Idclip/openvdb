@@ -63,6 +63,7 @@ def download(link, filelocation):
 
 def diff(src_file, dst_file):
     print('Comparing grids with AX...')
+    sys.stdout.flush()
 
     grids = vdb.readAllGridMetadata(src_file)
     a = grids[0].valueTypeName + '@' + grids[0].name
@@ -92,6 +93,8 @@ for url in vdb_urls:
     download_thread.start()
     downloads[zip_filename] = download_thread
 
+sys.stdout.flush()
+
 # Process files
 
 while downloads:
@@ -106,6 +109,7 @@ while downloads:
 
     print('-----------------------------------------')
     print('Processing "' + zip_file + '"')
+    sys.stdout.flush()
     # Remove the entry
     del downloads[zip_file]
 
@@ -118,6 +122,7 @@ while downloads:
     try:
         # Extract the downloaded zip
         print('Extracting ' + zip_file + '...')
+        sys.stdout.flush()
         with zipfile.ZipFile(zip_file, 'r') as zip_ref:
             zip_ref.extractall()
 
@@ -144,6 +149,8 @@ while downloads:
         print('  input size: [' + str(src_size) + ']')
         print('  outpt size: [' + str(dst_size) + ']')
         print('  comp ratio: [' + str(src_size/float(dst_size)) + ']')
+        sys.stdout.flush()
+
     except Exception as e:
         print(e)
         pass
@@ -154,6 +161,8 @@ while downloads:
 
     # Cleanup
     print('Cleaning up "' + name + '" files...')
+    sys.stdout.flush()
     if os.path.isfile(src_file): os.remove(src_file)
     if os.path.isfile(dst_file): os.remove(dst_file)
     if os.path.isfile(zip_file): os.remove(zip_file)
+
