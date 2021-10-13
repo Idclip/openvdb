@@ -317,8 +317,6 @@ jobs:
       github.event.inputs.type == 'blosc'
     runs-on: ubuntu-latest
     name: blosc-read-write:${{ matrix.blosc }}
-    env:
-      CXX: clang++-10
     strategy:
       matrix:
         blosc: ['1.5.0']
@@ -331,8 +329,6 @@ jobs:
       run: sudo apt-get -q install -y libtbb-dev
     - name: install_gtest
       run: sudo apt-get -q install -y libgtest-dev
-    - name: install_llvm
-      run: sudo apt-get -q install -y llvm-dev
     - name: install_blosc
       shell: bash
       run: sudo ./ci/install_blosc.sh ${{ matrix.blosc }}
