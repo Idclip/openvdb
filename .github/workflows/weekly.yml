@@ -331,50 +331,72 @@ jobs:
         echo "/usr/local/opt/gnu-getopt/bin" >> $GITHUB_PATH
     - name: install_blosc
       shell: bash
-      run: ./ci/install_blosc.sh ${{ matrix.blosc }}
+      run:  |
+        ./ci/install_blosc.sh 1.5.0 $HOME/blosc/old
+        rm -rf c-blosc
+        ./ci/install_blosc.sh ${{ matrix.blosc }} $HOME/blosc/${{ matrix.blosc }}
     - name: install_req
-      shell: bash
       run: pip3 install --user requests
-    - name: build
+    - name: build_with_old_blosc
+      run: >
+        ./ci/build.sh -v
+        --build-type=Release
+        --components=\"core,axcore,axbin\"
+        --cargs=\"
+        -DOPENVDB_CORE_STATIC=OFF
+        -DOPENVDB_AX_STATIC=OFF
+        -DBLOSC_ROOT=$HOME/blosc/old
+        -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm
+        \"
+    - name: download_caches
+      run: python3 ./ci/download_vdb_caches.py
+    - name: cache_out_vdbs_with_blosc_1_5_0
+      shell: bash
+      run: for i in *.vdb; do vdb_ax $i -o $(echo $i | cut -d. -f1)_blosc.vdb -s "1;" -v; echo $i; done
+    - name: build_with_new_blosc
       run: >
         ./ci/build.sh -v
         --build-type=Release
         --components=\"core,python,test,axcore,axbin\"
-        --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm\"
-    # @note  Run read/write script. We can't run this on the linux runner as
-    #   it hits memory limits.
-    - name: test_vdbs
-      run: python3 ./ci/read_write_test_compression.py
+        --cargs=\"
+        -DOPENVDB_CORE_STATIC=OFF
+        -DOPENVDB_AX_STATIC=OFF
+        -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON
+        -DBLOSC_ROOT=$HOME/blosc/${{ matrix.blosc }}
+        -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm
+        \"
+    - name: read_write_blosc_test
+      run: python3 ./ci/read_write_blosc_compression.py
     - name: test
       run: cd build && sudo ctest -V
 
-  linux-blosc:
-    if: |
-      github.event_name != 'workflow_dispatch' ||
-      github.event.inputs.type == 'all' ||
-      github.event.inputs.type == 'blosc'
-    runs-on: ubuntu-latest
-    name: linux-blosc:${{ matrix.blosc }}
-    strategy:
-      matrix:
-        blosc: ['1.5.0','1.10.0','1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
-      fail-fast: false
-    steps:
-    - uses: actions/checkout@v2
-    - name: install_boost
-      run: sudo apt-get -q install -y libboost-dev libboost-system-dev libboost-iostreams-dev libboost-python-dev
-    - name: install_tbb
-      run: sudo apt-get -q install -y libtbb-dev
-    - name: install_gtest
-      run: sudo apt-get -q install -y libgtest-dev
-    - name: install_blosc
-      shell: bash
-      run: sudo ./ci/install_blosc.sh ${{ matrix.blosc }}
-    - name: build
-      run: >
-        sudo ./ci/build.sh -v
-        --build-type=Release
-        --components=\"core,test\"
-        --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
-    - name: test
-      run: cd build && sudo ctest -V
+#  linux-blosc:
+#    if: |
+#      github.event_name != 'workflow_dispatch' ||
+#      github.event.inputs.type == 'all' ||
+#      github.event.inputs.type == 'blosc'
+#    runs-on: ubuntu-latest
+#    name: linux-blosc:${{ matrix.blosc }}
+#    strategy:
+#      matrix:
+#        blosc: ['1.5.0','1.10.0','1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
+#      fail-fast: false
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: install_boost
+#      run: sudo apt-get -q install -y libboost-dev libboost-system-dev libboost-iostreams-dev libboost-python-dev
+#    - name: install_tbb
+#      run: sudo apt-get -q install -y libtbb-dev
+#    - name: install_gtest
+#      run: sudo apt-get -q install -y libgtest-dev
+#    - name: install_blosc
+#      shell: bash
+#      run: sudo ./ci/install_blosc.sh ${{ matrix.blosc }}
+#    - name: build
+#      run: >
+#        sudo ./ci/build.sh -v
+#        --build-type=Release
+#        --components=\"core,test\"
+#        --cargs=\"-DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON\"
+#    - name: test
+#      run: cd build && sudo ctest -V
