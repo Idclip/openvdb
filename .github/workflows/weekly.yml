@@ -319,7 +319,7 @@ jobs:
     name: macos-blosc:${{ matrix.blosc }}
     strategy:
       matrix:
-        blosc: ['1.5.0','1.10.0','1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
+        blosc: ['1.14.0','1.15.0','1.16.0','1.17.0','1.18.0','1.19.0','1.20.0','1.21.0']
       fail-fast: false
     steps:
     - uses: actions/checkout@v2
@@ -332,12 +332,12 @@ jobs:
     - name: install_blosc
       shell: bash
       run:  |
-        ./ci/install_blosc.sh 1.5.0 $HOME/blosc/old
+        ./ci/install_blosc.sh 1.5.0 $HOME/blosc/1.5.0
         rm -rf c-blosc
         ./ci/install_blosc.sh ${{ matrix.blosc }} $HOME/blosc/${{ matrix.blosc }}
     - name: install_req
       run: pip3 install --user requests
-    - name: build_with_old_blosc
+    - name: build_with_1_5_0
       run: >
         ./ci/build.sh -v
         --build-type=Release
@@ -345,14 +345,19 @@ jobs:
         --cargs=\"
         -DOPENVDB_CORE_STATIC=OFF
         -DOPENVDB_AX_STATIC=OFF
-        -DBLOSC_ROOT=$HOME/blosc/old
+        -DBLOSC_ROOT=$HOME/blosc/1.5.0
         -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm
         \"
     - name: download_caches
       run: python3 ./ci/download_vdb_caches.py
+      # blosc 1.5.0 -> 1.10.0 have issues with MacOS RPATHs and don't properly
+      # lik up when VDB builds. export DYLD_FALLBACK_LIBRARY_PATH so that our
+      # install picks up 1.5.0. This isn't needed for newer versions of blosc
     - name: cache_out_vdbs_with_blosc_1_5_0
       shell: bash
-      run: for i in *.vdb; do vdb_ax $i -o $(echo $i | cut -d. -f1)_blosc.vdb -s "1;" -v; echo $i; done
+      run: |
+        export DYLD_FALLBACK_LIBRARY_PATH=$HOME/blosc/1.5.0/lib
+        for i in *.vdb; do vdb_ax $i -o $(echo $i | cut -d. -f1)_blosc.vdb -s "1;" -v; echo $i; done
     - name: build_with_new_blosc
       run: >
         ./ci/build.sh -v
@@ -364,6 +369,7 @@ jobs:
         -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON
         -DBLOSC_ROOT=$HOME/blosc/${{ matrix.blosc }}
         -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm
+        -DDISABLE_CMAKE_SEARCH_PATHS=ON
         \"
     - name: read_write_blosc_test
       run: python3 ./ci/read_write_blosc_compression.py
