@@ -17,8 +17,6 @@ vdb_aliases = {
     'smoke1.vdb' : 'smoke',
 }
 
-sys.path.append('/Users/nick/dev/openvdb/.build/openvdb/openvdb/python')
-
 import pyopenvdb as vdb
 
 
@@ -86,9 +84,8 @@ for src_file in vdbs:
         print(e)
         pass
 
-    if False:
-        if os.path.isfile(src_file) and os.path.isfile(dst_file):
-            diff(src_file, dst_file)
+    if os.path.isfile(src_file) and os.path.isfile(dst_file):
+        diff(src_file, dst_file)
 
     # Cleanup
     print('Cleaning up "' + name + '" files...')
