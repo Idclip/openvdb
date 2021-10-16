@@ -347,7 +347,8 @@ jobs:
         -DOPENVDB_AX_STATIC=OFF
         -DBLOSC_ROOT=$HOME/blosc/1.5.0
         -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm
-        \"
+        \" &&
+        rm -rf build
     - name: download_caches
       run: python3 ./ci/download_vdb_caches.py
       # blosc 1.5.0 -> 1.10.0 have issues with MacOS RPATHs and don't properly
