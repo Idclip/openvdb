@@ -327,7 +327,7 @@ jobs:
       shell: bash
       run: |
         brew update
-        brew install bash gnu-getopt cmake boost boost-python3 tbb llvm googletest
+        brew install bash gnu-getopt cmake boost boost-python3 tbb llvm
         echo "/usr/local/opt/gnu-getopt/bin" >> $GITHUB_PATH
     - name: install_blosc
       shell: bash
@@ -341,30 +341,26 @@ jobs:
       run: >
         ./ci/build.sh -v
         --build-type=Release
-        --components=\"core,axcore,axbin\"
+        --components=\"core,python,axcore,axbin\"
         --cargs=\"
+        -DCMAKE_INSTALL_PREFIX=$HOME/openvdb/old
+        -DPYOPENVDB_INSTALL_DIRECTORY=$HOME/openvdb/old/python
         -DOPENVDB_CORE_STATIC=OFF
         -DOPENVDB_AX_STATIC=OFF
+        -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON
         -DBLOSC_ROOT=$HOME/blosc/1.5.0
         -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm
+        -DDISABLE_CMAKE_SEARCH_PATHS=ON
         \" &&
         rm -rf build
-    - name: download_caches
-      run: python3 ./ci/download_vdb_caches.py
-      # blosc 1.5.0 -> 1.10.0 have issues with MacOS RPATHs and don't properly
-      # lik up when VDB builds. export DYLD_FALLBACK_LIBRARY_PATH so that our
-      # install picks up 1.5.0. This isn't needed for newer versions of blosc
-    - name: cache_out_vdbs_with_blosc_1_5_0
-      shell: bash
-      run: |
-        export DYLD_FALLBACK_LIBRARY_PATH=$HOME/blosc/1.5.0/lib
-        for i in *.vdb; do vdb_ax $i -o $(echo $i | cut -d. -f1)_blosc.vdb -s "1;" -v; echo $i; done
     - name: build_with_new_blosc
       run: >
         ./ci/build.sh -v
         --build-type=Release
-        --components=\"core,python,test,axcore,axbin\"
+        --components=\"core,python,axcore,axbin\"
         --cargs=\"
+        -DCMAKE_INSTALL_PREFIX=$HOME/openvdb/new
+        -DPYOPENVDB_INSTALL_DIRECTORY=$HOME/openvdb/new/python
         -DOPENVDB_CORE_STATIC=OFF
         -DOPENVDB_AX_STATIC=OFF
         -DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON
@@ -372,10 +368,35 @@ jobs:
         -DLLVM_DIR=/usr/local/opt/llvm/lib/cmake/llvm
         -DDISABLE_CMAKE_SEARCH_PATHS=ON
         \"
+    - name: download_caches
+      run: python3 ./ci/download_vdb_caches.py
+      # blosc 1.5.0 -> 1.10.0 have issues with MacOS RPATHs and don't properly
+      # lik up when VDB builds. export DYLD_FALLBACK_LIBRARY_PATH so that our
+      # install picks up 1.5.0. This isn't needed for newer versions of blosc
+    - name: cache_out_vdbs
+      shell: bash
+      run: |
+        mkdir old_caches new_caches
+        export DYLD_FALLBACK_LIBRARY_PATH=$HOME/blosc/1.5.0/lib
+        for i in *.vdb; do $HOME/openvdb/old/bin/vdb_ax $i -o old_caches/$(echo $i | cut -d. -f1)_blosc_old.vdb -s "1;" -v; echo $i; done
+        export DYLD_FALLBACK_LIBRARY_PATH=$HOME/blosc/${{ matrix.blosc }}/lib
+        for i in *.vdb; do $HOME/openvdb/new/bin/vdb_ax $i -o new_caches/$(echo $i | cut -d. -f1)_blosc_new.vdb -s "1;" -v; echo $i; done
+        rm *.vdb
     - name: read_write_blosc_test
-      run: python3 ./ci/read_write_blosc_compression.py
-    - name: test
-      run: cd build && sudo ctest -V
+      run: |
+        export TMP_PYTHONPATH=${PYTHONPATH}
+        export TMP_PATH=${PATH}
+        cd old_caches
+        export DYLD_FALLBACK_LIBRARY_PATH=$HOME/blosc/${{ matrix.blosc }}/lib
+        export PYTHONPATH=${TMP_PYTHONPATH}:$HOME/openvdb/new/python
+        export PATH=${TMP_PATH}:$HOME/openvdb/new/bin
+        python3 ../ci/read_write_blosc_compression.py
+        cd ..
+        cd new_caches
+        export DYLD_FALLBACK_LIBRARY_PATH=$HOME/blosc/1.5.0/lib
+        export PYTHONPATH=${TMP_PYTHONPATH}:$HOME/openvdb/old/python
+        export PATH=${TMP_PATH}:$HOME/openvdb/old/bin
+        python3 ../ci/read_write_blosc_compression.py
 
 #  linux-blosc:
 #    if: |

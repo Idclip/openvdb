@@ -56,7 +56,7 @@ for src_file in vdbs:
     name = vdb_aliases.get(name)
     if not name: name = src_file.split('.vdb')[0]
 
-    dst_file = name + '_blosc_new.vdb'
+    dst_file = name + '_output.vdb'
 
     try:
         # Read/Write - ignore files with multiple grids as we want to check file
