@@ -1,5 +1,5 @@
 
-name: AX
+name: NanoVDB
 
 on:
   push:
