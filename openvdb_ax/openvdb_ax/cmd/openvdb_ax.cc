@@ -45,8 +45,8 @@ const char* gProgName = "";
 void usage [[noreturn]] (int exitStatus = EXIT_FAILURE)
 {
     std::cerr <<
-    "Usage: " << gProgName << " [input.vdb [output.vdb] | analyze] [-s \"string\" | -f file.txt] [OPTIONS]\n" <<
-    "Which: executes a string or file containing a code snippet on an input.vdb file\n\n" <<
+    "Usage: " << gProgName << " [in1.vdb in2.vdb ... | analyze] [-o output.vdb] [-s \"string\" | -f file.txt] [OPTIONS]\n" <<
+    "Which: executes a string or file containing a code snippet on input vdb file(s)\n\n" <<
     "Options:\n" <<
     "    -s snippet       execute code snippet on the input.vdb file\n" <<
     "    -f file.txt      execute text file containing a code snippet on the input.vdb file\n" <<
@@ -87,7 +87,7 @@ struct ProgOptions
 
     // Execute options
     std::unique_ptr<std::string> mInputCode = nullptr;
-    std::string mInputVDBFile = "";
+    std::vector<std::string> mInputVDBFiles = {};
     std::string mOutputVDBFile = "";
     bool mVerbose = false;
     openvdb::ax::CompilerOptions::OptLevel mOptLevel =
@@ -333,6 +333,8 @@ main(int argc, char *argv[])
                 opts.mVerbose = true;
             } else if (parser.check(i, "--threads")) {
                 opts.threads = atoi(argv[++i]);
+            } else if (parser.check(i, "-o")) {
+                opts.mOutputVDBFile = argv[++i];
             } else if (parser.check(i, "--max-errors")) {
                 opts.mMaxErrors = atoi(argv[++i]);
             } else if (parser.check(i, "--werror", 0)) {
@@ -383,23 +385,11 @@ main(int argc, char *argv[])
             if (opts.mMode == ProgOptions::Mode::Execute) {
                 opts.mInitCompile = true;
                 // execute positional argument setup
-                if (opts.mInputVDBFile.empty()) {
-                    opts.mInputVDBFile = arg;
-                }
-                else if (opts.mOutputVDBFile.empty()) {
-                    opts.mOutputVDBFile = arg;
-                }
-                else {
-                    OPENVDB_LOG_FATAL("unrecognized positional argument: \"" << arg << "\"");
-                    usage();
-                }
+                opts.mInputVDBFiles.emplace_back(arg);
             }
-            else if (!opts.mInputVDBFile.empty() ||
-                !opts.mOutputVDBFile.empty())
-            {
-                OPENVDB_LOG_FATAL("unrecognized positional argument: \"" << arg << "\"");
-                usage();
-            }
+        } else if (!opts.mInputVDBFiles.empty()) {
+            OPENVDB_LOG_FATAL("no vdb files have been provided.");
+            usage();
         } else {
             usage();
         }
@@ -421,7 +411,12 @@ main(int argc, char *argv[])
         axlog('\n');
 
         if (opts.mMode == ProgOptions::Execute) {
-            axlog("  vdb in  : \"" << opts.mInputVDBFile  << "\"\n");
+            axlog("  vdb in  : \"");
+            for (const auto& in : opts.mInputVDBFiles) {
+                const bool sep = (&in != &opts.mInputVDBFiles.back());
+                axlog(in << (sep ? ", " : ""));
+            }
+            axlog("\"\n");
             axlog("  vdb out : \"" << opts.mOutputVDBFile << "\"\n");
         }
         if (opts.mMode == ProgOptions::Execute ||
@@ -460,7 +455,7 @@ main(int argc, char *argv[])
     }
 
     if (opts.mMode == ProgOptions::Execute) {
-        if (opts.mInputVDBFile.empty()) {
+        if (opts.mInputVDBFiles.empty()) {
             OPENVDB_LOG_FATAL("expected at least one VDB file or analysis mode");
             usage();
         }
@@ -482,24 +477,29 @@ main(int argc, char *argv[])
 
     // read vdb file data for
 
-    openvdb::GridPtrVecPtr grids;
+    openvdb::GridPtrVec grids;
     openvdb::MetaMap::Ptr meta;
 
     if (opts.mMode == ProgOptions::Execute) {
-        openvdb::io::File file(opts.mInputVDBFile);
-        try {
-            axtimer();
-            axlog("[INFO] Reading VDB data"
-                << (openvdb::io::Archive::isDelayedLoadingEnabled() ?
-                    " (delay-load)" : "") << std::flush);
-            file.open();
-            grids = file.getGrids();
-            meta = file.getMetadata();
-            file.close();
-            axlog(": " << axtime() << '\n');
-        } catch (openvdb::Exception& e) {
-            OPENVDB_LOG_ERROR(e.what() << " (" << opts.mInputVDBFile << ")");
-            return EXIT_FAILURE;
+        axlog("[INFO] Reading VDB data"
+            << (openvdb::io::Archive::isDelayedLoadingEnabled() ?
+                " (delay-load) " : " ") << '\n');
+        for (const auto& filename : opts.mInputVDBFiles) {
+            openvdb::io::File file(filename);
+            try {
+                axlog("[INFO] | \"" << filename << "\"");
+                axtimer();
+                file.open();
+                auto in = file.getGrids();
+                grids.insert(grids.end(), in->begin(), in->end());
+                // choose the first files metadata
+                if (!meta) meta = file.getMetadata();
+                file.close();
+                axlog(": " << axtime() << '\n');
+            } catch (openvdb::Exception& e) {
+                OPENVDB_LOG_ERROR(e.what() << " (" << filename << ")");
+                return EXIT_FAILURE;
+            }
         }
     }
 
@@ -584,10 +584,9 @@ main(int argc, char *argv[])
 
     if (opts.mMode == ProgOptions::Execute) {
         assert(meta);
-        assert(grids);
         bool points = false;
         bool volumes = false;
-        for (auto grid : *grids) {
+        for (auto grid : grids) {
             points |= grid->isType<openvdb::points::PointDataGrid>();
             volumes |= !points;
             if (points && volumes) break;
@@ -688,13 +687,13 @@ main(int argc, char *argv[])
 
         size_t total = 0, count = 1;
         if (opts.mVerbose) {
-            for (auto grid : *grids) {
+            for (auto grid : grids) {
                 if (!grid->isType<openvdb::points::PointDataGrid>()) continue;
                 ++total;
             }
         }
 
-        for (auto grid : *grids) {
+        for (auto grid :grids) {
             if (!grid->isType<openvdb::points::PointDataGrid>()) continue;
             openvdb::points::PointDataGrid::Ptr points =
                 openvdb::gridPtrCast<openvdb::points::PointDataGrid>(grid);
@@ -751,7 +750,7 @@ main(int argc, char *argv[])
         if (opts.mVerbose) {
             std::vector<const std::string*> names;
             axlog("[INFO] Executing using:\n");
-            for (auto grid : *grids) {
+            for (auto grid : grids) {
                 if (grid->isType<openvdb::points::PointDataGrid>()) continue;
                 axlog("  " << grid->getName() << '\n');
                 axlog("    " << grid->valueType() << '\n');
@@ -760,7 +759,7 @@ main(int argc, char *argv[])
             axlog(std::flush);
         }
 
-        try { volumeExe->execute(*grids); }
+        try { volumeExe->execute(grids); }
         catch (std::exception& e) {
             OPENVDB_LOG_FATAL("Execution error!\nErrors:\n" << e.what());
             return EXIT_FAILURE;
@@ -775,7 +774,7 @@ main(int argc, char *argv[])
         axlog("[INFO] Writing results" << std::flush);
         openvdb::io::File out(opts.mOutputVDBFile);
         try {
-            out.write(*grids, *meta);
+            out.write(grids, *meta);
         } catch (openvdb::Exception& e) {
             OPENVDB_LOG_ERROR(e.what() << " (" << out.filename() << ")");
             return EXIT_FAILURE;
