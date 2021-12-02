@@ -1,45 +1,26 @@
 // Copyright Contributors to the OpenVDB Project
 // SPDX-License-Identifier: MPL-2.0
 
-#include <cppunit/extensions/HelperMacros.h>
-
 #include <openvdb/openvdb.h>
 #include <openvdb/points/PointAttribute.h>
 #include <openvdb/points/PointGroup.h>
 #include <openvdb/points/PointConversion.h>
 #include <openvdb/points/PointCount.h>
 #include <openvdb/points/PointMerge.h>
-#include "util2.h"
+
+#include <gtest/gtest.h>
 
 using namespace openvdb;
 using namespace openvdb::points;
 
-class TestPointMerge: public CppUnit::TestFixture
+class TestPointMerge: public ::testing::Test
 {
 public:
-
-    CPPUNIT_TEST_SUITE(TestPointMerge);
-    CPPUNIT_TEST(testMerge);
-    CPPUNIT_TEST(testGroupMerge);
-    CPPUNIT_TEST(testMultiAttributeMerge);
-    CPPUNIT_TEST(testMultiGroupMerge);
-    CPPUNIT_TEST(testCompressionMerge);
-    CPPUNIT_TEST(testStringMerge);
-    CPPUNIT_TEST_SUITE_END();
-
-    void testMerge();
-    void testGroupMerge();
-    void testMultiAttributeMerge();
-    void testMultiGroupMerge();
-    void testCompressionMerge();
-    void testStringMerge();
-
+    void SetUp() override { openvdb::initialize(); }
+    void TearDown() override { openvdb::uninitialize(); }
 }; // class TestPointMerge
 
-CPPUNIT_TEST_SUITE_REGISTRATION(TestPointMerge);
-
-void
-TestPointMerge::testMerge()
+TEST_F(TestPointMerge, testMerge)
 {
     const float voxelSize = 0.1f;
     math::Transform::Ptr transform(math::Transform::createLinearTransform(voxelSize));
@@ -53,17 +34,16 @@ TestPointMerge::testMerge()
     // Ensure point in B was merged into A
 
     math::Coord coord = transform->worldToIndexCellCentered(points2[0]);
-    CPPUNIT_ASSERT(grid1->tree().probeLeaf(coord)->pointCount() == 1);
+    EXPECT_TRUE(grid1->tree().probeLeaf(coord)->pointCount() == 1);
 
     // Ensure original point in A still exists
 
     coord = transform->worldToIndexCellCentered(points1[0]);
-    CPPUNIT_ASSERT(grid1->tree().probeLeaf(coord)->pointCount() == 1);
+    EXPECT_TRUE(grid1->tree().probeLeaf(coord)->pointCount() == 1);
 }
 
 
-void
-TestPointMerge::testGroupMerge()
+TEST_F(TestPointMerge, testGroupMerge)
 {
     const float voxelSize = 0.1f;
     math::Transform::Ptr transform(math::Transform::createLinearTransform(voxelSize));
@@ -76,18 +56,18 @@ TestPointMerge::testGroupMerge()
         setGroup(grid2->tree(), "a1", true);
 
         mergePoints(*grid1, *grid2);
-        CPPUNIT_ASSERT(grid1->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid2->tree().cbeginLeaf());
+        EXPECT_TRUE(grid1->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid2->tree().cbeginLeaf());
 
         const auto leafIter = grid1->tree().cbeginLeaf();
         const auto& desc = leafIter->attributeSet().descriptor();
 
-        CPPUNIT_ASSERT(leafIter);
-        CPPUNIT_ASSERT(desc.hasGroup("a1"));
-        CPPUNIT_ASSERT_EQUAL(leafIter->pointCount(), Index64(2));
+        EXPECT_TRUE(leafIter);
+        EXPECT_TRUE(desc.hasGroup("a1"));
+        EXPECT_EQ(leafIter->pointCount(), Index64(2));
         GroupHandle handle(leafIter->groupHandle("a1"));
-        CPPUNIT_ASSERT_EQUAL(handle.get(0), false);
-        CPPUNIT_ASSERT_EQUAL(handle.get(1), true);
+        EXPECT_EQ(handle.get(0), false);
+        EXPECT_EQ(handle.get(1), true);
     }
 
     {
@@ -97,24 +77,23 @@ TestPointMerge::testGroupMerge()
         setGroup(grid1->tree(), "a1", true);
 
         mergePoints(*grid1, *grid2);
-        CPPUNIT_ASSERT(grid1->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid2->tree().cbeginLeaf());
+        EXPECT_TRUE(grid1->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid2->tree().cbeginLeaf());
 
         const auto leafIter = grid1->tree().cbeginLeaf();
         const auto& desc = leafIter->attributeSet().descriptor();
 
-        CPPUNIT_ASSERT(leafIter);
-        CPPUNIT_ASSERT(desc.hasGroup("a1"));
-        CPPUNIT_ASSERT_EQUAL(leafIter->pointCount(), Index64(2));
+        EXPECT_TRUE(leafIter);
+        EXPECT_TRUE(desc.hasGroup("a1"));
+        EXPECT_EQ(leafIter->pointCount(), Index64(2));
         GroupHandle handle(leafIter->groupHandle("a1"));
-        CPPUNIT_ASSERT_EQUAL(handle.get(0), true);
-        CPPUNIT_ASSERT_EQUAL(handle.get(1), false);
+        EXPECT_EQ(handle.get(0), true);
+        EXPECT_EQ(handle.get(1), false);
     }
 }
 
 
-void
-TestPointMerge::testMultiAttributeMerge()
+TEST_F(TestPointMerge, testMultiAttributeMerge)
 {
     // five points across four leafs with transform1, all the in same leaf with
     // transform2
@@ -136,7 +115,7 @@ TestPointMerge::testMultiAttributeMerge()
         PointDataGrid::Ptr grid2 = createPointDataGrid<NullCodec, PointDataGrid>(positions, *transform1);
         PointDataTree& tree2 = grid2->tree();
 
-        appendAttribute<long>(tree2, "a3");
+        appendAttribute<int64_t>(tree2, "a3");
         appendAttribute<double>(tree2, "a5");
         appendAttribute<short>(tree2, "a1");
         appendAttribute<Vec3f>(tree2, "a2");
@@ -146,15 +125,15 @@ TestPointMerge::testMultiAttributeMerge()
 
         appendAttribute<short>(tree3, "a4");
         appendAttribute<Vec3f>(tree3, "a2");
-        appendAttribute<long>(tree3, "a3");
+        appendAttribute<int64_t>(tree3, "a3");
         appendAttribute<short>(tree3, "a1");
 
         //   grid1 has:
         //    - a1: short, a2: vec3f, a5: double, a6: vec3short
         //   grid2 has:
-        //    - a3: long, a5: double, a1: short, a2: vec3f
+        //    - a3: int64_t, a5: double, a1: short, a2: vec3f
         //   grid3 has:
-        //    - a4: short, a2: vec3f, a3: long, a1: short
+        //    - a4: short, a2: vec3f, a3: int64_t, a1: short
 
         std::vector<PointDataGrid::Ptr> grids;
         grids.push_back(grid2);
@@ -162,26 +141,26 @@ TestPointMerge::testMultiAttributeMerge()
 
         mergePoints(*grid1, grids);
 
-        CPPUNIT_ASSERT(grid1->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid2->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid3->tree().cbeginLeaf());
-        CPPUNIT_ASSERT_EQUAL(totalPointCount, pointCount(tree1));
+        EXPECT_TRUE(grid1->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid2->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid3->tree().cbeginLeaf());
+        EXPECT_EQ(totalPointCount, pointCount(tree1));
 
         const auto leafIter = tree1.cbeginLeaf();
 
-        CPPUNIT_ASSERT(leafIter);
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a1"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a1").hasValueType<short>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a2"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a2").hasValueType<Vec3f>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a3"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a3").hasValueType<long>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a4"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a4").hasValueType<short>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a5"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a5").hasValueType<double>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a6"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a6").hasValueType<Vec3i>());
+        EXPECT_TRUE(leafIter);
+        EXPECT_TRUE(leafIter->hasAttribute("a1"));
+        EXPECT_TRUE(leafIter->attributeArray("a1").hasValueType<short>());
+        EXPECT_TRUE(leafIter->hasAttribute("a2"));
+        EXPECT_TRUE(leafIter->attributeArray("a2").hasValueType<Vec3f>());
+        EXPECT_TRUE(leafIter->hasAttribute("a3"));
+        EXPECT_TRUE(leafIter->attributeArray("a3").hasValueType<int64_t>());
+        EXPECT_TRUE(leafIter->hasAttribute("a4"));
+        EXPECT_TRUE(leafIter->attributeArray("a4").hasValueType<short>());
+        EXPECT_TRUE(leafIter->hasAttribute("a5"));
+        EXPECT_TRUE(leafIter->attributeArray("a5").hasValueType<double>());
+        EXPECT_TRUE(leafIter->hasAttribute("a6"));
+        EXPECT_TRUE(leafIter->attributeArray("a6").hasValueType<Vec3i>());
     }
 
     {
@@ -196,7 +175,7 @@ TestPointMerge::testMultiAttributeMerge()
         PointDataGrid::Ptr grid2 = createPointDataGrid<NullCodec, PointDataGrid>(positions, *transform2);
         PointDataTree& tree2 = grid2->tree();
 
-        appendAttribute<long>(tree2, "a3");
+        appendAttribute<int64_t>(tree2, "a3");
         appendAttribute<double>(tree2, "a5");
         appendAttribute<short>(tree2, "a1");
         appendAttribute<Vec3f>(tree2, "a2");
@@ -206,15 +185,15 @@ TestPointMerge::testMultiAttributeMerge()
 
         appendAttribute<short>(tree3, "a4");
         appendAttribute<Vec3f>(tree3, "a2");
-        appendAttribute<long>(tree3, "a3");
+        appendAttribute<int64_t>(tree3, "a3");
         appendAttribute<short>(tree3, "a1");
 
         //   grid1 has:
         //    - a1: short, a2: vec3f, a5: double, a6: vec3short
         //   grid2 has:
-        //    - a3: long, a5: double, a1: short, a2: vec3f
+        //    - a3: int64_t, a5: double, a1: short, a2: vec3f
         //   grid3 has:
-        //    - a4: short, a2: vec3f, a3: long, a1: short
+        //    - a4: short, a2: vec3f, a3: int64_t, a1: short
 
         std::vector<PointDataGrid::Ptr> grids;
         grids.push_back(grid2);
@@ -222,32 +201,31 @@ TestPointMerge::testMultiAttributeMerge()
 
         mergePoints(*grid1, grids);
 
-        CPPUNIT_ASSERT(grid1->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid2->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid3->tree().cbeginLeaf());
-        CPPUNIT_ASSERT_EQUAL(totalPointCount, pointCount(tree1));
+        EXPECT_TRUE(grid1->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid2->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid3->tree().cbeginLeaf());
+        EXPECT_EQ(totalPointCount, pointCount(tree1));
 
         const auto leafIter = tree1.cbeginLeaf();
 
-        CPPUNIT_ASSERT(leafIter);
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a1"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a1").hasValueType<short>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a2"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a2").hasValueType<Vec3f>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a3"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a3").hasValueType<long>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a4"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a4").hasValueType<short>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a5"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a5").hasValueType<double>());
-        CPPUNIT_ASSERT(leafIter->hasAttribute("a6"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("a6").hasValueType<Vec3i>());
+        EXPECT_TRUE(leafIter);
+        EXPECT_TRUE(leafIter->hasAttribute("a1"));
+        EXPECT_TRUE(leafIter->attributeArray("a1").hasValueType<short>());
+        EXPECT_TRUE(leafIter->hasAttribute("a2"));
+        EXPECT_TRUE(leafIter->attributeArray("a2").hasValueType<Vec3f>());
+        EXPECT_TRUE(leafIter->hasAttribute("a3"));
+        EXPECT_TRUE(leafIter->attributeArray("a3").hasValueType<int64_t>());
+        EXPECT_TRUE(leafIter->hasAttribute("a4"));
+        EXPECT_TRUE(leafIter->attributeArray("a4").hasValueType<short>());
+        EXPECT_TRUE(leafIter->hasAttribute("a5"));
+        EXPECT_TRUE(leafIter->attributeArray("a5").hasValueType<double>());
+        EXPECT_TRUE(leafIter->hasAttribute("a6"));
+        EXPECT_TRUE(leafIter->attributeArray("a6").hasValueType<Vec3i>());
     }
 }
 
 
-void
-TestPointMerge::testMultiGroupMerge()
+TEST_F(TestPointMerge, testMultiGroupMerge)
 {
     // five points across four leafs with transform1, all the in same leaf with
     // transform2
@@ -298,25 +276,25 @@ TestPointMerge::testMultiGroupMerge()
 
         mergePoints(*grid1, grids);
 
-        CPPUNIT_ASSERT(grid1->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid2->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid3->tree().cbeginLeaf());
-        CPPUNIT_ASSERT_EQUAL(totalPointCount, pointCount(tree1));
+        EXPECT_TRUE(grid1->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid2->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid3->tree().cbeginLeaf());
+        EXPECT_EQ(totalPointCount, pointCount(tree1));
 
         const auto leafIter = tree1.cbeginLeaf();
-        CPPUNIT_ASSERT(leafIter);
+        EXPECT_TRUE(leafIter);
 
         const auto& desc = leafIter->attributeSet().descriptor();
 
-        CPPUNIT_ASSERT(desc.hasGroup("a1"));
-        CPPUNIT_ASSERT(desc.hasGroup("a2"));
-        CPPUNIT_ASSERT(desc.hasGroup("a3"));
-        CPPUNIT_ASSERT(desc.hasGroup("a4"));
-        CPPUNIT_ASSERT(desc.hasGroup("a5"));
-        CPPUNIT_ASSERT(desc.hasGroup("a6"));
-        CPPUNIT_ASSERT(desc.hasGroup("a7"));
-        CPPUNIT_ASSERT(desc.hasGroup("a8"));
-        CPPUNIT_ASSERT(desc.hasGroup("a9"));
+        EXPECT_TRUE(desc.hasGroup("a1"));
+        EXPECT_TRUE(desc.hasGroup("a2"));
+        EXPECT_TRUE(desc.hasGroup("a3"));
+        EXPECT_TRUE(desc.hasGroup("a4"));
+        EXPECT_TRUE(desc.hasGroup("a5"));
+        EXPECT_TRUE(desc.hasGroup("a6"));
+        EXPECT_TRUE(desc.hasGroup("a7"));
+        EXPECT_TRUE(desc.hasGroup("a8"));
+        EXPECT_TRUE(desc.hasGroup("a9"));
     }
 
     {
@@ -353,31 +331,30 @@ TestPointMerge::testMultiGroupMerge()
 
         mergePoints(*grid1, grids);
 
-        CPPUNIT_ASSERT(grid1->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid2->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid3->tree().cbeginLeaf());
-        CPPUNIT_ASSERT_EQUAL(totalPointCount, pointCount(tree1));
+        EXPECT_TRUE(grid1->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid2->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid3->tree().cbeginLeaf());
+        EXPECT_EQ(totalPointCount, pointCount(tree1));
 
         const auto leafIter = tree1.cbeginLeaf();
-        CPPUNIT_ASSERT(leafIter);
+        EXPECT_TRUE(leafIter);
 
         const auto& desc = leafIter->attributeSet().descriptor();
 
-        CPPUNIT_ASSERT(desc.hasGroup("a1"));
-        CPPUNIT_ASSERT(desc.hasGroup("a2"));
-        CPPUNIT_ASSERT(desc.hasGroup("a3"));
-        CPPUNIT_ASSERT(desc.hasGroup("a4"));
-        CPPUNIT_ASSERT(desc.hasGroup("a5"));
-        CPPUNIT_ASSERT(desc.hasGroup("a6"));
-        CPPUNIT_ASSERT(desc.hasGroup("a7"));
-        CPPUNIT_ASSERT(desc.hasGroup("a8"));
-        CPPUNIT_ASSERT(desc.hasGroup("a9"));
+        EXPECT_TRUE(desc.hasGroup("a1"));
+        EXPECT_TRUE(desc.hasGroup("a2"));
+        EXPECT_TRUE(desc.hasGroup("a3"));
+        EXPECT_TRUE(desc.hasGroup("a4"));
+        EXPECT_TRUE(desc.hasGroup("a5"));
+        EXPECT_TRUE(desc.hasGroup("a6"));
+        EXPECT_TRUE(desc.hasGroup("a7"));
+        EXPECT_TRUE(desc.hasGroup("a8"));
+        EXPECT_TRUE(desc.hasGroup("a9"));
     }
 }
 
 
-void
-TestPointMerge::testCompressionMerge()
+TEST_F(TestPointMerge, testCompressionMerge)
 {
     // five points across four leafs with transform1, all the in same leaf with
     // transform2
@@ -395,14 +372,14 @@ TestPointMerge::testCompressionMerge()
 
         mergePoints(*grid1, *grid2);
 
-        CPPUNIT_ASSERT(grid1->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid2->tree().cbeginLeaf());
-        CPPUNIT_ASSERT_EQUAL(totalPointCount, pointCount(grid1->tree()));
+        EXPECT_TRUE(grid1->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid2->tree().cbeginLeaf());
+        EXPECT_EQ(totalPointCount, pointCount(grid1->tree()));
 
         const auto leafIter = grid1->tree().cbeginLeaf();
-        CPPUNIT_ASSERT(leafIter);
-        CPPUNIT_ASSERT(leafIter->hasAttribute("P"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("P").isType<PositionType>());
+        EXPECT_TRUE(leafIter);
+        EXPECT_TRUE(leafIter->hasAttribute("P"));
+        EXPECT_TRUE(leafIter->attributeArray("P").isType<PositionType>());
     }
 
     {
@@ -411,20 +388,19 @@ TestPointMerge::testCompressionMerge()
 
         mergePoints(*grid1, *grid2);
 
-        CPPUNIT_ASSERT(grid1->tree().cbeginLeaf());
-        CPPUNIT_ASSERT(!grid2->tree().cbeginLeaf());
-        CPPUNIT_ASSERT_EQUAL(totalPointCount, pointCount(grid1->tree()));
+        EXPECT_TRUE(grid1->tree().cbeginLeaf());
+        EXPECT_TRUE(!grid2->tree().cbeginLeaf());
+        EXPECT_EQ(totalPointCount, pointCount(grid1->tree()));
 
         const auto leafIter = grid1->tree().cbeginLeaf();
-        CPPUNIT_ASSERT(leafIter);
-        CPPUNIT_ASSERT(leafIter->hasAttribute("P"));
-        CPPUNIT_ASSERT(leafIter->attributeArray("P").isType<PositionType>());
+        EXPECT_TRUE(leafIter);
+        EXPECT_TRUE(leafIter->hasAttribute("P"));
+        EXPECT_TRUE(leafIter->attributeArray("P").isType<PositionType>());
     }
 }
 
 
-void
-TestPointMerge::testStringMerge()
+TEST_F(TestPointMerge, testStringMerge)
 {
     std::vector<Vec3s> positions1{{1, 1, 1}, {1, 3, 1}, {2, 5, 1}};
     std::vector<Vec3s> positions2{{1, 2, 1}, {100, 3, 1}, {5, 2, 8}};
@@ -466,12 +442,12 @@ TestPointMerge::testStringMerge()
 
     // each expected string occurs once and once only
 
-    CPPUNIT_ASSERT_EQUAL(stringValues.size(), size_t(5));
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "abc") != stringValues.end());
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "def") != stringValues.end());
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "foo") != stringValues.end());
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "bar") != stringValues.end());
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "ijk") != stringValues.end());
+    EXPECT_EQ(stringValues.size(), size_t(5));
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "abc") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "def") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "foo") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "bar") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "ijk") != stringValues.end());
 
     stringValues.clear();
 
@@ -483,11 +459,11 @@ TestPointMerge::testStringMerge()
         }
     }
 
-    CPPUNIT_ASSERT_EQUAL(stringValues.size(), size_t(6));
+    EXPECT_EQ(stringValues.size(), size_t(6));
 
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "abc") != stringValues.end());
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "def") != stringValues.end());
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "foo") != stringValues.end());
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "bar") != stringValues.end());
-    CPPUNIT_ASSERT(std::find(stringValues.begin(), stringValues.end(), "ijk") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "abc") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "def") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "foo") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "bar") != stringValues.end());
+    EXPECT_TRUE(std::find(stringValues.begin(), stringValues.end(), "ijk") != stringValues.end());
 }
