@@ -381,3 +381,4 @@ local j
 
 
 
+COMMAND;vdb_ax;analyze;-f;forLoop;--ast-print

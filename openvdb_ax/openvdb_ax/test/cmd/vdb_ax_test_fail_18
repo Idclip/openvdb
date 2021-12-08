@@ -1,2 +1,3 @@
 WARNING: position arguments [input.vdb <output.vdb>] are deprecated. use -i and -o
 FATAL: unrecognized positional argument: "file.vdb". use -i and -o for vdb files. See 'vdb_ax --help'
+COMMAND;vdb_ax;execute;file.vdb;-o;tmp.vdb;-s;@ls_sphere += 1;

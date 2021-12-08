@@ -4,3 +4,4 @@ int a = 1.0; int a = 1.0;
 [2] error: local variable "a" has already been declared 1:14
 int a = 1.0; int a = 1.0;
 -------------^
+COMMAND;vdb_ax;analyze;--werror;--try-compile;--max-errors;2;-s;int a = 1.0; int a = 1.0;

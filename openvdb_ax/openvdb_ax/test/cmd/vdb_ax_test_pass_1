@@ -5,9 +5,9 @@ CLI utility for processing OpenVDB data using AX. Various commands are supported
     -v          verbose (print timing and diagnostics)
 
 [execute] read/process/write VDB file/streams (default command):
-    -i [file.vdb]          append an input vdb file to be read
+    -i <file.vdb>          append an input vdb file or read from cin.
     -s [code], -f [file]   input code to execute as a string or from a file.
-    -o [file.vdb]          write the result to a given vdb file
+    -o <file.vdb>          write the result to a vdb file or send to cout.
     --opt [level]          optimization level [NONE, O0, O1, O2, Os, Oz, O3 (default)]
     --werror               warnings as errors
     --max-errors [n]       maximum error messages, 0 (default) allows all error messages
@@ -30,3 +30,4 @@ CLI utility for processing OpenVDB data using AX. Various commands are supported
 
 Email bug reports, questions, discussions to <openvdb-dev@lists.aswf.io>
 and/or open issues at https://github.com/AcademySoftwareFoundation/openvdb.
+COMMAND;vdb_ax;-h

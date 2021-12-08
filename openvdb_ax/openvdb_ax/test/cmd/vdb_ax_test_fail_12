@@ -1,1 +1,2 @@
 FATAL: unrecognized positional argument: "execute". use -i and -o for vdb files. See 'vdb_ax --help'
+COMMAND;vdb_ax;-i;file.vdb;execute;-s;@a+=@b;

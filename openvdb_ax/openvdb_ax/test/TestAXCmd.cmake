@@ -67,6 +67,9 @@ set(TEST_FAIL_NUM 0)
 ## @brief Register and run a test. Takes various arguments. Note that if
 ##   running a vdb_ax command with -s, the AX string must be passed separately
 ##   to with the AX keyword (otherwise semicolons are impossible to handle).
+##   Also note that | has a special meaning in ARGS - it splits the COMMAND
+##   and pipes the results from/to to the next. The same COMMAND is used for
+##   each. -s is only passed to the last set of ARGS.
 ## KEYWORDS:
 ##   PASS, FAIL: Whether the test is expected to pass/fail
 ##   GENERATES_OUTPUT: Whether the test is expected to generate output. If so,
@@ -109,22 +112,31 @@ function(RUN_TEST)
   unset(RETURN_CODE)
   unset(TEST_OUTPUT)
 
+  # If a pipe has been specified, split the command
+  # Not that -s is only passed to the last command (so use -f with pipes)
+  list(PREPEND RUN_TEST_ARGS "|")
+  list(TRANSFORM RUN_TEST_ARGS REPLACE "^\\|$" "COMMAND;${TEST_EXE_COMMAND}")
+
   if(RUN_TEST_AX)
     string(REPLACE ";" "\;" RUN_TEST_AX "${RUN_TEST_AX}")
     set(RUN_TEST_AX "${RUN_TEST_AX}\;")
     list(APPEND RUN_TEST_ARGS -s "${RUN_TEST_AX}")
   endif()
 
-  get_filename_component(EXE_COMMAND ${TEST_EXE_COMMAND} NAME)
-  message(STATUS "Running: ${EXE_COMMAND} ${RUN_TEST_ARGS}")
+  message(STATUS "Running: ${RUN_TEST_ARGS}")
 
   if(RUN_TEST_GENERATES_OUTPUT)
-    execute_process(COMMAND ${TEST_EXE_COMMAND} ${RUN_TEST_ARGS}
+    execute_process(${RUN_TEST_ARGS}
       OUTPUT_FILE ${OUTPUT_DIR}/${TEST_FILE}
       ERROR_FILE  ${OUTPUT_DIR}/${TEST_FILE}
       RESULT_VARIABLE RETURN_CODE)
+
+    # Also write the command used to generate the test (remove paths)
+    set(ARGS_TO_WRITE "${RUN_TEST_ARGS}")
+    list(TRANSFORM ARGS_TO_WRITE REPLACE ".*/([^\n]*)$" "\\1")
+    file(APPEND ${OUTPUT_DIR}/${TEST_FILE} "${ARGS_TO_WRITE}")
   else()
-    execute_process(COMMAND ${TEST_EXE_COMMAND} ${RUN_TEST_ARGS}
+    execute_process(${RUN_TEST_ARGS}
       OUTPUT_VARIABLE TEST_OUTPUT
       ERROR_VARIABLE  TEST_OUTPUT
       RESULT_VARIABLE RETURN_CODE)
@@ -137,7 +149,7 @@ function(RUN_TEST)
      (RUN_TEST_PASS AND NOT (RETURN_CODE EQUAL 0)) OR
      (NOT RUN_TEST_IGNORE_OUTPUT AND TEST_OUTPUT))
     string(REPLACE ";" " " RUN_TEST_ARGS "${RUN_TEST_ARGS}")
-    set(FAILED_TESTS "${FAILED_TESTS};${TEST_EXE_COMMAND} ${RUN_TEST_ARGS}" PARENT_SCOPE)
+    set(FAILED_TESTS "${FAILED_TESTS};${RUN_TEST_ARGS}" PARENT_SCOPE)
     return()
   endif()
 
@@ -160,7 +172,7 @@ function(RUN_TEST)
       message(STATUS "Diff outputs failed:\n${DIFF_OUTPUT}")
     endif()
     string(REPLACE ";" " " RUN_TEST_ARGS "${RUN_TEST_ARGS}")
-    set(FAILED_TESTS "${FAILED_TESTS};${TEST_EXE_COMMAND} ${RUN_TEST_ARGS}" PARENT_SCOPE)
+    set(FAILED_TESTS "${FAILED_TESTS};${RUN_TEST_ARGS}" PARENT_SCOPE)
   endif()
 endfunction()
 
@@ -182,31 +194,6 @@ run_test(PASS GENERATES_OUTPUT ARGS analyze -f ${CMAKE_CURRENT_LIST_DIR}/snippet
 run_test(PASS GENERATES_OUTPUT ARGS functions -h)
 run_test(PASS GENERATES_OUTPUT ARGS functions --list log)
 run_test(PASS GENERATES_OUTPUT ARGS functions --list-names)
-
-if(HAS_DOWNLOAD_VDBS)
-  run_test(PASS GENERATES_OUTPUT ARGS ${SPHERE_VDB} --threads 1
-    AX "
-    vec3i c = getcoord();
-    if(c.y > 60)
-      if(c.x < 2 && c.x > -2)
-        if(c.z < 2 && c.z > -2)
-          print(@ls_sphere);
-    ")
-  run_test(PASS GENERATES_OUTPUT ARGS execute ${SPHERE_VDB} --threads 1
-    AX "
-    vec3i c = getcoord();
-    if(c.y > 60)
-      if(c.x < 2 && c.x > -2)
-        if(c.z < 2 && c.z > -2)
-          print(@ls_sphere);
-    ")
-  run_test(PASS GENERATES_OUTPUT ARGS execute ${TORUS_VDB} ${SPHERE_VDB} --threads 1
-    AX  "
-    @ls_sphere = max(@ls_torus, @ls_sphere);
-    if (abs(@ls_sphere) < 1e-4 && @ls_sphere != 0.0f) {
-      print(@ls_sphere);
-    }")
-endif()
 
 # These tests should pass and produce no output
 
@@ -240,12 +227,50 @@ run_test(FAIL GENERATES_OUTPUT ARGS execute file.vdb -o tmp.vdb AX "@ls_sphere +
 # These should come last so that, when enabled, any that GENERATES_OUTPUT don't impact order
 
 if(HAS_DOWNLOAD_VDBS)
+  file(WRITE ${CMAKE_BINARY_DIR}/print.ax "
+    vec3i c = getcoord();
+    if(c.y > 60)
+      if(c.x < 2 && c.x > -2)
+        if(c.z < 2 && c.z > -2)
+          print(@ls_sphere);")
+  file(WRITE ${CMAKE_BINARY_DIR}/modify.ax "
+    vec3i c = getcoord();
+    if(c.y > 60)
+      if(c.x < 2 && c.x > -2)
+        if(c.z < 2 && c.z > -2)
+          @ls_sphere += 5;")
+
   # @todo  diff these once we have attribute bindings (can't diff the files)
   #   due to UUID changing
   run_test(PASS ARGS -i ${SPHERE_VDB} -o ${CMAKE_BINARY_DIR}/tmp.vdb AX "@ls_sphere += 1;")
   run_test(PASS ARGS -i ${SPHERE_VDB} -i ${CMAKE_BINARY_DIR}/tmp.vdb -o ${CMAKE_BINARY_DIR}/tmp.vdb AX "@ls_sphere -= 1;")
   run_test(PASS GENERATES_OUTPUT ARGS ${SPHERE_VDB} ${CMAKE_BINARY_DIR}/tmp.vdb AX "@ls_sphere -= 1;")
+  #
+  run_test(PASS GENERATES_OUTPUT ARGS ${SPHERE_VDB} --threads 1 -f ${CMAKE_BINARY_DIR}/print.ax)
+  run_test(PASS GENERATES_OUTPUT ARGS execute ${SPHERE_VDB} --threads 1
+    AX "
+    vec3i c = getcoord();
+    if(c.y > 60)
+      if(c.x < 2 && c.x > -2)
+        if(c.z < 2 && c.z > -2)
+          print(@ls_sphere);
+    ")
+  run_test(PASS GENERATES_OUTPUT ARGS execute -i ${TORUS_VDB} -i ${SPHERE_VDB} --threads 1
+    AX  "
+    @ls_sphere = max(@ls_torus, @ls_sphere);
+    if (abs(@ls_sphere) < 1e-4 && @ls_sphere != 0.0f) {
+      print(@ls_sphere);
+    }")
+  # test piping
+  run_test(PASS GENERATES_OUTPUT
+    ARGS -i ${SPHERE_VDB} -f ${CMAKE_BINARY_DIR}/modify.ax -o |
+         -i --threads 1 -f ${CMAKE_BINARY_DIR}/print.ax)
+  # cleanup
   run_test(PASS COMMAND ${CMAKE_COMMAND} ARGS -E remove -f ${CMAKE_BINARY_DIR}/tmp.vdb)
+  run_test(PASS COMMAND ${CMAKE_COMMAND} ARGS -E
+    remove -f
+      ${CMAKE_BINARY_DIR}/print.ax
+      ${CMAKE_BINARY_DIR}/modify.ax)
 endif()
 
 # These test fail and output is not checked
@@ -259,7 +284,7 @@ run_test(FAIL IGNORE_OUTPUT ARGS invalid_file -f ${CMAKE_CURRENT_LIST_DIR}/snipp
 ###############################################################################
 
 if(FAILED_TESTS)
-  set(MSG "The following vdb_ax test command failed:")
+  set(MSG "\nThe following vdb_ax test command failed:")
   foreach(FAILED_TEST ${FAILED_TESTS})
     set(MSG " ${MSG}\n ${FAILED_TEST}")
   endforeach()

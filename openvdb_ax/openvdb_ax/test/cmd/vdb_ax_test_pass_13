@@ -19,3 +19,4 @@ log2
 |  - double(double n)
 |  - float(float n)
 
+COMMAND;vdb_ax;functions;--list;log

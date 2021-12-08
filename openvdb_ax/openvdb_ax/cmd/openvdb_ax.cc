@@ -22,6 +22,7 @@
 
 #include <openvdb/openvdb.h>
 #include <openvdb/version.h>
+#include <openvdb/io/Stream.h>
 #include <openvdb/io/File.h>
 #include <openvdb/util/logging.h>
 #include <openvdb/util/CpuTimer.h>
@@ -68,6 +69,7 @@ struct ProgOptions
     std::vector<std::string> mInputVDBFiles = {};
     std::string mOutputVDBFile = "";
     bool mCopyFileMeta = false;
+    bool mOutputToCout = false;
     bool mVerbose = false;
     openvdb::ax::CompilerOptions::OptLevel mOptLevel =
         openvdb::ax::CompilerOptions::OptLevel::O3;
@@ -150,14 +152,20 @@ auto usage_execute(const bool verbose)
             "         " << gProgName << " a.vdb b.vdb c.vdb -s \"@c = @a + @b;\" -o out.vdb  // combine a,b into c\n" <<
             "         " << gProgName << " points.vdb -s \"@P += v@v * 2;\" -o out.vdb        // move points based on a vector attribute\n" <<
             "\n" <<
+            "    Grids can also be piped from/to cin/cout, allowing for invocations of this\n" <<
+            "    binary to be chained together. -i/-o options without an argument enable this:\n" <<
+            "\n" <<
+            "         " << gProgName << " -i density.vdb -s \"@density += 1;\" -o |  // pipe into next command\n" <<
+            "           " << gProgName << " -i -i fog.vdb -s \"@density += @fog;\" -o out.vdb\n" <<
+            "\n" <<
             "    For more examples and help with syntax, see the AX documentation:\n" <<
             "      https://academysoftwarefoundation.github.io/openvdb/openvdbax.html\n" <<
             "\n";
         }
         os <<
-        "    -i [file.vdb]          append an input vdb file to be read\n"
+        "    -i <file.vdb>          append an input vdb file or read from cin.\n"
         "    -s [code], -f [file]   input code to execute as a string or from a file.\n" <<
-        "    -o [file.vdb]          write the result to a given vdb file\n" <<
+        "    -o <file.vdb>          write the result to a vdb file or send to cout.\n" <<
         "    --opt [level]          optimization level [NONE, O0, O1, O2, Os, Oz, O3 (default)]\n" <<
         "    --werror               warnings as errors\n" <<
         "    --max-errors [n]       maximum error messages, 0 (default) allows all error messages\n" <<
@@ -268,13 +276,23 @@ struct OptParse
 
     OptParse(int argc_, char* argv_[]): argc(argc_), argv(argv_) {}
 
+    const char* next(int idx) const
+    {
+        if (idx + 1 >= argc) return nullptr;
+        const char* next = argv[idx+1];
+        if (next[0] == '-') return nullptr;
+        return next;
+    }
+
     bool check(int idx, const std::string& name, int numArgs = 1) const
     {
         if (argv[idx] == name) {
-            if (idx + numArgs >= argc) {
-                OPENVDB_LOG_FATAL("option " << name << " requires "
-                    << numArgs << " argument" << (numArgs == 1 ? "" : "s"));
-                fatal();
+            for (int i = 0; i < numArgs; ++i) {
+                if (!this->next(idx+i)) {
+                    OPENVDB_LOG_FATAL("option " << name << " requires "
+                        << numArgs << " argument" << (numArgs == 1 ? "" : "s"));
+                    fatal();
+                }
             }
             return true;
         }
@@ -399,6 +417,14 @@ main(int argc, char *argv[])
 
     if (argc == 1) usage();
 
+    // Track whether we're reading/outputing to cin/cout. We could do this
+    // automatically with:
+    //  !isatty(fileno(stdin));
+    //  !isatty(fileno(stdout));
+    // but we've has reports of this behaviour not being supported on some
+    // platforms (cygwin)
+    bool pipein = false, pipeout = false;
+
     OptParse parser(argc, argv);
     ProgOptions opts;
 
@@ -430,23 +456,33 @@ main(int argc, char *argv[])
                 multiSnippet |= static_cast<bool>(opts.mInputCode);
                 opts.mInputCode.reset(new std::string());
                 loadSnippetFile(argv[i], *opts.mInputCode);
-            } else if (parser.check(i, "-i")) {
+            } else if (parser.check(i, "-i", 0)) {
                 if (positionalInputHasBeenUsed) {
                     fatal("unrecognized positional argument: \"" + opts.mInputVDBFiles.back() + "\". use -i and -o for vdb files");
                 }
                 dashInputHasBeenUsed = true;
-                opts.mInputVDBFiles.emplace_back(argv[++i]);
+                const char* next = parser.next(i);
+                if (!next) pipein = true; // -i given with no args
+                else {
+                    opts.mInputVDBFiles.emplace_back(next);
+                    ++i;
+                }
+            } else if (parser.check(i, "-o", 0)) {
+                if (positionalInputHasBeenUsed) {
+                    fatal("unrecognized positional argument: \"" + opts.mInputVDBFiles.back() + "\". use -i and -o for vdb files");
+                }
+                const char* next = parser.next(i);
+                if (!next) pipeout = true; // -o given with no args
+                else {
+                    opts.mOutputVDBFile = std::string(next);
+                    ++i;
+                }
             } else if (parser.check(i, "-v", 0)) {
                 opts.mVerbose = true;
             } else if (parser.check(i, "--threads")) {
                 opts.threads = atoi(argv[++i]);
             } else if (parser.check(i, "--copy-file-metadata", 0)) {
                 opts.mCopyFileMeta = true;
-            } else if (parser.check(i, "-o")) {
-                if (positionalInputHasBeenUsed) {
-                    fatal("unrecognized positional argument: \"" + opts.mInputVDBFiles.back() + "\". use -i and -o for vdb files");
-                }
-                opts.mOutputVDBFile = argv[++i];
             } else if (parser.check(i, "--max-errors")) {
                 opts.mMaxErrors = atoi(argv[++i]);
             } else if (parser.check(i, "--werror", 0)) {
@@ -455,10 +491,10 @@ main(int argc, char *argv[])
                 opts.mFunctionList = true;
                 opts.mInitCompile = true; // need to intialize llvm
                 opts.mFunctionNamesOnly = false;
-                if (i + 1 >= argc) continue;
-                if (argv[i+1][0] == '-') continue;
+                const char* next = parser.next(i);
+                if (!next) continue;
                 ++i;
-                opts.mFunctionSearch = std::string(argv[i]);
+                opts.mFunctionSearch = std::string(next);
             } else if (parser.check(i, "--list-names", 0)) {
                 opts.mFunctionList = true;
                 opts.mFunctionNamesOnly = true;
@@ -470,10 +506,10 @@ main(int argc, char *argv[])
                 opts.mAttribRegPrint = true;
             } else if (parser.check(i, "--try-compile", 0)) {
                 opts.mInitCompile = true;
-                if (i + 1 >= argc) continue;
-                if (argv[i+1][0] == '-') continue;
+                const char* next = parser.next(i);
+                if (!next) continue;
                 ++i;
-                opts.mCompileFor = tryCompileStringToCompilation(argv[i]);
+                opts.mCompileFor = tryCompileStringToCompilation(std::string(next));
             } else if (parser.check(i, "--opt")) {
                 ++i;
                 opts.mOptLevel = optStringToLevel(argv[i]);
@@ -522,11 +558,11 @@ main(int argc, char *argv[])
 
     if (opts.mMode == ProgOptions::Mode::Execute) {
         opts.mInitCompile = true;
-        if (opts.mInputVDBFiles.empty()) {
+        if (opts.mInputVDBFiles.empty() && !pipein) {
             fatal("no vdb files have been provided");
         }
     }
-    else if (!opts.mInputVDBFiles.empty()) {
+    else if (!opts.mInputVDBFiles.empty() || pipein) {
         fatal(modeString(opts.mMode) + " does not take input vdb files");
     }
 
@@ -547,12 +583,19 @@ main(int argc, char *argv[])
 
         if (opts.mMode == ProgOptions::Execute) {
             axlog("  vdb in  : \"");
+            if (pipein) {
+                axlog("(reading from pipe)");
+                if (!opts.mInputVDBFiles.empty()) axlog(", ");
+            }
             for (const auto& in : opts.mInputVDBFiles) {
                 const bool sep = (&in != &opts.mInputVDBFiles.back());
                 axlog(in << (sep ? ", " : ""));
             }
             axlog("\"\n");
-            axlog("  vdb out : \"" << opts.mOutputVDBFile << "\"\n");
+            axlog("  vdb out : \"");
+            if (pipeout) axlog("(output from pipe)");
+            if (!opts.mOutputVDBFile.empty()) axlog(", " << opts.mOutputVDBFile);
+            axlog("\"\n");
         }
         if (opts.mMode == ProgOptions::Execute ||
             opts.mMode == ProgOptions::Analyze) {
@@ -589,7 +632,7 @@ main(int argc, char *argv[])
     }
 
     if (opts.mMode == ProgOptions::Execute) {
-        if (opts.mOutputVDBFile.empty()) {
+        if (opts.mOutputVDBFile.empty() && !pipeout) {
             OPENVDB_LOG_WARN("no output VDB File specified - nothing will be written to disk");
         }
     }
@@ -608,27 +651,39 @@ main(int argc, char *argv[])
     openvdb::GridPtrVec grids;
     openvdb::MetaMap::Ptr meta;
 
-    if (opts.mMode == ProgOptions::Execute) {
-        // read vdb file data for
-        axlog("[INFO] Reading VDB data"
-            << (openvdb::io::Archive::isDelayedLoadingEnabled() ?
-                " (delay-load)" : "") << '\n');
-        for (const auto& filename : opts.mInputVDBFiles) {
-            openvdb::io::File file(filename);
-            try {
-                axlog("[INFO] | \"" << filename << "\"");
-                axtimer();
-                file.open();
-                auto in = file.getGrids();
-                grids.insert(grids.end(), in->begin(), in->end());
-                // choose the first files metadata
-                if (opts.mCopyFileMeta && !meta) meta = file.getMetadata();
-                file.close();
-                axlog(": " << axtime() << '\n');
-            } catch (openvdb::Exception& e) {
-                axlog('\n');
-                OPENVDB_LOG_ERROR(e.what() << " (" << filename << ")");
-                return EXIT_FAILURE;
+    if (opts.mMode == ProgOptions::Execute)
+    {
+        if (pipein)
+        {
+            axlog("[INFO] Reading VDB data from std::cin");
+            axtimer();
+            // read from std::cin
+            openvdb::io::Stream input(std::cin, /*delayload=*/false);
+            grids = *(input.getGrids());
+            axlog(": " << axtime() << '\n');
+        }
+        if (!opts.mInputVDBFiles.empty())
+        {
+            // read vdb file data for
+            axlog("[INFO] Reading VDB data"
+                << (openvdb::io::Archive::isDelayedLoadingEnabled() ?
+                    " (delay-load) " : " ") << '\n');
+            for (const auto& filename : opts.mInputVDBFiles) {
+                openvdb::io::File file(filename);
+                try {
+                    axlog("[INFO] | \"" << filename << "\"");
+                    axtimer();
+                    file.open();
+                    auto in = file.getGrids();
+                    grids.insert(grids.end(), in->begin(), in->end());
+                    // choose the first files metadata
+                    if (opts.mCopyFileMeta && !meta) meta = file.getMetadata();
+                    file.close();
+                    axlog(": " << axtime() << '\n');
+                } catch (openvdb::Exception& e) {
+                    OPENVDB_LOG_ERROR(e.what() << " (" << filename << ")");
+                    return EXIT_FAILURE;
+                }
             }
         }
     }
@@ -914,6 +969,10 @@ main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
         axlog("[INFO] | " << axtime() << '\n' << std::flush);
+    }
+    if (pipeout) {
+        openvdb::io::Stream out(std::cout);
+        out.write(grids);
     }
 
     return EXIT_SUCCESS;

@@ -1,1 +1,2 @@
 FATAL: no vdb files have been provided. See 'vdb_ax --help'
+COMMAND;vdb_ax;-f;forLoop

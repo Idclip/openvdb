@@ -18,3 +18,4 @@ WARNING: no output VDB File specified - nothing will be written to disk
 0.0508118
 0.100403
 0.10083
+COMMAND;vdb_ax;sphere.vdb;--threads;1;-f;print.ax

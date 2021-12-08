@@ -1,1 +1,22 @@
-WARNING: position arguments [input.vdb <output.vdb>] are deprecated. use -i and -o
+WARNING: no output VDB File specified - nothing will be written to disk
+2.22549e-05
+2.22549e-05
+7.67782e-06
+7.68527e-06
+7.68527e-06
+7.75233e-06
+2.224e-05
+2.22549e-05
+7.68527e-06
+7.68527e-06
+2.22549e-05
+2.224e-05
+2.22549e-05
+2.23182e-05
+7.67782e-06
+7.75233e-06
+COMMAND;vdb_ax;execute;-i;torus.vdb;-i;sphere.vdb;--threads;1;-s;
+    @ls_sphere = max(@ls_torus, @ls_sphere);
+    if (abs(@ls_sphere) < 1e-4 && @ls_sphere != 0.0f) {
+      print(@ls_sphere);
+    };

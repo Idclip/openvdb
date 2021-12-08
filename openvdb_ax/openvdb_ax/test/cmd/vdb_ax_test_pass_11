@@ -7,3 +7,4 @@
 [3] warning: implicit conversion in assignment (possible truncation) 61:23
     for (int32 i = 5; int32 k = floor(i - 1); --i) j++;
 ----------------------^
+COMMAND;vdb_ax;analyze;-f;forLoop;--try-compile;volumes

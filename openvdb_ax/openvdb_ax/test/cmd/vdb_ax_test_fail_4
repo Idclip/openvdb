@@ -1,1 +1,2 @@
 FATAL: File Load Error: invalid_file
+COMMAND;vdb_ax;analyze;-f;invalid_file

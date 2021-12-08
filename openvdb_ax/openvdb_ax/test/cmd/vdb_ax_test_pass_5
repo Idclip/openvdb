@@ -16,3 +16,4 @@ Attribute: a, type: float
   Usage : 1
     Attribute: a type: float
 
+COMMAND;vdb_ax;analyze;--reg-print;--try-compile;-s;@a+=@b;

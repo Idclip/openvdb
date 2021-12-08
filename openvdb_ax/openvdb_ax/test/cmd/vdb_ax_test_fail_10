@@ -1,1 +1,2 @@
 ERROR: AXCompilerError: Function "ax.compute.voxel.k1" cannot be called for the current target:"ax.volume.module". This function only runs on OpenVDB Point Grids.
+COMMAND;vdb_ax;analyze;--try-compile;volumes;-s;string str; bool a = ingroup(str);

@@ -1,3 +1,4 @@
 {
     float@a += float@b;
 }
+COMMAND;vdb_ax;analyze;--re-print;-s;@a+=@b;

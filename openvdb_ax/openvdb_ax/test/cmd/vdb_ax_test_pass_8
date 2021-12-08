@@ -68,3 +68,4 @@ Attribute: loop_test3, type: vec3f
   Dependencies : 0
   Usage : 0
 
+COMMAND;vdb_ax;analyze;-f;forLoop;--reg-print

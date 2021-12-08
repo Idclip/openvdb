@@ -12,3 +12,4 @@ usage: vdb_ax [analyze] [<args>]
                           attempt to compile code for points, volumes or both if no
                           option is provided, reporting any failures or success.
 
+COMMAND;vdb_ax;analyze;-h

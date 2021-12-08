@@ -3,3 +3,4 @@ scoped block: 1 statement(s)
         attribute: @(float - inferred) a
         attribute: @(float - inferred) b
 
+COMMAND;vdb_ax;analyze;--ast-print;-s;@a+=@b;

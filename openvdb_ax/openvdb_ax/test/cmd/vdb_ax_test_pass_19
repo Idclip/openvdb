@@ -1,0 +1,20 @@
+WARNING: no output VDB File specified - nothing will be written to disk
+5.05078
+5.10156
+5.05078
+5.05078
+5.10156
+5.10156
+5.05078
+5.10156
+5.05078
+5.10156
+5.05078
+5.05078
+5.10156
+5.10156
+5.05078
+5.05078
+5.10156
+5.10156
+COMMAND;vdb_ax;-i;sphere.vdb;-f;modify.ax;-o;COMMAND;vdb_ax;-i;--threads;1;-f;print.ax
