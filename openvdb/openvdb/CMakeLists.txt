@@ -379,6 +379,7 @@ set(OPENVDB_LIBRARY_SOURCE_FILES
   points/points.cc
   util/Formats.cc
   util/Util.cc
+  tools/Count.cc
 )
 
 set(OPENVDB_LIBRARY_INCLUDE_FILES
