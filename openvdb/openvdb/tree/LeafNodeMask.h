@@ -35,7 +35,11 @@ public:
     using ValueType = bool;// value type != build type
     using Buffer = LeafBuffer<ValueType, Log2Dim>;// buffer uses the bool specialization
     using NodeMaskType = util::NodeMask<Log2Dim>;
-    using Ptr = SharedPtr<LeafNodeType>;
+
+    using Ptr       = SharedPtr<LeafNodeType>;
+    using ConstPtr  = SharedPtr<const LeafNodeType>;
+    using UPtr      = std::unique_ptr<LeafNodeType>;
+    using ConstUPtr = std::unique_ptr<const LeafNodeType>;
 
     // These static declarations must be on separate lines to avoid VC9 compiler errors.
     static const Index LOG2DIM    = Log2Dim;    // needed by parent nodes

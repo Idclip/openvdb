@@ -40,9 +40,12 @@ class OPENVDB_API AttributeSet
 public:
     enum { INVALID_POS = std::numeric_limits<size_t>::max() };
 
-    using Ptr                   = std::shared_ptr<AttributeSet>;
-    using ConstPtr              = std::shared_ptr<const AttributeSet>;
-    using UniquePtr             = std::unique_ptr<AttributeSet>;
+    using Ptr              = std::shared_ptr<AttributeSet>;
+    using ConstPtr         = std::shared_ptr<const AttributeSet>;
+    using UPtr             = std::unique_ptr<AttributeSet>;
+    using ConstUPtr        = std::unique_ptr<const AttributeSet>;
+    using UniquePtr        OPENVDB_DEPRECATED = UPtr;
+    using ConstUniquePtr   OPENVDB_DEPRECATED = ConstUPtr;
 
     class Descriptor;
 
@@ -312,6 +315,9 @@ class OPENVDB_API AttributeSet::Descriptor
 {
 public:
     using Ptr               = std::shared_ptr<Descriptor>;
+    using ConstPtr          = std::shared_ptr<const Descriptor>;
+    using UPtr              = std::unique_ptr<Descriptor>;
+    using ConstUPtr         = std::unique_ptr<const Descriptor>;
 
     using NameAndType       = Util::NameAndType;
     using NameAndTypeVec    = Util::NameAndTypeVec;

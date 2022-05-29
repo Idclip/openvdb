@@ -21,8 +21,11 @@ namespace io {
 class OPENVDB_API DelayedLoadMetadata: public Metadata
 {
 public:
-    using Ptr = SharedPtr<DelayedLoadMetadata>;
-    using ConstPtr = SharedPtr<const DelayedLoadMetadata>;
+    using Ptr       = SharedPtr<DelayedLoadMetadata>;
+    using ConstPtr  = SharedPtr<const DelayedLoadMetadata>;
+    using UPtr      = std::unique_ptr<DelayedLoadMetadata>;
+    using ConstUPtr = std::unique_ptr<const DelayedLoadMetadata>;
+
     using MaskType = int8_t;
     using CompressedSizeType = int64_t;
 

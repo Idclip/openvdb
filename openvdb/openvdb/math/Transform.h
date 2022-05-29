@@ -39,8 +39,10 @@ calculateBounds(const Transform& t, const Vec3d& minWS, const Vec3d& maxWS,
 class OPENVDB_API Transform
 {
 public:
-    using Ptr = SharedPtr<Transform>;
-    using ConstPtr = SharedPtr<const Transform>;
+    using Ptr       = SharedPtr<Transform>;
+    using ConstPtr  = SharedPtr<const Transform>;
+    using UPtr      = std::unique_ptr<Transform>;
+    using ConstUPtr = std::unique_ptr<const Transform>;
 
     Transform(): mMap(MapBase::Ptr(new ScaleMap())) {}
     Transform(const MapBase::Ptr&);

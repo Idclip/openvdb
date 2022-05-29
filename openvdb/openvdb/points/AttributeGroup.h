@@ -72,8 +72,9 @@ inline bool isGroup(const AttributeArray& array)
 class OPENVDB_API GroupHandle
 {
 public:
-    using Ptr = std::shared_ptr<GroupHandle>;
-    using UniquePtr = std::unique_ptr<GroupHandle>;
+    using Ptr       = std::shared_ptr<GroupHandle>;
+    using UPtr      = std::unique_ptr<GroupHandle>;
+    using UniquePtr OPENVDB_DEPRECATED = UPtr;
 
     // Dummy class that distinguishes an offset from a bitmask on construction
     struct BitMask { };
@@ -101,8 +102,9 @@ protected:
 class OPENVDB_API GroupWriteHandle : public GroupHandle
 {
 public:
-    using Ptr = std::shared_ptr<GroupWriteHandle>;
-    using UniquePtr = std::unique_ptr<GroupWriteHandle>;
+    using Ptr       = std::shared_ptr<GroupWriteHandle>;
+    using UPtr      = std::unique_ptr<GroupWriteHandle>;
+    using UniquePtr OPENVDB_DEPRECATED = UPtr;
 
     GroupWriteHandle(GroupAttributeArray& array, const GroupType& offset);
 

@@ -366,7 +366,7 @@ private:
     const size_t mIndex;
     const double mFactor;
     const unsigned int mSeed;
-    typename Handle::UniquePtr mIdHandle;
+    typename Handle::UPtr mIdHandle;
 }; // class AttributeHashFilter
 
 
@@ -439,7 +439,7 @@ private:
     const math::Transform& mTransform;
     const ValueT mMin;
     const ValueT mMax;
-    Handle::UniquePtr mPositionHandle;
+    Handle::UPtr mPositionHandle;
 }; // class LevelSetFilter
 
 
@@ -494,7 +494,7 @@ public:
 private:
     const openvdb::math::Transform& mTransform;
     const openvdb::BBoxd mBbox;
-    Handle::UniquePtr mPositionHandle;
+    Handle::UPtr mPositionHandle;
 }; // class BBoxFilter
 
 

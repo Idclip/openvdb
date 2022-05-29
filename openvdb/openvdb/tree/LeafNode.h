@@ -42,7 +42,11 @@ public:
     using Buffer = LeafBuffer<ValueType, Log2Dim>;
     using LeafNodeType = LeafNode<ValueType, Log2Dim>;
     using NodeMaskType = util::NodeMask<Log2Dim>;
-    using Ptr = SharedPtr<LeafNode>;
+
+    using Ptr       = SharedPtr<LeafNode>;
+    using ConstPtr  = SharedPtr<const LeafNode>;
+    using UPtr      = std::unique_ptr<LeafNode>;
+    using ConstUPtr = std::unique_ptr<const LeafNode>;
 
     static const Index
         LOG2DIM     = Log2Dim,      // needed by parent nodes

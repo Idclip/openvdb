@@ -59,15 +59,17 @@ template<typename TreeType>
 class MultiResGrid: public MetaMap
 {
 public:
-    using Ptr = SharedPtr<MultiResGrid>;
-    using ConstPtr = SharedPtr<const MultiResGrid>;
+    using Ptr       = SharedPtr<MultiResGrid>;
+    using ConstPtr  = SharedPtr<const MultiResGrid>;
+    using UPtr      = std::unique_ptr<MultiResGrid>;
+    using ConstUPtr = std::unique_ptr<const MultiResGrid>;
 
-    using ValueType = typename TreeType::ValueType;
+    using ValueType    = typename TreeType::ValueType;
     using ValueOnCIter = typename TreeType::ValueOnCIter;
-    using ValueOnIter = typename TreeType::ValueOnIter;
-    using TreePtr = typename TreeType::Ptr;
+    using ValueOnIter  = typename TreeType::ValueOnIter;
+    using TreePtr      = typename TreeType::Ptr;
     using ConstTreePtr = typename TreeType::ConstPtr;
-    using GridPtr = typename Grid<TreeType>::Ptr;
+    using GridPtr      = typename Grid<TreeType>::Ptr;
     using ConstGridPtr = typename Grid<TreeType>::ConstPtr;
 
     //////////////////////////////////////////////////////////////////////

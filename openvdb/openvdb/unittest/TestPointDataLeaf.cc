@@ -616,7 +616,7 @@ TEST_F(TestPointDataLeaf, testSteal)
 
     // steal the attribute set
 
-    AttributeSet::UniquePtr attributeSet = leaf.stealAttributeSet();
+    AttributeSet::UPtr attributeSet = leaf.stealAttributeSet();
 
     EXPECT_TRUE(attributeSet);
     EXPECT_EQ(attributeSet->size(), size_t(1));

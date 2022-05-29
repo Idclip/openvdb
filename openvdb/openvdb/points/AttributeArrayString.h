@@ -56,7 +56,8 @@ using StringAttributeArray = TypedAttributeArray<Index, StringCodec<false>>;
 class OPENVDB_API StringMetaCache
 {
 public:
-    using UniquePtr = std::unique_ptr<StringMetaCache>;
+    using UPtr = std::unique_ptr<StringMetaCache>;
+    using UniquePtr OPENVDB_DEPRECATED = UPtr;
     using ValueMap = std::unordered_map<Name, Index>;
 
     StringMetaCache() = default;
@@ -88,7 +89,8 @@ private:
 class OPENVDB_API StringMetaInserter
 {
 public:
-    using UniquePtr = std::unique_ptr<StringMetaInserter>;
+    using UPtr = std::unique_ptr<StringMetaInserter>;
+    using UniquePtr OPENVDB_DEPRECATED = UPtr;
 
     explicit StringMetaInserter(MetaMap& metadata);
 
@@ -153,8 +155,9 @@ inline bool isString(const AttributeArray& array)
 class OPENVDB_API StringAttributeHandle
 {
 public:
-    using Ptr = std::shared_ptr<StringAttributeHandle>;//SharedPtr<StringAttributeHandle>;
-    using UniquePtr = std::unique_ptr<StringAttributeHandle>;
+    using Ptr  = std::shared_ptr<StringAttributeHandle>;
+    using UPtr = std::unique_ptr<StringAttributeHandle>;
+    using UniquePtr OPENVDB_DEPRECATED = UPtr;
 
     static Ptr create(const AttributeArray& array, const MetaMap& metadata, const bool preserveCompression = true);
 
@@ -186,8 +189,9 @@ protected:
 class OPENVDB_API StringAttributeWriteHandle : public StringAttributeHandle
 {
 public:
-    using Ptr = std::shared_ptr<StringAttributeWriteHandle>;//SharedPtr<StringAttributeWriteHandle>;
-    using UniquePtr = std::unique_ptr<StringAttributeWriteHandle>;
+    using Ptr  = std::shared_ptr<StringAttributeWriteHandle>;
+    using UPtr = std::unique_ptr<StringAttributeWriteHandle>;
+    using UniquePtr OPENVDB_DEPRECATED = UPtr;
 
     static Ptr create(AttributeArray& array, const MetaMap& metadata, const bool expand = true);
 

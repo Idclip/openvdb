@@ -1357,7 +1357,11 @@ template<typename T, Index Log2Dim>
 struct PointIndexLeafNode : public tree::LeafNode<T, Log2Dim>
 {
     using LeafNodeType = PointIndexLeafNode<T, Log2Dim>;
-    using Ptr = SharedPtr<PointIndexLeafNode>;
+
+    using Ptr       = SharedPtr<PointIndexLeafNode>;
+    using ConstPtr  = SharedPtr<const PointIndexLeafNode>;
+    using UPtr      = std::unique_ptr<PointIndexLeafNode>;
+    using ConstUPtr = std::unique_ptr<const PointIndexLeafNode>;
 
     using ValueType = T;
     using IndexArray = std::vector<ValueType>;

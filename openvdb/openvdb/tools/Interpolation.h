@@ -283,10 +283,12 @@ template<typename GridOrTreeType, typename SamplerType>
 class GridSampler
 {
 public:
-    using Ptr = SharedPtr<GridSampler>;
-    using ValueType = typename GridOrTreeType::ValueType;
-    using GridType = typename TreeAdapter<GridOrTreeType>::GridType;
-    using TreeType = typename TreeAdapter<GridOrTreeType>::TreeType;
+    using Ptr  = SharedPtr<GridSampler>;
+    using UPtr = std::unique_ptr<GridSampler>;
+
+    using ValueType    = typename GridOrTreeType::ValueType;
+    using GridType     = typename TreeAdapter<GridOrTreeType>::GridType;
+    using TreeType     = typename TreeAdapter<GridOrTreeType>::TreeType;
     using AccessorType = typename TreeAdapter<GridOrTreeType>::AccessorType;
 
      /// @param grid  a grid to be sampled
@@ -365,10 +367,12 @@ template<typename TreeT, typename SamplerType>
 class GridSampler<tree::ValueAccessor<TreeT>, SamplerType>
 {
 public:
-    using Ptr = SharedPtr<GridSampler>;
-    using ValueType = typename TreeT::ValueType;
-    using TreeType = TreeT;
-    using GridType = Grid<TreeType>;
+    using Ptr  = SharedPtr<GridSampler>;
+    using UPtr = std::unique_ptr<GridSampler>;
+
+    using ValueType    = typename TreeT::ValueType;
+    using TreeType     = TreeT;
+    using GridType     = Grid<TreeType>;
     using AccessorType = typename tree::ValueAccessor<TreeT>;
 
     /// @param acc  a ValueAccessor to be sampled

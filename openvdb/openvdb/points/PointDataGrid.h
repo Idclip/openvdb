@@ -239,8 +239,12 @@ template <typename T, Index Log2Dim>
 class PointDataLeafNode : public tree::LeafNode<T, Log2Dim>, io::MultiPass {
 
 public:
-    using LeafNodeType  = PointDataLeafNode<T, Log2Dim>;
-    using Ptr           = std::shared_ptr<PointDataLeafNode>;
+    using LeafNodeType = PointDataLeafNode<T, Log2Dim>;
+
+    using Ptr          = std::shared_ptr<PointDataLeafNode>;
+    using ConstPtr     = std::shared_ptr<const PointDataLeafNode>;
+    using UPtr         = std::unique_ptr<PointDataLeafNode>;
+    using ConstUPtr    = std::unique_ptr<const PointDataLeafNode>;
 
     using ValueType     = T;
     using ValueTypePair = std::pair<ValueType, ValueType>;
@@ -322,7 +326,7 @@ public:
     const AttributeSet& attributeSet() const { return *mAttributeSet; }
 
     /// @brief Steal the attribute set, a new, empty attribute set is inserted in it's place.
-    AttributeSet::UniquePtr stealAttributeSet();
+    AttributeSet::UPtr stealAttributeSet();
 
     /// @brief Create a new attribute set. Existing attributes will be removed.
     void initializeAttributes(const Descriptor::Ptr& descriptor, const Index arrayLength,
@@ -600,7 +604,7 @@ public:
     using ValueAll  = typename BaseLeaf::ValueAll;
 
 private:
-    AttributeSet::UniquePtr mAttributeSet;
+    AttributeSet::UPtr mAttributeSet;
     uint16_t mVoxelBufferSize = 0;
 
 protected:
@@ -748,10 +752,10 @@ public:
 // PointDataLeafNode implementation
 
 template<typename T, Index Log2Dim>
-inline AttributeSet::UniquePtr
+inline AttributeSet::UPtr
 PointDataLeafNode<T, Log2Dim>::stealAttributeSet()
 {
-    AttributeSet::UniquePtr ptr = std::make_unique<AttributeSet>();
+    AttributeSet::UPtr ptr = std::make_unique<AttributeSet>();
     std::swap(ptr, mAttributeSet);
     return ptr;
 }

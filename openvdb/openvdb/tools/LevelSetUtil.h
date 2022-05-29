@@ -1278,7 +1278,7 @@ private:
 template<typename NodeType>
 struct NodeMaskSegment
 {
-    using Ptr = SharedPtr<NodeMaskSegment>;
+    using UPtr = std::unique_ptr<NodeMaskSegment>;
     using NodeMaskType = typename NodeType::NodeMaskType;
 
     NodeMaskSegment() : connections(), mask(false), origin(0,0,0), visited(false) {}
@@ -1293,11 +1293,11 @@ struct NodeMaskSegment
 template<typename NodeType>
 void
 nodeMaskSegmentation(const NodeType& node,
-    std::vector<typename NodeMaskSegment<NodeType>::Ptr>& segments)
+    std::vector<typename NodeMaskSegment<NodeType>::UPtr>& segments)
 {
     using NodeMaskType = typename NodeType::NodeMaskType;
     using NodeMaskSegmentType = NodeMaskSegment<NodeType>;
-    using NodeMaskSegmentTypePtr = typename NodeMaskSegmentType::Ptr;
+    using NodeMaskSegmentTypePtr = typename NodeMaskSegmentType::UPtr;
 
     NodeMaskType nodeMask(node.getValueMask());
     std::deque<Index> indexList;
@@ -1361,7 +1361,7 @@ nodeMaskSegmentation(const NodeType& node,
 
         }
 
-        segments.push_back(segment);
+        segments.emplace_back(std::move(segment));
     }
 }
 
@@ -1370,7 +1370,7 @@ template<typename NodeType>
 struct SegmentNodeMask
 {
     using NodeMaskSegmentType = NodeMaskSegment<NodeType>;
-    using NodeMaskSegmentTypePtr = typename NodeMaskSegmentType::Ptr;
+    using NodeMaskSegmentTypePtr = typename NodeMaskSegmentType::UPtr;
     using NodeMaskSegmentVector = typename std::vector<NodeMaskSegmentTypePtr>;
 
     SegmentNodeMask(std::vector<NodeType*>& nodes, NodeMaskSegmentVector* nodeMaskArray)
@@ -1400,7 +1400,7 @@ struct ConnectNodeMaskSegments
 {
     using NodeMaskType = typename NodeType::NodeMaskType;
     using NodeMaskSegmentType = NodeMaskSegment<NodeType>;
-    using NodeMaskSegmentTypePtr = typename NodeMaskSegmentType::Ptr;
+    using NodeMaskSegmentTypePtr = typename NodeMaskSegmentType::UPtr;
     using NodeMaskSegmentVector = typename std::vector<NodeMaskSegmentTypePtr>;
 
     ConnectNodeMaskSegments(const TreeType& tree, NodeMaskSegmentVector* nodeMaskArray)
@@ -2346,7 +2346,7 @@ extractActiveVoxelSegmentMasks(const GridOrTreeType& volume,
     using BoolGridOrTreePtrType = typename GridOrTreeType::template ValueConverter<bool>::Type::Ptr;
 
     using NodeMaskSegmentType = level_set_util_internal::NodeMaskSegment<BoolLeafNodeType>;
-    using NodeMaskSegmentPtrType = typename NodeMaskSegmentType::Ptr;
+    using NodeMaskSegmentPtrType = typename NodeMaskSegmentType::UPtr;
     using NodeMaskSegmentPtrVector = typename std::vector<NodeMaskSegmentPtrType>;
     using NodeMaskSegmentRawPtrVector = typename std::vector<NodeMaskSegmentType*>;
 

@@ -162,7 +162,9 @@ public:
 class GridResampler
 {
 public:
-    using Ptr = SharedPtr<GridResampler>;
+    using Ptr  = SharedPtr<GridResampler>;
+    using UPtr = std::unique_ptr<GridResampler>;
+
     using InterruptFunc = std::function<bool (void)>;
 
     GridResampler(): mThreaded(true), mTransformTiles(true) {}
@@ -233,7 +235,8 @@ private:
 class GridTransformer: public GridResampler
 {
 public:
-    using Ptr = SharedPtr<GridTransformer>;
+    using Ptr  = SharedPtr<GridTransformer>;
+    using UPtr = std::unique_ptr<GridTransformer>;
 
     GridTransformer(const Mat4R& xform);
     GridTransformer(

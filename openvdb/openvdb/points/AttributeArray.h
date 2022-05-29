@@ -122,8 +122,10 @@ public:
         ScopedRegistryLock();
     }; // class ScopedRegistryLock
 
-    using Ptr           = std::shared_ptr<AttributeArray>;
-    using ConstPtr      = std::shared_ptr<const AttributeArray>;
+    using Ptr       = std::shared_ptr<AttributeArray>;
+    using ConstPtr  = std::shared_ptr<const AttributeArray>;
+    using UPtr      = std::unique_ptr<AttributeArray>;
+    using ConstUPtr = std::unique_ptr<const AttributeArray>;
 
     using FactoryMethod = Ptr (*)(Index, Index, bool, const Metadata*);
 
@@ -538,8 +540,10 @@ template<typename ValueType_, typename Codec_ = NullCodec>
 class TypedAttributeArray final: public AttributeArray
 {
 public:
-    using Ptr           = std::shared_ptr<TypedAttributeArray>;
-    using ConstPtr      = std::shared_ptr<const TypedAttributeArray>;
+    using Ptr       = std::shared_ptr<TypedAttributeArray>;
+    using ConstPtr  = std::shared_ptr<const TypedAttributeArray>;
+    using UPtr      = std::unique_ptr<TypedAttributeArray>;
+    using ConstUPtr = std::unique_ptr<const TypedAttributeArray>;
 
     using ValueType     = ValueType_;
     using Codec         = Codec_;
@@ -817,9 +821,10 @@ template <typename ValueType, typename CodecType = UnknownCodec>
 class AttributeHandle
 {
 public:
-    using Handle    = AttributeHandle<ValueType, CodecType>;
-    using Ptr       = std::shared_ptr<Handle>;
-    using UniquePtr = std::unique_ptr<Handle>;
+    using Handle  = AttributeHandle<ValueType, CodecType>;
+    using Ptr     = std::shared_ptr<Handle>;
+    using UPtr    = std::unique_ptr<Handle>;
+    using UniquePtr OPENVDB_DEPRECATED = UPtr;
 
 protected:
     using GetterPtr = ValueType (*)(const AttributeArray* array, const Index n);
@@ -890,7 +895,10 @@ class AttributeWriteHandle : public AttributeHandle<ValueType, CodecType>
 public:
     using Handle    = AttributeWriteHandle<ValueType, CodecType>;
     using Ptr       = std::shared_ptr<Handle>;
-    using ScopedPtr = std::unique_ptr<Handle>;
+    using UPtr      = std::unique_ptr<Handle>;
+
+    using UniquePtr OPENVDB_DEPRECATED = UPtr;
+    using ScopedPtr OPENVDB_DEPRECATED_MESSAGE("use AttributeWriteHandle::UPtr") = std::unique_ptr<Handle>;
 
     static Ptr create(AttributeArray& array, const bool expand = true);
 

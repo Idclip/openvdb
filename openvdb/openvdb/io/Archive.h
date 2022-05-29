@@ -32,8 +32,10 @@ class GridDescriptor;
 class OPENVDB_API Archive
 {
 public:
-    using Ptr = SharedPtr<Archive>;
-    using ConstPtr = SharedPtr<const Archive>;
+    using Ptr       = SharedPtr<Archive>;
+    using ConstPtr  = SharedPtr<const Archive>;
+    using UPtr      = std::unique_ptr<Archive>;
+    using ConstUPtr = std::unique_ptr<const Archive>;
 
     static const uint32_t DEFAULT_COMPRESSION_FLAGS;
 

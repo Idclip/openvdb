@@ -30,8 +30,10 @@ namespace io {
 class OPENVDB_API StreamMetadata
 {
 public:
-    using Ptr = SharedPtr<StreamMetadata>;
-    using ConstPtr = SharedPtr<const StreamMetadata>;
+    using Ptr       = SharedPtr<StreamMetadata>;
+    using ConstPtr  = SharedPtr<const StreamMetadata>;
+    using UPtr      = std::unique_ptr<StreamMetadata>;
+    using ConstUPtr = std::unique_ptr<const StreamMetadata>;
 
     StreamMetadata();
     StreamMetadata(const StreamMetadata&);
@@ -133,7 +135,8 @@ class File;
 class OPENVDB_API MappedFile
 {
 public:
-    using Ptr = SharedPtr<MappedFile>;
+    using Ptr            = SharedPtr<MappedFile>;
+    using UPtr      = std::unique_ptr<MappedFile>;
 
     ~MappedFile();
     MappedFile(const MappedFile&) = delete; // not copyable

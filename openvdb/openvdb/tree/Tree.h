@@ -36,8 +36,10 @@ namespace tree {
 class OPENVDB_API TreeBase
 {
 public:
-    using Ptr = SharedPtr<TreeBase>;
-    using ConstPtr = SharedPtr<const TreeBase>;
+    using Ptr       = SharedPtr<TreeBase>;
+    using ConstPtr  = SharedPtr<const TreeBase>;
+    using UPtr      = std::unique_ptr<TreeBase>;
+    using ConstUPtr = std::unique_ptr<const TreeBase>;
 
     TreeBase() = default;
     TreeBase(const TreeBase&) = default;
@@ -177,13 +179,15 @@ template<typename _RootNodeType>
 class Tree: public TreeBase
 {
 public:
-    using Ptr = SharedPtr<Tree>;
-    using ConstPtr = SharedPtr<const Tree>;
+    using Ptr       = SharedPtr<Tree>;
+    using ConstPtr  = SharedPtr<const Tree>;
+    using UPtr      = std::unique_ptr<Tree>;
+    using ConstUPtr = std::unique_ptr<const Tree>;
 
-    using RootNodeType = _RootNodeType;
-    using ValueType = typename RootNodeType::ValueType;
-    using BuildType = typename RootNodeType::BuildType;
-    using LeafNodeType = typename RootNodeType::LeafNodeType;
+    using RootNodeType   = _RootNodeType;
+    using ValueType      = typename RootNodeType::ValueType;
+    using BuildType      = typename RootNodeType::BuildType;
+    using LeafNodeType   = typename RootNodeType::LeafNodeType;
 
     static const Index DEPTH = RootNodeType::LEVEL + 1;
 

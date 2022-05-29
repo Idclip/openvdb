@@ -23,8 +23,10 @@ namespace OPENVDB_VERSION_NAME {
 class OPENVDB_API Metadata
 {
 public:
-    using Ptr = SharedPtr<Metadata>;
-    using ConstPtr = SharedPtr<const Metadata>;
+    using Ptr       = SharedPtr<Metadata>;
+    using ConstPtr  = SharedPtr<const Metadata>;
+    using UPtr      = std::unique_ptr<Metadata>;
+    using ConstUPtr = std::unique_ptr<const Metadata>;
 
     Metadata() {}
     virtual ~Metadata() {}
@@ -121,8 +123,10 @@ template<typename T>
 class TypedMetadata: public Metadata
 {
 public:
-    using Ptr = SharedPtr<TypedMetadata<T>>;
-    using ConstPtr = SharedPtr<const TypedMetadata<T>>;
+    using Ptr       = SharedPtr<TypedMetadata<T>>;
+    using ConstPtr  = SharedPtr<const TypedMetadata<T>>;
+    using UPtr      = std::unique_ptr<TypedMetadata<T>>;
+    using ConstUPtr = std::unique_ptr<const TypedMetadata<T>>;
 
     TypedMetadata();
     TypedMetadata(const T& value);

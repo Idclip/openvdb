@@ -77,8 +77,10 @@ typename GridType::Ptr createLevelSet(
 class OPENVDB_API GridBase: public MetaMap
 {
 public:
-    using Ptr      = SharedPtr<GridBase>;
-    using ConstPtr = SharedPtr<const GridBase>;
+    using Ptr       = SharedPtr<GridBase>;
+    using ConstPtr  = SharedPtr<const GridBase>;
+    using UPtr      = std::unique_ptr<GridBase>;
+    using ConstUPtr = std::unique_ptr<const GridBase>;
 
     using GridFactory = Ptr (*)();
 
@@ -574,6 +576,8 @@ class Grid: public GridBase
 public:
     using Ptr                 = SharedPtr<Grid>;
     using ConstPtr            = SharedPtr<const Grid>;
+    using UPtr           = std::unique_ptr<GridBase>;
+    using ConstUPtr      = std::unique_ptr<const GridBase>;
 
     using TreeType            = _TreeType;
     using TreePtrType         = typename _TreeType::Ptr;

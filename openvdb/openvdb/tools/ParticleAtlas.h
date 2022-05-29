@@ -82,8 +82,10 @@ namespace tools {
 template<typename PointIndexGridType = PointIndexGrid>
 struct ParticleAtlas
 {
-    using Ptr = SharedPtr<ParticleAtlas>;
-    using ConstPtr = SharedPtr<const ParticleAtlas>;
+    using Ptr       = SharedPtr<ParticleAtlas>;
+    using ConstPtr  = SharedPtr<const ParticleAtlas>;
+    using UPtr      = std::unique_ptr<ParticleAtlas>;
+    using ConstUPtr = std::unique_ptr<const ParticleAtlas>;
 
     using PointIndexGridPtr = typename PointIndexGridType::Ptr;
     using IndexType = typename PointIndexGridType::ValueType;
@@ -291,8 +293,11 @@ struct ComputeExtremas
 template<typename ParticleArrayT, typename PointIndex>
 struct SplittableParticleArray
 {
-    using Ptr = SharedPtr<SplittableParticleArray>;
-    using ConstPtr = SharedPtr<const SplittableParticleArray>;
+    using Ptr       = SharedPtr<SplittableParticleArray>;
+    using ConstPtr  = SharedPtr<const SplittableParticleArray>;
+    using UPtr      = std::unique_ptr<SplittableParticleArray>;
+    using ConstUPtr = std::unique_ptr<const SplittableParticleArray>;
+
     using ParticleArray = ParticleArrayT;
 
     using PosType = typename ParticleArray::PosType;

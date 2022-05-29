@@ -134,8 +134,11 @@ OPENVDB_API Mat4d approxInverse(const Mat4d& mat);
 class OPENVDB_API MapBase
 {
 public:
-    using Ptr = SharedPtr<MapBase>;
-    using ConstPtr = SharedPtr<const MapBase>;
+    using Ptr       = SharedPtr<MapBase>;
+    using ConstPtr  = SharedPtr<const MapBase>;
+    using UPtr      = std::unique_ptr<MapBase>;
+    using ConstUPtr = std::unique_ptr<const MapBase>;
+
     using MapFactory = Ptr (*)();
 
     MapBase(const MapBase&) = default;
@@ -309,8 +312,10 @@ private:
 class OPENVDB_API AffineMap OPENVDB_MAP_CLASS_SPECIFIER: public MapBase
 {
 public:
-    using Ptr = SharedPtr<AffineMap>;
-    using ConstPtr = SharedPtr<const AffineMap>;
+    using Ptr       = SharedPtr<AffineMap>;
+    using ConstPtr  = SharedPtr<const AffineMap>;
+    using UPtr      = std::unique_ptr<AffineMap>;
+    using ConstUPtr = std::unique_ptr<const AffineMap>;
 
     AffineMap():
         mMatrix(Mat4d::identity()),
@@ -669,8 +674,10 @@ private:
 class OPENVDB_API ScaleMap: public MapBase
 {
 public:
-    using Ptr = SharedPtr<ScaleMap>;
-    using ConstPtr = SharedPtr<const ScaleMap>;
+    using Ptr       = SharedPtr<ScaleMap>;
+    using ConstPtr  = SharedPtr<const ScaleMap>;
+    using UPtr      = std::unique_ptr<ScaleMap>;
+    using ConstUPtr = std::unique_ptr<const ScaleMap>;
 
     ScaleMap(): MapBase(), mScaleValues(Vec3d(1,1,1)), mVoxelSize(Vec3d(1,1,1)),
                 mScaleValuesInverse(Vec3d(1,1,1)),
@@ -920,8 +927,10 @@ private:
 class OPENVDB_API UniformScaleMap OPENVDB_MAP_CLASS_SPECIFIER: public ScaleMap
 {
 public:
-    using Ptr = SharedPtr<UniformScaleMap>;
-    using ConstPtr = SharedPtr<const UniformScaleMap>;
+    using Ptr       = SharedPtr<UniformScaleMap>;
+    using ConstPtr  = SharedPtr<const UniformScaleMap>;
+    using UPtr      = std::unique_ptr<UniformScaleMap>;
+    using ConstUPtr = std::unique_ptr<const UniformScaleMap>;
 
     UniformScaleMap(): ScaleMap(Vec3d(1,1,1)) {}
     UniformScaleMap(double scale): ScaleMap(Vec3d(scale, scale, scale)) {}
@@ -993,8 +1002,10 @@ ScaleMap::postScale(const Vec3d& v) const
 class OPENVDB_API TranslationMap OPENVDB_MAP_CLASS_SPECIFIER: public MapBase
 {
 public:
-    using Ptr = SharedPtr<TranslationMap>;
-    using ConstPtr = SharedPtr<const TranslationMap>;
+    using Ptr       = SharedPtr<TranslationMap>;
+    using ConstPtr  = SharedPtr<const TranslationMap>;
+    using UPtr      = std::unique_ptr<TranslationMap>;
+    using ConstUPtr = std::unique_ptr<const TranslationMap>;
 
     // default constructor is a translation by zero.
     TranslationMap(): MapBase(), mTranslation(Vec3d(0,0,0)) {}
@@ -1178,8 +1189,10 @@ private:
 class OPENVDB_API ScaleTranslateMap: public MapBase
 {
 public:
-    using Ptr = SharedPtr<ScaleTranslateMap>;
-    using ConstPtr = SharedPtr<const ScaleTranslateMap>;
+    using Ptr       = SharedPtr<ScaleTranslateMap>;
+    using ConstPtr  = SharedPtr<const ScaleTranslateMap>;
+    using UPtr      = std::unique_ptr<ScaleTranslateMap>;
+    using ConstUPtr = std::unique_ptr<const ScaleTranslateMap>;
 
     ScaleTranslateMap():
         MapBase(),
@@ -1495,8 +1508,10 @@ ScaleMap::preTranslate(const Vec3d& t) const
 class OPENVDB_API UniformScaleTranslateMap OPENVDB_MAP_CLASS_SPECIFIER: public ScaleTranslateMap
 {
 public:
-    using Ptr = SharedPtr<UniformScaleTranslateMap>;
-    using ConstPtr = SharedPtr<const UniformScaleTranslateMap>;
+    using Ptr       = SharedPtr<UniformScaleTranslateMap>;
+    using ConstPtr  = SharedPtr<const UniformScaleTranslateMap>;
+    using UPtr      = std::unique_ptr<UniformScaleTranslateMap>;
+    using ConstUPtr = std::unique_ptr<const UniformScaleTranslateMap>;
 
     UniformScaleTranslateMap():ScaleTranslateMap(Vec3d(1,1,1), Vec3d(0,0,0)) {}
     UniformScaleTranslateMap(double scale, const Vec3d& translate):
@@ -1638,8 +1653,10 @@ ScaleTranslateMap::postScale(const Vec3d& v) const
 class OPENVDB_API UnitaryMap OPENVDB_MAP_CLASS_SPECIFIER: public MapBase
 {
 public:
-    using Ptr = SharedPtr<UnitaryMap>;
-    using ConstPtr = SharedPtr<const UnitaryMap>;
+    using Ptr       = SharedPtr<UnitaryMap>;
+    using ConstPtr  = SharedPtr<const UnitaryMap>;
+    using UPtr      = std::unique_ptr<UnitaryMap>;
+    using ConstUPtr = std::unique_ptr<const UnitaryMap>;
 
     /// default constructor makes an Idenity.
     UnitaryMap(): mAffineMap(Mat4d::identity())
@@ -1910,8 +1927,10 @@ private:
 class OPENVDB_API NonlinearFrustumMap OPENVDB_MAP_CLASS_SPECIFIER: public MapBase
 {
 public:
-    using Ptr = SharedPtr<NonlinearFrustumMap>;
-    using ConstPtr = SharedPtr<const NonlinearFrustumMap>;
+    using Ptr       = SharedPtr<NonlinearFrustumMap>;
+    using ConstPtr  = SharedPtr<const NonlinearFrustumMap>;
+    using UPtr      = std::unique_ptr<NonlinearFrustumMap>;
+    using ConstUPtr = std::unique_ptr<const NonlinearFrustumMap>;
 
     NonlinearFrustumMap():
         MapBase(),
@@ -2613,9 +2632,10 @@ class CompoundMap
 public:
     using MyType = CompoundMap<FirstMapType, SecondMapType>;
 
-    using Ptr = SharedPtr<MyType>;
-    using ConstPtr = SharedPtr<const MyType>;
-
+    using Ptr       = SharedPtr<MyType>;
+    using ConstPtr  = SharedPtr<const MyType>;
+    using UPtr      = std::unique_ptr<MyType>;
+    using ConstUPtr = std::unique_ptr<const MyType>;
 
     CompoundMap() { updateAffineMatrix(); }
 

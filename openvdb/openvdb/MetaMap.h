@@ -19,8 +19,10 @@ namespace OPENVDB_VERSION_NAME {
 class OPENVDB_API MetaMap
 {
 public:
-    using Ptr = SharedPtr<MetaMap>;
-    using ConstPtr = SharedPtr<const MetaMap>;
+    using Ptr       = SharedPtr<MetaMap>;
+    using ConstPtr  = SharedPtr<const MetaMap>;
+    using UPtr      = std::unique_ptr<MetaMap>;
+    using ConstUPtr = std::unique_ptr<const MetaMap>;
 
     using MetadataMap = std::map<Name, Metadata::Ptr>;
     using MetaIterator = MetadataMap::iterator;
