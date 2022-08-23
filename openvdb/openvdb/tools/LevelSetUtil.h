@@ -131,9 +131,13 @@ extractEnclosedRegion(
 ///
 /// @param volume       Signed distance field / level set volume.
 /// @param isovalue     The crossing point that is considered the surface.
+enum class IsoSurfaceMask { BOTH, INSIDE, OUTSIDE };
+///
 template<typename GridOrTreeType>
 typename GridOrTreeType::template ValueConverter<bool>::Type::Ptr
-extractIsosurfaceMask(const GridOrTreeType& volume, typename GridOrTreeType::ValueType isovalue);
+extractIsosurfaceMask(const GridOrTreeType& volume,
+    typename GridOrTreeType::ValueType isovalue,
+    const IsoSurfaceMask maskType = IsoSurfaceMask::BOTH);
 
 
 /// @brief Return a mask for each connected component of the given grid's active voxels.
@@ -1168,12 +1172,14 @@ struct MaskIsovalueCrossingVoxels
         const InputTreeType& inputTree,
         const std::vector<const InputLeafNodeType*>& inputLeafNodes,
         BoolTreeType& maskTree,
-        InputValueType iso)
+        InputValueType iso,
+        const IsoSurfaceMask maskType)
         : mInputAccessor(inputTree)
         , mInputNodes(!inputLeafNodes.empty() ? &inputLeafNodes.front() : nullptr)
         , mMaskTree(false)
         , mMaskAccessor(maskTree)
         , mIsovalue(iso)
+        , mMaskType(maskType)
     {
     }
 
@@ -1183,6 +1189,7 @@ struct MaskIsovalueCrossingVoxels
         , mMaskTree(false)
         , mMaskAccessor(mMaskTree)
         , mIsovalue(rhs.mIsovalue)
+        , mMaskType(rhs.mMaskType)
     {
     }
 
@@ -1243,8 +1250,18 @@ struct MaskIsovalueCrossingVoxels
                 }
 
                 if (signChange) {
-                    collectedData = true;
-                    maskNodePt->setValueOn(it.pos(), true);
+                    if (mMaskType == IsoSurfaceMask::BOTH) {
+                        collectedData = true;
+                        maskNodePt->setValueOn(it.pos(), true);
+                    }
+                    else if (isUnder && mMaskType == IsoSurfaceMask::INSIDE) {
+                        collectedData = true;
+                        maskNodePt->setValueOn(it.pos(), true);
+                    }
+                    else if (!isUnder && mMaskType == IsoSurfaceMask::OUTSIDE) {
+                        collectedData = true;
+                        maskNodePt->setValueOn(it.pos(), true);
+                    }
                 }
             }
 
@@ -1269,6 +1286,7 @@ private:
     tree::ValueAccessor<BoolTreeType>           mMaskAccessor;
 
     InputValueType                              mIsovalue;
+    const IsoSurfaceMask                        mMaskType;
 }; // MaskIsovalueCrossingVoxels
 
 
@@ -2312,7 +2330,9 @@ extractEnclosedRegion(const GridOrTreeType& volume,
 
 template<typename GridOrTreeType>
 typename GridOrTreeType::template ValueConverter<bool>::Type::Ptr
-extractIsosurfaceMask(const GridOrTreeType& volume, typename GridOrTreeType::ValueType isovalue)
+extractIsosurfaceMask(const GridOrTreeType& volume,
+    typename GridOrTreeType::ValueType isovalue,
+    const IsoSurfaceMask maskType)
 {
     using TreeType = typename TreeAdapter<GridOrTreeType>::TreeType;
     const TreeType& tree = TreeAdapter<GridOrTreeType>::tree(volume);
@@ -2323,7 +2343,8 @@ extractIsosurfaceMask(const GridOrTreeType& volume, typename GridOrTreeType::Val
     using BoolTreeType = typename TreeType::template ValueConverter<bool>::Type;
     typename BoolTreeType::Ptr mask(new BoolTreeType(false));
 
-    level_set_util_internal::MaskIsovalueCrossingVoxels<TreeType> op(tree, nodes, *mask, isovalue);
+    level_set_util_internal::MaskIsovalueCrossingVoxels<TreeType>
+        op(tree, nodes, *mask, isovalue, maskType);
     tbb::parallel_reduce(tbb::blocked_range<size_t>(0, nodes.size()), op);
 
     return level_set_util_internal::GridOrTreeConstructor<GridOrTreeType>::constructMask(
@@ -2559,7 +2580,7 @@ segmentSDF(const GridOrTreeType& volume, std::vector<typename GridOrTreeType::Pt
     const TreeType& inputTree = TreeAdapter<GridOrTreeType>::tree(volume);
 
     // 1. Mask zero crossing voxels
-    BoolTreePtrType mask = extractIsosurfaceMask(inputTree, lsutilGridZero<GridOrTreeType>());
+    BoolTreePtrType mask = extractIsosurfaceMask(inputTree, lsutilGridZero<GridOrTreeType>(), IsoSurfaceMask::INSIDE);
 
     // 2. Segment the zero crossing mask
     std::vector<BoolTreePtrType> maskSegmentArray;
