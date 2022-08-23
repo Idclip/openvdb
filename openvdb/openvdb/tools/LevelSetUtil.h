@@ -11,6 +11,7 @@
 #ifndef OPENVDB_TOOLS_LEVEL_SET_UTIL_HAS_BEEN_INCLUDED
 #define OPENVDB_TOOLS_LEVEL_SET_UTIL_HAS_BEEN_INCLUDED
 
+#include "Morphology.h" // for dilateActiveValues
 #include "MeshToVolume.h" // for traceExteriorBoundaries
 #include "SignedFloodFill.h" // for signedFloodFillWithValues
 
@@ -2579,8 +2580,21 @@ segmentSDF(const GridOrTreeType& volume, std::vector<typename GridOrTreeType::Pt
 
     const TreeType& inputTree = TreeAdapter<GridOrTreeType>::tree(volume);
 
-    // 1. Mask zero crossing voxels
-    BoolTreePtrType mask = extractIsosurfaceMask(inputTree, lsutilGridZero<GridOrTreeType>(), IsoSurfaceMask::INSIDE);
+    // 1. Mask zero crossing voxels (only use the inside band to avoid issues
+    //    where the outside bands of multiple segments overlap or touch.
+    BoolTreePtrType mask = extractIsosurfaceMask(inputTree,
+        lsutilGridZero<GridOrTreeType>(),
+        IsoSurfaceMask::INSIDE);
+
+    tools::dilateActiveValues(*mask);
+    tree::LeafManager<BoolTreeType> m(*mask);
+    m.foreach([&](auto& leaf, size_t) {
+        for (auto voxel = leaf.beginValueOn(); voxel; ++voxel) {
+            if (inputTree.getValue(voxel.getCoord()) >= lsutilGridZero<GridOrTreeType>()) {
+                voxel.setValueOff();
+            }
+        }
+    });
 
     // 2. Segment the zero crossing mask
     std::vector<BoolTreePtrType> maskSegmentArray;
@@ -2596,12 +2610,17 @@ segmentSDF(const GridOrTreeType& volume, std::vector<typename GridOrTreeType::Pt
     } else {
         const tbb::blocked_range<size_t> segmentRange(0, numSegments);
 
-        // 3. Expand zero crossing mask to capture sdf narrow band
+        // 3. dilate each band (we base the segmentation on the inside band but)
+        //    need to expand to the outside to make sure all leaf nodes are captured
+        for (auto& mask : maskSegmentArray) {
+            tools::dilateActiveValues(*mask);
+        }
+
+        // 4. Expand zero crossing mask to capture sdf narrow band
         tbb::parallel_for(segmentRange,
             level_set_util_internal::ExpandNarrowbandMask<TreeType>(inputTree, maskSegmentArray));
 
-        // 4. Export sdf segments
-
+        // 5. Export sdf segments
         tbb::parallel_for(segmentRange, level_set_util_internal::MaskedCopy<TreeType>(
             inputTree, outputSegmentArray, maskSegmentArray));
 
@@ -2658,12 +2677,12 @@ OPENVDB_REAL_TREE_INSTANTIATE(_FUNCTION)
 #undef _FUNCTION
 
 #define _FUNCTION(TreeT) \
-    TreeT::ValueConverter<bool>::Type::Ptr extractIsosurfaceMask(const TreeT&, TreeT::ValueType)
+    TreeT::ValueConverter<bool>::Type::Ptr extractIsosurfaceMask(const TreeT&, TreeT::ValueType, const IsoSurfaceMask)
 OPENVDB_REAL_TREE_INSTANTIATE(_FUNCTION)
 #undef _FUNCTION
 
 #define _FUNCTION(TreeT) \
-    Grid<TreeT>::ValueConverter<bool>::Type::Ptr extractIsosurfaceMask(const Grid<TreeT>&, TreeT::ValueType)
+    Grid<TreeT>::ValueConverter<bool>::Type::Ptr extractIsosurfaceMask(const Grid<TreeT>&, TreeT::ValueType, const IsoSurfaceMask)
 OPENVDB_REAL_TREE_INSTANTIATE(_FUNCTION)
 #undef _FUNCTION
 
