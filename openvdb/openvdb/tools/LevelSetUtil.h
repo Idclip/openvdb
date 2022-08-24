@@ -1707,44 +1707,75 @@ struct ExpandLeafNodeRegion
             for (typename BoolLeafNodeType::ValueOnIter it = maskNode.beginValueOn(); it; ++it) {
 
                 const Index pos = it.pos();
-                const ValueType val = std::abs(distNode->getValue(pos));
+                const ValueType val = distNode->getValue(pos);
+                const bool inside = val < 0;
 
                 ijk = BoolLeafNodeType::offsetToLocalCoord(pos);
                 nijk = ijk + maskNode.origin();
 
                 if (dataZUp && ijk[2] == (BoolLeafNodeType::DIM - 1)) {
                     const Index npos = pos - (NodeType::DIM - 1);
-                    if (maskZUp.isOn(npos) && std::abs(dataZUp[npos]) > val) {
-                        newMaskAcc.setValueOn(nijk.offsetBy(0, 0, 1));
+                    if (maskZUp.isOn(npos)) {
+                        if (inside && dataZUp[npos] < val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(0, 0, 1));
+                        }
+                        else if (!inside && dataZUp[npos] > val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(0, 0, 1));
+                        }
                     }
                 } else if (dataZDown && ijk[2] == 0) {
                     const Index npos = pos + (NodeType::DIM - 1);
-                    if (maskZDown.isOn(npos) && std::abs(dataZDown[npos]) > val) {
-                        newMaskAcc.setValueOn(nijk.offsetBy(0, 0, -1));
+                    if (maskZDown.isOn(npos)) {
+                        if (inside && dataZDown[npos] < val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(0, 0, -1));
+                        }
+                        else if (!inside && dataZDown[npos] > val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(0, 0, -1));
+                        }
                     }
                 }
 
                 if (dataYUp && ijk[1] == (BoolLeafNodeType::DIM - 1)) {
                     const Index npos = pos - (NodeType::DIM - 1) * NodeType::DIM;
-                    if (maskYUp.isOn(npos) && std::abs(dataYUp[npos]) > val) {
-                        newMaskAcc.setValueOn(nijk.offsetBy(0, 1, 0));
+                    if (maskYUp.isOn(npos)) {
+                        if (inside && dataYUp[npos] < val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(0, 1, 0));
+                        }
+                        else if (!inside && dataYUp[npos] > val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(0, 1, 0));
+                        }
                     }
                 } else if (dataYDown && ijk[1] == 0) {
                     const Index npos = pos + (NodeType::DIM - 1) * NodeType::DIM;
-                    if (maskYDown.isOn(npos) && std::abs(dataYDown[npos]) > val) {
-                        newMaskAcc.setValueOn(nijk.offsetBy(0, -1, 0));
+                    if (maskYDown.isOn(npos)) {
+                        if (inside && dataYDown[npos] < val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(0, -1, 0));
+                        }
+                        else if (!inside && dataYDown[npos] > val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(0, -1, 0));
+                        }
                     }
                 }
 
                 if (dataXUp && ijk[0] == (BoolLeafNodeType::DIM - 1)) {
                     const Index npos = pos - (NodeType::DIM - 1) * NodeType::DIM * NodeType::DIM;
-                    if (maskXUp.isOn(npos) && std::abs(dataXUp[npos]) > val) {
-                        newMaskAcc.setValueOn(nijk.offsetBy(1, 0, 0));
+                    if (maskXUp.isOn(npos)) {
+                        if (inside && dataXUp[npos] < val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(1, 0, 0));
+                        }
+                        else if (!inside && dataXUp[npos] > val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(1, 0, 0));
+                        }
                     }
                 } else if (dataXDown && ijk[0] == 0) {
                     const Index npos = pos + (NodeType::DIM - 1) * NodeType::DIM * NodeType::DIM;
-                    if (maskXDown.isOn(npos) && std::abs(dataXDown[npos]) > val) {
-                        newMaskAcc.setValueOn(nijk.offsetBy(-1, 0, 0));
+                    if (maskXDown.isOn(npos)) {
+                        if (inside && dataXDown[npos] < val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(-1, 0, 0));
+                        }
+                        else if (!inside && dataXDown[npos] > val) {
+                            newMaskAcc.setValueOn(nijk.offsetBy(-1, 0, 0));
+                        }
                     }
                 }
 
@@ -1824,50 +1855,84 @@ struct FillLeafNodeVoxels
                 if (narrowbandMask.isOn(pos)) continue;
                 narrowbandMask.setOn(pos);
 
-                const ValueType dist = std::abs(data[pos]);
+                const ValueType dist = data[pos];
+                const bool inside = (dist < 0);
 
                 ijk = LeafNodeType::offsetToLocalCoord(pos);
 
                 Index npos = pos - 1;
-                if (ijk[2] != 0 && mask.isOn(npos) && std::abs(data[npos]) > dist) {
-                    mask.setOff(npos);
-                    indexList.push_back(npos);
+                if (ijk[2] != 0 && mask.isOn(npos)) {
+                    if (inside && data[npos] < dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
+                    else if (!inside && data[npos] > dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
                 }
 
                 npos = pos + 1;
-                if ((ijk[2] != (LeafNodeType::DIM - 1)) && mask.isOn(npos)
-                    && std::abs(data[npos]) > dist)
+                if ((ijk[2] != (LeafNodeType::DIM - 1)) && mask.isOn(npos))
                 {
-                    mask.setOff(npos);
-                    indexList.push_back(npos);
+                    if (inside && data[npos] < dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
+                    else if (!inside && data[npos] > dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
                 }
 
                 npos = pos - LeafNodeType::DIM;
-                if (ijk[1] != 0 && mask.isOn(npos) && std::abs(data[npos]) > dist) {
-                    mask.setOff(npos);
-                    indexList.push_back(npos);
+                if (ijk[1] != 0 && mask.isOn(npos)) {
+                    if (inside && data[npos] < dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
+                    else if (!inside && data[npos] > dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
                 }
 
                 npos = pos + LeafNodeType::DIM;
-                if ((ijk[1] != (LeafNodeType::DIM - 1)) && mask.isOn(npos)
-                    && std::abs(data[npos]) > dist)
+                if ((ijk[1] != (LeafNodeType::DIM - 1)) && mask.isOn(npos))
                 {
-                    mask.setOff(npos);
-                    indexList.push_back(npos);
+                    if (inside && data[npos] < dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
+                    else if (!inside && data[npos] > dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
                 }
 
                 npos = pos - LeafNodeType::DIM * LeafNodeType::DIM;
-                if (ijk[0] != 0 && mask.isOn(npos) && std::abs(data[npos]) > dist) {
-                    mask.setOff(npos);
-                    indexList.push_back(npos);
+                if (ijk[0] != 0 && mask.isOn(npos)) {
+                    if (inside && data[npos] < dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
+                    else if (!inside && data[npos] > dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
                 }
 
                 npos = pos + LeafNodeType::DIM * LeafNodeType::DIM;
-                if ((ijk[0] != (LeafNodeType::DIM - 1)) && mask.isOn(npos)
-                    && std::abs(data[npos]) > dist)
+                if ((ijk[0] != (LeafNodeType::DIM - 1)) && mask.isOn(npos))
                 {
-                    mask.setOff(npos);
-                    indexList.push_back(npos);
+                    if (inside && data[npos] < dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
+                    else if (!inside && data[npos] > dist) {
+                        mask.setOff(npos);
+                        indexList.push_back(npos);
+                    }
                 }
             } // end flood fill loop
         } // end range loop
