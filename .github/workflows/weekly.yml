@@ -30,7 +30,7 @@ jobs:
   # download Houdini and cache it. The secrets are used in download_houdini.py
   checksecret:
     name: Verify Houdini Secrets
-    runs-on: ubuntu-20.04-8c-32g-300h
+    runs-on: ubuntu-latest
     outputs:
       HOUDINI_SECRETS: ${{ steps.check.outputs.HOUDINI_SECRETS }}
     steps:
@@ -350,22 +350,55 @@ jobs:
   ################################## ABI ######################################
   #############################################################################
 
+  compute_latest_release:
+    # Get latest version tag and configure the abi job matrix. We test on the
+    # last two major versions of VDB to check that the latest master is ABI
+    # compatible with both.
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - id: set-matrix
+      # Get last version tag and export a job matrix for both that major version
+      # and the previous major version
+      run: |
+        LATEST_VERSION=$(git tag | grep -E v[0-9]*.[0-9]*.[0-9]* | sort --version-sort | tail -n1)
+        LATEST_VERSION_MAJOR_NUMBER=$(echo $LATEST_VERSION | cut -d. -f1 | cut -dv -f2)
+        A=$(expr ${LATEST_VERSION_MAJOR_NUMBER} - 1)
+        B=$(expr ${LATEST_VERSION_MAJOR_NUMBER} - 0)
+        echo "matrix={\"LATEST_VERSION_MAJOR_NUMBER\":[\"${A}\",\"${B}\"]}" >> $GITHUB_OUTPUT
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
   linux-abi-checker:
-    # v10.0.0 doesn't exist yet, so can't run this automatically.
     if: |
-      github.event_name == 'workflow_dispatch' &&
-      (github.event.inputs.type == 'all' ||
-       github.event.inputs.type == 'abi')
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.type == 'all' ||
+      github.event.inputs.type == 'abi'
     # abi-dumper version verified to work with 20.04/GCC9
     runs-on: ubuntu-20.04
+    name: linux-abi-checker-v${{ matrix.LATEST_VERSION_MAJOR_NUMBER }}
+    needs: compute_latest_release
+    strategy:
+      matrix: ${{ fromJSON(needs.compute_latest_release.outputs.matrix) }}
     env:
-      VDB_MAJOR_VERSION: 10
+      LATEST_VERSION_MAJOR_NUMBER: ${{ matrix.LATEST_VERSION_MAJOR_NUMBER }}
     steps:
+    # Need tag history to re-checkout
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: install_deps
       run: sudo apt-get -q install -y libboost-dev libboost-system-dev libboost-iostreams-dev libtbb-dev libblosc-dev elfutils
+    # - name: compute_latest_release
+    #   shell: bash
+    #   run: |
+    #     LATEST_VERSION=$(git tag | grep -E v[0-9]*.[0-9]*.[0-9]* | sort --version-sort | tail -n1)
+    #     LATEST_VERSION_MAJOR_NUMBER=$(echo $LATEST_VERSION | cut -d. -f1 | cut -dv -f2)
+    #     echo "Computed latest version tag as ${LATEST_VERSION} with latest major version ${LATEST_VERSION_MAJOR_NUMBER}"
+    #     echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_ENV
+    #     echo "LATEST_VERSION_MAJOR_NUMBER=${LATEST_VERSION_MAJOR_NUMBER}" >> $GITHUB_ENV
     # abi-compliance-checker and abi-dumper
     #
     # @note that abi-dumper is available through apt but at the time of writing this
@@ -391,16 +424,24 @@ jobs:
         --build-type=Debug
         --target=openvdb_shared
         --components=\"core\"
-        --cargs=\'-DUSE_EXPLICIT_INSTANTIATION=OFF -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON\'
+        --cargs=\'
+        -DOPENVDB_ABI_VERSION_NUMBER=${LATEST_VERSION_MAJOR_NUMBER}
+        -DUSE_EXPLICIT_INSTANTIATION=OFF
+        -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON
+        \'
     - name: checkout_baseline
-      run: git checkout v${VDB_MAJOR_VERSION}.0.0
+      run: git checkout v${LATEST_VERSION_MAJOR_NUMBER}.0.0
     - name: build_baseline
       run: >
         sudo ./ci/build.sh -v
         --build-type=Debug
         --target=openvdb_shared
         --components=\"core\"
-        --cargs=\'-DUSE_EXPLICIT_INSTANTIATION=OFF -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON\'
+        --cargs=\'
+        -DOPENVDB_ABI_VERSION_NUMBER=${LATEST_VERSION_MAJOR_NUMBER}
+        -DUSE_EXPLICIT_INSTANTIATION=OFF
+        -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON
+        \'
     - name: abi_dump
       run: |
         abi-dumper/abi-dumper.pl build_latest/openvdb/openvdb/libopenvdb.so -o ABI-1.dump -lver 1
@@ -410,7 +451,7 @@ jobs:
       # latest with the baseline version number but no CMake/defines allow us to
       # do this.
     - name: replace_symbols
-      run: sed -i -E 's/openvdb([^v]*)v'${VDB_MAJOR_VERSION}'_[0-9]/openvdb\1v'${VDB_MAJOR_VERSION}'_0/g' ABI-1.dump
+      run: sed -i -E 's/openvdb([^v]*)v'${LATEST_VERSION_MAJOR_NUMBER}'_[0-9]/openvdb\1v'${LATEST_VERSION_MAJOR_NUMBER}'_0/g' ABI-1.dump
     - name: abi_check
       # -strict treats warnings as errors
       # -extended checks all member data
