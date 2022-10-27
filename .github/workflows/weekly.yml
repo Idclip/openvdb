@@ -382,6 +382,7 @@ jobs:
     needs: compute_latest_release
     strategy:
       matrix: ${{ fromJSON(needs.compute_latest_release.outputs.matrix) }}
+      fail-fast: false
     env:
       LATEST_VERSION_MAJOR_NUMBER: ${{ matrix.LATEST_VERSION_MAJOR_NUMBER }}
     steps:
@@ -430,7 +431,9 @@ jobs:
         -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON
         \'
     - name: checkout_baseline
-      run: git checkout v${LATEST_VERSION_MAJOR_NUMBER}.0.0
+      run: |
+        git checkout v${LATEST_VERSION_MAJOR_NUMBER}.0.0
+        git checkout origin/master ci/build.sh
     - name: build_baseline
       run: >
         sudo ./ci/build.sh -v
