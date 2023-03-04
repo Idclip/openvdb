@@ -41,19 +41,13 @@ This will define the following variables:
 
 A variety of variables will also be set from HoudiniConfig.cmake.
 
-Additionally, the following values are set for all dependent OpenVDB
-builds, ensuring they link against the correct libraries. This may
-overwrite user provided values.
+Additionally, the following imported targets will be created:
 
-``ZLIB_ROOT``
-``ZLIB_LIBRARY``
-``OPENEXR_INCLUDEDIR``
-``OPENEXR_LIBRARYDIR``
-``TBB_INCLUDEDIR``
-``TBB_LIBRARYDIR``
-``BLOSC_INCLUDEDIR``
-``BLOSC_LIBRARYDIR``
-``JEMALLOC_LIBRARYDIR``
+``TBB::tbb`` aliased to ``Houdini::Dep::tbb``
+``TBB::tbbmalloc`` aliased to ``Houdini::Dep::tbbmalloc``
+``ZLIB::ZLIB`` aliased to ``Houdini::Dep::z``
+``Blosc::blosc`` aliased to ``Houdini::Dep::blosc``
+``Jemalloc::jemalloc`` aliased to ``Houdini::Dep::jemalloc`` if available
 
 Hints
 ^^^^^
@@ -86,7 +80,8 @@ endif()
 # Set _HOUDINI_ROOT based on a user provided root var. Xxx_ROOT and ENV{Xxx_ROOT}
 # are prioritised over the legacy capitalized XXX_ROOT variables for matching
 # CMake 3.12 behaviour
-# @todo  deprecate -D and ENV HOUDINI_ROOT from CMake 3.12
+# @todo  decide on what variable to support, CMake 3.27 added back support for
+#   both <UPPERCASE>_ROOT and <Lowercase>_ROOT variables...
 if(Houdini_ROOT)
   set(_HOUDINI_ROOT ${Houdini_ROOT})
 elseif(DEFINED ENV{Houdini_ROOT})
@@ -154,7 +149,7 @@ find_package_handle_standard_args(Houdini
 )
 
 # ------------------------------------------------------------------------
-#  Add support for older versions of Houdini
+#  Check support for older versions of Houdini
 # ------------------------------------------------------------------------
 
 if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_HOUDINI_VERSION)
@@ -181,145 +176,91 @@ if(NOT HOUDINI_DSOLIB_DIR)
   endif()
 endif()
 
-set(_HOUDINI_EXTRA_LIBRARIES)
-set(_HOUDINI_EXTRA_LIBRARY_NAMES)
-
-if(APPLE)
-  list(APPEND _HOUDINI_EXTRA_LIBRARIES
-    ${HOUDINI_DSOLIB_DIR}/libHoudiniRAY.dylib
-    ${HOUDINI_DSOLIB_DIR}/libhboost_regex.dylib
-    ${HOUDINI_DSOLIB_DIR}/libhboost_thread.dylib
-  )
-  list(APPEND _HOUDINI_EXTRA_LIBRARY_NAMES
-    HoudiniRAY
-    hboost_regex
-    hboost_thread
-  )
-elseif(UNIX)
-  list(APPEND _HOUDINI_EXTRA_LIBRARIES
-    ${HOUDINI_DSOLIB_DIR}/libHoudiniRAY.so
-    ${HOUDINI_DSOLIB_DIR}/libhboost_regex.so
-    ${HOUDINI_DSOLIB_DIR}/libhboost_thread.so
-  )
-  list(APPEND _HOUDINI_EXTRA_LIBRARY_NAMES
-    HoudiniRAY
-    hboost_regex
-    hboost_thread
-  )
-elseif(WIN32)
-  #libRAY is already included by houdini for windows builds
-  if(Houdini_VERSION VERSION_LESS 18.5)
-    list(APPEND _HOUDINI_EXTRA_LIBRARIES
-      ${HOUDINI_DSOLIB_DIR}/hboost_regex-mt.lib
-      ${HOUDINI_DSOLIB_DIR}/hboost_thread-mt.lib
-    )
-  else()
-    list(APPEND _HOUDINI_EXTRA_LIBRARIES
-      ${HOUDINI_DSOLIB_DIR}/hboost_regex-mt-x64.lib
-      ${HOUDINI_DSOLIB_DIR}/hboost_thread-mt-x64.lib
-    )
-  endif()
-  list(APPEND _HOUDINI_EXTRA_LIBRARY_NAMES
-    hboost_regex
-    hboost_thread
-  )
-endif()
-
-# Additionally link extra deps
-
-_houdini_create_libraries(
-  PATHS ${_HOUDINI_EXTRA_LIBRARIES}
-  TARGET_NAMES ${_HOUDINI_EXTRA_LIBRARY_NAMES}
-  TYPE SHARED
-)
-
-unset(_HOUDINI_EXTRA_LIBRARIES)
-unset(_HOUDINI_EXTRA_LIBRARY_NAMES)
-
 # Set Houdini lib and include directories
 
 set(HOUDINI_INCLUDE_DIR ${_houdini_include_dir})
 set(HOUDINI_LIB_DIR ${_houdini_install_root}/${HOUDINI_DSOLIB_DIR})
 
-# ------------------------------------------------------------------------
-#  Configure dependencies
-# ------------------------------------------------------------------------
+if(APPLE)
+  # Additionally create extra deps. These are created automatically on most
+  # platforms except MacOS which just uses the framework path (but we always
+  # want these as we don't really want to link libopenvdb to the entire
+  # Houdini core framework.
+  set(_HOUDINI_EXTRA_LIBRARIES libz.dylib libblosc.dylib libtbb.dylib libtbbmalloc.dylib)
+  set(_HOUDINI_EXTRA_TARGET_NAMES z blosc tbb tbbmalloc)
 
-# Congfigure dependency hints to point to Houdini. Allow for user overriding
-# if custom Houdini installations are in use
+  foreach(LIB_INFO IN ZIP_LISTS _HOUDINI_EXTRA_LIBRARIES _HOUDINI_EXTRA_TARGET_NAMES)
+    set(LIB_NAME ${LIB_INFO_0})
+    set(TARGET_NAME ${LIB_INFO_1})
 
-# ZLIB - FindPackage ( ZLIB) only supports a few path hints. We use
-# ZLIB_ROOT to find the zlib includes and explicitly set the path to
-# the zlib library
+    if(TARGET Houdini::Dep::${TARGET_NAME})
+      continue()
+    endif()
 
-if(NOT ZLIB_ROOT)
-  set(ZLIB_ROOT ${HOUDINI_INCLUDE_DIR})
+    # This does NOT link the above to the Houdini imported target. It simply
+    # makes sure that these libs have specific targets that the openvdb core
+    # library can link against
+    _houdini_create_libraries(
+      PATHS ${HOUDINI_DSOLIB_DIR}/${LIB_NAME}
+      TARGET_NAMES ${TARGET_NAME}
+      TYPE SHARED
+      EXTRA_DEP)
+
+    # Not done automatically
+    target_include_directories(Houdini::Dep::${TARGET_NAME}
+      INTERFACE ${HOUDINI_INCLUDE_DIR})
+  endforeach()
+
+  unset(_HOUDINI_EXTRA_LIBRARIES)
+  unset(_HOUDINI_EXTRA_TARGET_NAMES)
 endif()
-if(NOT ZLIB_LIBRARY)
-  # Full path to zlib library - FindPackage ( ZLIB)
-  find_library(ZLIB_LIBRARY z
-    ${_FIND_HOUDINI_ADDITIONAL_OPTIONS}
-    PATHS ${HOUDINI_LIB_DIR}
-  )
-  if(NOT EXISTS ${ZLIB_LIBRARY})
-    message(WARNING "The OpenVDB Houdini CMake setup is unable to locate libz within "
-      "the Houdini installation at: ${HOUDINI_LIB_DIR}. OpenVDB may not build correctly."
-    )
-  endif()
-endif()
+
+# ------------------------------------------------------------------------
+#  Configure imported targets for the OpenVDB core components to use
+# ------------------------------------------------------------------------
+
+# ZLIB
+
+add_library(ZLIB::ZLIB INTERFACE IMPORTED)
+target_link_libraries(ZLIB::ZLIB INTERFACE Houdini::Dep::z)
 
 # TBB
 
-if(NOT TBB_INCLUDEDIR)
-  set(TBB_INCLUDEDIR ${HOUDINI_INCLUDE_DIR})
-endif()
-if(NOT TBB_LIBRARYDIR)
-  set(TBB_LIBRARYDIR ${HOUDINI_LIB_DIR})
-endif()
+add_library(TBB::tbb INTERFACE IMPORTED)
+target_link_libraries(TBB::tbb INTERFACE Houdini::Dep::tbb)
+
+add_library(TBB::tbbmalloc INTERFACE IMPORTED)
+target_link_libraries(TBB::tbbmalloc INTERFACE Houdini::Dep::tbbmalloc)
 
 # Blosc
 
-if(NOT BLOSC_INCLUDEDIR)
-  set(BLOSC_INCLUDEDIR ${HOUDINI_INCLUDE_DIR})
-endif()
-if(NOT BLOSC_LIBRARYDIR)
-  set(BLOSC_LIBRARYDIR ${HOUDINI_LIB_DIR})
-endif()
+add_library(Blosc::blosc INTERFACE IMPORTED)
+target_link_libraries(Blosc::blosc INTERFACE Houdini::Dep::blosc)
 
-# Jemalloc
-
+# Jemalloc (not available on some platforms)
 # * On Mac OSX, linking against Jemalloc < 4.3.0 seg-faults with this error:
 #     malloc: *** malloc_zone_unregister() failed for 0xaddress
 #   As of Houdini 20, it still ships with Jemalloc 3.6.0, so don't expose it
 #   on Mac OSX (https://github.com/jemalloc/jemalloc/issues/420).
-if(NOT APPLE AND NOT JEMALLOC_LIBRARYDIR)
-  set(JEMALLOC_LIBRARYDIR ${HOUDINI_LIB_DIR})
-endif()
-
-# OpenEXR
-
-if(NOT OPENEXR_INCLUDEDIR)
-  set(OPENEXR_INCLUDEDIR ${HOUDINI_INCLUDE_DIR})
-endif()
-if(NOT OPENEXR_LIBRARYDIR)
-  set(OPENEXR_LIBRARYDIR ${HOUDINI_LIB_DIR})
+if(NOT APPLE AND TARGET Houdini::Dep::jemalloc)
+  add_library(Jemalloc::jemalloc INTERFACE IMPORTED)
+  target_link_libraries(Jemalloc::jemalloc INTERFACE Houdini::Dep::jemalloc)
 endif()
 
 # Boost - currently must be provided as VDB is not fully configured to
 # use Houdini's namespaced hboost
 
-# Add the required suffix as part of the cmake lib suffix searches
-if(APPLE)
-  list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES "_sidefx.dylib")
-elseif(UNIX)
-  list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES "_sidefx.so")
-elseif(WIN32)
-  list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES "_sidefx.lib")
-endif()
+# EXR/Imath - optional and must be provided externally if requested
 
 # ------------------------------------------------------------------------
 #  Configure OpenVDB ABI
 # ------------------------------------------------------------------------
+
+if(NOT OPENVDB_USE_DELAYED_LOADING)
+  message(FATAL_ERROR "Delay loading (OPENVDB_USE_DELAYED_LOADING) must be "
+    "enabled when building against Houdini for ABI compatibility with Houdini's "
+    "namespaced version of OpenVDB.")
+endif()
 
 # Explicitly configure the OpenVDB ABI version depending on the Houdini
 # version.

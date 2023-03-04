@@ -50,11 +50,15 @@ set(OPENVDB_BINARIES_DEPENDENT_LIBS
 )
 
 if(CONCURRENT_MALLOC STREQUAL "Jemalloc")
-  find_package(Jemalloc REQUIRED)
-  list(APPEND OPENVDB_BINARIES_DEPENDENT_LIBS Jemalloc::jemalloc)
+  if(NOT TARGET Jemalloc::jemalloc)
+    find_package(Jemalloc REQUIRED)
+    list(APPEND OPENVDB_BINARIES_DEPENDENT_LIBS Jemalloc::jemalloc)
+  endif()
 elseif(CONCURRENT_MALLOC STREQUAL "Tbbmalloc")
-  find_package(TBB ${MINIMUM_TBB_VERSION} REQUIRED COMPONENTS tbbmalloc)
-  list(APPEND OPENVDB_BINARIES_DEPENDENT_LIBS TBB::tbbmalloc)
+  if(NOT TARGET TBB::tbbmalloc)
+    find_package(TBB ${MINIMUM_TBB_VERSION} REQUIRED COMPONENTS tbbmalloc)
+    list(APPEND OPENVDB_BINARIES_DEPENDENT_LIBS TBB::tbbmalloc)
+  endif()
 endif()
 
 ##########################################################################
