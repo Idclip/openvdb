@@ -1372,7 +1372,6 @@ struct ComputeIntersectingVoxelSign
         tree::ValueAccessor<const TreeType> distAcc(*mDistTree);
         tree::ValueAccessor<const Int32TreeType> idxAcc(*mIndexTree);
 
-        ValueType nval;
         CoordBBox bbox;
         Index xPos(0), yPos(0);
         Coord ijk, nijk, nodeMin, nodeMax;
@@ -1406,6 +1405,7 @@ struct ComputeIntersectingVoxelSign
             for (it = node.cbeginValueOn(); it; ++it) {
                 Index pos = it.pos();
 
+                /// @note 0.75 is the cutoff used in traceExteriorBoundaries
                 ValueType& dist = data[pos];
                 if (dist < 0.0 || dist > 0.75) continue;
 
@@ -1469,7 +1469,14 @@ struct ComputeIntersectingVoxelSign
                     for (Int32 m = 0; m < 26; ++m) {
                         nijk = ijk + util::COORD_OFFSETS[m];
 
-                        if (!bbox.isInside(nijk) && distAcc.probeValue(nijk, nval) && nval<-0.75) {
+                        // @note At this point we haven't flipped our sign, so
+                        //   we really only need to check neighbors across leaf
+                        //   boundaries if their value is < -0.75. However as
+                        //   other threads may be writing to these nodes we
+                        //   can't read the value without encountering a data race,
+                        //   even though we're just using the read value as an
+                        //   early exit. Instead we just check their active state.
+                        if (!bbox.isInside(nijk) && distAcc.isValueOn(nijk)) {
                             nxyz[0] = double(nijk[0]);
                             nxyz[1] = double(nijk[1]);
                             nxyz[2] = double(nijk[2]);
