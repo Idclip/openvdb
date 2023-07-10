@@ -14,7 +14,13 @@
 #include <openvdb_ax/ast/AST.h>
 #include <openvdb_ax/ast/Scanners.h>
 #include <openvdb_ax/ast/PrintTree.h>
+
+/// along with other standard header you need to import codegen stuff
 #include <openvdb_ax/codegen/Functions.h>
+#include <openvdb_ax/codegen/FunctionTypes.h>
+#include <openvdb_ax/codegen/FunctionRegistry.h>
+
+
 #include <openvdb_ax/compiler/Compiler.h>
 #include <openvdb_ax/compiler/AttributeRegistry.h>
 #include <openvdb_ax/compiler/CompilerOptions.h>
@@ -43,6 +49,48 @@ namespace openvdb {
 OPENVDB_USE_VERSION_NAMESPACE
 namespace OPENVDB_VERSION_NAME {
 namespace ax {
+
+
+
+
+/// Function are registered with a callback that essentially only builds/compiles
+/// the function if it has been used. Callbacks return FunctionGroups which represent
+/// a function  with all its possible signatures - in this case the "sum_print"
+/// lambda method.
+///
+/// See PointFunctions.cc, VolumeFunctions.cc and StandatdFunctions.cc for more examples.
+inline openvdb::ax::codegen::FunctionGroup::UniquePtr
+sumPrintCreator(const openvdb::ax::FunctionOptions&)
+{
+    // The actual function we want to bind
+    static auto sum_print_binding = [](float a, float b,
+        openvdb::ax::codegen::String* str)
+    {
+        auto r = a + b;
+        std::cerr << "invoked custom binding with string '" << str->c_str() << "' and result: " << r << std::endl;
+        return r;
+    };
+
+    /// The FunctionBuilder uses the builder pattern to create a function object
+    return openvdb::ax::codegen::FunctionBuilder("sum_print")
+        .addSignature<float(float,float,openvdb::ax::codegen::String*)>
+            ((float(*)(float,float,openvdb::ax::codegen::String*))(sum_print_binding)) // add the function
+        .setArgumentNames({"a", "b", "str"})              // set its argument names (optional, only for used printing)
+        .setDocumentation("Sums two values, prints and returns the result.") // set docs (optional, only for used printing)
+        .get();
+}
+
+inline void bindSumPrint(openvdb::ax::Compiler& C)
+{
+    // Re-create the default function registry, but also add our own bindings
+
+    auto functionRegistry = openvdb::ax::codegen::createDefaultRegistry();
+    functionRegistry->insert("sum_print", sumPrintCreator);
+    C.setFunctionRegistry(std::move(functionRegistry));
+}
+
+
+
 
 enum VDB_AX_MODE { Default, Execute, Analyze, Functions };
 enum VDB_AX_COMPILATION { None, All, Points, Volumes };
@@ -897,6 +945,8 @@ main(int argc, char *argv[])
 
     openvdb::ax::Compiler::Ptr compiler =
         openvdb::ax::Compiler::create(compOpts);
+    bindSumPrint(*compiler);
+
     openvdb::ax::CustomData::Ptr customData =
         openvdb::ax::CustomData::create();
     axlog("[INFO] | " << axtime() << '\n' << std::flush);
