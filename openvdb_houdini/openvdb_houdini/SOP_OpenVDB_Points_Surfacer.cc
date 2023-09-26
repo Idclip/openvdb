@@ -210,6 +210,15 @@ newSopOperator(OP_OperatorTable* table)
 
     // ELLIPSOID PARMS
 
+    parms.add(hutil::ParmFactory(PRM_ORD, "emode", "Ellipsoid Mode")
+        .setDefault(PRMzeroDefaults)
+        .setChoiceListItems(PRM_CHOICELIST_SINGLE, {
+            "points", "Points",
+            "Voxels", "Voxels"
+        })
+        .setTooltip("")
+        .setDocumentation(""));
+
     parms.add(hutil::ParmFactory(PRM_FLT_J, "allowedstretch", "Minimum Sphericity")
         .setDefault(0.3f)
         .setRange(PRM_RANGE_RESTRICTED, 0.01, PRM_RANGE_RESTRICTED, 1.0)
@@ -343,6 +352,7 @@ SOP_OpenVDB_Points_Surfacer::cookVDBSop(OP_Context& context)
         const std::string surfaceName = evalStdString( "surfacevdbname", time);
         const int halfBand = evalInt("halfbandvoxels", 0, time);
         const int mode = evalInt("mode", 0, time);
+        const int emode = evalInt("emode", 0, time);
         const bool keepPoints = evalInt("keep", 0, time) == 1;
 
         openvdb::math::Transform::Ptr sdfTransform;
@@ -510,6 +520,9 @@ SOP_OpenVDB_Points_Surfacer::cookVDBSop(OP_Context& context)
                 s.allowedAnisotropyRatio = allowedStretch;
                 s.averagePositions = averagePositions;
 
+                if (emode == 0) s.mode = openvdb::points::PcaSettings::Mode::POINTS;
+                else            s.mode = openvdb::points::PcaSettings::Mode::VOXELS;
+
                 std::cerr << "s.searchRadius " << s.searchRadius << std::endl;
                 std::cerr << "s.neighbourThreshold " << s.neighbourThreshold << std::endl;
                 std::cerr << "s.allowedAnisotropyRatio " << s.allowedAnisotropyRatio << std::endl;
@@ -538,7 +551,7 @@ SOP_OpenVDB_Points_Surfacer::cookVDBSop(OP_Context& context)
                 }
             }
 
-            if (rebuildLevelSet) {
+            if (rebuildLevelSet && !results.empty()) {
                 openvdb::FloatGrid::Ptr sdf = openvdb::StaticPtrCast<openvdb::FloatGrid>(results.front());
                 results[0] = openvdb::tools::levelSetRebuild(*sdf, 0, halfBand, halfBand);
             }

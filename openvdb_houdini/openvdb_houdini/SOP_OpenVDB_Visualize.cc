@@ -739,6 +739,8 @@ private:
     GA_RWHandleF  mFloatHandle;
     GA_RWHandleI  mInt32Handle;
     GA_RWHandleV3 mVec3fHandle;
+    GA_RWHandleV4 mVec4fHandle;
+    GA_RWHandleM3 mMat3fHandle;
     GA_RWHandleV3 mCdHandle;
     GA_RWHandleT<UT_Vector3i> mIndexCoordHandle;
 };
@@ -1147,7 +1149,10 @@ struct TreeVisualizer::RenderPointsOp
     }
 
     template<typename ValueT>
-    typename std::enable_if<!IsGridTypeArithmetic<ValueT>::value>::type
+    typename std::enable_if<
+        std::is_same<ValueT, openvdb::Vec3i>::value ||
+        std::is_same<ValueT, openvdb::Vec3f>::value ||
+        std::is_same<ValueT, openvdb::Vec3d>::value>::type
     setValue(GA_Offset offset, ValueT v) const
     {
         if (!mParent.mVec3fHandle.isValid())    return;
@@ -1155,11 +1160,38 @@ struct TreeVisualizer::RenderPointsOp
     }
 
     template<typename ValueT>
-    typename std::enable_if<IsGridTypeArithmetic<ValueT>::value>::type
+    typename std::enable_if<std::is_same<ValueT, openvdb::Vec4f>::value>::type
+    setValue(GA_Offset offset, ValueT v) const
+    {
+        if (!mParent.mVec4fHandle.isValid())    return;
+        mParent.mVec4fHandle.set(offset, UT_Vector4(float(v[0]), float(v[1]), float(v[2]), float(v[3])));
+    }
+
+    template<typename ValueT>
+    typename std::enable_if<std::is_same<ValueT, openvdb::Mat3s>::value>::type
+    setValue(GA_Offset offset, ValueT v) const
+    {
+        if (!mParent.mMat3fHandle.isValid())    return;
+        auto ptr = v.asPointer();
+        mParent.mMat3fHandle.set(offset, UT_Matrix3F(
+            float(ptr[0]), float(ptr[1]), float(ptr[2]),
+            float(ptr[3]), float(ptr[4]), float(ptr[5]),
+            float(ptr[6]), float(ptr[7]), float(ptr[8])
+        ));
+    }
+
+    template<typename ValueT>
+    typename std::enable_if<!(
+        std::is_same<ValueT, openvdb::Vec3i>::value ||
+        std::is_same<ValueT, openvdb::Vec3f>::value ||
+        std::is_same<ValueT, openvdb::Vec3d>::value)>::type
     setStaggeredValue(GA_Offset offset, ValueT v) const { }
 
     template<typename ValueT>
-    typename std::enable_if<!IsGridTypeArithmetic<ValueT>::value>::type
+    typename std::enable_if<
+        std::is_same<ValueT, openvdb::Vec3i>::value ||
+        std::is_same<ValueT, openvdb::Vec3f>::value ||
+        std::is_same<ValueT, openvdb::Vec3d>::value>::type
     setStaggeredValue(GA_Offset offset, ValueT v) const
     {
         if (!mParent.mVec3fHandle.isValid())    return;
@@ -1169,7 +1201,8 @@ struct TreeVisualizer::RenderPointsOp
     }
 
     template<typename ValueT>
-    void setColorBySign(size_t idx, const ValueT& value, size_t count = 1) const
+    typename std::enable_if<!std::is_same<ValueT, openvdb::Mat3s>::value>::type
+    setColorBySign(size_t idx, const ValueT& value, size_t count = 1) const
     {
         const bool negative = openvdb::math::isNegative(value);
         const auto color = SOP_OpenVDB_Visualize::colorSign(negative);
@@ -1177,6 +1210,10 @@ struct TreeVisualizer::RenderPointsOp
             mParent.mCdHandle.set(idx+i, color);
         }
     }
+
+    template<typename ValueT>
+    typename std::enable_if<std::is_same<ValueT, openvdb::Mat3s>::value>::type
+    setColorBySign(size_t idx, const ValueT& value, size_t count = 1) const {}
 
     template<typename ValueT>
     void setColorByRamp(size_t idx, const ValueT& value, size_t count = 1) const
@@ -1748,8 +1785,42 @@ TreeVisualizer::createPointAttributes(const GridT& grid)
 
             mVec3fHandle = attribHandle.getAttribute();
             mGeo->addVariableName(attrName, varName);
+        }
+        else if (valueType == openvdb::typeNameAsString<openvdb::Vec4f>())
+        {
+            if (!attrName.isstring()) attrName = "vdb_vec4f";
+            UT_String varName = attrName;
+            varName.toUpper();
 
-        } else {
+            GA_RWAttributeRef attribHandle =
+                mGeo->findFloatTuple(GA_ATTRIB_POINT, attrName, 4);
+
+            if (!attribHandle.isValid()) {
+                attribHandle = mGeo->addFloatTuple(
+                    GA_ATTRIB_POINT, attrName, 4, GA_Defaults(0));
+            }
+
+            mVec4fHandle = attribHandle.getAttribute();
+            mGeo->addVariableName(attrName, varName);
+        }
+        else if (valueType == openvdb::typeNameAsString<openvdb::Mat3s>())
+        {
+            if (!attrName.isstring()) attrName = "vdb_mat3f";
+            UT_String varName = attrName;
+            varName.toUpper();
+
+            GA_RWAttributeRef attribHandle =
+                mGeo->findFloatTuple(GA_ATTRIB_POINT, attrName, 9);
+
+            if (!attribHandle.isValid()) {
+                attribHandle = mGeo->addFloatTuple(
+                    GA_ATTRIB_POINT, attrName, 9, GA_Defaults(0));
+            }
+
+            mMat3fHandle = attribHandle.getAttribute();
+            mGeo->addVariableName(attrName, varName);
+        }
+        else {
             throw std::runtime_error(
                 "value attributes are not supported for values of type " + valueType);
         }
@@ -1903,6 +1974,7 @@ TreeVisualizer::render(bool node, const GridType& grid, openvdb::Int32 sliceInde
             HardenPtr hardenInt32;
             HardenPtr hardenFloat;
             HardenPtr hardenVec3f;
+            HardenPtr hardenVec4f;
 
             auto getAutoHarden = [](GA_Attribute* attribute, bool harden = true)
             {
@@ -1919,6 +1991,7 @@ TreeVisualizer::render(bool node, const GridType& grid, openvdb::Int32 sliceInde
             task_group2.run([&]{ hardenInt32 = getAutoHarden(mInt32Handle.getAttribute(), !node); });
             task_group2.run([&]{ hardenFloat = getAutoHarden(mFloatHandle.getAttribute(), !node); });
             task_group2.run([&]{ hardenVec3f = getAutoHarden(mVec3fHandle.getAttribute(), !node); });
+            task_group2.run([&]{ hardenVec4f = getAutoHarden(mVec4fHandle.getAttribute(), !node); });
             task_group2.wait();
 
             RenderPointsOp<TreeType> renderPointsOp(node, pointOffset, sliceIndex, staggered, *this);
@@ -2081,7 +2154,7 @@ SOP_OpenVDB_Visualize::Cache::cookVDBSop(OP_Context& context)
                 // draw tree topology
                 if (drawTree) {
                     TreeVisualizer draw(*gdp, treeParms, &boss.interrupter());
-                    hvdb::GEOvdbApply<hvdb::AllGridTypes>(*vdb, draw);
+                    hvdb::GEOvdbApply<hvdb::AllGridTypes::Append<openvdb::Vec4fGrid, openvdb::Mat3fGrid>>(*vdb, draw);
                 }
 
                 if (showFrustum) {

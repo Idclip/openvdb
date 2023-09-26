@@ -63,6 +63,8 @@ using Vec2STree    = tree::Tree4<Vec2s,       5, 4, 3>::Type;
 using Vec3DTree    = tree::Tree4<Vec3d,       5, 4, 3>::Type;
 using Vec3ITree    = tree::Tree4<Vec3i,       5, 4, 3>::Type;
 using Vec3STree    = tree::Tree4<Vec3f,       5, 4, 3>::Type;
+using Vec4fTree    = tree::Tree4<Vec4f,       5, 4, 3>::Type;
+using Mat3fTree    = tree::Tree4<Mat3s,       5, 4, 3>::Type;
 using ScalarTree   = FloatTree;
 using TopologyTree = MaskTree;
 using Vec3dTree    = Vec3DTree;
@@ -79,6 +81,8 @@ using MaskGrid     = Grid<MaskTree>;
 using Vec3DGrid    = Grid<Vec3DTree>;
 using Vec3IGrid    = Grid<Vec3ITree>;
 using Vec3SGrid    = Grid<Vec3STree>;
+using Vec4fGrid    = Grid<Vec4fTree>;
+using Mat3fGrid    = Grid<Mat3fTree>;
 using ScalarGrid   = FloatGrid;
 using TopologyGrid = MaskGrid;
 using Vec3dGrid    = Vec3DGrid;
@@ -107,7 +111,7 @@ using GridTypes =
 #ifndef OPENVDB_DISABLE_POINT_DATA_TREE_ALIAS
         Append<points::PointDataGrid>::
 #endif
-        Append<BoolGrid, MaskGrid>;
+        Append<BoolGrid, MaskGrid, Vec4fGrid, Mat3fGrid>;
 /// @}
 
 
