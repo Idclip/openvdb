@@ -146,7 +146,7 @@ struct BoxSampler
     /// tri-linear interpolation.
     /// @return @c true if any of the eight values are active
     template<class ValueT, class TreeT, size_t N>
-    static inline bool probeValues(ValueT (&data)[N][N][N], const TreeT& inTree, Coord ijk);
+    static inline uint8_t probeValues(ValueT (&data)[N][N][N], const TreeT& inTree, Coord ijk);
 
     /// @brief Find the minimum and maximum values of the eight cell
     /// values in @ data.
@@ -654,33 +654,33 @@ BoxSampler::getValues(ValueT (&data)[N][N][N], const TreeT& inTree, Coord ijk)
 }
 
 template<class ValueT, class TreeT, size_t N>
-inline bool
+inline uint8_t
 BoxSampler::probeValues(ValueT (&data)[N][N][N], const TreeT& inTree, Coord ijk)
 {
-    bool hasActiveValues = false;
-    hasActiveValues |= inTree.probeValue(ijk, data[0][0][0]); // i, j, k
+    uint8_t hasActiveValues = 0;
+    hasActiveValues |= uint8_t(inTree.probeValue(ijk, data[0][0][0])); // i, j, k
 
     ijk[2] += 1;
-    hasActiveValues |= inTree.probeValue(ijk, data[0][0][1]); // i, j, k + 1
+    hasActiveValues |= uint8_t(inTree.probeValue(ijk, data[0][0][1])) << 1; // i, j, k + 1
 
     ijk[1] += 1;
-    hasActiveValues |= inTree.probeValue(ijk, data[0][1][1]); // i, j+1, k + 1
+    hasActiveValues |= uint8_t(inTree.probeValue(ijk, data[0][1][1])) << 2; // i, j+1, k + 1
 
     ijk[2] -= 1;
-    hasActiveValues |= inTree.probeValue(ijk, data[0][1][0]); // i, j+1, k
+    hasActiveValues |= uint8_t(inTree.probeValue(ijk, data[0][1][0])) << 3; // i, j+1, k
 
     ijk[0] += 1;
     ijk[1] -= 1;
-    hasActiveValues |= inTree.probeValue(ijk, data[1][0][0]); // i+1, j, k
+    hasActiveValues |= uint8_t(inTree.probeValue(ijk, data[1][0][0])) << 4; // i+1, j, k
 
     ijk[2] += 1;
-    hasActiveValues |= inTree.probeValue(ijk, data[1][0][1]); // i+1, j, k + 1
+    hasActiveValues |= uint8_t(inTree.probeValue(ijk, data[1][0][1])) << 5; // i+1, j, k + 1
 
     ijk[1] += 1;
-    hasActiveValues |= inTree.probeValue(ijk, data[1][1][1]); // i+1, j+1, k + 1
+    hasActiveValues |= uint8_t(inTree.probeValue(ijk, data[1][1][1])) << 6; // i+1, j+1, k + 1
 
     ijk[2] -= 1;
-    hasActiveValues |= inTree.probeValue(ijk, data[1][1][0]); // i+1, j+1, k
+    hasActiveValues |= uint8_t(inTree.probeValue(ijk, data[1][1][0])) << 7; // i+1, j+1, k
 
     return hasActiveValues;
 }

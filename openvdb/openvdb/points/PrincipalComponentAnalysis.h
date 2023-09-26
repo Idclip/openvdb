@@ -23,6 +23,7 @@
 #include <openvdb/math/Coord.h>
 #include <openvdb/thread/Threading.h>
 #include <openvdb/util/NullInterrupter.h>
+#include <openvdb/tools/Interpolation.h>
 #include <openvdb/points/PointAttribute.h>
 #include <openvdb/points/PointGroup.h>
 #include <openvdb/points/PointTransfer.h>
@@ -64,6 +65,16 @@ pca(PointDataGridT& points,
 ///   distributions.
 struct PcaSettings
 {
+    /// @param mode  How the PCA weights and convariance matrices are computed
+    ///   on the point set. The default is POINTS, where every point adds a
+    ///   direct contribution from all neighbours within the specified search
+    ///   radius. If set to VOXELS, PCA weights and convariances are instead
+    ///   computed based on the topology and trillinearly interpolated onto
+    ///   the points. VOXELS mode can be significanlty faster but only
+    ///   produces an estimation of the anisotropic distribution.
+    enum class Mode { POINTS, VOXELS };
+    Mode mode = Mode::POINTS;
+
     /// @param searchRadius  the world space search radius of the neighborhood
     ///   around each point. Increasing this value will result in points
     ///   including more of their neighbors into their ellipsoidal calculations.
@@ -75,7 +86,7 @@ struct PcaSettings
     /// @param allowedAnisotropyRatio  the maximum allowed ratio between the
     ///   components in each ellipse' stretch coefficients such that:
     /// @code
-    ///     const auto s = stretch.sorted();
+    ///     const auto s = stretch.sorted(); // ascending order
     ///     assert(s[0]/s[2] >= allowedAnisotropyRatio);
     /// @endcode
     ///   This parameter effectively clamps the allowed anisotropy, with a
@@ -88,10 +99,11 @@ struct PcaSettings
     ///   so a reasonable minimum should be set. Values equal to or less than
     ///   0.0, or values greater than 1.0 have undefined results.
     float allowedAnisotropyRatio = 0.25f;
-    /// @param neighbourThreshold  the number of neighbours a point must have
-    ///   to be classified as having an elliptical distribution. Points with
-    ///   less neighbours than this will end up with uniform stretch values of
-    ///   1.0 and an identity rotation matrix.
+    /// @param neighbourThreshold  the number of neighbours a point
+    ///   (Mode::POINTS) or voxel (Mode::VOXELS) must have to be classified as
+    ///   having an elliptical distribution. Points or voxels with less
+    ///   neighbours than this will end up with uniform stretch values of 1.0
+    ///   and an identity rotation matrix.
     size_t neighbourThreshold = 20;
     /// @param averagePositions  the amount (between 0 and 1) to average out
     ///   positions. All points, whether they end up as ellipses or not,
@@ -144,5 +156,6 @@ struct PcaAttributes
 }
 
 #include "impl/PrincipalComponentAnalysisImpl.h"
+#include "impl/PrincipalComponentAnalysisVoxelImpl.h"
 
 #endif // OPENVDB_POINTS_POINT_PRINCIPAL_COMPONENT_ANALYSIS_HAS_BEEN_INCLUDED

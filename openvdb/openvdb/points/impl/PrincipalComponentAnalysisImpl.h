@@ -1,6 +1,11 @@
 // Copyright Contributors to the OpenVDB Project
 // SPDX-License-Identifier: MPL-2.0
 
+/// @author Richard Jones, Nick Avramoussis
+///
+/// @file PrincipalComponentAnalysisImpl.h
+///
+
 #ifndef OPENVDB_POINTS_POINT_PRINCIPAL_COMPONENT_ANALYSIS_IMPL_HAS_BEEN_INCLUDED
 #define OPENVDB_POINTS_POINT_PRINCIPAL_COMPONENT_ANALYSIS_IMPL_HAS_BEEN_INCLUDED
 
@@ -38,6 +43,7 @@ struct AttrIndices
     size_t mPosSumIndex;
     size_t mWeightSumIndex;
     size_t mCovMatrixIndex;
+    size_t mStretchIndex;
     size_t mPWsIndex;
     GroupIndexT mEllipsesGroupIndex;
 };
@@ -537,6 +543,15 @@ decomposeSymmetricMatrix(const math::Mat3<Scalar>& mat,
     return true;
 }
 
+template <typename PointDataTreeT,
+    typename InterrupterT>
+inline void
+computeVoxelBasedWeights(tree::LeafManager<PointDataTreeT>& manager,
+    const PcaSettings& settings,
+    const AttrIndices& indices,
+    Real vs,
+    InterrupterT* interrupt);
+
 } // namespace pca_internal
 
 
@@ -646,96 +661,104 @@ pca(PointDataGridT& points,
     indices.mPosSumIndex = posSumIndex;
     indices.mWeightSumIndex = weightSumIndex;
     indices.mCovMatrixIndex = rotIdx;
+    indices.mStretchIndex = strIdx;
     indices.mPWsIndex = pwsIdx;
     indices.mEllipsesGroupIndex = ellipsesIdx;
 
-    // 4) Init temporary attributes and calculate:
-    //        sum_j w_{i,j} * x_j / (sum_j w_j)
-    //    And neighbour counts for each point.
-    // simultaneously calculates the sum of weighted vector positions (sum w_{i,j} * x_i)
-    // weighted against the inverse sum of weights (1.0 / sum w_{i,j}). Also counts number
-    // of neighours each point has and updates the ellipses group based on minimum
-    // neighbour threshold. Those points which are "included" but which lack sufficient
-    // neighbours will be marked as "not included".
-    timer.start("Compute position weights");
+    if (settings.mode == PcaSettings::Mode::VOXELS)
     {
-        WeightPosSumsTransfer<PointDataTreeT> transfer(indices,
-            settings.searchRadius,
-            int32_t(settings.neighbourThreshold),
-            float(vs),
-            manager);
-
-        points::rasterize<PointDataGridT,
-            decltype(transfer),
-            NullFilter,
-            InterrupterT>(points, transfer, NullFilter(), interrupt);
+        computeVoxelBasedWeights(manager, settings, indices, vs, interrupt);
     }
+    else {
+        // 4) Init temporary attributes and calculate:
+        //        sum_j w_{i,j} * x_j / (sum_j w_j)
+        //    And neighbour counts for each point.
+        // simultaneously calculates the sum of weighted vector positions (sum w_{i,j} * x_i)
+        // weighted against the inverse sum of weights (1.0 / sum w_{i,j}). Also counts number
+        // of neighours each point has and updates the ellipses group based on minimum
+        // neighbour threshold. Those points which are "included" but which lack sufficient
+        // neighbours will be marked as "not included".
+        timer.start("Compute position weights");
+        {
+            WeightPosSumsTransfer<PointDataTreeT> transfer(indices,
+                settings.searchRadius,
+                int32_t(settings.neighbourThreshold),
+                float(vs),
+                manager);
 
-    timer.stop();
-    if (util::wasInterrupted(interrupt)) return;
-
-    // 5) Principal axes define the rotation matrix of the ellipsoid.
-    //    Calculates covariance matrices given weighted sums of positions and
-    //    sums of weights per-particle
-    timer.start("Compute covariance matrices");
-    {
-        CovarianceTransfer<PointDataTreeT>
-            transfer(indices, settings.searchRadius, float(vs), manager);
-
-        points::rasterize<PointDataGridT,
-            decltype(transfer),
-            NullFilter,
-            InterrupterT>(points, transfer, NullFilter(), interrupt);
-    }
-
-    timer.stop();
-    if (util::wasInterrupted(interrupt)) return;
-
-    // 6) radii stretches are given by the scaled singular values. Decompose
-    //    the covariance matrix into its principal axes and their lengths
-    timer.start("Decompose covariance matrices");
-    manager.foreach([&](LeafNodeT& leafnode, size_t)
-    {
-        AttributeWriteHandle<Vec3f, NullCodec> stretchHandle(leafnode.attributeArray(strIdx));
-        AttributeWriteHandle<math::Mat3s, NullCodec> rotHandle(leafnode.attributeArray(rotIdx));
-        GroupHandle ellipsesGroupHandle(leafnode.groupHandle(ellipsesIdx));
-
-        // we don't use a group filter here since we need to set the rotation
-        // matrix for excluded points
-
-        for (Index idx = 0; idx < stretchHandle.size(); ++idx) {
-            if (!ellipsesGroupHandle.get(idx)) {
-                rotHandle.set(idx, math::Mat3s::identity());
-                continue;
-            }
-
-            // get singular values of the covariance matrix
-            math::Mat3s u;
-            Vec3s sigma;
-            decomposeSymmetricMatrix(rotHandle.get(idx), u, sigma);
-
-            // fix sigma values, the principal lengths
-            auto maxs = sigma[0] * settings.allowedAnisotropyRatio;
-            sigma[1] = std::max(sigma[1], maxs);
-            sigma[2] = std::max(sigma[2], maxs);
-
-            // should only happen if all neighbours are coincident
-            // @note  The specific tolerance here relates to the normalization
-            //   of the stetch values in step (7) e.g. s*(1.0/cbrt(s.product())).
-            //   math::Tolerance<float>::value is 1e-7f, but we have a bit more
-            //   flexibility here, we can deal with smaller values, common for
-            //   the case where a point only has one neighbour
-            // @todo  have to manually construct the tolerance because
-            //   math::Tolerance<Vec3f> resolves to 0.0. fix this in the math lib
-            if (math::isApproxZero(sigma, Vec3f(1e-11f))) {
-                sigma = Vec3f::ones();
-            }
-
-            stretchHandle.set(idx, sigma);
-            rotHandle.set(idx, u);
+            points::rasterize<PointDataGridT,
+                decltype(transfer),
+                NullFilter,
+                InterrupterT>(points, transfer, NullFilter(), interrupt);
         }
-    });
-    timer.stop();
+
+        timer.stop();
+        if (util::wasInterrupted(interrupt)) return;
+
+        // 5) Principal axes define the rotation matrix of the ellipsoid.
+        //    Calculates covariance matrices given weighted sums of positions and
+        //    sums of weights per-particle
+        timer.start("Compute covariance matrices");
+        {
+            CovarianceTransfer<PointDataTreeT>
+                transfer(indices, settings.searchRadius, float(vs), manager);
+
+            points::rasterize<PointDataGridT,
+                decltype(transfer),
+                NullFilter,
+                InterrupterT>(points, transfer, NullFilter(), interrupt);
+        }
+
+        timer.stop();
+
+        if (util::wasInterrupted(interrupt)) return;
+
+        // 6) radii stretches are given by the scaled singular values. Decompose
+        //    the covariance matrix into its principal axes and their lengths
+        timer.start("Decompose covariance matrices");
+        manager.foreach([&](LeafNodeT& leafnode, size_t)
+        {
+            AttributeWriteHandle<Vec3f, NullCodec> stretchHandle(leafnode.attributeArray(strIdx));
+            AttributeWriteHandle<math::Mat3s, NullCodec> rotHandle(leafnode.attributeArray(rotIdx));
+            GroupHandle ellipsesGroupHandle(leafnode.groupHandle(ellipsesIdx));
+
+            // we don't use a group filter here since we need to set the rotation
+            // matrix for excluded points
+
+            for (Index idx = 0; idx < stretchHandle.size(); ++idx) {
+                if (!ellipsesGroupHandle.get(idx)) {
+                    rotHandle.set(idx, math::Mat3s::identity());
+                    continue;
+                }
+
+                // get singular values of the covariance matrix
+                math::Mat3s u;
+                Vec3s sigma;
+                decomposeSymmetricMatrix(rotHandle.get(idx), u, sigma);
+
+                // fix sigma values, the principal lengths
+                auto maxs = sigma[0] * settings.allowedAnisotropyRatio;
+                sigma[1] = std::max(sigma[1], maxs);
+                sigma[2] = std::max(sigma[2], maxs);
+
+                // should only happen if all neighbours are coincident
+                // @note  The specific tolerance here relates to the normalization
+                //   of the stetch values in step (7) e.g. s*(1.0/cbrt(s.product())).
+                //   math::Tolerance<float>::value is 1e-7f, but we have a bit more
+                //   flexibility here, we can deal with smaller values, common for
+                //   the case where a point only has one neighbour
+                // @todo  have to manually construct the tolerance because
+                //   math::Tolerance<Vec3f> resolves to 0.0. fix this in the math lib
+                if (math::isApproxZero(sigma, Vec3f(1e-11f))) {
+                    sigma = Vec3f::ones();
+                }
+
+                stretchHandle.set(idx, sigma);
+                rotHandle.set(idx, u);
+            }
+        });
+        timer.stop();
+    }
 
     // 7) normalise the principal lengths such that the transformation they
     //    describe 'preserves volume' thus becoming the stretch of the ellipsoids

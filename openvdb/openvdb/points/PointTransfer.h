@@ -402,6 +402,7 @@ inline void VolumeTransfer<TreeTypes...>::foreach(const FunctorT& functor)
 namespace transfer_internal
 {
 template <typename TransferT,
+          typename SourceT,
           typename TopologyT,
           typename PointFilterT = points::NullFilter,
           typename InterrupterT = util::NullInterrupter>
@@ -414,18 +415,18 @@ struct RasterizePoints
     static const Int32 DIM32 = static_cast<Int32>(DIM);
     static const Index LOG2DIM = TopologyT::LeafNodeType::LOG2DIM;
 
-    RasterizePoints(const points::PointDataTree& tree,
+    RasterizePoints(const SourceT& tree,
                     const TransferT& transfer,
-                    const CoordBBox& pointBounds,
+                    const CoordBBox& totalBounds,
                     const PointFilterT& filter = PointFilterT(),
                     InterrupterT* interrupter = nullptr)
-        : mPointAccessor(tree)
+        : mAccessor(tree)
         , mTransfer(transfer)
-        , mPointBounds(pointBounds)
+        , mTotalBounds(totalBounds)
         , mFilter(filter)
         , mInterrupter(interrupter) {}
 
-    void operator()(LeafNodeT& leaf, const size_t idx) const
+    void operator()(const LeafNodeT& leaf, const size_t idx) const
     {
         if (this->interrupted()) return;
 
@@ -453,12 +454,11 @@ struct RasterizePoints
         search.min() -= Coord(range);
         search.max() += Coord(range);
         this->transform<>(search);
-        search.intersect(mPointBounds);
+        search.intersect(mTotalBounds);
 
         // start the iteration from a leaf origin
         const Coord min = (search.min() & ~(DIM-1));
         const Coord& max = search.max();
-        PointFilterT localFilter(mFilter);
 
         // loop over overlapping leaf nodes
         Coord leafOrigin;
@@ -472,35 +472,14 @@ struct RasterizePoints
                     if (pbox.empty()) continue;
 
                     // if no points, continue
-                    const auto* pointLeaf = mPointAccessor.probeConstLeaf(leafOrigin);
-                    if (!pointLeaf) continue;
-                    if (!mTransfer.startPointLeaf(*pointLeaf)) continue;
-                    localFilter.reset(*pointLeaf);
-
+                    const auto* srcLeaf = mAccessor.probeConstLeaf(leafOrigin);
+                    if (!srcLeaf) continue;
+                    if (!mTransfer.startPointLeaf(*srcLeaf)) continue;
                     if (this->interrupted()) return;
 
-                    // loop over point voxels which contribute to this leaf
-                    const Coord& pmin(pbox.min());
-                    const Coord& pmax(pbox.max());
-                    for (Coord ijk = pmin; ijk.x() <= pmax.x(); ++ijk.x()) {
-                        const Index i = ((ijk.x() & (DIM-1u)) << 2*LOG2DIM); // unsigned bit shift mult
-                        for (ijk.y() = pmin.y(); ijk.y() <= pmax.y(); ++ijk.y()) {
-                            const Index ij = i + ((ijk.y() & (DIM-1u)) << LOG2DIM);
-                            for (ijk.z() = pmin.z(); ijk.z() <= pmax.z(); ++ijk.z()) {
-                                // voxel should be in this points leaf
-                                assert((ijk & ~(DIM-1u)) == leafOrigin);
-                                const Index index = ij + /*k*/(ijk.z() & (DIM-1u));
-                                const Index end = pointLeaf->getValue(index);
-                                Index id = (index == 0) ? 0 : Index(pointLeaf->getValue(index - 1));
-                                for (; id < end; ++id) {
-                                    if (!localFilter.valid(&id)) continue;
-                                    mTransfer.rasterizePoint(ijk, id, bounds);
-                                } //point idx
-                            }
-                        }
-                    } // outer point voxel
+                    this->transfer(pbox, *srcLeaf, bounds);
 
-                    if (!mTransfer.endPointLeaf(*pointLeaf)) {
+                    if (!mTransfer.endPointLeaf(*srcLeaf)) {
                         // rescurse if necessary
                         if (!mTransfer.finalize(origin, idx)) {
                             this->operator()(leaf, idx);
@@ -525,6 +504,55 @@ struct RasterizePoints
     }
 
 private:
+
+    template<typename T, Index Log2Dim>
+    inline void transfer(const CoordBBox& pbox,
+        const PointDataLeafNode<T, Log2Dim>& leaf,
+        const CoordBBox& bounds) const
+    {
+        PointFilterT localFilter(mFilter);
+        localFilter.reset(leaf);
+
+        // loop over point voxels which contribute to this leaf
+        const Coord& pmin(pbox.min());
+        const Coord& pmax(pbox.max());
+        for (Coord ijk = pmin; ijk.x() <= pmax.x(); ++ijk.x()) {
+            const Index i = ((ijk.x() & (DIM-1u)) << 2*LOG2DIM); // unsigned bit shift mult
+            for (ijk.y() = pmin.y(); ijk.y() <= pmax.y(); ++ijk.y()) {
+                const Index ij = i + ((ijk.y() & (DIM-1u)) << LOG2DIM);
+                for (ijk.z() = pmin.z(); ijk.z() <= pmax.z(); ++ijk.z()) {
+                    // voxel should be in this points leaf
+                    assert((ijk & ~(DIM-1u)) == leafOrigin);
+                    const Index index = ij + /*k*/(ijk.z() & (DIM-1u));
+                    const Index end = leaf.getValue(index);
+                    Index id = (index == 0) ? 0 : Index(leaf.getValue(index - 1));
+                    for (; id < end; ++id) {
+                        if (!localFilter.valid(&id)) continue;
+                        mTransfer.rasterizePoint(ijk, id, bounds);
+                    } //point idx
+                }
+            }
+        } // outer point voxel
+    }
+
+    template<typename T, Index Log2Dim>
+    inline void transfer(const CoordBBox& pbox,
+        const tree::LeafNode<T, Log2Dim>& leaf,
+        const CoordBBox& bounds) const
+    {
+        const Coord& pmin(pbox.min());
+        const Coord& pmax(pbox.max());
+        for (Coord ijk = pmin; ijk.x() <= pmax.x(); ++ijk.x()) {
+            for (ijk.y() = pmin.y(); ijk.y() <= pmax.y(); ++ijk.y()) {
+                for (ijk.z() = pmin.z(); ijk.z() <= pmax.z(); ++ijk.z()) {
+                    // voxel should be in this points leaf
+                    assert((ijk & ~(DIM-1u)) == leafOrigin);
+                    if (!leaf.isValueOn(ijk)) continue; // @todo generalize to a template iterator
+                    mTransfer.rasterizePoint(ijk, -1, bounds);
+                }
+            }
+        }
+    }
 
     template <typename EnableT = TransferT>
     typename std::enable_if<std::is_base_of<TransformTransfer, EnableT>::value>::type
@@ -554,9 +582,9 @@ private:
     }
 
 private:
-    const PointDataGrid::ConstAccessor mPointAccessor;
+    const tree::ValueAccessor<const SourceT> mAccessor;
     mutable TransferT mTransfer;
-    const CoordBBox& mPointBounds;
+    const CoordBBox& mTotalBounds;
     const PointFilterT& mFilter;
     InterrupterT* mInterrupter;
 };
@@ -566,31 +594,31 @@ private:
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 
-template <typename PointDataTreeOrGridT,
+template <typename SourceGridOrTreeT,
     typename TransferT,
     typename FilterT,
     typename InterrupterT>
 inline void
-rasterize(const PointDataTreeOrGridT& points,
+rasterize(const SourceGridOrTreeT& input,
           TransferT& transfer,
           const FilterT& filter,
           InterrupterT* interrupter)
 {
-    using PointTreeT = typename TreeAdapter<PointDataTreeOrGridT>::TreeType;
-    static_assert(std::is_base_of<TreeBase, PointTreeT>::value,
+    using SourceTreeT = typename TreeAdapter<SourceGridOrTreeT>::TreeType;
+    static_assert(std::is_base_of<TreeBase, SourceTreeT>::value,
         "Provided points to rasterize is not a derived TreeBase type.");
 
-    const auto& tree = TreeAdapter<PointDataTreeOrGridT>::tree(points);
+    const auto& tree = TreeAdapter<SourceGridOrTreeT>::tree(input);
 
-    auto& topology = transfer.topology();
+    const auto& topology = transfer.topology();
     using TreeT = typename std::decay<decltype(topology)>::type;
 
     // Compute max search bounds
     CoordBBox bounds;
     tree.evalLeafBoundingBox(bounds);
 
-    tree::LeafManager<TreeT> manager(topology);
-    transfer_internal::RasterizePoints<TransferT, TreeT, FilterT, InterrupterT>
+    tree::LeafManager<const TreeT> manager(topology);
+    transfer_internal::RasterizePoints<TransferT, SourceTreeT, TreeT, FilterT, InterrupterT>
         raster(tree, transfer, bounds, filter, interrupter);
     manager.foreach(raster);
 }

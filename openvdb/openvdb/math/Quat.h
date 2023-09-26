@@ -24,18 +24,18 @@ template<typename T> class Quat;
 
 /// Linear interpolation between the two quaternions
 template <typename T>
-Quat<T> slerp(const Quat<T> &q1, const Quat<T> &q2, T t, T tolerance=0.00001)
+Quat<T> slerp(const Quat<T> &q1, const Quat<T> &q2, T t, T tolerance=T(0.00001))
 {
-    T qdot, angle, sineAngle;
+    T angle, sineAngle;
 
-    qdot = q1.dot(q2);
+    const T qdot = q1.dot(q2);
 
-    if (fabs(qdot) >= 1.0) {
-        angle     = 0; // not necessary but suppresses compiler warning
-        sineAngle = 0;
+    if (std::fabs(qdot) >= T(1.0)) {
+        angle     = T(0); // not necessary but suppresses compiler warning
+        sineAngle = T(0);
     } else {
-        angle     = acos(qdot);
-        sineAngle = sin(angle);
+        angle     = std::acos(qdot);
+        sineAngle = std::sin(angle);
     }
 
     //
@@ -44,8 +44,9 @@ Quat<T> slerp(const Quat<T> &q1, const Quat<T> &q2, T t, T tolerance=0.00001)
     // case linear interpolation is used but we normalize to
     // guarantee unit length
     //
-    if (sineAngle <= tolerance) {
-        T s = 1.0 - t;
+    if (sineAngle <= tolerance)
+    {
+        const T s = T(1.0) - t;
 
         Quat<T> qtemp(s * q1[0] + t * q2[0], s * q1[1] + t * q2[1],
                       s * q1[2] + t * q2[2], s * q1[3] + t * q2[3]);
@@ -55,23 +56,23 @@ Quat<T> slerp(const Quat<T> &q1, const Quat<T> &q2, T t, T tolerance=0.00001)
         // for example, if t is close to 0.5. In this case it is not safe
         // to project back onto the sphere.
         //
-        double lengthSquared = qtemp.dot(qtemp);
+        const T lengthSquared = qtemp.dot(qtemp);
 
         if (lengthSquared <= tolerance * tolerance) {
-            qtemp = (t < 0.5) ? q1 : q2;
+            qtemp = (t < T(0.5)) ? q1 : q2;
         } else {
-            qtemp *= 1.0 / sqrt(lengthSquared);
+            qtemp *= T(1.0) / std::sqrt(lengthSquared);
         }
         return qtemp;
-    } else {
-
-        T sine  = 1.0 / sineAngle;
-        T a = sin((1.0 - t) * angle) * sine;
-        T b = sin(t * angle) * sine;
+    }
+    else
+    {
+        const T sine  = T(1.0) / sineAngle;
+        const T a = std::sin((T(1.0) - t) * angle) * sine;
+        const T b = std::sin(t * angle) * sine;
         return Quat<T>(a * q1[0] + b * q2[0], a * q1[1] + b * q2[1],
                        a * q1[2] + b * q2[2], a * q1[3] + b * q2[3]);
     }
-
 }
 
 template<typename T>
@@ -94,7 +95,6 @@ public:
         mm[1] = y;
         mm[2] = z;
         mm[3] = w;
-
     }
 
     /// Constructor with array argument, e.g.   float a[4]; Quatf q(a);
@@ -104,41 +104,34 @@ public:
         mm[1] = a[1];
         mm[2] = a[2];
         mm[3] = a[3];
-
     }
 
     /// Constructor given rotation as axis and angle, the axis must be
     /// unit vector
     Quat(const Vec3<T> &axis, T angle)
     {
-        // assert( REL_EQ(axis.length(), 1.) );
-
-        T s = T(sin(angle*T(0.5)));
-
+        const T s = T(std::sin(angle*T(0.5)));
         mm[0] = axis.x() * s;
         mm[1] = axis.y() * s;
         mm[2] = axis.z() * s;
-
-        mm[3] = T(cos(angle*T(0.5)));
-
+        mm[3] = T(std::cos(angle*T(0.5)));
     }
 
     /// Constructor given rotation as axis and angle
     Quat(math::Axis axis, T angle)
     {
-        T s = T(sin(angle*T(0.5)));
-
+        const T s = T(std::sin(angle*T(0.5)));
         mm[0] = (axis==math::X_AXIS) * s;
         mm[1] = (axis==math::Y_AXIS) * s;
         mm[2] = (axis==math::Z_AXIS) * s;
-
-        mm[3] = T(cos(angle*T(0.5)));
+        mm[3] = T(std::cos(angle*T(0.5)));
     }
 
     /// Constructor given a rotation matrix
     template<typename T1>
-    Quat(const Mat3<T1> &rot) {
-
+    Quat(const Mat3<T1> &rot)
+        : Quat(rot, Quat::kUnsafeConstruct)
+    {
         // verify that the matrix is really a rotation
         if(!isUnitary(rot)) {  // unitary is reflection or rotation
              OPENVDB_THROW(ArithmeticError,
@@ -148,39 +141,48 @@ public:
              OPENVDB_THROW(ArithmeticError,
                 "A reflection matrix can not be used to construct a quaternion");
         }
+    }
 
-        T trace(rot.trace());
-        if (trace > 0) {
-
-            T q_w = 0.5 * std::sqrt(trace+1);
-            T factor = 0.25 / q_w;
+    /// Constructor given a rotation matrix
+    enum Flag { kUnsafeConstruct };
+    template<typename T1>
+    Quat(const Mat3<T1> &rot, Flag)
+    {
+        const T trace(rot.trace());
+        if (trace > T(0))
+        {
+            const T q_w = T(0.5) * std::sqrt(trace+1);
+            const T factor = T(0.25) / q_w;
 
             mm[0] = factor * (rot(1,2) - rot(2,1));
             mm[1] = factor * (rot(2,0) - rot(0,2));
             mm[2] = factor * (rot(0,1) - rot(1,0));
             mm[3] = q_w;
-        }  else if (rot(0,0) > rot(1,1) && rot(0,0) > rot(2,2)) {
-
-            T q_x = 0.5 * sqrt(rot(0,0)- rot(1,1)-rot(2,2)+1);
-            T factor = 0.25 / q_x;
+        }
+        else if (rot(0,0) > rot(1,1) && rot(0,0) > rot(2,2))
+        {
+            const T q_x = T(0.5) * std::sqrt(rot(0,0) - rot(1,1) - rot(2,2) + 1);
+            const T factor = T(0.25) / q_x;
 
             mm[0] = q_x;
             mm[1] = factor * (rot(0,1) + rot(1,0));
             mm[2] = factor * (rot(2,0) + rot(0,2));
             mm[3] = factor * (rot(1,2) - rot(2,1));
-        } else if (rot(1,1) > rot(2,2)) {
+        }
+        else if (rot(1,1) > rot(2,2))
+        {
+            const T q_y = T(0.5) * std::sqrt(rot(1,1) - rot(0,0) - rot(2,2) + 1);
+            const T factor = T(0.25) / q_y;
 
-            T q_y = 0.5 * sqrt(rot(1,1)-rot(0,0)-rot(2,2)+1);
-            T factor = 0.25 / q_y;
-
-            mm[0] =  factor * (rot(0,1) + rot(1,0));
+            mm[0] = factor * (rot(0,1) + rot(1,0));
             mm[1] = q_y;
             mm[2] = factor * (rot(1,2) + rot(2,1));
             mm[3] = factor * (rot(2,0) - rot(0,2));
-        } else {
-
-            T q_z = 0.5 * sqrt(rot(2,2)-rot(0,0)-rot(1,1)+1);
-            T factor = 0.25 / q_z;
+        }
+        else
+        {
+            const T q_z = T(0.5) * std::sqrt(rot(2,2) - rot(0,0) - rot(1,1) + 1);
+            const T factor = T(0.25) / q_z;
 
             mm[0] = factor * (rot(2,0) + rot(0,2));
             mm[1] = factor * (rot(1,2) + rot(2,1));
@@ -200,6 +202,9 @@ public:
     T y() const { return mm[1]; }
     T z() const { return mm[2]; }
     T w() const { return mm[3]; }
+
+    T* asPointer() { return this->mm; }
+    const T* asPointer() const { return this->mm; }
 
     // Number of elements
     static unsigned numElements() { return 4; }
@@ -295,7 +300,9 @@ public:
 
     /// Returns vector of x,y,z rotational components
     Vec3<T> eulerAngles(RotationOrder rotationOrder) const
-    { return math::eulerAngles(Mat3<T>(*this), rotationOrder); }
+    {
+        return math::eulerAngles(Mat3<T>(*this), rotationOrder);
+    }
 
     /// Equality operator, does exact floating point comparisons
     bool operator==(const Quat &q) const
@@ -369,7 +376,6 @@ public:
         prod.mm[3] = mm[3]*q.mm[3] - mm[0]*q.mm[0] - mm[1]*q.mm[1] - mm[2]*q.mm[2];
 
         return prod;
-
     }
 
     /// Assigns this to (this*q), e.g.   q *= q1;
@@ -392,8 +398,7 @@ public:
     }
 
     /// Negation operator, e.g.   q = -q;
-    Quat operator-() const
-    { return Quat<T>(-mm[0], -mm[1], -mm[2], -mm[3]); }
+    Quat operator-() const { return Quat<T>(-mm[0], -mm[1], -mm[2], -mm[3]); }
 
     /// this = q1 + q2
     /// "this", q1 and q2 need not be distinct objects, e.g. q.add(q1,q);
@@ -551,6 +556,57 @@ protected:
 template <typename S, typename T>
 Quat<T> operator*(S scalar, const Quat<T> &q) { return q*scalar; }
 
+template<typename T>
+inline Quat<T>
+Abs(const Quat<T>& q)
+{
+    Quat<T> out;
+    const T* ip = q.asPointer();
+    T* op = out.asPointer();
+    for (unsigned i = 0; i < 4; ++i, ++op, ++ip) *op = math::Abs(*ip);
+    return out;
+}
+
+template<typename Type1, typename Type2>
+inline Quat<Type1>
+cwiseAdd(const Quat<Type1>& m, const Type2 s)
+{
+    Quat<Type1> out;
+    const Type1* ip = m.asPointer();
+    Type1* op = out.asPointer();
+    for (unsigned i = 0; i < 4; ++i, ++op, ++ip) {
+        OPENVDB_NO_TYPE_CONVERSION_WARNING_BEGIN
+        *op = *ip + s;
+        OPENVDB_NO_TYPE_CONVERSION_WARNING_END
+    }
+    return out;
+}
+
+/// @return true if q0 < q1, comparing components in order of significance.
+template<typename T>
+inline bool
+cwiseLessThan(const Quat<T>& q0, const Quat<T>& q1)
+{
+    const T* q0p = q0.asPointer();
+    const T* q1p = q1.asPointer();
+    for (unsigned i = 0; i < 3; ++i, ++q0p, ++q1p) {
+        if (!math::isExactlyEqual(*q0p, *q1p)) return *q0p < *q1p;
+    }
+    return *q0p < *q1p;
+}
+
+/// @return true if q0 > q1, comparing components in order of significance.
+template<typename T>
+inline bool
+cwiseGreaterThan(const Quat<T>& q0, const Quat<T>& q1)
+{
+    const T* q0p = q0.asPointer();
+    const T* q1p = q1.asPointer();
+    for (unsigned i = 0; i < 3; ++i, ++q0p, ++q1p) {
+        if (!math::isExactlyEqual(*q0p, *q1p)) return *q0p > *q1p;
+    }
+    return *q0p > *q1p;
+}
 
 /// @brief Interpolate between m1 and m2.
 /// Converts to quaternion  form and uses slerp
@@ -569,8 +625,6 @@ Mat3<T> slerp(const Mat3<T0> &m1, const Mat3<T0> &m2, T t)
     MatType m = rotation<MatType>(qslerp);
     return m;
 }
-
-
 
 /// Interpolate between m1 and m4 by converting m1 ... m4  into
 /// quaternions and treating them as control points of a Bezier
@@ -604,7 +658,6 @@ OPENVDB_IS_POD(Quats)
 OPENVDB_IS_POD(Quatd)
 
 } // namespace math
-
 
 template<> inline math::Quats zeroVal<math::Quats >() { return math::Quats::zero(); }
 template<> inline math::Quatd zeroVal<math::Quatd >() { return math::Quatd::zero(); }
