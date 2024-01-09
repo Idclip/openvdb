@@ -75,7 +75,6 @@
 #include <openvdb/tools/ValueTransformer.h>
 #include <openvdb/thread/Threading.h>
 #include <openvdb/util/NullInterrupter.h>
-#include <openvdb/points/PrincipalComponentAnalysis.h>
 
 #include <unordered_map>
 
@@ -173,7 +172,10 @@ struct SphereSettings
     ///   will perform faster if they are able to assume a uniform radius (so
     ///   use this value instead of setting the `radius` parameter if radii are
     ///   uniform).
-    Real radiusScale = 1.0;
+    /// @note  Type of the scale is always double precision (the Promote exists
+    ///   as this could be a vector scale - see EllipsoidSettings).
+    using RadiusScaleT = typename PromoteType<RadiusAttributeT>::Highest;
+    RadiusScaleT radiusScale = RadiusScaleT(1.0);
 
     /// @param halfband  the half band width of the generated surface.
     Real halfband = LEVEL_SET_HALF_WIDTH;
@@ -267,9 +269,17 @@ struct SmoothSphereSettings
 /// @brief  Anisotropic point rasterization based on the principal component
 ///   analysis of point neighbours. See the struct member documentation for
 ///   detailed behavior.
+/// @details  This rasterization technique is typically used with the
+///   accompanying PCA tools in PrincipalComponentAnalysis.h which initializes
+///   the required attributes. These attributes define the rotational and
+///   affine transformations which can be used to construct ellipsoids for each
+///   point. Typically (for our intended surfacing) these transformations are
+///   built by analysing each points neighbourhood distributions and
+///   constructing tight ellipsoids that orient themselves to follow these
+///   point distributions.
 /// @note  Protected inheritance prevents accidental struct slicing
 template <typename AttributeTs = TypeList<>,
-    typename RadiusAttributeT = float,
+    typename RadiusAttributeT = Vec3f,
     typename FilterT = NullFilter,
     typename InterrupterT = util::NullInterrupter>
 struct EllipsoidSettings
@@ -281,22 +291,28 @@ struct EllipsoidSettings
     using FilterType = typename BaseT::FilterType;
     using InterrupterType = typename BaseT::InterrupterType;
 
-    using BaseT::radius;
-    using BaseT::radiusScale;
     using BaseT::halfband;
     using BaseT::transform;
     using BaseT::attributes;
     using BaseT::filter;
     using BaseT::interrupter;
 
-    /// @brief  The required principal component analysis attributes which are
-    ///   required to exist on the points being rasterized. These attributes
-    ///   define the rotational and affine transformations which can be used to
-    ///   construct ellipsoids for each point. Typically (for our intended
-    ///   surfacing) these transformations are built by analysing each points
-    ///   neighbourhood distributions and constructing tight ellipsoids that
-    ///   orient themselves to follow these point distributions.
-    PcaAttributes pca;
+    /// @note  For ellipsoid rasterization, the radius attribute and scale
+    ///   need to be Vec3f types (RadiusAttributeT defaults to this). This
+    ///   represents each ellipsoids stretch and squash coefficients.
+    using BaseT::radius;
+    using BaseT::radiusScale;
+
+    /// @param rotation  the attribute containing each points orientation
+    /// @details  This attribute must exist and represents the rotation of
+    ///   each points ellipse. Must be a Mat3s type.
+    std::string rotation = "rotation";
+
+    /// @param pws  An optional attribute which represents the world space
+    ///   position of a point.
+    /// @details  This can be useful to override the position of a point in
+    ///   index space. If it exists, it must be a Vec3d type.
+    std::string pws = "";
 };
 
 } // namespace points

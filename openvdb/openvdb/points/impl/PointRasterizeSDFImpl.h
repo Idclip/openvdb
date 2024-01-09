@@ -44,10 +44,10 @@ struct FixedBandRadius : public FixedRadius<ValueT>
     static constexpr bool Fixed = true;
     using ValueType = ValueT;
 
-    FixedBandRadius(const ValueT ris, const ValueT hb)
+    FixedBandRadius(const ValueT ris, const float hb)
         : FixedRadius<ValueT>(ris)
-        , mMinSearchIS(math::Max(ValueT(0.0), ris - hb))
-        , mMaxSearchIS(ris + hb)
+        , mMinSearchIS(math::Max(ValueT(0.0), ris - ValueT(hb)))
+        , mMaxSearchIS(ris + ValueT(hb))
         , mMinSearchSqIS(mMinSearchIS*mMinSearchIS)
         , mMaxSearchSqIS(mMaxSearchIS*mMaxSearchIS)
         , mHalfBand(hb) {}
@@ -61,7 +61,8 @@ struct FixedBandRadius : public FixedRadius<ValueT>
     }
 
     inline const FixedBandRadius& eval(const Index) const { return *this; }
-    inline ValueT halfband() const { return mHalfBand; }
+    inline float halfband() const { return mHalfBand; }
+
     inline ValueT min() const { return mMinSearchIS; }
     inline ValueT minSq() const { return mMinSearchSqIS; }
     inline ValueT max() const { return mMaxSearchIS; }
@@ -71,21 +72,40 @@ private:
     const ValueT mMinSearchSqIS, mMaxSearchSqIS;
     // @note  Could technically recompute this value from the rest here
     //   but storing it alleviates any potential precision issues
-    const ValueT mHalfBand;
+    const float mHalfBand;
+};
+
+/// @brief  A vector varying per point radius (used for the ellipsoid
+///   rasterizer).
+template <>
+struct FixedBandRadius<Vec3f> : public FixedRadius<Vec3f>
+{
+    static constexpr bool Fixed = true;
+    using ValueType = Vec3f;
+    FixedBandRadius(const Vec3f ris, const float hb)
+        : FixedRadius<Vec3f>(ris)
+        , mHalfBand(hb) {}
+    inline void reset(const PointDataTree::LeafNodeType&) const {}
+    inline const FixedBandRadius& eval(const Index) const { return *this; }
+    inline float halfband() const { return mHalfBand; }
+private:
+    const float mHalfBand;
 };
 
 /// @brief  A varying per point radius with an optional scale
-template <typename ValueT, typename CodecT = UnknownCodec>
+template <typename ValueT, typename ScaleT = ValueT, typename CodecT = UnknownCodec>
 struct VaryingRadius
 {
     static constexpr bool Fixed = false;
     using ValueType = ValueT;
 
     using RadiusHandleT = AttributeHandle<ValueT, CodecT>;
-    VaryingRadius(const size_t ridx, const ValueT scale = 1.0)
+    VaryingRadius(const size_t ridx, const ScaleT scale = ScaleT(1.0))
         : mRIdx(ridx), mRHandle(), mScale(scale) {}
     VaryingRadius(const VaryingRadius& other)
         : mRIdx(other.mRIdx), mRHandle(), mScale(other.mScale) {}
+
+    inline size_t size() const { return mRHandle->size(); }
 
     inline void reset(const PointDataTree::LeafNodeType& leaf)
     {
@@ -93,39 +113,40 @@ struct VaryingRadius
     }
 
     /// @brief  Compute a fixed radius for a specific point
-    inline const FixedRadius<ValueT> eval(const Index id, const ValueT scale = 1.0) const
+    inline auto eval(const Index id, const ScaleT scale = ScaleT(1.0)) const
     {
         assert(mRHandle);
-        return FixedRadius<ValueT>(mRHandle->get(id) * mScale * scale);
+        auto x = mRHandle->get(id) * mScale * scale;
+        return FixedRadius<decltype(x)>(x);
     }
 
 private:
     const size_t mRIdx;
     typename RadiusHandleT::UniquePtr mRHandle;
-    const ValueT mScale;
+    const ScaleT mScale;
 };
 
 /// @brief  A varying per point narrow band radius with an optional scale
-template <typename ValueT, typename CodecT = UnknownCodec>
-struct VaryingBandRadius : public VaryingRadius<ValueT, CodecT>
+template <typename ValueT, typename ScaleT = ValueT, typename CodecT = UnknownCodec>
+struct VaryingBandRadius : public VaryingRadius<ValueT, ScaleT, CodecT>
 {
     static constexpr bool Fixed = false;
     using ValueType = ValueT;
 
-    using BaseT = VaryingRadius<ValueT, CodecT>;
-    VaryingBandRadius(const size_t ridx, const ValueT halfband,
-        const ValueT scale = 1.0)
+    using BaseT = VaryingRadius<ValueT, ScaleT, CodecT>;
+    VaryingBandRadius(const size_t ridx, const float halfband,
+        const ScaleT scale = ScaleT(1.0))
         : BaseT(ridx, scale), mHalfBand(halfband) {}
 
-    inline ValueT halfband() const { return mHalfBand; }
-    inline const FixedBandRadius<ValueT> eval(const Index id, const ValueT scale = 1.0) const
+    inline float halfband() const { return mHalfBand; }
+    inline auto eval(const Index id, const ScaleT scale = ScaleT(1.0)) const
     {
-        const auto r = this->BaseT::eval(id, scale).get();
-        return FixedBandRadius<ValueT>(ValueT(r), mHalfBand);
+        auto r = this->BaseT::eval(id, scale).get();
+        return FixedBandRadius<decltype(r)>(r, mHalfBand);
     }
 
 private:
-    const ValueT mHalfBand;
+    const float mHalfBand;
 };
 
 /// @brief  Base class for SDF transfers which consolidates member data and
@@ -252,6 +273,8 @@ struct SphericalTransfer :
     // The precision of the kernel arithmetic
     using RealT = double;
 
+    using ElemT = typename VecTraits<typename RadiusType::ValueType>::ElementType;
+
     SphericalTransfer(const size_t pidx,
             const size_t width,
             const RadiusType& rt,
@@ -292,7 +315,7 @@ struct SphericalTransfer :
     inline void rasterizePoint(const Vec3d& P,
                     const Index id,
                     const CoordBBox& bounds,
-                    const FixedBandRadius<typename RadiusType::ValueType>& r)
+                    const FixedBandRadius<ElemT>& r)
     {
         const RealT max = r.max();
         CoordBBox intersectBox(Coord::round(P - max), Coord::round(P + max));
@@ -669,24 +692,26 @@ protected:
     //   As the rasterization is so fast (discarding of voxels out of range)
     //   this overzealous activation results in far superior performance overall.
     template <typename LeafT>
-    inline void activate(const LeafT& leaf, const int32_t dist)
+    inline bool activate(const LeafT& leaf, const int32_t dist)
     {
         CoordBBox bounds = this->toSurfaceBounds(this->getActiveBoundingBox(leaf));
-        if (bounds.empty()) return;
+        if (bounds.empty()) return false;
         // Expand by the desired surface index space distance
         bounds.expand(dist);
         this->activate(bounds);
+        return true;
     }
 
     template <typename LeafT>
-    inline void activate(const LeafT& leaf, const Vec3i dist)
+    inline bool activate(const LeafT& leaf, const Vec3i dist)
     {
         CoordBBox bounds = this->toSurfaceBounds(this->getActiveBoundingBox(leaf));
-        if (bounds.empty()) return;
+        if (bounds.empty()) return false;
         // Expand by the desired surface index space distance
         bounds.min() -= Coord(dist);
         bounds.max() += Coord(dist);
         this->activate(bounds);
+        return true;
     }
 
     template <typename LeafT>
@@ -1271,7 +1296,7 @@ rasterizeSpheres(const PointDataGridT& points,
     {
         // search distance at the SDF transform, including its half band
         const Real radiusIndexSpace = settings.radiusScale / vs;
-        const FixedBandRadius<Real> rad(radiusIndexSpace, halfband);
+        const FixedBandRadius<Real> rad(radiusIndexSpace, float(halfband));
         const Real minBandRadius = rad.min();
         const Real maxBandRadius = rad.max();
         const size_t width = static_cast<size_t>(math::RoundUp(maxBandRadius));
@@ -1383,7 +1408,7 @@ rasterizeSmoothSpheres(const PointDataGridT& points,
         // This is the max possible distance we need to activate, but we'll
         // clip this at the edges of the point bounds (as the ZB kernel will
         // only create positions in between points).
-        const FixedBandRadius<Real> bands(maxActivationRadius, halfband);
+        const FixedBandRadius<Real> bands(maxActivationRadius, float(halfband));
         const Real max = bands.max();
 
         // Compute max radius in index space and expand bounds
