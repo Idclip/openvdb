@@ -528,13 +528,16 @@ SOP_OpenVDB_Points_Surfacer::cookVDBSop(OP_Context& context)
                     if (boss.wasInterrupted()) return error();
                     boss.start("Stamping ellipsoids into surface");
 
-                    openvdb::points::EllipsoidSettings<openvdb::TypeList<>, float, openvdb::points::NullFilter, hvdb::Interrupter> es;
+                    openvdb::points::EllipsoidSettings<openvdb::TypeList<>, openvdb::Vec3f, openvdb::points::NullFilter, hvdb::Interrupter> es;
                     es.interrupter = &boss;
-                    es.radiusScale = radiusScale.x();
+                    es.radiusScale = radiusScale;
                     es.halfband = halfBand;
                     es.transform = sdfTransform;
 
-                    es.pca = a;
+                    es.radius = a.stretch;
+                    es.rotation = a.rotation;
+                    if (s.averagePositions > 0)
+                        es.pws = a.positionWS;
 
                     std::cerr << "es.radiusScale " << es.radiusScale << std::endl;
                     std::cerr << "es.radius " << es.radius << std::endl;
