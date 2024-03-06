@@ -490,7 +490,7 @@ endif()
 
 # Add standard dependencies
 
-find_package(TBB REQUIRED COMPONENTS tbb)
+find_package(TBB CONFIG REQUIRED COMPONENTS tbb)
 find_package(Boost REQUIRED COMPONENTS iostreams)
 
 # Add deps for pyopenvdb

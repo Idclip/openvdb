@@ -128,9 +128,14 @@ if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_BOOST_VERSION)
 endif()
 
 if(NOT TARGET TBB::tbb)
-  find_package(TBB ${MINIMUM_TBB_VERSION} REQUIRED COMPONENTS tbb)
+  find_package(TBB ${MINIMUM_TBB_VERSION} CONFIG REQUIRED COMPONENTS tbb)
+  get_target_property(_TBB_LOCATION TBB::tbb IMPORTED_LOCATION_RELEASE)
+  message(STATUS "Found TBB: ${_TBB_LOCATION} (found suitable version \"${TBB_VERSION}\","
+    "minimum required is \"${MINIMUM_TBB_VERSION}\") found components: tbb")
+  unset(_TBB_LOCATION)
+
   if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_TBB_VERSION)
-    if(${Tbb_VERSION} VERSION_LESS FUTURE_MINIMUM_TBB_VERSION)
+    if(${TBB_VERSION} VERSION_LESS FUTURE_MINIMUM_TBB_VERSION)
       message(DEPRECATION "Support for TBB versions < ${FUTURE_MINIMUM_TBB_VERSION} "
         "is deprecated and will be removed.")
     endif()
@@ -139,18 +144,18 @@ endif()
 
 if(USE_IMATH_HALF)
   if(NOT TARGET Imath::Imath)
-    find_package(Imath CONFIG)
-  endif()
-  if (NOT TARGET Imath::Imath)
-    find_package(IlmBase ${MINIMUM_ILMBASE_VERSION} REQUIRED COMPONENTS Half)
-    if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_ILMBASE_VERSION)
-      if(${IlmBase_VERSION} VERSION_LESS FUTURE_MINIMUM_ILMBASE_VERSION)
-        message(DEPRECATION "Support for IlmBase versions < ${FUTURE_MINIMUM_ILMBASE_VERSION} "
+    find_package(Imath ${MINIMUM_IMATH_VERSION} CONFIG REQUIRED)
+    get_target_property(_IMATH_LOCATION Imath::Imath IMPORTED_LOCATION_RELEASE)
+    message(STATUS "Found Imath: ${_IMATH_LOCATION} (found suitable version \"${Imath_VERSION}\","
+      "minimum required is \"${MINIMUM_IMATH_VERSION}\")")
+    unset(_IMATH_LOCATION)
+
+    if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_IMATH_VERSION)
+      if(${Imath_VERSION} VERSION_LESS FUTURE_MINIMUM_IMATH_VERSION)
+        message(DEPRECATION "Support for Imath versions < ${FUTURE_MINIMUM_IMATH_VERSION} "
           "is deprecated and will be removed.")
       endif()
     endif()
-  else()
-    message(STATUS "Found Imath ${Imath_VERSION}")
   endif()
 endif()
 
