@@ -192,7 +192,7 @@ cmake \
     -DOPENVDB_TOOL_USE_NANO=OFF \
     -DOPENVDB_BUILD_PYTHON_UNITTESTS=ON \
     -DMSVC_MP_THREAD_COUNT=${PARMS[-j]} \
-    "${CMAKE_EXTRA[@]}" \
+    "${CMAKE_EXTRA[@]}" --debug-find \
     ..
 
 $CMAKE_BUILD_CMD

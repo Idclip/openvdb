@@ -107,6 +107,7 @@ endif()
 ##########################################################################
 
 # Collect and configure lib dependencies
+message(STATUS "CMAKE ARCH ==== ${CMAKE_LIBRARY_ARCHITECTURE}")
 
 if(OPENVDB_USE_DELAYED_LOADING)
   if(NOT TARGET Boost::iostreams)
@@ -126,6 +127,8 @@ if(OPENVDB_FUTURE_DEPRECATION AND FUTURE_MINIMUM_BOOST_VERSION)
       "is deprecated and will be removed.")
   endif()
 endif()
+
+message(STATUS "CMAKE ARCH ==== ${CMAKE_LIBRARY_ARCHITECTURE}")
 
 if(NOT TARGET TBB::tbb)
   find_package(TBB ${MINIMUM_TBB_VERSION} CONFIG REQUIRED COMPONENTS tbb)

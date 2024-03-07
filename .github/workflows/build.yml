@@ -102,6 +102,12 @@ jobs:
         path: /tmp/ccache
         key: linux-vfx${{ matrix.config.image }}-abi${{ matrix.config.abi }}-${{ matrix.config.cxx }}-${{ steps.timestamp.outputs.timestamp }}
         restore-keys: linux-vfx${{ matrix.config.image }}-abi${{ matrix.config.abi }}-${{ matrix.config.cxx }}-
+    - name: print_tree
+      run: sudo yum install tree -y
+    - name: print_tree
+      run: tree -afpi /usr/lib
+    - name: print_tree
+      run: tree -afpi /usr/local/lib
     - name: build
       run: >
         ./ci/build.sh -v
@@ -111,6 +117,7 @@ jobs:
         ${{ matrix.config.cmake }}
         -DOPENVDB_CXX_STRICT=ON
         -DOPENVDB_ABI_VERSION_NUMBER=${{ matrix.config.abi }}
+        -DTBB_DIR=/usr/lib/x86_64-linux-gnu/cmake/TBB/
         \"
     - name: test
       # Always run tests on weekly builds but skip Debug on commits as they take a while.
