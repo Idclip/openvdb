@@ -205,33 +205,18 @@ else()
 endif()
 
 set(Blosc_LIB_COMPONENTS "")
-# NOTE: Search for debug version first (see vcpkg hack)
-list(APPEND BLOSC_BUILD_TYPES DEBUG RELEASE)
+list(APPEND BLOSC_BUILD_TYPES RELEASE DEBUG)
 
 foreach(BUILD_TYPE ${BLOSC_BUILD_TYPES})
   set(_BLOSC_LIB_NAME blosc)
 
-  set(_BLOSC_CMAKE_IGNORE_PATH ${CMAKE_IGNORE_PATH})
-  if(VCPKG_TOOLCHAIN)
-    # Blosc is installed very strangely in VCPKG (debug/release libs have the
-    # same name, static build uses external deps, dll doesn't) and blosc itself
-    # comes with almost zero downstream CMake support for us to detect settings.
-    # We should not support external package managers in our own modules like
-    # this, but there doesn't seem to be a work around
-    if(NOT DEFINED BLOSC_DEBUG_SUFFIX)
-      set(BLOSC_DEBUG_SUFFIX "")
-    endif()
-    if(BUILD_TYPE STREQUAL RELEASE)
-      if(EXISTS ${Blosc_LIBRARY_DEBUG})
-        get_filename_component(_BLOSC_DEBUG_DIR ${Blosc_LIBRARY_DEBUG} DIRECTORY)
-        list(APPEND CMAKE_IGNORE_PATH ${_BLOSC_DEBUG_DIR})
-      endif()
-    endif()
-  endif()
-
   if(BUILD_TYPE STREQUAL DEBUG)
     if(NOT DEFINED BLOSC_DEBUG_SUFFIX)
-      set(BLOSC_DEBUG_SUFFIX _d)
+      if(VCPKG_TOOLCHAIN)
+        set(BLOSC_DEBUG_SUFFIX d)
+      else()
+        set(BLOSC_DEBUG_SUFFIX _d)
+      endif()
     endif()
     set(_BLOSC_LIB_NAME "${_BLOSC_LIB_NAME}${BLOSC_DEBUG_SUFFIX}")
   endif()
@@ -243,7 +228,6 @@ foreach(BUILD_TYPE ${BLOSC_BUILD_TYPES})
   )
 
   list(APPEND Blosc_LIB_COMPONENTS ${Blosc_LIBRARY_${BUILD_TYPE}})
-  set(CMAKE_IGNORE_PATH ${_BLOSC_CMAKE_IGNORE_PATH})
 endforeach()
 
 # Reset library suffix
@@ -386,16 +370,6 @@ if(NOT TARGET Blosc::blosc)
     foreach(BLOSC_EXTERNAL_LIB ${BLOSC_EXTERNAL_LIBRARIES})
 
       foreach(BUILD_TYPE ${BLOSC_BUILD_TYPES})
-        set(_BLOSC_CMAKE_IGNORE_PATH ${CMAKE_IGNORE_PATH})
-
-        if(VCPKG_TOOLCHAIN)
-          if(BUILD_TYPE STREQUAL RELEASE)
-            list(APPEND CMAKE_IGNORE_PATH ${Blosc_DEBUG_LIBRARY_DIRS})
-          else()
-            list(APPEND CMAKE_IGNORE_PATH ${Blosc_RELEASE_LIBRARY_DIRS})
-          endif()
-        endif()
-
         find_library(${BLOSC_EXTERNAL_LIB}_LIBRARY_${BUILD_TYPE} ${BLOSC_EXTERNAL_LIB}
           ${_FIND_BLOSC_ADDITIONAL_OPTIONS}
           PATHS ${_BLOSC_LIBRARYDIR_SEARCH_DIRS}
@@ -409,8 +383,6 @@ if(NOT TARGET Blosc::blosc)
               PATH_SUFFIXES ${CMAKE_INSTALL_LIBDIR} lib64 lib)
           endif()
         endif()
-
-        set(CMAKE_IGNORE_PATH ${_BLOSC_CMAKE_IGNORE_PATH})
       endforeach()
 
       if(${BLOSC_EXTERNAL_LIB}_LIBRARY_DEBUG AND ${BLOSC_EXTERNAL_LIB}_LIBRARY_RELEASE)
