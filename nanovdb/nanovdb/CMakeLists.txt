@@ -105,6 +105,7 @@ if(NANOVDB_USE_CUDA)
   endif()
 
   if(MSVC)
+    list(APPEND CMAKE_CUDA_FLAGS "-Xcompiler=/bigobj")
     # If a CMAKE_MSVC_RUNTIME_LIBRARY has not been provided and we're building
     # against openvdb, match the CRT that openvdb has been built against. This
     # setting is automatically propagated to CXX files but not CUDA sources, so
