@@ -97,21 +97,24 @@ endif()
 
 # Configure LLVM
 
-find_package(LLVM REQUIRED)
-find_library(found_LLVM LLVM HINTS ${LLVM_LIBRARY_DIRS})
+find_package(LLVM REQUIRED CONFIG)
+find_library(LLVM_SHARED_LIBRARY NAMES LLVM PATHS ${LLVM_LIBRARY_DIRS} NO_DEFAULT_PATH)
 
-if(found_LLVM)
-  set(LLVM_LIBS "LLVM")
-elseif(LLVM_PACKAGE_VERSION VERSION_LESS 16)
-  # Builds against LLVM 15 and earlier use MCJIT
-  llvm_map_components_to_libnames(_llvm_libs
-    native core executionengine support mcjit passes)
-  set(LLVM_LIBS "${_llvm_libs}")
+if(LLVM_SHARED_LIBRARY)
+  message(STATUS "Using shared LLVM library: ${LLVM_SHARED_LIBRARY}")
+  set(LLVM_LIBS ${LLVM_SHARED_LIBRARY})
 else()
-  # Builds against LLVM 16 and later use LLJIT/ORC
-  llvm_map_components_to_libnames(_llvm_libs
-    native core executionengine support orcjit orcshared orctargetprocess passes)
-  set(LLVM_LIBS "${_llvm_libs}")
+  message(STATUS "Shared LLVM library not found, falling back to component libraries")
+  if(LLVM_PACKAGE_VERSION VERSION_LESS 16)
+  # Builds against LLVM 15 and earlier use MCJIT
+    llvm_map_components_to_libnames(_llvm_libs
+      native core executionengine support mcjit passes)
+  else()
+    # Builds against LLVM 16 and later use LLJIT/ORC
+    llvm_map_components_to_libnames(_llvm_libs
+      native core executionengine support orcjit orcshared orctargetprocess passes)
+  endif()
+  set(LLVM_LIBS ${_llvm_libs})
 endif()
 
 set_property(GLOBAL PROPERTY OPENVDB_LLVM_VERSION_MAJOR "${LLVM_VERSION_MAJOR}")
