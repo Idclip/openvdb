@@ -36,7 +36,7 @@ endif()
 if(NOT OPENVDB_BUILD_AX)
   set(OPENVDBAX_LIB OpenVDB::openvdb_ax)
 else()
-  set(OPENVDBAX_LIB openvdb_ax)
+  set(OPENVDBAX_LIB openvdb_ax_static)
 endif()
 
 set(OPENVDB_AX_TEST_DEPENDENT_LIBS ${OPENVDBAX_LIB})
