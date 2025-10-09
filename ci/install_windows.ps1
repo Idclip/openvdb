@@ -37,4 +37,7 @@ try {
     vcpkg install $vcpkgPackages
 }
 
+# Install numpy for tests
+python -m pip install numpy
+
 Write-Host "vcpkg install completed successfully"
