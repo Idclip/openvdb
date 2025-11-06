@@ -59,6 +59,12 @@ jobs:
         -DUSE_EXPLICIT_INSTANTIATION=OFF
         -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON
         \"
+    - name: upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: doxygen_html
+        path: /usr/local/share/doc/OpenVDB/html
+        retention-days: 1
     - name: pre_deploy
       # Overwrite global SSH configuration
       #  https://github.com/peaceiris/actions-gh-pages/issues/719
