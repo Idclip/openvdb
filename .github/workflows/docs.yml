@@ -23,16 +23,21 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: 'Upload to CI or Deploy openvdb-website'
+        # What to do with the html artifacts produced. Upload options upload
+        # the zipped aritfacts to the CI (with a 1 day retention). Deploy
+        # options require the ASWF repo and deploy the html to the openvdb
+        # website repository
+        description: 'Deploy/Upload'
         required: true
         default: 'none'
         type: choice
         options:
           - none
-          - upload (docs)
-          - upload (coverage)
-          - deploy (docs)
-          - deploy (coverage)
+          - deploy to website (docs)
+          - deploy to website (coverage)
+          - upload to ci (docs)
+          - upload to ci (coverage)
+
 
 # Allow subsequent pushes to the same PR or REF to cancel any previous jobs.
 concurrency:
@@ -58,12 +63,13 @@ jobs:
         --build-type=Release
         --components="core,doc"
         --target="doc"
+        --build-dir=".build"
     - name: upload
-      if: github.event.inputs.deploy == 'upload (docs)'
+      if: github.event.inputs.deploy == 'upload to ci (docs)'
       uses: actions/upload-artifact@v4
       with:
         name: doxygen_html
-        path: /usr/local/share/doc/OpenVDB/html
+        path: .build/doc/html
         retention-days: 1
     - name: pre_deploy
       # Overwrite global SSH configuration
@@ -79,11 +85,11 @@ jobs:
       if: |
         github.repository_owner == 'AcademySoftwareFoundation' &&
         github.event_name == 'workflow_dispatch' &&
-        github.event.inputs.deploy == 'docs'
+        github.event.inputs.deploy == 'deploy to website (docs)'
       uses: peaceiris/actions-gh-pages@v3
       with:
         deploy_key: ${{ secrets.PRIVATE_KEY }}
-        publish_dir: /usr/local/share/doc/OpenVDB/html
+        publish_dir: .build/doc/html
         destination_dir: documentation/doxygen
         external_repository: AcademySoftwareFoundation/openvdb-website
         publish_branch: master
@@ -100,8 +106,8 @@ jobs:
     if: |
       github.repository_owner == 'AcademySoftwareFoundation' &&
       github.event_name == 'workflow_dispatch' &&
-      (github.event.inputs.deploy == 'upload (coverage)' ||
-       github.event.inputs.deploy == 'deploy (coverage)')
+      (github.event.inputs.deploy == 'upload to ci (coverage)' ||
+       github.event.inputs.deploy == 'deploy to website (coverage)')
     runs-on: ubuntu-latest
     container:
       image: aswf/ci-openvdb:2025-clang19.1
