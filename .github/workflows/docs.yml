@@ -23,9 +23,16 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: 'Deploy to openvdb-website (docs/coverage)?'
+        description: 'Upload to CI or Deploy openvdb-website'
         required: true
         default: 'none'
+        type: choice
+        options:
+          - none
+          - upload (docs)
+          - upload (coverage)
+          - deploy (docs)
+          - deploy (coverage)
 
 # Allow subsequent pushes to the same PR or REF to cancel any previous jobs.
 concurrency:
@@ -49,8 +56,10 @@ jobs:
       run: >
         ./ci/build.sh -v
         --build-type=Release
-        --components="doc"
+        --components="core,doc"
+        --target="doc"
     - name: upload
+      if: github.event.inputs.deploy == 'upload (docs)'
       uses: actions/upload-artifact@v4
       with:
         name: doxygen_html
@@ -91,7 +100,8 @@ jobs:
     if: |
       github.repository_owner == 'AcademySoftwareFoundation' &&
       github.event_name == 'workflow_dispatch' &&
-      github.event.inputs.deploy == 'coverage'
+      (github.event.inputs.deploy == 'upload (coverage)' ||
+       github.event.inputs.deploy == 'deploy (coverage)')
     runs-on: ubuntu-latest
     container:
       image: aswf/ci-openvdb:2025-clang19.1
@@ -123,6 +133,13 @@ jobs:
         sed -i -e 's/List of functions/Download function index/g' index.html
         rm index.functions.html
         cd -
+    - name: upload
+      if: github.event.inputs.deploy == 'upload (coverage)'
+      uses: actions/upload-artifact@v4
+      with:
+        name: gcov
+        path: ./build/gcov_html
+        retention-days: 1
     - name: pre_deploy
       # Overwrite global SSH configuration
       #  https://github.com/peaceiris/actions-gh-pages/issues/719
