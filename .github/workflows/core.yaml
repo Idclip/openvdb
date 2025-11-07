@@ -1,0 +1,79 @@
+name: OpenVDB Build
+
+on:
+  workflow_call:
+    inputs:
+      cxx:
+        required: false
+        default: 'clang++'
+        type: string
+      image:
+        required: false
+        default: '2026'
+        type: string
+      abi:
+        required: false
+        default: 13
+        type: number
+      components:
+        required: false
+        default: 'core'
+        type: string
+      build:
+        required: false
+        default: 'Release'
+        type: string
+      cmake:
+        required: false
+        type: string
+
+jobs:
+  linux:
+    runs-on: ${{ (github.repository_owner == 'AcademySoftwareFoundation' && 'ubuntu-22.04-8c-32g-300h') || 'ubuntu-latest' }}
+    name: linux:${{ inputs.image }}-abi:${{ inputs.abi }}-cxx:${{ inputs.cxx }}-type:${{ inputs.build }}
+    container:
+      image: aswf/ci-openvdb:${{ inputs.image }}
+    env:
+      CXX: ${{ inputs.cxx }}
+      CCACHE_DIR: /tmp/ccache
+    steps:
+    - uses: actions/checkout@v3
+    - name: nanobind
+      if: contains(inputs.components, 'python')
+      run: ./ci/install_nanobind.sh 2.5.0
+    - name: timestamp
+      id: timestamp
+      run: echo "timestamp=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+    - name: ccache
+      # don't use ccache for debug builds
+      if: inputs.build == 'Release'
+      id: ccache
+      uses: actions/cache@v3
+      with:
+        path: /tmp/ccache
+        key: linux-vfx${{ inputs.image }}-abi${{ inputs.abi }}-${{ inputs.cxx }}-${{ steps.timestamp.outputs.timestamp }}
+        restore-keys: linux-vfx${{ inputs.image }}-abi${{ inputs.abi }}-${{ inputs.cxx }}-
+    - name: build
+      run: >
+        ./ci/build.sh -v
+        --build-type=${{ inputs.build }}
+        --components=\"${{ inputs.components }}\"
+        --cargs=\"
+        ${{ inputs.cmake }}
+        -DOPENVDB_CXX_STRICT=ON
+        -DOPENVDB_AX_TEST_CMD_DOWNLOADS=ON
+        -DOPENVDB_ABI_VERSION_NUMBER=${{ inputs.abi }}
+        \"
+    - name: test
+      # Skip Debug on commits as they take a while.
+      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.config.build == 'Release'
+      run: |
+        cd build && ctest -V
+        cd - && ./ci/test_install.sh
+    - name: test_doxygen_examples
+      if: contains(inputs.components, 'ax')
+      run: ./ci/extract_test_examples.sh
+    # Keep ccache light by stripping out any caches not accessed in the last day
+    - name: ccache_clean
+      if: inputs.build == 'Release'
+      run: ccache --evict-older-than 1d
