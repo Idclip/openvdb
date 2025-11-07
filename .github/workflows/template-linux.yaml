@@ -3,6 +3,10 @@ name: OpenVDB Linux Build
 on:
   workflow_call:
     inputs:
+      name:
+        required: false
+        default: 'linux'
+        type: string
       cxx:
         required: false
         default: 'clang++'
@@ -33,7 +37,7 @@ on:
 jobs:
   linux:
     runs-on: ${{ (github.repository_owner == 'AcademySoftwareFoundation' && 'ubuntu-22.04-8c-32g-300h') || 'ubuntu-latest' }}
-    name: linux:${{ inputs.image }}-abi:${{ inputs.abi }}-cxx:${{ inputs.cxx }}-type:${{ inputs.build }}
+    name: ${{ inputs.name }}
     container:
       image: aswf/ci-openvdb:${{ inputs.image }}
     env:
