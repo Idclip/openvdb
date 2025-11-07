@@ -48,7 +48,7 @@ defaults:
     shell: bash
 
 jobs:
-  linux-vfx:
+  linux:
     if: |
       github.event_name != 'workflow_dispatch' ||
       github.event.inputs.type == 'all' ||
@@ -90,7 +90,6 @@ jobs:
       fail-fast: false
     uses: ./.github/workflows/template-linux.yaml
     with:
-      name: ${{ matrix.config.name }}
       cxx: ${{ matrix.config.cxx }}
       image: ${{ matrix.config.image }}
       abi: ${{ matrix.config.abi }}
