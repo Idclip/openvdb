@@ -1,0 +1,84 @@
+name: OpenVDB Windows Builds
+
+on:
+  workflow_call:
+    inputs:
+      vc:
+        required: false
+        default: 'x64-windows'
+        type: string
+      components:
+        required: false
+        default: 'core'
+        type: string
+      build:
+        required: false
+        default: 'Release'
+        type: string
+      cmake:
+        required: false
+        type: string
+      llvm:
+        required: false
+        type: string
+      crt:
+        required: false
+        type: string
+
+jobs:
+  windows:
+    runs-on: ${{ (github.repository_owner == 'AcademySoftwareFoundation' && 'windows-2022-8c-32g-300h') || 'windows-latest' }}
+    name: windows
+    env:
+      VCPKG_DEFAULT_TRIPLET: ${{ inputs.vc }}
+      visual_studio: "Visual Studio 17 2022"
+      # Read by install_windows_cuda
+      cuda: "12.4.0"
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: path
+      shell: pwsh
+      run: |
+        # note: system path must be modified in a previous step to it's use
+        echo "$Env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "${{github.workspace}}\build\openvdb\openvdb\Release" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    - name: install
+      shell: powershell
+      run: .\ci\install_windows.ps1
+    - name: llvm
+      if: contains(inputs.components, 'ax')
+      shell: bash
+      run: ./ci/install_llvm_windows.sh ${{ inputs.llvm }} ${{ inputs.crt }}
+    - name: install_numpy
+      shell: powershell
+      if: ${{ !contains(inputs.vc, 'static')}}
+      run: .\ci\install_windows_numpy.ps1
+    - name: install_cuda
+      if: contains(inputs.components, 'nano')
+      shell: powershell
+      run: .\ci\install_windows_cuda.ps1
+    - name: build
+      run: >
+        ./ci/build.sh -v
+        --config='Release'
+        --components='core,bin,view,render,python,test'
+        --cargs=\'
+        -A x64 -G \"Visual Studio 17 2022\"
+        -DMSVC_COMPRESS_PDB=ON
+        -DUSE_EXR=ON
+        -DUSE_PNG=ON
+        -DVCPKG_TARGET_TRIPLET=${VCPKG_DEFAULT_TRIPLET}
+        -DCMAKE_TOOLCHAIN_FILE=\"${VCPKG_INSTALLATION_ROOT}\\scripts\\buildsystems\\vcpkg.cmake\"
+        -DNANOVDB_USE_CUDA=ON
+        -DNANOVDB_USE_OPENVDB=ON
+        -DCMAKE_CUDA_ARCHITECTURES="80"
+        -DCMAKE_CUDA_FLAGS="-D_WIN32"
+        ${{ inputs.cmake }}
+        \'
+    - name: size
+      # Print the build directy size (monitor if we're hitting runner limits)
+      run: du -h build
+    - name: test
+      run: cd build && ctest -V -C Release -E ".*cuda.*|.*mgpu.*"

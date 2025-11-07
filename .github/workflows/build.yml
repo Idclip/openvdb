@@ -13,8 +13,6 @@ on:
       - 'doc/**'
       - 'openvdb_maya/**'
       - 'openvdb_houdini/**'
-      - 'openvdb_ax/**'
-      - 'nanovdb/**'
       - 'fvdb/**'
       - 'pendingchanges/**'
       - '**.md'
@@ -27,8 +25,6 @@ on:
       - 'doc/**'
       - 'openvdb_maya/**'
       - 'openvdb_houdini/**'
-      - 'openvdb_ax/**'
-      - 'nanovdb/**'
       - 'fvdb/**'
       - 'pendingchanges/**'
       - '**.md'
@@ -60,18 +56,79 @@ jobs:
     strategy:
       matrix:
         config:
-          - { cxx: clang++, image: '2026',           abi: '13', build: 'Release', cmake: '' }
-          - { cxx: g++,     image: '2026',           abi: '13', build: 'Release', cmake: '' }
-          - { cxx: clang++, image: '2026',           abi: '13', build: 'Debug',   cmake: '' }
-          - { cxx: clang++, image: '2025-clang19.1', abi: '12', build: 'Release', cmake: '' }
-          - { cxx: clang++, image: '2024-clang17.2', abi: '11', build: 'Release', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
-    uses: ./.github/workflows/core.yaml
+          - { cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,view,render,test,', cmake: '' }
+          - { cxx: g++,     image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,view,render,test,', cmake: '' }
+          - { cxx: clang++, image: '2026',           abi: '13', build: 'Debug',   components: 'core,python,bin,view,render,test,', cmake: '' }
+          - { cxx: clang++, image: '2025-clang19.1', abi: '12', build: 'Release', components: 'core,python,bin,view,render,test,', cmake: '' }
+          - { cxx: clang++, image: '2024-clang17.2', abi: '11', build: 'Release', components: 'core,python,bin,view,render,test,', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          # Weekly
+          - { name: 'all',    cxx: clang++, image: '2026', build: 'Release', components: 'core,python,bin,view,render,test', cmake: '-DUSE_BLOSC=ON  -DUSE_ZLIB=ON  -DUSE_EXR=ON  -DUSE_PNG=ON'  }
+          - { name: 'lite',   cxx: clang++, image: '2026', build: 'Release', components: 'core,python,bin,view,render,test', cmake: '-DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DUSE_EXR=OFF -DUSE_PNG=OFF -DOPENVDB_USE_DELAYED_LOADING=OFF' }
+          - { name: 'half',   cxx: clang++, image: '2026', build: 'Release', components: 'core,python,bin,view,render,test', cmake: '-DUSE_BLOSC=OFF -DUSE_IMATH_HALF=ON' }
+          - { name: 'sse',    cxx: clang++, image: '2026', build: 'Release', components: 'core,python,bin,view,render,test', cmake: '-DOPENVDB_SIMD=SSE42' }
+          - { name: 'avx',    cxx: clang++, image: '2026', build: 'Release', components: 'core,python,bin,view,render,test', cmake: '-DOPENVDB_SIMD=AVX' }
+          - { name: 'pygrid', cxx: clang++, image: '2026', build: 'Release', components: 'core,python,bin,view,render,test', cmake: '-DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON' }
+          - { name: 'asan',   cxx: clang++, image: '2026', build: 'asan',    components: 'core,test',                        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DNANOVDB_USE_OPENVDB=ON -DOPENVDB_AX_STATIC=OFF -DOPENVDB_CORE_STATIC=OFF -DUSE_BLOSC=OFF' } # We never called blosc_destroy(), so disable blosc to silence these errors
+          - { name: 'ubsan',  cxx: clang++, image: '2026', build: 'ubsan',   components: 'core,test',                        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" ' }
+          - { name: 'c++20',  cxx: clang++, image: '2026', build: 'Release', components: 'core,test',                        cmake: '-DCMAKE_CXX_STANDARD=20' }
+          - { name: 'conf',   cxx: clang++, image: '2026', build: 'Release', components: 'core,python,bin,view,render,test', cmake: '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON' }
+          # AX
+          - { cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,view,render,test,axcore,axbin,axtest', cmake: '' }
+          - { cxx: g++,     image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,view,render,test,axcore,axbin,axtest', cmake: '' }
+          - { cxx: clang++, image: '2026',           abi: '13', build: 'Debug',   components: 'core,python,bin,view,render,test,axcore,axbin,axtest', cmake: '' }
+          - { cxx: clang++, image: '2025-clang19.1', abi: '12', build: 'Release', components: 'core,python,bin,view,render,test,axcore,axbin,axtest', cmake: '' }
+          - { cxx: clang++, image: '2024-clang17.2', abi: '11', build: 'Release', components: 'core,python,bin,view,render,test,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          # For AX builds, to test LLVM 15/16
+          - { cxx: clang++, image: '2024-clang16.2', abi: '13', build: 'Release', components: 'core,python,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { cxx: clang++, image: '2023-clang15',   abi: '13', build: 'Release', components: 'core,python,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          # NanoVDB
+          # NOTE: CMAKE_POSITION_INDEPENDENT_CODE set to fix default behaviour change in clang 14
+          #   https://github.com/AcademySoftwareFoundation/aswf-docker/issues/228
+          - { cxx: g++,     image: '2024-clang17.2', build: 'Release', components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { cxx: g++,     image: '2024-clang17.2', build: 'Debug',   components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { cxx: clang++, image: '2024-clang17.2', build: 'Release', components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { cxx: clang++, image: '2024-clang17.2', build: 'Debug',   components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { cxx: clang++, image: '2024-clang17.2', build: 'Release', components: 'nanotest', cmake: '-DNANOVDB_USE_OPENVDB=OFF -DNANOVDB_USE_CUDA=OFF' }
+      fail-fast: false
+    uses: ./.github/workflows/template-linux.yaml
     with:
       cxx: ${{ matrix.config.cxx }}
       image: ${{ matrix.config.image }}
       abi: ${{ matrix.config.abi }}
       build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
       cmake: ${{ matrix.config.cmake }}
+
+  macos-vfx:
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.type == 'all' ||
+      github.event.inputs.type == 'mac'
+    strategy:
+      matrix:
+        config:
+          - { image: 'macos-14', build: 'Release', components: 'core,python,bin,view,render,test', llvm: '', cmake: '' }
+          - { image: 'macos-15', build: 'Release', components: 'core,python,bin,view,render,test', llvm: '', cmake: '' }
+          # core,python,axcore,axbin,axtest
+          - { image: 'macos-15', build: 'Release', components: 'core,python,axcore,axbin,axtest', llvm: '21' }
+          - { image: 'macos-14', build: 'Release', components: 'core,python,axcore,axbin,axtest', llvm: '21' }
+          - { image: 'macos-14', build: 'Release', components: 'core,python,axcore,axbin,axtest', llvm: '20' }
+          - { image: 'macos-14', build: 'Release', components: 'core,python,axcore,axbin,axtest', llvm: '19' }
+          - { image: 'macos-14', build: 'Release', components: 'core,python,axcore,axbin,axtest', llvm: '18' }
+          - { image: 'macos-14', build: 'Release', components: 'core,python,axcore,axbin,axtest', llvm: '17' }
+          - { image: 'macos-14', build: 'Release', components: 'core,python,axcore,axbin,axtest', llvm: '16' }
+          - { image: 'macos-latest', build: 'Release', components: 'core,python,axcore,axbin,axtest', llvm: '20', cmake: '-DUSE_EXPLICIT_INSTANTIATION=OFF ' }
+          # Nano
+          - { image: 'macos-14', build: 'Release', components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install -DUSE_EXPLICIT_INSTANTIATION=OFF -DNANOVDB_USE_CUDA=OFF -DNANOVDB_USE_OPENVDB=ON' }
+          - { image: 'macos-14', build: 'Debug',   components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install -DUSE_EXPLICIT_INSTANTIATION=OFF -DNANOVDB_USE_CUDA=OFF -DNANOVDB_USE_OPENVDB=ON' }
+      fail-fast: false
+    uses: ./.github/workflows/template-macos.yaml
+    with:
+      image: ${{ matrix.config.image }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+      llvm: ${{ matrix.config.llvm }}
 
   windows:
     # Windows CI. Tests a dynamic build with MD.
@@ -79,73 +136,47 @@ jobs:
       github.event_name != 'workflow_dispatch' ||
       github.event.inputs.type == 'all' ||
       github.event.inputs.type == 'win'
-    runs-on: ${{ (github.repository_owner == 'AcademySoftwareFoundation' && 'windows-2022-8c-32g-300h') || 'windows-latest' }}
-    name: windows
-    env:
-      VCPKG_DEFAULT_TRIPLET: x64-windows
-    strategy:
-      fail-fast: false
-    steps:
-    - uses: actions/checkout@v3
-    - name: path
-      shell: pwsh
-      run: |
-        # note: system path must be modified in a previous step to it's use
-        echo "$Env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        echo "${{github.workspace}}\build\openvdb\openvdb\Release" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    - name: install
-      shell: powershell
-      run: .\ci\install_windows.ps1
-    - name: install_numpy
-      shell: powershell
-      run: .\ci\install_windows_numpy.ps1
-    - name: build
-      run: >
-        ./ci/build.sh -v
-        --config='Release'
-        --components='core,bin,view,render,python,test'
-        --cargs=\'
-        -A x64 -G \"Visual Studio 17 2022\" -DOPENVDB_CORE_STATIC=OFF
-        -DMSVC_COMPRESS_PDB=ON
-        -DUSE_EXR=ON
-        -DUSE_PNG=ON
-        -DVCPKG_TARGET_TRIPLET=${VCPKG_DEFAULT_TRIPLET}
-        -DCMAKE_TOOLCHAIN_FILE=\"${VCPKG_INSTALLATION_ROOT}\\scripts\\buildsystems\\vcpkg.cmake\"
-        \'
-    - name: size
-      # Print the build directy size (monitor if we're hitting runner limits)
-      run: du -h build
-    - name: test
-      run: cd build && ctest -V -C Release
-
-  macos:
-    if: |
-      github.event_name != 'workflow_dispatch' ||
-      github.event.inputs.type == 'all' ||
-      github.event.inputs.type == 'mac'
-    runs-on: ${{ matrix.config.image }}
-    name: ${{ matrix.config.image }}
-    env:
-      CXX: clang++
     strategy:
       matrix:
         config:
-          - { image: macos-14 }
-          - { image: macos-15 }
-    steps:
-    - uses: actions/checkout@v3
-    - name: install
-      run: |
-        ./ci/install_macos.sh
-        ./ci/install_tbb_macos.sh
-    - name: build
-      run: >
-        ./ci/build.sh -v
-        --build-type=Release
-        --components=\"core,python,bin,view,render,test\"
-        --cargs=\'
-        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
-        \'
-    - name: test
-      run: cd build && ctest -V
+          # static build of blosc from vcpkg does not build internal sources.
+          # USE_STATIC_DEPENDENCIES is required for IlmBase/OpenEXR defines and
+          # Boost as both shared and static libs are installed.
+          # USE_EXPLICIT_INSTANTIATION is disabled for debug static libraries
+          # due to disk space constraints
+          - { vc: 'x64-windows-static', build: 'Release', components: 'core,bin,view,render,test',        cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
+          - { vc: 'x64-windows',        build: 'Release', components: 'core,bin,view,render,python,test', cmake: '-DOPENVDB_CORE_STATIC=OFF' }
+          - { vc: 'x64-windows',        build: 'Debug',   components: 'core,bin,view,render,python,test', cmake: '-DOPENVDB_CORE_STATIC=OFF' }
+          # AX
+          # static build of blosc from vcpkg does not build internal sources.
+          # USE_STATIC_DEPENDENCIES is required for IlmBase/OpenEXR defines and
+          # Boost as both shared and static libs are installed.
+          # @todo  We don't currently run the axtests with shared builds of ax
+          # due to symbol issues using LLVM as a static lib (which is the only
+          # option on Windows).
+          # @note  currently only test static builds with MT as building LLVM as
+          # a shared lib on windows is a bit dicey
+          - { vc: 'x64-windows-static', llvm: '18.1.0', crt: 'MultiThreaded',      components: 'core,axcore,axbin,axtest', build: 'Release', cmake: '-DOPENVDB_AX_TEST_CMD_DOWNLOADS=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_CORE_SHARED=OFF -DOPENVDB_AX_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
+          - { vc: 'x64-windows-static', llvm: '18.1.0', crt: 'MultiThreadedDebug', components: 'core,axcore,axbin,axtest', build: 'Debug',   cmake: '-DOPENVDB_AX_TEST_CMD_DOWNLOADS=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_CORE_SHARED=OFF -DOPENVDB_AX_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
+          - { vc: 'x64-windows',        llvm: '18.1.0', crt: 'MultiThreadedDLL',   components: 'core,axcore,axbin',        build: 'Release', cmake: '-DOPENVDB_AX_TEST_CMD_DOWNLOADS=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_CORE_STATIC=OFF -DOPENVDB_AX_STATIC=OFF' }
+          - { vc: 'x64-windows-static', llvm: '15.0.0', crt: 'MultiThreaded',      components: 'core,axcore,axbin,axtest', build: 'Release', cmake: '-DOPENVDB_AX_TEST_CMD_DOWNLOADS=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_CORE_SHARED=OFF -DOPENVDB_AX_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON' }
+          # Nano
+          - { build: 'Release', components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DDUSE_EXPLICIT_INSTANTIATION=OFF' }
+          # static build of blosc from vcpkg does not build internal sources.
+          # USE_STATIC_DEPENDENCIES is required for IlmBase/OpenEXR defines and
+          # Boost as both shared and static libs are installed.
+          - { vc: 'x64-windows-static', build: 'Release', cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded' }
+          - { vc: 'x64-windows-static', build: 'Debug',   cmake: '-DOPENVDB_CORE_SHARED=OFF -DUSE_STATIC_DEPENDENCIES=ON -DBLOSC_USE_EXTERNAL_SOURCES=ON -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug' }
+          - { vc: 'x64-windows',        build: 'Release', cmake: '-DOPENVDB_CORE_STATIC=OFF' }
+          - { vc: 'x64-windows',        build: 'Debug',   cmake: '-DOPENVDB_CORE_STATIC=OFF' }
+      fail-fast: false
+    uses: ./.github/workflows/template-windows.yaml
+    with:
+      vc: ${{ matrix.config.vc }}
+      image: ${{ matrix.config.image }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+      llvm: ${{ matrix.config.llvm }}
+      crt: ${{ matrix.config.crt }}
 

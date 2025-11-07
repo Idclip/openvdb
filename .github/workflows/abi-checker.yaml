@@ -1,0 +1,106 @@
+# This workflow runs once a week and tests a variety of configurations,
+# dependencies and other specific or expensive checkes (sanitizers).
+# It also contains the Houdini Cache jobs which update the CI cache
+# with new Houdini releases.
+
+name: Weekly
+
+on:
+  schedule:
+    # run this workflow Sunday 00:00 UTC
+    - cron:  '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'The type of CI to run (all, houdini, latest, extra, ax, blosc, abi)'
+        required: true
+        default: 'all'
+
+# Allow subsequent pushes to the same PR or REF to cancel any previous jobs.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  linux-abi-checker:
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      (github.event.inputs.type == 'all' ||
+       github.event.inputs.type == 'abi')
+    runs-on: ubuntu-22.04
+    env:
+      # The 'abicheck' build type sets these, but older versions of the library
+      # may not have this build type. See OpenVDBCXX.cmake
+      CXXFLAGS: "-gdwarf-4 -g3 -ggdb -Og"
+    steps:
+    - name: Enable Node 16
+      run: |
+        echo "ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true" >> $GITHUB_ENV
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+    # Compute the latest major version - that is used as our baseline
+    # note: For CI forks, make sure you have your tags synced
+    - name: get_major_version
+      run: |
+        LATEST_VERSION_TAG=$(git tag --merged | sort --version-sort | tail -n1)
+        echo "Computed latest VDB tag: ${LATEST_VERSION_TAG}"
+        VDB_MAJOR_VERSION=$(echo ${LATEST_VERSION_TAG} | cut -f1 -d '.' | tr -d -c 0-9)
+        echo "Using major version: ${VDB_MAJOR_VERSION}"
+        echo "VDB_MAJOR_VERSION=${VDB_MAJOR_VERSION}" >> "$GITHUB_ENV"
+    - name: install_deps
+      run: sudo apt-get -q install -y libboost-iostreams-dev libtbb-dev libblosc-dev elfutils
+    - name: install_abi_checker
+      run: sudo apt-get -q install -y abi-dumper abi-compliance-checker
+    - name: build_new
+      run: >
+        ./ci/build.sh -v
+        --build-dir=build_new
+        --build-type=abicheck
+        --target=openvdb_shared
+        --components=\"core\"
+        --cargs=\'-DUSE_EXPLICIT_INSTANTIATION=OFF -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON\'
+    - name: checkout_baseline
+      run: git checkout v${VDB_MAJOR_VERSION}.0.0
+    - name: build_old
+      run: >
+        ./ci/build.sh -v
+        --build-dir=build_old
+        --build-type=abicheck
+        --target=openvdb_shared
+        --components=\"core\"
+        --cargs=\'-DUSE_EXPLICIT_INSTANTIATION=OFF -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON\'
+    - name: abi_dump
+      run: |
+        abi-dumper build_new/openvdb/openvdb/libopenvdb.so -o ABI-NEW.dump -lver 1
+        abi-dumper build_old/openvdb/openvdb/libopenvdb.so -o ABI-OLD.dump -lver 2
+      # Replace the version namespace in the latest ABI dump with the baseline
+      # version we're comparing against. We should probably instead build the
+      # latest with the baseline version number but no CMake/defines allow us to
+      # do this.
+    - name: replace_symbols
+      run: sed -i -E 's/openvdb([^v]*)v[0-9]*_[0-9]/openvdb\1v'${VDB_MAJOR_VERSION}'_0/g' ABI-NEW.dump
+    - name: abi_check
+      # -strict treats warnings as errors
+      # -extended checks all member data
+      # we check everything _not_ in openvdb::**::internal namespace
+      run: >
+        abi-compliance-checker -l OPENVDB
+        -old ABI-OLD.dump
+        -new ABI-NEW.dump
+        -skip-internal-symbols "\d(openvdb.*internal)"
+        -skip-internal-types "(openvdb.*internal)::"
+        -strict
+        -extended
+    - name: upload_report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: abi_report
+        path: ./compat_reports/OPENVDB/2_to_1/compat_report.html
+        retention-days: 5

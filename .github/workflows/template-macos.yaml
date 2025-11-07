@@ -1,0 +1,55 @@
+name: OpenVDB MacOS Builds
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: false
+        default: 'macos-latest'
+        type: string
+      components:
+        required: false
+        default: 'core'
+        type: string
+      build:
+        required: false
+        default: 'Release'
+        type: string
+      cmake:
+        required: false
+        type: string
+      llvm:
+        required: false
+        type: number
+
+jobs:
+  macos:
+    runs-on: ${{ inputs.image }}
+    name: macos:${{ inputs.image }}-type:${{ inputs.build }}
+    env:
+      CXX: clang++
+    steps:
+    - uses: actions/checkout@v3
+    - name: install_llvm
+      if: ${{ inputs.llvm != '' }}
+      run: ./ci/install_macos.sh ${{ inputs.llvm }}
+    - name: install_deps
+      run: ./ci/install_tbb_macos.sh
+    - name: build
+      run: >
+        ./ci/build.sh -v
+        --build-type=${{ inputs.build }}
+        --components="${{ inputs.components }}"
+        --cargs=\"
+        -DOPENVDB_AX_TEST_CMD_DOWNLOADS=ON
+        -DUSE_EXPLICIT_INSTANTIATION=OFF
+        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+        -DLLVM_DIR=/opt/homebrew/opt/llvm@${{ inputs.llvm }}/lib/cmake/llvm
+        ${{ inputs.cmake }}
+        \"
+    - name: test
+      run: cd build && ctest -V -E ".*cuda.*|.*mgpu.*"
+    - name: test_ax_doxygen_examples
+      if: contains(inputs.components, 'ax')
+      run: ./ci/extract_test_examples.sh
+

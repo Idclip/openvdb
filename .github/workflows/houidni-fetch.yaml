@@ -1,0 +1,126 @@
+# This workflow runs once a week and tests a variety of configurations,
+# dependencies and other specific or expensive checkes (sanitizers).
+# It also contains the Houdini Cache jobs which update the CI cache
+# with new Houdini releases.
+
+name: Weekly
+
+on:
+  schedule:
+    # run this workflow Sunday 00:00 UTC
+    - cron:  '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'The type of CI to run (all, houdini, latest, extra, ax, blosc, abi)'
+        required: true
+        default: 'all'
+
+# Allow subsequent pushes to the same PR or REF to cancel any previous jobs.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  #############################################################################
+  ################################## Houdini ##################################
+  #############################################################################
+
+  # Check that valid github secrets have been set for the ability to
+  # download Houdini and cache it. The secrets are used in download_houdini.py
+  checksecret:
+    name: Verify Houdini Secrets
+    runs-on: ubuntu-latest
+    outputs:
+      HOUDINI_SECRETS: ${{ steps.check.outputs.HOUDINI_SECRETS }}
+    steps:
+      - id: check
+        env:
+            HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
+            HOUDINI_SECRET_KEY: ${{ secrets.HOUDINI_SECRET_KEY }}
+        run: echo "HOUDINI_SECRETS=${{ env.HOUDINI_CLIENT_ID != '' && env.HOUDINI_SECRET_KEY != '' }}" >> $GITHUB_OUTPUT
+      - name: Skip Next Jobs
+        if: steps.check.outputs.HOUDINI_SECRETS != 'true'
+        run: echo "HOUDINI_CLIENT_ID and HOUDINI_SECRET_KEY GitHub Action Secrets needs to be set to install Houdini builds"
+      # Explicitly error on the ASWF repo, we expect this secret to always exist
+      - name: Error ASWF
+        if: steps.check.outputs.HOUDINI_SECRETS != 'true' && github.repository_owner == 'AcademySoftwareFoundation'
+        run: exit 1
+
+  # download the latest production version of Houdini X, strip out headers,
+  # libraries and binaries required for building OpenVDB and put it into
+  # the GitHub Actions cache
+  linux_houdini:
+    needs: [checksecret]
+    if: |
+      (needs.checksecret.outputs.HOUDINI_SECRETS == 'true') &&
+      (github.event_name != 'workflow_dispatch' ||
+       github.event.inputs.type == 'all' ||
+       github.event.inputs.type == 'houdini')
+    runs-on: ${{ (github.repository_owner == 'AcademySoftwareFoundation' && 'ubuntu-22.04-8c-32g-300h') || 'ubuntu-latest' }}
+    name: linux-houdini:${{ matrix.config.hou_hash }}
+    env:
+      CXX: clang++
+      HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
+      HOUDINI_SECRET_KEY: ${{ secrets.HOUDINI_SECRET_KEY }}
+    strategy:
+      matrix:
+        config:
+          - { houdini_version: '21.0', platform: 'linux_x86_64_gcc11.2', hou_hash: '21_0' }
+          - { houdini_version: '20.5', platform: 'linux_x86_64_gcc11.2', hou_hash: '20_5' }
+      fail-fast: false
+    container:
+      image: aswf/ci-base:2024
+    steps:
+    - uses: actions/checkout@v3
+    - name: timestamp
+      id: timestamp
+      run: echo "timestamp=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+    - name: download_houdini
+      run: ./ci/download_houdini.sh ${{ matrix.config.houdini_version }} ${{ matrix.config.platform }} --prod
+    - name: install_houdini
+      run: |
+        mkdir $HOME/houdini_install
+        cp hou/hou.tar.gz $HOME/houdini_install/hou.tar.gz
+        cd $HOME/houdini_install && tar -xzf hou.tar.gz && cd -
+    - name: write_houdini_cache
+      uses: actions/cache/save@v3
+      with:
+        path: hou
+        key: vdb-v5-houdini${{ matrix.config.hou_hash }}-${{ steps.timestamp.outputs.timestamp }}
+
+  macos_houdini:
+    needs: [checksecret]
+    if: |
+      (needs.checksecret.outputs.HOUDINI_SECRETS == 'true') &&
+      (github.event_name != 'workflow_dispatch' ||
+       github.event.inputs.type == 'all' ||
+       github.event.inputs.type == 'houdini')
+    # Note that macos-14 (current macos-latest) switches to M1. We could instead test
+    # the arm build here instead of the x86 one.
+    runs-on: macos-latest
+    name: macos-houdini
+    env:
+      HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
+      HOUDINI_SECRET_KEY: ${{ secrets.HOUDINI_SECRET_KEY }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: timestamp
+      id: timestamp
+      run: echo "timestamp=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+    - name: download_houdini
+      run: ./ci/download_houdini.sh 21.0 macosx_arm64_clang15.0_14 --prod
+    - name: install_houdini
+      run: |
+        mkdir $HOME/houdini_install
+        cp hou/hou.tar.gz $HOME/houdini_install/hou.tar.gz
+        cd $HOME/houdini_install && tar -xzf hou.tar.gz && cd -
+    - name: write_houdini_cache
+      uses: actions/cache/save@v3
+      with:
+        path: hou
+        key: vdb-v5-houdini-macos-${{ steps.timestamp.outputs.timestamp }}

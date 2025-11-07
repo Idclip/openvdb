@@ -1,4 +1,4 @@
-name: OpenVDB Build
+name: OpenVDB Linux Build
 
 on:
   workflow_call:
@@ -26,6 +26,9 @@ on:
       cmake:
         required: false
         type: string
+      flags:
+        required: false
+        type: string
 
 jobs:
   linux:
@@ -41,6 +44,11 @@ jobs:
     - name: nanobind
       if: contains(inputs.components, 'python')
       run: ./ci/install_nanobind.sh 2.5.0
+    - name: setup_cuda_12
+      if: contains(inputs.flags, 'cuda')
+      run: |
+        echo "/usr/local/cuda-12/bin" >> $GITHUB_PATH
+        echo "LD_LIBRARY_PATH=/usr/local/cuda-12/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
     - name: timestamp
       id: timestamp
       run: echo "timestamp=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
@@ -59,18 +67,21 @@ jobs:
         --build-type=${{ inputs.build }}
         --components=\"${{ inputs.components }}\"
         --cargs=\"
-        ${{ inputs.cmake }}
         -DOPENVDB_CXX_STRICT=ON
         -DOPENVDB_AX_TEST_CMD_DOWNLOADS=ON
         -DOPENVDB_ABI_VERSION_NUMBER=${{ inputs.abi }}
+        -DNANOVDB_USE_CUDA=ON
+        -DNANOVDB_USE_OPENVDB=ON
+        -DCMAKE_CUDA_ARCHITECTURES="80"
+        ${{ inputs.cmake }}
         \"
     - name: test
       # Skip Debug on commits as they take a while.
       if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.config.build == 'Release'
       run: |
-        cd build && ctest -V
+        cd build && ctest -V -E ".*cuda.*|.*mgpu.*"
         cd - && ./ci/test_install.sh
-    - name: test_doxygen_examples
+    - name: test_ax_doxygen_examples
       if: contains(inputs.components, 'ax')
       run: ./ci/extract_test_examples.sh
     # Keep ccache light by stripping out any caches not accessed in the last day
