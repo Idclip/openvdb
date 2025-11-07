@@ -56,37 +56,37 @@ jobs:
     strategy:
       matrix:
         config:
-          - { name: 'rel',      cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test,', cmake: '' }
-          - { name: 'dbg',      cxx: clang++, image: '2026',           abi: '13', build: 'Debug',   components: 'core,python,bin,test,', cmake: '' }
-          - { name: 'gcc',      cxx: g++,     image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test,', cmake: '' }
-          - { name: '2025',     cxx: clang++, image: '2025-clang19.1', abi: '12', build: 'Release', components: 'core,python,bin,test,', cmake: '' }
-          - { name: '2024',     cxx: clang++, image: '2024-clang17.2', abi: '11', build: 'Release', components: 'core,python,bin,test,', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { name: 'rel',      cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test,', cmake: '' }
+          - { name: 'dbg',      cxx: clang++, image: '2026',           abi: 13, build: 'Debug',   components: 'core,python,bin,test,', cmake: '' }
+          - { name: 'gcc',      cxx: g++,     image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test,', cmake: '' }
+          - { name: '2025',     cxx: clang++, image: '2025-clang19.1', abi: 12, build: 'Release', components: 'core,python,bin,test,', cmake: '' }
+          - { name: '2024',     cxx: clang++, image: '2024-clang17.2', abi: 11, build: 'Release', components: 'core,python,bin,test,', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
           # Weekly
-          - { name: 'all',      cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test', cmake: '-DUSE_BLOSC=ON -DUSE_ZLIB=ON -DUSE_EXR=ON -DUSE_PNG=ON'  }
-          - { name: 'lite',     cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test', cmake: '-DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DUSE_EXR=OFF -DUSE_PNG=OFF -DOPENVDB_USE_DELAYED_LOADING=OFF' }
-          - { name: 'half',     cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test', cmake: '-DUSE_BLOSC=OFF -DUSE_IMATH_HALF=ON' }
-          - { name: 'simd',     cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test', cmake: '-DOPENVDB_SIMD=SSE42 -DOPENVDB_SIMD=AVX' }
-          - { name: 'pygrid',   cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test', cmake: '-DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON' }
-          - { name: 'asan',     cxx: clang++, image: '2026',           abi: '13', build: 'asan',    components: 'core,test',            cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DNANOVDB_USE_OPENVDB=ON -DOPENVDB_AX_STATIC=OFF -DOPENVDB_CORE_STATIC=OFF -DUSE_BLOSC=OFF' } # We never called blosc_destroy(), so disable blosc to silence these errors
-          - { name: 'ubsan',    cxx: clang++, image: '2026',           abi: '13', build: 'ubsan',   components: 'core,test',            cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" ' }
-          - { name: 'c++20',    cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,test',            cmake: '-DCMAKE_CXX_STANDARD=20' }
-          - { name: 'conf',     cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test', cmake: '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON' }
+          - { name: 'all',      cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test', cmake: '-DUSE_BLOSC=ON -DUSE_ZLIB=ON -DUSE_EXR=ON -DUSE_PNG=ON'  }
+          - { name: 'lite',     cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test', cmake: '-DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DUSE_EXR=OFF -DUSE_PNG=OFF -DOPENVDB_USE_DELAYED_LOADING=OFF' }
+          - { name: 'half',     cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test', cmake: '-DUSE_BLOSC=OFF -DUSE_IMATH_HALF=ON' }
+          - { name: 'simd',     cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test', cmake: '-DOPENVDB_SIMD=SSE42 -DOPENVDB_SIMD=AVX' }
+          - { name: 'pygrid',   cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test', cmake: '-DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON' }
+          - { name: 'asan',     cxx: clang++, image: '2026',           abi: 13, build: 'asan',    components: 'core,test',            cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DNANOVDB_USE_OPENVDB=ON -DOPENVDB_AX_STATIC=OFF -DOPENVDB_CORE_STATIC=OFF -DUSE_BLOSC=OFF' } # We never called blosc_destroy(), so disable blosc to silence these errors
+          - { name: 'ubsan',    cxx: clang++, image: '2026',           abi: 13, build: 'ubsan',   components: 'core,test',            cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" ' }
+          - { name: 'c++20',    cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,test',            cmake: '-DCMAKE_CXX_STANDARD=20' }
+          - { name: 'conf',     cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test', cmake: '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON' }
           # AX
-          - { name: 'ax-clang', cxx: clang++, image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '' }
-          - { name: 'ax-dbg',   cxx: clang++, image: '2026',           abi: '13', build: 'Debug',   components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '' }
-          - { name: 'ax-gcc',   cxx: g++,     image: '2026',           abi: '13', build: 'Release', components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '' }
-          - { name: 'ax-19',    cxx: clang++, image: '2025-clang19.1', abi: '12', build: 'Release', components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '' }
-          - { name: 'ax-17',    cxx: clang++, image: '2024-clang17.2', abi: '11', build: 'Release', components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { name: 'ax-clang', cxx: clang++, image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '' }
+          - { name: 'ax-dbg',   cxx: clang++, image: '2026',           abi: 13, build: 'Debug',   components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '' }
+          - { name: 'ax-gcc',   cxx: g++,     image: '2026',           abi: 13, build: 'Release', components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '' }
+          - { name: 'ax-19',    cxx: clang++, image: '2025-clang19.1', abi: 12, build: 'Release', components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '' }
+          - { name: 'ax-17',    cxx: clang++, image: '2024-clang17.2', abi: 11, build: 'Release', components: 'core,python,bin,test,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
           # For AX builds, to test LLVM 15/16
-          - { name: 'ax-16',    cxx: clang++, image: '2024-clang16.2', abi: '13', build: 'Release', components: 'core,python,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
-          - { name: 'ax-15',    cxx: clang++, image: '2023-clang15',   abi: '13', build: 'Release', components: 'core,python,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { name: 'ax-16',    cxx: clang++, image: '2024-clang16.2', abi: 13, build: 'Release', components: 'core,python,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { name: 'ax-15',    cxx: clang++, image: '2023-clang15',   abi: 13, build: 'Release', components: 'core,python,axcore,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
           # NanoVDB
           # NOTE: CMAKE_POSITION_INDEPENDENT_CODE set to fix default behaviour change in clang 14
           #   https://github.com/AcademySoftwareFoundation/aswf-docker/issues/228
-          - { name: 'nano-rel', cxx: clang++, image: '2024-clang17.2', abi: '13', build: 'Release', components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
-          - { name: 'nano-dbg', cxx: clang++, image: '2024-clang17.2', abi: '13', build: 'Debug',   components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
-          - { name: 'nano-gcc', cxx: g++,     image: '2024-clang17.2', abi: '13', build: 'Release', components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
-          - { name: 'nano-lite',cxx: clang++, image: '2024-clang17.2', abi: '13', build: 'Release', components: 'nanotest', cmake: '-DNANOVDB_USE_OPENVDB=OFF -DNANOVDB_USE_CUDA=OFF' }
+          - { name: 'nano-rel', cxx: clang++, image: '2024-clang17.2', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { name: 'nano-dbg', cxx: clang++, image: '2024-clang17.2', abi: 13, build: 'Debug',   components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { name: 'nano-gcc', cxx: g++,     image: '2024-clang17.2', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanoexam,nanobench,nanotool', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { name: 'nano-lite',cxx: clang++, image: '2024-clang17.2', abi: 13, build: 'Release', components: 'nanotest', cmake: '-DNANOVDB_USE_OPENVDB=OFF -DNANOVDB_USE_CUDA=OFF' }
       fail-fast: false
     uses: ./.github/workflows/template-linux.yaml
     with:
