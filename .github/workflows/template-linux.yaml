@@ -48,7 +48,7 @@ jobs:
       if: contains(inputs.components, 'python')
       run: ./ci/install_nanobind.sh 2.5.0
     - name: setup_cuda_12
-      if: contains(inputs.flags, 'cuda')
+      if: contains(inputs.components, 'nano')
       run: |
         echo "/usr/local/cuda-12/bin" >> $GITHUB_PATH
         echo "LD_LIBRARY_PATH=/usr/local/cuda-12/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
