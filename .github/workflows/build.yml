@@ -111,7 +111,7 @@ jobs:
           - { os: 'linux', name: 'nano-gcc',  cxx: g++,     image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
           - { os: 'linux', name: 'nano-lite', cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'nanotest', cmake: '-DNANOVDB_USE_OPENVDB=OFF -DNANOVDB_USE_CUDA=OFF' }
       fail-fast: false
-    uses: ./.github/workflows/template-${{ matrix.config.os }}.yaml
+    uses: "${{ matrix.config.os }}"
     with:
       cxx: ${{ matrix.config.cxx }}
       image: ${{ matrix.config.image }}
