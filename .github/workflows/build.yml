@@ -48,27 +48,27 @@ defaults:
     shell: bash
 
 
-jobs:
-  # linux:
-  #   if: |
-  #     github.event_name != 'workflow_dispatch' ||
-  #     github.event.inputs.type == 'all' ||
-  #     github.event.inputs.type == 'linux'
-  #   strategy:
-  #     matrix:
-  #       config:
-  #         - { name: 'rel',       cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
-  #         - { name: 'ax-rel',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
-  #         - { name: 'nano-rel',  cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_EXPLICIT_INSTANTIATION=OFF' }
-  #     fail-fast: false
-  #   uses: ./.github/workflows/template-linux.yaml
-  #   with:
-  #     cxx: ${{ matrix.config.cxx }}
-  #     image: ${{ matrix.config.image }}
-  #     abi: ${{ matrix.config.abi }}
-  #     build: ${{ matrix.config.build }}
-  #     components: ${{ matrix.config.components }}
-  #     cmake: ${{ matrix.config.cmake }}
+# jobs:
+#   linux:
+#     if: |
+#       github.event_name != 'workflow_dispatch' ||
+#       github.event.inputs.type == 'all' ||
+#       github.event.inputs.type == 'linux'
+#     strategy:
+#       matrix:
+#         config:
+#           - { name: 'rel',       cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
+#           - { name: 'ax-rel',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
+#           - { name: 'nano-rel',  cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+#       fail-fast: false
+#     uses: ./.github/workflows/template-linux.yaml
+#     with:
+#       cxx: ${{ matrix.config.cxx }}
+#       image: ${{ matrix.config.image }}
+#       abi: ${{ matrix.config.abi }}
+#       build: ${{ matrix.config.build }}
+#       components: ${{ matrix.config.components }}
+#       cmake: ${{ matrix.config.cmake }}
 
 
 jobs:
