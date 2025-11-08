@@ -2,20 +2,6 @@
 name: Build
 
 on:
-  push:
-    branches:
-      - 'master'
-      - 'feature/**'
-      - 'pr/**'
-    paths-ignore:
-      - 'CHANGES'
-      - 'CODEOWNERS'
-      - 'doc/**'
-      - 'openvdb_maya/**'
-      - 'openvdb_houdini/**'
-      - 'fvdb/**'
-      - 'pendingchanges/**'
-      - '**.md'
   pull_request:
     branches:
       - '**'
@@ -31,12 +17,9 @@ on:
   schedule:
     # run this workflow Sunday 00:00 UTC
     - cron:  '0 0 * * 0'
-  workflow_dispatch:
-    inputs:
-      type:
-        description: 'The type of CI to run (all, linux, win, mac)'
-        required: true
-        default: 'all'
+  merge_group:
+    types: [ checks_requested ]
+
 
 # Allow subsequent pushes to the same PR or REF to cancel any previous jobs.
 concurrency:
@@ -47,71 +30,17 @@ defaults:
   run:
     shell: bash
 
-
-# jobs:
-#   linux:
-#     if: |
-#       github.event_name != 'workflow_dispatch' ||
-#       github.event.inputs.type == 'all' ||
-#       github.event.inputs.type == 'linux'
-#     strategy:
-#       matrix:
-#         config:
-#           - { name: 'rel',       cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
-#           - { name: 'ax-rel',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
-#           - { name: 'nano-rel',  cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_EXPLICIT_INSTANTIATION=OFF' }
-#       fail-fast: false
-#     uses: ./.github/workflows/template-linux.yaml
-#     with:
-#       cxx: ${{ matrix.config.cxx }}
-#       image: ${{ matrix.config.image }}
-#       abi: ${{ matrix.config.abi }}
-#       build: ${{ matrix.config.build }}
-#       components: ${{ matrix.config.components }}
-#       cmake: ${{ matrix.config.cmake }}
-
-
 jobs:
-  linux:
-    if: |
-      github.event_name != 'workflow_dispatch' ||
-      github.event.inputs.type == 'all' ||
-      github.event.inputs.type == 'linux'
+  linux-on-pr:
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
     strategy:
       matrix:
         config:
-          - { os: 'linux', name: 'rel',       cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
-          - { os: 'linux', name: 'dbg',       cxx: clang++, image: '2026', abi: 13, build: 'Debug',   components: 'core,py,bin,test,', cmake: '' }
-          - { os: 'linux', name: 'gcc',       cxx: g++,     image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
-          - { os: 'linux', name: '2025',      cxx: clang++, image: '2025', abi: 12, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
-          - { os: 'linux', name: '2024',      cxx: clang++, image: '2024', abi: 11, build: 'Release', components: 'core,py,bin,test,', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
-          # Weekly
-          - { os: 'linux', name: 'all',       cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON -DUSE_BLOSC=ON -DUSE_ZLIB=ON -DUSE_EXR=ON -DUSE_PNG=ON'  }
-          - { os: 'linux', name: 'lite',      cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DUSE_EXR=OFF -DUSE_PNG=OFF -DOPENVDB_USE_DELAYED_LOADING=OFF' }
-          - { os: 'linux', name: 'half',      cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DUSE_IMATH_HALF=ON' }
-          - { os: 'linux', name: 'simd',      cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DOPENVDB_SIMD=SSE42 -DOPENVDB_SIMD=AVX' }
-          - { os: 'linux', name: 'asan',      cxx: clang++, image: '2026', abi: 13, build: 'asan',    components: 'core,test',        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DNANOVDB_USE_OPENVDB=ON -DOPENVDB_AX_STATIC=OFF -DOPENVDB_CORE_STATIC=OFF -DUSE_BLOSC=OFF' } # We never called blosc_destroy(), so disable blosc to silence these errors
-          - { os: 'linux', name: 'ubsan',     cxx: clang++, image: '2026', abi: 13, build: 'ubsan',   components: 'core,test',        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" ' }
-          - { os: 'linux', name: 'c++20',     cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,test',        cmake: '-DCMAKE_CXX_STANDARD=20' }
-          - { os: 'linux', name: 'conf',      cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core',             cmake: '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON' }
-          # AX
-          - { os: 'linux', name: 'ax-rel',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
-          - { os: 'linux', name: 'ax-dbg',    cxx: clang++, image: '2026', abi: 13, build: 'Debug',   components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
-          - { os: 'linux', name: 'ax-gcc',    cxx: g++,     image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
-          - { os: 'linux', name: 'ax-19',     cxx: clang++, image: '2025', abi: 12, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
-          - { os: 'linux', name: 'ax-17',     cxx: clang++, image: '2024', abi: 11, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
-          # For AX builds, to test LLVM 15/16
-          - { os: 'linux', name: 'ax-16',     cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,py,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
-          - { os: 'linux', name: 'ax-15',     cxx: clang++, image: '2023', abi: 13, build: 'Release', components: 'core,py,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
-          # NanoVDB
-          # NOTE: CMAKE_POSITION_INDEPENDENT_CODE set to fix default behaviour change in clang 14
-          #   https://github.com/AcademySoftwareFoundation/aswf-docker/issues/228
-          - { os: 'linux', name: 'nano-rel',  cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
-          - { os: 'linux', name: 'nano-dbg',  cxx: clang++, image: '2024', abi: 13, build: 'Debug',   components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
-          - { os: 'linux', name: 'nano-gcc',  cxx: g++,     image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
-          - { os: 'linux', name: 'nano-lite', cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'nanotest', cmake: '-DNANOVDB_USE_OPENVDB=OFF -DNANOVDB_USE_CUDA=OFF' }
+          - { name: 'rel',      cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
+          - { name: 'ax-rel',   cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
+          - { name: 'nano-rel', cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_EXPLICIT_INSTANTIATION=OFF' }
       fail-fast: false
-    uses: "${{ matrix.config.os }}"
+    uses: ./.github/workflows/template-linux.yaml
     with:
       cxx: ${{ matrix.config.cxx }}
       image: ${{ matrix.config.image }}
@@ -119,6 +48,64 @@ jobs:
       build: ${{ matrix.config.build }}
       components: ${{ matrix.config.components }}
       cmake: ${{ matrix.config.cmake }}
+
+  linux-on-merge:
+    if: github.event_name == 'merge_group' || github.event_name == 'schedule'
+    strategy:
+      matrix:
+        config:
+          - { name: 'dbg',       cxx: clang++, image: '2026', abi: 13, build: 'Debug',   components: 'core,py,bin,test,', cmake: '' }
+          - { name: 'gcc',       cxx: g++,     image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
+          - { name: '2025',      cxx: clang++, image: '2025', abi: 12, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
+          - { name: '2024',      cxx: clang++, image: '2024', abi: 11, build: 'Release', components: 'core,py,bin,test,', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          # AX
+          - { name: 'ax-dbg',    cxx: clang++, image: '2026', abi: 13, build: 'Debug',   components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
+          - { name: 'ax-gcc',    cxx: g++,     image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
+          - { name: 'ax-19',     cxx: clang++, image: '2025', abi: 12, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
+          - { name: 'ax-17',     cxx: clang++, image: '2024', abi: 11, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          # For AX builds, to test LLVM 15/16
+          - { name: 'ax-16',     cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,py,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { name: 'ax-15',     cxx: clang++, image: '2023', abi: 13, build: 'Release', components: 'core,py,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          # NanoVDB
+          # NOTE: CMAKE_POSITION_INDEPENDENT_CODE set to fix default behaviour change in clang 14
+          #   https://github.com/AcademySoftwareFoundation/aswf-docker/issues/228
+          - { name: 'nano-dbg',  cxx: clang++, image: '2024', abi: 13, build: 'Debug',   components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { name: 'nano-gcc',  cxx: g++,     image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { name: 'nano-lite', cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'nanotest', cmake: '-DNANOVDB_USE_OPENVDB=OFF -DNANOVDB_USE_CUDA=OFF' }
+      fail-fast: false
+    uses: ./.github/workflows/template-linux.yaml
+    with:
+      cxx: ${{ matrix.config.cxx }}
+      image: ${{ matrix.config.image }}
+      abi: ${{ matrix.config.abi }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+
+  linux-on-weekly:
+    if: github.event_name == 'schedule'
+    strategy:
+      matrix:
+        config:
+          - { name: 'all',   build: 'Release', components: 'core,py,bin,test', cmake: '-DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON -DUSE_BLOSC=ON -DUSE_ZLIB=ON -DUSE_EXR=ON -DUSE_PNG=ON -DOPENVDB_SIMD=SSE42 -DOPENVDB_SIMD=AVX'  }
+          - { name: 'lite',  build: 'Release', components: 'core,py,bin,test', cmake: '-DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DUSE_EXR=OFF -DUSE_PNG=OFF -DOPENVDB_USE_DELAYED_LOADING=OFF' }
+          - { name: 'half',  build: 'Release', components: 'core,py,bin,test', cmake: '-DUSE_IMATH_HALF=ON' }
+          - { name: 'asan',  build: 'asan',    components: 'core,test',        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DNANOVDB_USE_OPENVDB=ON -DOPENVDB_AX_STATIC=OFF -DOPENVDB_CORE_STATIC=OFF -DUSE_BLOSC=OFF' } # We never called blosc_destroy(), so disable blosc to silence these errors
+          - { name: 'ubsan', build: 'ubsan',   components: 'core,test',        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" ' }
+          - { name: 'c++20', build: 'Release', components: 'core,test',        cmake: '-DCMAKE_CXX_STANDARD=20' }
+          - { name: 'conf',  build: 'Release', components: 'core',             cmake: '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON' }
+      fail-fast: false
+    uses: ./.github/workflows/template-linux.yaml
+    with:
+      cxx: 'clang++'
+      image: '2026'
+      abi: 13
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+
+
+
 
   # macos-vfx:
   #   if: |
