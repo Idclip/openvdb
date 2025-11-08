@@ -37,6 +37,7 @@ on:
 jobs:
   linux:
     runs-on: ${{ (github.repository_owner == 'AcademySoftwareFoundation' && 'ubuntu-22.04-8c-32g-300h') || 'ubuntu-latest' }}
+    name: ${{ inputs.name }}
     container:
       image: aswf/ci-openvdb:${{ inputs.image }}
     env:
