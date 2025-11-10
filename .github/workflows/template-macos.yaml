@@ -1,0 +1,116 @@
+name: OpenVDB MacOS Builds
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        required: false
+        default: 'macos-latest'
+        type: string
+      components:
+        required: false
+        default: 'core'
+        type: string
+      build:
+        required: false
+        default: 'Release'
+        type: string
+      cmake:
+        required: false
+        type: string
+      llvm:
+        required: false
+        type: number
+
+jobs:
+  macos:
+    runs-on: ${{ inputs.image }}
+    name: macos:${{ inputs.image }}-type:${{ inputs.build }}
+    env:
+      CXX: clang++
+    steps:
+    - uses: actions/checkout@v3
+    - name: install_llvm
+      if: ${{ inputs.llvm != '' }}
+      run: ./ci/install_macos.sh ${{ inputs.llvm }}
+    - name: install_deps
+      run: ./ci/install_tbb_macos.sh
+    - name: build
+      run: >
+        ./ci/build.sh -v
+        --build-type=${{ inputs.build }}
+        --components="${{ inputs.components }}"
+        --cargs=\"
+        -DOPENVDB_AX_TEST_CMD_DOWNLOADS=ON
+        -DUSE_EXPLICIT_INSTANTIATION=OFF
+        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+        -DLLVM_DIR=/opt/homebrew/opt/llvm@${{ inputs.llvm }}/lib/cmake/llvm
+        ${{ inputs.cmake }}
+        \"
+    - name: test
+      run: cd build && ctest -V -E ".*cuda.*|.*mgpu.*"
+    - name: test_ax_doxygen_examples
+      if: contains(inputs.components, 'ax')
+      run: ./ci/extract_test_examples.sh
+
+  checksecret:
+    if: contains(inputs.components, 'hou')
+    # Check that valid github secrets have been set. This isn't needed to retrieve
+    # the cache, but ensures that the job doens't start with an empty cache
+    name: Verify Houdini Secrets
+    runs-on: ubuntu-latest
+    outputs:
+      HOUDINI_SECRETS: ${{ steps.check.outputs.HOUDINI_SECRETS }}
+    steps:
+      - id: check
+        env:
+            HOUDINI_CLIENT_ID: ${{ secrets.HOUDINI_CLIENT_ID }}
+            HOUDINI_SECRET_KEY: ${{ secrets.HOUDINI_SECRET_KEY }}
+        run: echo "HOUDINI_SECRETS=${{ env.HOUDINI_CLIENT_ID != '' && env.HOUDINI_SECRET_KEY != '' }}" >> $GITHUB_OUTPUT
+      - name: Skip Next Jobs
+        if: steps.check.outputs.HOUDINI_SECRETS != 'true'
+        run: echo "HOUDINI_CLIENT_ID and HOUDINI_SECRET_KEY GitHub Action Secrets needs to be set to install Houdini builds"
+
+  macos-houdini:
+    needs: [checksecret]
+    if: >
+      ${{ needs.checksecret.outputs.HOUDINI_SECRETS == 'true' ||
+          github.repository_owner == 'AcademySoftwareFoundation' }}
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: fetch_houdini
+      uses: actions/cache/restore@v3
+      with:
+        path: hou
+        key: dummy-houdini
+        restore-keys: vdb-v5-houdini-macos-
+    - name: validate_houdini
+      run: test -f "hou/hou.tar.gz"
+      # Make sure that the unpacked install is NOT in the root of the OpenVDB checkout
+      # otherwise CMake's install RPATHs wil not work correctly.
+    - name: install_houdini
+      run: |
+        mkdir $HOME/houdini_install
+        cp hou/hou.tar.gz $HOME/houdini_install/hou.tar.gz
+        cd $HOME/houdini_install && tar -xzf hou.tar.gz && cd -
+    - name: install_llvm
+      if: ${{ inputs.llvm != '' }}
+      run: ./ci/install_macos.sh ${{ inputs.llvm }}
+    - name: build
+      run: |
+        ./ci/build.sh -v \
+          --build-type=Release \
+          --components="core,hou,bin,view,render,test,axcore,axbin" \
+          --cargs=\" \
+            -DHOUDINI_ROOT=$HOME/houdini_install/hou \
+            -DOPENVDB_BUILD_HOUDINI_ABITESTS=OFF \
+            -DOPENVDB_HOUDINI_INSTALL_PREFIX=/tmp \
+            -DDISABLE_CMAKE_SEARCH_PATHS=ON \
+            -DDISABLE_DEPENDENCY_VERSION_CHECKS=ON \
+            -DUSE_EXPLICIT_INSTANTIATION=OFF \
+            -DLLVM_DIR=/opt/homebrew/opt/llvm@${{ inputs.llvm }}/lib/cmake/llvm \
+            -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install \
+            \"
+    - name: test
+      run: cd build && ctest -V

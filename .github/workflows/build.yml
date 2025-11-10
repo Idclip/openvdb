@@ -2,45 +2,24 @@
 name: Build
 
 on:
-  push:
-    branches:
-      - 'master'
-      - 'feature/**'
-      - 'pr/**'
-    paths-ignore:
-      - 'CHANGES'
-      - 'CODEOWNERS'
-      - 'doc/**'
-      - 'openvdb_maya/**'
-      - 'openvdb_houdini/**'
-      - 'openvdb_ax/**'
-      - 'nanovdb/**'
-      - 'fvdb/**'
-      - 'pendingchanges/**'
-      - '**.md'
   pull_request:
     branches:
       - '**'
     paths-ignore:
       - 'CHANGES'
       - 'CODEOWNERS'
+      - 'LICENSE'
       - 'doc/**'
       - 'openvdb_maya/**'
-      - 'openvdb_houdini/**'
-      - 'openvdb_ax/**'
-      - 'nanovdb/**'
-      - 'fvdb/**'
+      - 'openvdb_wolfram/**'
       - 'pendingchanges/**'
+      - 'tsc/**'
       - '**.md'
   schedule:
-    # run this workflow every day 7am UTC
-    - cron:  '0 7 * * *'
-  workflow_dispatch:
-    inputs:
-      type:
-        description: 'The type of CI to run (all, linux, win, mac)'
-        required: true
-        default: 'all'
+    # run this workflow Sunday 00:00 UTC
+    - cron:  '0 0 * * 0'
+  merge_group:
+    types: [ checks_requested ]
 
 # Allow subsequent pushes to the same PR or REF to cancel any previous jobs.
 concurrency:
@@ -52,146 +31,182 @@ defaults:
     shell: bash
 
 jobs:
-  linux-vfx:
-    # VFX platform jobs. These are run on the appropriate CentOS images from
-    # the provided ASWF docker containers
-    if: |
-      github.event_name != 'workflow_dispatch' ||
-      github.event.inputs.type == 'all' ||
-      github.event.inputs.type == 'linux'
-    runs-on: ${{ (github.repository_owner == 'AcademySoftwareFoundation' && 'ubuntu-22.04-8c-32g-300h') || 'ubuntu-latest' }}
-    name: >
-      linux:${{ matrix.config.image }}-abi:${{ matrix.config.abi }}-cxx:${{ matrix.config.cxx }}-type:${{ matrix.config.build }}
-    container:
-      image: aswf/ci-openvdb:${{ matrix.config.image }}
-    env:
-      CXX: ${{ matrix.config.cxx }}
-      CCACHE_DIR: /tmp/ccache
+  #############################################################################
+  #############################################################################
+
+  linux-on-pr:
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
     strategy:
       matrix:
         config:
-          - { cxx: clang++, image: '2026',           abi: '13', build: 'Release', cmake: '-DOPENVDB_USE_FUTURE_ABI_13=ON' }
-          - { cxx: g++,     image: '2026',           abi: '13', build: 'Release', cmake: '-DOPENVDB_USE_FUTURE_ABI_13=ON' }
-          - { cxx: clang++, image: '2026',           abi: '13', build: 'Debug',   cmake: '-DOPENVDB_USE_FUTURE_ABI_13=ON' }
-          - { cxx: clang++, image: '2025-clang19.1', abi: '12', build: 'Release', cmake: '' }
-          - { cxx: clang++, image: '2024-clang17.2', abi: '11', build: 'Release', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { name: 'rel',      cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
+          - { name: 'ax-rel',   cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
+          - { name: 'nano-rel', cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { name: 'houdini',  cxx: clang++, image: '2026', abi: 12, build: 'Release', components: 'core,hou,bin,view,render,py,test', cmake: '' }
       fail-fast: false
-    steps:
-    - uses: actions/checkout@v3
-    - name: nanobind
-      run: ./ci/install_nanobind.sh 2.5.0
-      # 2026 images are broken with gtest/glfw installs
-    - name: deps
-      if: contains(matrix.config.image, '2026')
-      run: |
-        ./ci/install_gtest.sh latest
-        ./ci/install_glfw.sh latest
-    - name: timestamp
-      id: timestamp
-      run: echo "timestamp=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-    - name: ccache
-      # don't use ccache for debug builds
-      if: matrix.config.build == 'Release'
-      id: ccache
-      uses: actions/cache@v3
-      with:
-        path: /tmp/ccache
-        key: linux-vfx${{ matrix.config.image }}-abi${{ matrix.config.abi }}-${{ matrix.config.cxx }}-${{ steps.timestamp.outputs.timestamp }}
-        restore-keys: linux-vfx${{ matrix.config.image }}-abi${{ matrix.config.abi }}-${{ matrix.config.cxx }}-
-    - name: build
-      run: >
-        ./ci/build.sh -v
-        --build-type=${{ matrix.config.build }}
-        --components=\"core,python,bin,view,render,test\"
-        --cargs=\"
-        ${{ matrix.config.cmake }}
-        -DOPENVDB_CXX_STRICT=ON
-        -DOPENVDB_ABI_VERSION_NUMBER=${{ matrix.config.abi }}
-        \"
-    - name: test
-      # Skip Debug on commits as they take a while.
-      if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || matrix.config.build == 'Release'
-      run: |
-        cd build && ctest -V
-        cd - && ./ci/test_install.sh
-    # Keep ccache light by stripping out any caches not accessed in the last day
-    - name: ccache_clean
-      if: matrix.config.build == 'Release'
-      run: ccache --evict-older-than 1d
+    uses: ./.github/workflows/template-linux.yaml
+    with:
+      cxx: ${{ matrix.config.cxx }}
+      image: ${{ matrix.config.image }}
+      abi: ${{ matrix.config.abi }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
 
-  windows:
-    # Windows CI. Tests a dynamic build with MD.
-    if: |
-      github.event_name != 'workflow_dispatch' ||
-      github.event.inputs.type == 'all' ||
-      github.event.inputs.type == 'win'
-    runs-on: ${{ (github.repository_owner == 'AcademySoftwareFoundation' && 'windows-2022-8c-32g-300h') || 'windows-latest' }}
-    name: windows
-    env:
-      VCPKG_DEFAULT_TRIPLET: x64-windows
-    strategy:
-      fail-fast: false
-    steps:
-    - uses: actions/checkout@v3
-    - name: path
-      shell: pwsh
-      run: |
-        # note: system path must be modified in a previous step to it's use
-        echo "$Env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        echo "${{github.workspace}}\build\openvdb\openvdb\Release" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    - name: install
-      shell: powershell
-      run: .\ci\install_windows.ps1
-    - name: install_numpy
-      shell: powershell
-      run: .\ci\install_windows_numpy.ps1
-    - name: build
-      run: >
-        ./ci/build.sh -v
-        --config='Release'
-        --components='core,bin,view,render,python,test'
-        --cargs=\'
-        -A x64 -G \"Visual Studio 17 2022\" -DOPENVDB_CORE_STATIC=OFF
-        -DMSVC_COMPRESS_PDB=ON
-        -DUSE_EXR=ON
-        -DUSE_PNG=ON
-        -DVCPKG_TARGET_TRIPLET=${VCPKG_DEFAULT_TRIPLET}
-        -DCMAKE_TOOLCHAIN_FILE=\"${VCPKG_INSTALLATION_ROOT}\\scripts\\buildsystems\\vcpkg.cmake\"
-        \'
-    - name: size
-      # Print the build directy size (monitor if we're hitting runner limits)
-      run: du -h build
-    - name: test
-      run: cd build && ctest -V -C Release
-
-  macos:
-    if: |
-      github.event_name != 'workflow_dispatch' ||
-      github.event.inputs.type == 'all' ||
-      github.event.inputs.type == 'mac'
-    runs-on: ${{ matrix.config.image }}
-    name: ${{ matrix.config.image }}
-    env:
-      CXX: clang++
+  linux-on-merge:
+    if: github.event_name == 'merge_group' || github.event_name == 'schedule'
     strategy:
       matrix:
         config:
-          - { image: macos-14 }
-          - { image: macos-15 }
-    steps:
-    - uses: actions/checkout@v3
-    - name: install
-      run: |
-        ./ci/install_macos.sh
-        ./ci/install_tbb_macos.sh
-    - name: build
-      run: >
-        ./ci/build.sh -v
-        --build-type=Release
-        --components=\"core,python,bin,view,render,test\"
-        --cargs=\'
-        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
-        \'
-    - name: test
-      run: cd build && ctest -V
+          - { name: 'dbg',       cxx: clang++, image: '2026', abi: 13, build: 'Debug',   components: 'core,py,bin,test,', cmake: '-DOPENVDB_ENABLE_ASSERTS=ON' }
+          - { name: 'gcc',       cxx: g++,     image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
+          - { name: '2025',      cxx: clang++, image: '2025', abi: 12, build: 'Release', components: 'core,py,bin,test,', cmake: '' }
+          - { name: '2024',      cxx: clang++, image: '2024', abi: 11, build: 'Release', components: 'core,py,bin,test,', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          # AX
+          - { name: 'ax-dbg',    cxx: clang++, image: '2026', abi: 13, build: 'Debug',   components: 'core,py,bin,test,ax,axbin,axtest', cmake: '-DOPENVDB_ENABLE_ASSERTS=ON' }
+          - { name: 'ax-gcc',    cxx: g++,     image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
+          - { name: 'ax-19',     cxx: clang++, image: '2025', abi: 12, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '' }
+          - { name: 'ax-17',     cxx: clang++, image: '2024', abi: 11, build: 'Release', components: 'core,py,bin,test,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { name: 'ax-16',     cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'core,py,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          - { name: 'ax-15',     cxx: clang++, image: '2023', abi: 13, build: 'Release', components: 'core,py,ax,axbin,axtest', cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON' }
+          # Houdini
+          - { name: 'houdini',   cxx: clang++, image: '2026', abi: 12, build: 'Release', components: 'core,hou,bin,view,render,py,test,axcore,axbin,axtest' }
+          - { name: 'houdini',   cxx: g++,     image: '2026', abi: 12, build: 'Release', components: 'core,hou,bin,view,render,py,test,axcore,axbin,axtest' }
+          - { name: 'houdini',   cxx: clang++, image: '2024', abi: 11, build: 'Release', components: 'core,hou,bin,view,render,py,test,axcore,axbin,axtest' }
+          # NanoVDB
+          # NOTE: CMAKE_POSITION_INDEPENDENT_CODE set to fix default behaviour change in clang 14
+          #   https://github.com/AcademySoftwareFoundation/aswf-docker/issues/228
+          - { name: 'nano-dbg',  cxx: clang++, image: '2024', abi: 13, build: 'Debug',   components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { name: 'nano-gcc',  cxx: g++,     image: '2024', abi: 13, build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_POSITION_INDEPENDENT_CODE=ON -DUSE_BLOSC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF' }
+          - { name: 'nano-lite', cxx: clang++, image: '2024', abi: 13, build: 'Release', components: 'nanotest', cmake: '-DNANOVDB_USE_OPENVDB=OFF -DNANOVDB_USE_CUDA=OFF' }
+      fail-fast: false
+    uses: ./.github/workflows/template-linux.yaml
+    with:
+      cxx: ${{ matrix.config.cxx }}
+      image: ${{ matrix.config.image }}
+      abi: ${{ matrix.config.abi }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+
+  linux-on-weekly:
+    if: github.event_name == 'schedule'
+    strategy:
+      matrix:
+        config:
+          # Core
+          - { name: 'all',     cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON -DUSE_BLOSC=ON -DUSE_ZLIB=ON -DUSE_EXR=ON -DUSE_PNG=ON -DOPENVDB_SIMD=SSE42 -DOPENVDB_SIMD=AVX'  }
+          - { name: 'lite',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DUSE_EXR=OFF -DUSE_PNG=OFF -DOPENVDB_USE_DELAYED_LOADING=OFF' }
+          - { name: 'half',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DUSE_IMATH_HALF=ON' }
+          - { name: 'asan',    cxx: clang++, image: '2026', abi: 13, build: 'asan',    components: 'core,test',        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DNANOVDB_USE_OPENVDB=ON -DOPENVDB_AX_STATIC=OFF -DOPENVDB_CORE_STATIC=OFF -DUSE_BLOSC=OFF' } # We never called blosc_destroy(), so disable blosc to silence these errors
+          - { name: 'ubsan',   cxx: clang++, image: '2026', abi: 13, build: 'ubsan',   components: 'core,test',        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" ' }
+          - { name: 'c++20',   cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,test',        cmake: '-DCMAKE_CXX_STANDARD=20' }
+          - { name: 'conf',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core',             cmake: '-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON' }
+          # Houdini
+          - { name: 'houdini', cxx: clang++, image: '2026', abi: 12, build: 'Debug',   components: 'core,hou,bin,view,render,py,test,axcore,axbin,axtest' }
+          - { name: 'houdini', cxx: g++,     image: '2024', abi: 11, build: 'Release', components: 'core,hou,bin,view,render,py,test,axcore,axbin,axtest' }
+      fail-fast: false
+    uses: ./.github/workflows/template-linux.yaml
+    with:
+      cxx: ${{ matrix.config.cxx }}
+      image: ${{ matrix.config.image }}
+      abi: ${{ matrix.config.abi }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+
+  #############################################################################
+  #############################################################################
+
+  macos-on-pr:
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
+    strategy:
+      matrix:
+        config:
+          - { name: 'rel',      image: 'macos-15', build: 'Release', components: 'core,py,bin,test', llvm: '', cmake: '' }
+          - { name: 'ax-rel',   image: 'macos-15', build: 'Release', components: 'core,py,ax,axbin,axtest', llvm: '21' }
+          - { name: 'nano-rel', image: 'macos-14', build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install -DUSE_EXPLICIT_INSTANTIATION=OFF -DNANOVDB_USE_CUDA=OFF -DNANOVDB_USE_OPENVDB=ON' }
+      fail-fast: false
+    uses: ./.github/workflows/template-macos.yaml
+    with:
+      image: ${{ matrix.config.image }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+      llvm: ${{ matrix.config.llvm }}
+
+  macos-on-weekly:
+    if: github.event_name == 'schedule'
+    strategy:
+      matrix:
+        config:
+          # Core
+          - { name: 'rel-mos14',    image: 'macos-14', build: 'Release', components: 'core,py,bin,test', llvm: '', cmake: '' }
+          # AX
+          - { name: 'ax-rel-mos14', image: 'macos-14', build: 'Release', components: 'core,py,ax,axbin,axtest', llvm: '21' }
+          - { name: 'ax-rel-20',    image: 'macos-15', build: 'Release', components: 'core,py,ax,axbin,axtest', llvm: '20' }
+          - { name: 'ax-rel-19',    image: 'macos-15', build: 'Release', components: 'core,py,ax,axbin,axtest', llvm: '19' }
+          - { name: 'ax-rel-18',    image: 'macos-15', build: 'Release', components: 'core,py,ax,axbin,axtest', llvm: '18' }
+          - { name: 'ax-rel-17',    image: 'macos-15', build: 'Release', components: 'core,py,ax,axbin,axtest', llvm: '17' }
+          - { name: 'ax-rel-16',    image: 'macos-15', build: 'Release', components: 'core,py,ax,axbin,axtest', llvm: '16' }
+          # Nano
+          - { name: 'nano-mos14',   image: 'macos-14', build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install -DUSE_EXPLICIT_INSTANTIATION=OFF -DNANOVDB_USE_CUDA=OFF -DNANOVDB_USE_OPENVDB=ON' }
+          - { name: 'nano-mos14',   image: 'macos-14', build: 'Debug',   components: 'core,nano,nanotest,nanotools', cmake: '-DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install -DUSE_EXPLICIT_INSTANTIATION=OFF -DNANOVDB_USE_CUDA=OFF -DNANOVDB_USE_OPENVDB=ON' }
+      fail-fast: false
+    uses: ./.github/workflows/template-macos.yaml
+    with:
+      image: ${{ matrix.config.image }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+      llvm: ${{ matrix.config.llvm }}
+
+  #############################################################################
+  #############################################################################
+
+  win-on-pr:
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
+    strategy:
+      matrix:
+        config:
+          - { name: 'rel',      vc: 'x64-windows',        llvm: '',       build: 'Release', components: 'core,bin,py,test', cmake: '' }
+          - { name: 'ax-rel',   vc: 'x64-windows-static', llvm: '18.1.0', build: 'Release', components: 'core,ax,axbin,axtest', cmake: '' }
+          - { name: 'nano-rel', vc: 'x64-windows',        llvm: '',       build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '' }
+      fail-fast: false
+    uses: ./.github/workflows/template-windows.yaml
+    with:
+      vc: ${{ matrix.config.vc }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+      llvm: ${{ matrix.config.llvm }}
+
+  win-on-merge:
+    if: github.event_name == 'merge_group' || github.event_name == 'schedule'
+    strategy:
+      matrix:
+        config:
+          - { name: 'rel-static', vc: 'x64-windows-static', llvm: '', build: 'Release', components: 'core,bin,test',    cmake: '' }
+          - { name: 'rel-dbg',    vc: 'x64-windows',        llvm: '', build: 'Debug',   components: 'core,bin,py,test', cmake: '-DDOPENVDB_ENABLE_ASSERTS=ON' }
+          # AX
+          # @todo  We don't currently run the axtests with shared builds of ax
+          # due to symbol issues using LLVM as a static lib (which is the only
+          # option on Windows).
+          # @note  currently only test static builds with MT as building LLVM as
+          # a shared lib on windows is a bit dicey
+          - { name: 'ax-shared', vc: 'x64-windows',        llvm: '18.1.0', build: 'Release', components: 'core,ax,axbin',        cmake: '' }
+          - { name: 'ax-dbg',    vc: 'x64-windows-static', llvm: '18.1.0', build: 'Debug',   components: 'core,ax,axbin,axtest', cmake: '' }
+          - { name: 'ax-15',     vc: 'x64-windows-static', llvm: '15.0.0', build: 'Release', components: 'core,ax,axbin,axtest', cmake: '' }
+          # Nano
+          - { name: 'nano-static-rel', vc: 'x64-windows-static', llvm: '', build: 'Release', components: 'core,nano,nanotest,nanotools', cmake: '' }
+          - { name: 'nano-static-dbg', vc: 'x64-windows-static', llvm: '', build: 'Debug',   components: 'core,nano,nanotest,nanotools', cmake: '' }
+          - { name: 'nano-dbg',        vc: 'x64-windows',        llvm: '', build: 'Debug',   components: 'core,nano,nanotest,nanotools', cmake: '' }
+      fail-fast: false
+    uses: ./.github/workflows/template-windows.yaml
+    with:
+      vc: ${{ matrix.config.vc }}
+      build: ${{ matrix.config.build }}
+      components: ${{ matrix.config.components }}
+      cmake: ${{ matrix.config.cmake }}
+      llvm: ${{ matrix.config.llvm }}
 
