@@ -80,12 +80,12 @@ jobs:
         -DCMAKE_CUDA_ARCHITECTURES="80"
         -DCMAKE_CUDA_FLAGS="-D_WIN32"
         `################## Args based on vc toolchain ##################` \
-        ${{ (inputs.build == 'Debug' && '-DUSE_EXPLICIT_INSTANTIATION=OFF') || '' }
-        ${{ (inputs.vc == 'x64-windows' && '-DOPENVDB_CORE_STATIC=OFF') || '' }
-        ${{ (inputs.vc == 'x64-windows' && '-DOPENVDB_AX_STATIC=OFF') || '' }
-        ${{ (inputs.vc == 'x64-windows-static' && '-DOPENVDB_CORE_SHARED=OFF') || '' }
-        ${{ (inputs.vc == 'x64-windows-static' && '-DBLOSC_USE_EXTERNAL_SOURCES=ON') || '' }
-        ${{ (inputs.vc == 'x64-windows-static' && '-DUSE_STATIC_DEPENDENCIES=ON') || '' }
+        ${{ (inputs.build == 'Debug' && '-DUSE_EXPLICIT_INSTANTIATION=OFF') || '' }}
+        ${{ (inputs.vc == 'x64-windows' && '-DOPENVDB_CORE_STATIC=OFF') || '' }}
+        ${{ (inputs.vc == 'x64-windows' && '-DOPENVDB_AX_STATIC=OFF') || '' }}
+        ${{ (inputs.vc == 'x64-windows-static' && '-DOPENVDB_CORE_SHARED=OFF') || '' }}
+        ${{ (inputs.vc == 'x64-windows-static' && '-DBLOSC_USE_EXTERNAL_SOURCES=ON') || '' }}
+        ${{ (inputs.vc == 'x64-windows-static' && '-DUSE_STATIC_DEPENDENCIES=ON') || '' }}
         ${{ inputs.cmake }}
         \'
     - name: size

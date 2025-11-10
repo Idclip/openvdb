@@ -144,8 +144,8 @@ jobs:
       uses: actions/cache/restore@v3
       with:
         path: hou
-        key: dummy-houdini${{ ineeds.checksecret.outputs.H_VERSION }}-${{ steps.timestamp.outputs.timestamp }}
-        restore-keys: vdb-v5-houdini${{ ineeds.checksecret.outputs.H_VERSION }}-
+        key: dummy-houdini${{ needs.checksecret.outputs.H_VERSION }}-${{ steps.timestamp.outputs.timestamp }}
+        restore-keys: vdb-v5-houdini${{ needs.checksecret.outputs.H_VERSION }}-
     - name: install_houdini
       run:
       run: |
@@ -164,8 +164,8 @@ jobs:
       uses: actions/cache@v3
       with:
         path: /tmp/ccache
-        key: linux-vfx-hou${{ ineeds.checksecret.outputs.H_VERSION }}-${{ inputs.image }}-${{ inputs.cxx }}-${{ steps.timestamp.outputs.timestamp }}
-        restore-keys: linux-vfx-hou${{ ineeds.checksecret.outputs.H_VERSION }}-${{ inputs.image }}-${{ inputs.cxx }}-
+        key: linux-vfx-hou${{ needs.checksecret.outputs.H_VERSION }}-${{ inputs.image }}-${{ inputs.cxx }}-${{ steps.timestamp.outputs.timestamp }}
+        restore-keys: linux-vfx-hou${{ needs.checksecret.outputs.H_VERSION }}-${{ inputs.image }}-${{ inputs.cxx }}-
     # Build
     - name: build
       run: >
