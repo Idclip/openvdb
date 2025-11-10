@@ -147,7 +147,6 @@ jobs:
         key: dummy-houdini${{ needs.checksecret.outputs.H_VERSION }}-${{ steps.timestamp.outputs.timestamp }}
         restore-keys: vdb-v5-houdini${{ needs.checksecret.outputs.H_VERSION }}-
     - name: install_houdini
-      run:
       run: |
         test -f "hou/hou.tar.gz"
         mkdir $HOME/houdini_install
