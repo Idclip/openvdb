@@ -5,7 +5,24 @@
 set -ex
 
 LLVM_VER="$1"
-LLVM_CRT="$2"
+VC_MODE="$2"
+VDB_BUILD="$3"
+
+LLVM_CRT="MultiThreadedDLL"
+
+if [[ "${VC_MODE}" == "x64-windows" ]]; then
+    if [[ "${VDB_BUILD}" == "Release" ]]; then
+        LLVM_CRT="MultiThreadedDLL"
+    elif [[ "${VDB_BUILD}" == "Debug" ]]; then
+        LLVM_CRT="MultiThreadedDebugDLL"
+    fi
+elif [[ "${VC_MODE}" == "x64-windows-static" ]]; then
+    if [[ "${VDB_BUILD}" == "Release" ]]; then
+        LLVM_CRT="MultiThreaded"
+    elif [[ "${VDB_BUILD}" == "Debug" ]]; then
+        LLVM_CRT="MultiThreadedDebug"
+    fi
+fi
 
 # Legacy define for older versions of LLVM
 LLVM_LEGACY_CRT_DEFINE=""

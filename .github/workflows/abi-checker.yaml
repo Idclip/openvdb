@@ -3,18 +3,13 @@
 # It also contains the Houdini Cache jobs which update the CI cache
 # with new Houdini releases.
 
-name: Weekly
+name: ABI Check
 
 on:
   schedule:
     # run this workflow Sunday 00:00 UTC
     - cron:  '0 0 * * 0'
   workflow_dispatch:
-    inputs:
-      type:
-        description: 'The type of CI to run (all, houdini, latest, extra, ax, blosc, abi)'
-        required: true
-        default: 'all'
 
 # Allow subsequent pushes to the same PR or REF to cancel any previous jobs.
 concurrency:
@@ -27,10 +22,6 @@ defaults:
 
 jobs:
   linux-abi-checker:
-    if: |
-      github.event_name == 'workflow_dispatch' &&
-      (github.event.inputs.type == 'all' ||
-       github.event.inputs.type == 'abi')
     runs-on: ubuntu-22.04
     env:
       # The 'abicheck' build type sets these, but older versions of the library

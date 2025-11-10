@@ -21,9 +21,6 @@ on:
       llvm:
         required: false
         type: string
-      crt:
-        required: false
-        type: string
 
 jobs:
   windows:
@@ -50,7 +47,7 @@ jobs:
     - name: llvm
       if: contains(inputs.components, 'ax')
       shell: bash
-      run: ./ci/install_llvm_windows.sh ${{ inputs.llvm }} ${{ inputs.crt }}
+      run: ./ci/install_llvm_windows.sh ${{ inputs.llvm }} ${{ inputs.vc }} ${{ inputs.build }}
     - name: install_numpy
       shell: powershell
       if: ${{ !contains(inputs.vc, 'static')}}
@@ -59,22 +56,36 @@ jobs:
       if: contains(inputs.components, 'nano')
       shell: powershell
       run: .\ci\install_windows_cuda.ps1
+    # static build of blosc from vcpkg does not build internal sources.
+    # USE_STATIC_DEPENDENCIES is required for IlmBase/OpenEXR defines and
+    # USE_EXPLICIT_INSTANTIATION is disabled for debug static libraries due to disk space constraints
     - name: build
       run: >
         ./ci/build.sh -v
         --config='Release'
         --components='core,bin,view,render,python,test'
         --cargs=\'
+        `################## Default CMake args for all components ##################` \
         -A x64 -G \"Visual Studio 17 2022\"
         -DMSVC_COMPRESS_PDB=ON
         -DUSE_EXR=ON
         -DUSE_PNG=ON
         -DVCPKG_TARGET_TRIPLET=${VCPKG_DEFAULT_TRIPLET}
         -DCMAKE_TOOLCHAIN_FILE=\"${VCPKG_INSTALLATION_ROOT}\\scripts\\buildsystems\\vcpkg.cmake\"
+        `################## Default CMake args for AX components ###################` \
+        -DOPENVDB_AX_TEST_CMD_DOWNLOADS=OFF
+        `################## Default CMake args for NanoVDB components ##############` \
         -DNANOVDB_USE_CUDA=ON
         -DNANOVDB_USE_OPENVDB=ON
         -DCMAKE_CUDA_ARCHITECTURES="80"
         -DCMAKE_CUDA_FLAGS="-D_WIN32"
+        `################## Args based on vc toolchain ##################` \
+        ${{ (inputs.build == 'Debug' && '-DUSE_EXPLICIT_INSTANTIATION=OFF') || '' }
+        ${{ (inputs.vc == 'x64-windows' && '-DOPENVDB_CORE_STATIC=OFF') || '' }
+        ${{ (inputs.vc == 'x64-windows' && '-DOPENVDB_AX_STATIC=OFF') || '' }
+        ${{ (inputs.vc == 'x64-windows-static' && '-DOPENVDB_CORE_SHARED=OFF') || '' }
+        ${{ (inputs.vc == 'x64-windows-static' && '-DBLOSC_USE_EXTERNAL_SOURCES=ON') || '' }
+        ${{ (inputs.vc == 'x64-windows-static' && '-DUSE_STATIC_DEPENDENCIES=ON') || '' }
         ${{ inputs.cmake }}
         \'
     - name: size

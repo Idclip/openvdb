@@ -1,13 +1,8 @@
 
-name: AX
+name: AX Grammar
 
 on:
   workflow_dispatch:
-    inputs:
-      type:
-        description: 'The type of CI to run (all, mac, linux, grammar)'
-        required: true
-        default: 'all'
 
 defaults:
   run:
@@ -15,8 +10,6 @@ defaults:
 
 jobs:
   gen-grammar:
-    if: |
-      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     container:
       image: aswf/ci-openvdb:2025-clang19.1
