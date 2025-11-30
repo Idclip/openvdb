@@ -1,0 +1,72 @@
+# This workflow runs once a week and tests a variety of configurations,
+# dependencies and other specific or expensive checkes (sanitizers).
+# It also contains the Houdini Cache jobs which update the CI cache
+# with new Houdini releases.
+
+name: Latest
+
+on:
+  schedule:
+    # run this workflow Sunday 00:00 UTC
+    - cron:  '0 0 * * 0'
+  workflow_dispatch:
+
+# Allow subsequent pushes to the same PR or REF to cancel any previous jobs.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  #############################################################################
+  ########################### Core Library Extras #############################
+  #############################################################################
+
+  # Test latest dependencies, latest compilers and options
+  latest:
+    if: |
+      github.event_name != 'workflow_dispatch' ||
+      github.event.inputs.type == 'all' ||
+      github.event.inputs.type == 'latest'
+    runs-on: ${{ matrix.config.runson }}
+    env:
+      CXX: ${{ matrix.config.cxx }}
+    strategy:
+      matrix:
+        config:
+          # llvm-17 is currently the default which has symbol issues with the python module
+          - { runson: ubuntu-latest, cxx: g++, cmake: '-DOPENVDB_PYTHON_USE_AX=OFF' }
+          # Disable the clang job for now. See https://github.com/actions/runner-images/issues/8659
+          # - { runson: ubuntu-latest, cxx: clang++, cmake: '' }
+          # @todo gcc on macos
+          - { runson: macos-latest, cxx: '', cmake: '-DLLVM_DIR=/opt/homebrew/opt/llvm/lib/cmake/llvm' }
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - name: install_deps
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get -q install -y libboost-dev libboost-iostreams-dev libtbb-dev libblosc-dev libgtest-dev libgmock-dev python3-numpy
+            ./ci/install_nanobind.sh latest
+            ./ci/install_blosc.sh latest
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            ./ci/install_macos.sh latest
+            ./ci/install_tbb_macos.sh
+          else
+            echo "$RUNNER_OS not supported"; exit 1
+          fi
+      - name: build
+        run: >
+          ./ci/build.sh -v
+          --build-type=Release
+          --components=\"core,axcore,python,bin,render,test,axbin\"
+          --cargs=\'
+          -DCMAKE_CXX_STANDARD=20
+          -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
+          ${{ matrix.config.cmake }}
+          \'
+      - name: test
+        run: cd build && ctest -V

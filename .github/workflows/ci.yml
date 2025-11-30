@@ -32,6 +32,7 @@ defaults:
 
 jobs:
   #############################################################################
+  ################################### Linux ###################################
   #############################################################################
 
   linux-on-pr:
@@ -89,7 +90,7 @@ jobs:
       components: ${{ matrix.config.components }}
       cmake: ${{ matrix.config.cmake }}
 
-  linux-on-weekly:
+  linux-on-schedule:
     if: github.event_name == 'schedule'
     strategy:
       matrix:
@@ -97,7 +98,7 @@ jobs:
           # Core
           - { name: 'all',     cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DOPENVDB_PYTHON_WRAP_ALL_GRID_TYPES=ON -DUSE_BLOSC=ON -DUSE_ZLIB=ON -DUSE_EXR=ON -DUSE_PNG=ON -DOPENVDB_SIMD=SSE42 -DOPENVDB_SIMD=AVX'  }
           - { name: 'lite',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DUSE_BLOSC=OFF -DUSE_ZLIB=OFF -DUSE_EXR=OFF -DUSE_PNG=OFF -DOPENVDB_USE_DELAYED_LOADING=OFF' }
-          - { name: 'half',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,py,bin,test', cmake: '-DUSE_IMATH_HALF=ON' }
+          - { name: 'half',    cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,bin,test',    cmake: '-DUSE_IMATH_HALF=ON' }
           - { name: 'asan',    cxx: clang++, image: '2026', abi: 13, build: 'asan',    components: 'core,test',        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DNANOVDB_USE_OPENVDB=ON -DOPENVDB_AX_STATIC=OFF -DOPENVDB_CORE_STATIC=OFF -DUSE_BLOSC=OFF' } # We never called blosc_destroy(), so disable blosc to silence these errors
           - { name: 'ubsan',   cxx: clang++, image: '2026', abi: 13, build: 'ubsan',   components: 'core,test',        cmake: '-DDISABLE_DEPENDENCY_VERSION_CHECKS=ON -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" ' }
           - { name: 'c++20',   cxx: clang++, image: '2026', abi: 13, build: 'Release', components: 'core,test',        cmake: '-DCMAKE_CXX_STANDARD=20' }
@@ -116,6 +117,7 @@ jobs:
       cmake: ${{ matrix.config.cmake }}
 
   #############################################################################
+  ################################### MacOS ###################################
   #############################################################################
 
   macos-on-pr:
@@ -135,7 +137,7 @@ jobs:
       cmake: ${{ matrix.config.cmake }}
       llvm: ${{ matrix.config.llvm }}
 
-  macos-on-weekly:
+  macos-on-schedule:
     if: github.event_name == 'schedule'
     strategy:
       matrix:
@@ -162,6 +164,7 @@ jobs:
       llvm: ${{ matrix.config.llvm }}
 
   #############################################################################
+  ################################## Windows ##################################
   #############################################################################
 
   win-on-pr:
